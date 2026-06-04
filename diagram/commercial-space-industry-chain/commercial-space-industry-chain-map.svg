@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="52%" stop-color="#102338"/>
+      <stop offset="100%" stop-color="#1b2012"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#42d6ff"/>
+      <stop offset="55%" stop-color="#80f2b8"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:600;fill:#c9efff}
+      .card{fill:#0b1d2a;stroke:#2d5d70;stroke-width:2}
+      .head{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .body{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:500;fill:#dcecf2}
+      .tag{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#09121b}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:650;fill:#aee6f5}
+    </style>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#bg)"/>
+  <text class="title" x="88" y="110" font-size="58">商业航天产业链全景图谱</text>
+  <text class="sub" x="90" y="166" font-size="27">卫星/火箭零部件与材料 → 航天总装集成 → 发射运营与地面设备 → 应用服务</text>
+  <rect x="90" y="205" width="1420" height="8" rx="4" fill="url(#bar)"/>
+
+  <g transform="translate(92 270)">
+    <rect class="card" width="1416" height="270" rx="22"/>
+    <rect x="32" y="32" width="260" height="50" rx="25" fill="#42d6ff"/>
+    <text class="tag" x="70" y="66" font-size="25">01 上游制造</text>
+    <text class="head" x="340" y="68" font-size="36">卫星制造 + 火箭制造：技术壁垒最高、订单放量最集中</text>
+    <text class="body" x="340" y="122" font-size="27">卫星总装/T-R组件/激光通信/连接器 → 火箭发动机/结构件/碳纤维/钛合金</text>
+    <text class="small" x="340" y="174" font-size="24">代表：中国卫星、航天电子、国博电子、航天动力、超捷股份、西部材料、楚江新材、铂力特</text>
+    <text class="small" x="340" y="216" font-size="23">追踪：千帆批次、在轨卫星数量、发动机订单、结构件价值量、材料验证、成本爬坡</text>
+  </g>
+
+  <g transform="translate(92 610)">
+    <rect class="card" width="1416" height="270" rx="22"/>
+    <rect x="32" y="32" width="260" height="50" rx="25" fill="#80f2b8"/>
+    <text class="tag" x="70" y="66" font-size="25">02 中游枢纽</text>
+    <text class="head" x="340" y="68" font-size="36">发射运营与地面设备：连接制造端与应用端</text>
+    <text class="body" x="340" y="122" font-size="27">火箭发射服务 → 测控运控 → 地面终端 → 星地融合组网 → 导航增强</text>
+    <text class="small" x="340" y="174" font-size="24">代表：航天科工火箭、中兴通讯、海格通信、北斗星通；风险样本：航天宏图</text>
+    <text class="small" x="340" y="216" font-size="23">追踪：发射排期、IPO进程、地面终端订单、星间链路、回款周期和亏损风险</text>
+  </g>
+
+  <g transform="translate(92 950)">
+    <rect class="card" width="1416" height="270" rx="22"/>
+    <rect x="32" y="32" width="260" height="50" rx="25" fill="#ffd166"/>
+    <text class="tag" x="70" y="66" font-size="25">03 下游应用</text>
+    <text class="head" x="340" y="68" font-size="36">卫星互联网、遥感导航、太空光伏：远期弹性最大</text>
+    <text class="body" x="340" y="122" font-size="27">通信广播卫星运营 → 星链终端天线 → 导航增强 → 遥感数据 → 太空算力/光伏</text>
+    <text class="small" x="340" y="174" font-size="24">代表：中国卫通、信维通信、迈为股份、西部超导、盛路通信、北斗星通</text>
+    <text class="small" x="340" y="216" font-size="23">追踪：卫星运营收入、SpaceX链订单、应用商业化、ETF资金、概念兑现风险</text>
+  </g>
+
+  <g stroke="url(#bar)" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M800 542v65"/>
+    <path d="M800 882v65"/>
+  </g>
+
+  <g transform="translate(92 1315)">
+    <rect width="1416" height="142" rx="20" fill="#081620" stroke="#2d5d70" stroke-width="2"/>
+    <text class="head" x="38" y="50" font-size="30">核心驱动</text>
+    <text class="body" x="210" y="50" font-size="25">千帆星座组网 · 长征十号乙可复用火箭 · SpaceX IPO · 标准体系落地 · ETF资金流入</text>
+    <text class="small" x="38" y="96" font-size="22">跟踪重点：组网节奏、火箭复用验证、核心零部件订单、SpaceX链真实订单、亏损企业风险。</text>
+  </g>
+</svg>

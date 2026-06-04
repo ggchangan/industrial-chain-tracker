@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07131f"/>
+      <stop offset="48%" stop-color="#15263a"/>
+      <stop offset="100%" stop-color="#10261f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="50%" stop-color="#7cf3c8"/>
+      <stop offset="100%" stop-color="#f6d365"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g opacity="0.16" stroke="#e7fbff" stroke-width="1">
+    <path d="M64 118h260M54 206h220M84 510h280M888 116h230M890 530h230"/>
+    <path d="M142 72v485M258 96v390M948 68v510M1082 144v390"/>
+  </g>
+  <g transform="translate(700 112)" filter="url(#glow)">
+    <path d="M130 38c92 70 92 172 0 242M296 38c-92 70-92 172 0 242" fill="none" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <g stroke="#7dd3fc" stroke-width="5" stroke-linecap="round">
+      <path d="M150 78h126M134 126h158M134 174h158M150 222h126"/>
+    </g>
+    <circle cx="130" cy="38" r="12" fill="#7cf3c8"/>
+    <circle cx="296" cy="38" r="12" fill="#f6d365"/>
+    <circle cx="130" cy="280" r="12" fill="#f6d365"/>
+    <circle cx="296" cy="280" r="12" fill="#7cf3c8"/>
+    <g transform="translate(42 330)">
+      <rect x="0" y="0" width="360" height="92" rx="18" fill="#0d2030" stroke="#7cf3c8" stroke-width="3"/>
+      <circle cx="58" cy="46" r="22" fill="#102b3c" stroke="#7dd3fc" stroke-width="4"/>
+      <path d="M116 46h180" stroke="#f6d365" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="320" cy="46" r="18" fill="#f6d365"/>
+    </g>
+  </g>
+  <g transform="translate(78 92)">
+    <text x="0" y="0" fill="#9ee7ff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="700">产业链深度解析</text>
+    <text x="0" y="88" fill="#ffffff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="72" font-weight="800">创新药</text>
+    <text x="0" y="150" fill="#d8f7ff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="33" font-weight="650">从上游服务到下游商业化全梳理</text>
+    <rect x="0" y="204" width="636" height="2" fill="#7cf3c8"/>
+    <text x="0" y="263" fill="#f2fbff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="29" font-weight="650">CXO → 创新药企 → 商业化/BD出海</text>
+    <text x="0" y="319" fill="#f6d365" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="27" font-weight="750">BD出海 · 盈利拐点 · ADC/双抗 · 支付优化</text>
+  </g>
+  <g transform="translate(78 556)" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="23" fill="#d9faff">
+    <rect x="0" y="-34" width="154" height="48" rx="10" fill="#14344a" stroke="#7dd3fc"/>
+    <text x="24" y="-2">BD出海</text>
+    <rect x="178" y="-34" width="178" height="48" rx="10" fill="#173d33" stroke="#7cf3c8"/>
+    <text x="214" y="-2">CXO复苏</text>
+    <rect x="380" y="-34" width="184" height="48" rx="10" fill="#3d3218" stroke="#f6d365"/>
+    <text x="410" y="-2">价值兑现</text>
+  </g>
+</svg>

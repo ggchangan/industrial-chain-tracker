@@ -1,0 +1,96 @@
+<svg viewBox="0 0 1600 1600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="52%" stop-color="#131a33"/>
+      <stop offset="100%" stop-color="#082f34"/>
+    </linearGradient>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="#223044" stroke-width="0.8"/>
+    </pattern>
+    <marker id="arrow" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
+      <polygon points="0 0,14 5,0 10" fill="#38bdf8"/>
+    </marker>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <style>
+      text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif}
+      .title{fill:#f8fafc;font-size:58px;font-weight:900}
+      .sub{fill:#a9b7c8;font-size:22px}
+      .h{fill:#f8fafc;font-size:30px;font-weight:800}
+      .p{fill:#cbd5e1;font-size:20px}
+      .small{fill:#94a3b8;font-size:17px}
+      .tag{fill:#e2e8f0;font-size:18px;font-weight:700}
+    </style>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#bg)"/>
+  <rect width="1600" height="1600" fill="url(#grid)" opacity="0.48"/>
+  <circle cx="1280" cy="230" r="190" fill="#a78bfa" opacity="0.14" filter="url(#glow)"/>
+  <circle cx="286" cy="1260" r="220" fill="#22d3ee" opacity="0.12" filter="url(#glow)"/>
+
+  <text x="100" y="116" class="title">脑机接口产业链全景图</text>
+  <text x="103" y="158" class="sub">柔性电极 / 专用芯片 / 生物材料 → 采集解码与系统集成 → 医疗康复、消费与工业应用</text>
+
+  <g transform="translate(100 230)">
+    <rect width="1400" height="318" rx="26" fill="#071827" stroke="#a78bfa" stroke-width="3"/>
+    <rect x="34" y="34" width="188" height="52" rx="26" fill="rgba(167,139,250,0.14)" stroke="#a78bfa"/>
+    <text x="128" y="69" text-anchor="middle" class="tag" fill="#c4b5fd">01 上游硬件</text>
+    <text x="260" y="70" class="h">技术壁垒最高，决定信号质量与长期安全性</text>
+    <text x="54" y="128" class="p">电极：侵入式柔性电极、非侵入式干/湿电极，核心看通道密度和生物相容性</text>
+    <text x="54" y="170" class="p">芯片：脑电采集芯片、神经信号处理芯片，核心看低功耗、多通道和量产能力</text>
+    <text x="54" y="212" class="p">材料与制造：LCP薄膜、硬脑膜补片、植入式医疗精密连接器与安全性评价</text>
+    <text x="54" y="270" class="small">代表公司：康拓医疗、汉威科技、英集芯、成都华微、美好医疗、蓝思科技、冠昊生物、迈普医学、谱尼测试</text>
+    <g transform="translate(1128 80)">
+      <rect width="190" height="150" rx="18" fill="#23154a" stroke="#a78bfa"/>
+      <text x="95" y="50" text-anchor="middle" class="tag">关键指标</text>
+      <text x="95" y="90" text-anchor="middle" class="small">通道数</text>
+      <text x="95" y="120" text-anchor="middle" class="small">长期稳定性</text>
+    </g>
+  </g>
+
+  <path d="M800 574V674" stroke="#38bdf8" stroke-width="7" marker-end="url(#arrow)" opacity="0.95"/>
+
+  <g transform="translate(100 700)">
+    <rect width="1400" height="318" rx="26" fill="#071827" stroke="#22d3ee" stroke-width="3"/>
+    <rect x="34" y="34" width="200" height="52" rx="26" fill="rgba(34,211,238,0.14)" stroke="#22d3ee"/>
+    <text x="134" y="69" text-anchor="middle" class="tag" fill="#67e8f9">02 中游系统</text>
+    <text x="272" y="70" class="h">从神经信号到可用设备，是产业化关键中枢</text>
+    <text x="54" y="128" class="p">脑电采集平台：侵入式、半侵入式、非侵入式信号采集与传输</text>
+    <text x="54" y="170" class="p">解码算法与操作系统：运动意图识别、闭环反馈、设备控制与数据安全</text>
+    <text x="54" y="212" class="p">设备制造：全植入式系统、智能仿生手/腿、康复设备、工业疲劳监测设备</text>
+    <text x="54" y="270" class="small">代表企业：博睿康、脑虎科技、强脑科技、阶梯医疗、诚益通、翔宇医疗、伟思医疗</text>
+    <g transform="translate(1120 76)">
+      <rect width="210" height="160" rx="18" fill="#082f49" stroke="#22d3ee"/>
+      <text x="105" y="52" text-anchor="middle" class="tag">产业信号</text>
+      <text x="105" y="91" text-anchor="middle" class="small">多中心临床</text>
+      <text x="105" y="122" text-anchor="middle" class="small">IPO / 融资</text>
+    </g>
+  </g>
+
+  <path d="M800 1044V1144" stroke="#38bdf8" stroke-width="7" marker-end="url(#arrow)" opacity="0.95"/>
+
+  <g transform="translate(100 1170)">
+    <rect width="1400" height="300" rx="26" fill="#071827" stroke="#34d399" stroke-width="3"/>
+    <rect x="34" y="34" width="200" height="52" rx="26" fill="rgba(52,211,153,0.14)" stroke="#34d399"/>
+    <text x="134" y="69" text-anchor="middle" class="tag" fill="#6ee7b7">03 下游应用</text>
+    <text x="272" y="70" class="h">医疗先行，消费与工业打开远期弹性</text>
+    <text x="54" y="128" class="p">医疗康复：脊髓损伤、脑卒中、帕金森、渐冻症、疼痛管理与盆底康复</text>
+    <text x="54" y="170" class="p">消费互娱：智能仿生手、睡眠调控、游戏教育、智能家居意念控制</text>
+    <text x="54" y="212" class="p">工业特种作业：疲劳监测、高专注岗位安全预警、车路云和边缘智能延伸</text>
+    <text x="54" y="260" class="small">代表公司：三博脑科、创新医疗、浙江东方、壹网壹创、科大讯飞、岩山科技、熵基科技、狄耐克</text>
+  </g>
+
+  <g transform="translate(126 1510)">
+    <rect x="0" y="0" width="200" height="46" rx="23" fill="#172554" stroke="#60a5fa"/>
+    <text x="100" y="30" text-anchor="middle" class="tag">临床验证</text>
+    <rect x="226" y="0" width="220" height="46" rx="23" fill="#2e1065" stroke="#a78bfa"/>
+    <text x="336" y="30" text-anchor="middle" class="tag">Neuralink量产</text>
+    <rect x="472" y="0" width="190" height="46" rx="23" fill="#0f2e2c" stroke="#34d399"/>
+    <text x="567" y="30" text-anchor="middle" class="tag">主动康复</text>
+    <rect x="688" y="0" width="210" height="46" rx="23" fill="#431407" stroke="#fbbf24"/>
+    <text x="793" y="30" text-anchor="middle" class="tag">政策优先审批</text>
+    <rect x="924" y="0" width="220" height="46" rx="23" fill="#4c0519" stroke="#fb7185"/>
+    <text x="1034" y="30" text-anchor="middle" class="tag">伦理与隐私风险</text>
+  </g>
+</svg>

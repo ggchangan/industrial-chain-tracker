@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "光刻机产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/lithography-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "光学系统",
+      "keywords": ["投影物镜", "DUV光学", "EUV光学", "光学晶体", "光束整形"],
+      "companies": ["茂莱光学", "福晶科技", "波长光电"],
+      "whatToTrack": ["SMEE/ASML供应链进展", "半导体订单占比", "投影物镜交付", "扩产折旧与毛利率"]
+    },
+    {
+      "segment": "光源系统",
+      "keywords": ["ArF准分子激光器", "光场匀化器", "照明模组", "科益虹源"],
+      "companies": ["炬光科技", "科益虹源"],
+      "whatToTrack": ["光源模块验证", "核心元器件订单", "国产DUV光源进展", "国际龙头供应关系"]
+    },
+    {
+      "segment": "精密结构件与真空温控",
+      "keywords": ["真空腔体", "高纯管路", "精密零部件", "温控系统", "液冷"],
+      "companies": ["新莱应材", "富创精密", "同飞股份"],
+      "whatToTrack": ["半导体设备客户", "光刻机配套占比", "新增产能", "净利润兑现"]
+    },
+    {
+      "segment": "电子特气",
+      "keywords": ["光刻气", "ASML认证", "GIGAPHOTON认证", "Cymer", "Ar/F/Ne"],
+      "companies": ["中船特气", "华特气体"],
+      "whatToTrack": ["国际认证", "光刻气放量", "产能利用率", "价格与原料传导"]
+    },
+    {
+      "segment": "整机制造",
+      "keywords": ["上海微电子", "SSA800", "28nm DUV", "浸没式光刻机", "SMEE IPO"],
+      "companies": ["上海微电子", "张江高科", "上海电气"],
+      "whatToTrack": ["批量交付", "量产良率", "国产化率", "上市/重组进展"]
+    },
+    {
+      "segment": "直写光刻",
+      "keywords": ["直写光刻", "先进封装", "载板光刻", "PCB直接成像"],
+      "companies": ["芯碁微装"],
+      "whatToTrack": ["累计订单", "先进封装客户", "线宽能力", "PCB/载板设备放量"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立光刻机产业链基准逻辑",
+      "impact": "以AI芯片扩产、自主可控和SMEE整机突破为主线，追踪光学、光源、真空结构件、电子特气、整机制造和直写光刻路线变化。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "光刻机产业链深度解析原始稿",
+        "url": "../raw/lithography-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "板块催化",
+      "signal": "光刻机概念板块震荡走强，电子特气与核心零部件领涨",
+      "impact": "市场短期将电子特气、精密零部件、光学系统和直写光刻视为国产替代最具弹性的方向。",
+      "confidence": "待核验",
+      "source": {
+        "type": "market-note",
+        "platform": "user-provided",
+        "title": "2026年6月4日板块热点回顾",
+        "url": "../raw/lithography-industry-chain-original.md"
+      },
+      "notes": "需后续核验中船特气、华特气体、新莱应材、芯碁微装等涨幅及资金流数据。"
+    }
+  ]
+}

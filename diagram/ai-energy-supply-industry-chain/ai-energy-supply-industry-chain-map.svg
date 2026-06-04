@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1240" viewBox="0 0 1840 1240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111f"/><stop offset="0.55" stop-color="#10253b"/><stop offset="1" stop-color="#081018"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#74a7c8" stroke-width="0.7" opacity="0.16"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.32"/></filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#69e7ff"/></marker>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:52px;font-weight:800;fill:#f7fbff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;fill:#a9c4d9}
+      .stage{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:34px;font-weight:800;fill:#f7fbff}
+      .desc{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#a9c4d9}
+      .cardTitle{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;font-weight:800;fill:#f7fbff}
+      .item{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#dbe8f2}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:18px;fill:#9cb3c7}
+    </style>
+  </defs>
+  <rect width="1840" height="1240" fill="url(#bg)"/>
+  <rect width="1840" height="1240" fill="url(#grid)"/>
+  <text x="92" y="86" class="title">AI算力能源供给侧产业链图谱</text>
+  <text x="94" y="126" class="sub">核心零部件 -> 发电设备整机 -> 数据中心自建发电方案</text>
+  <g transform="translate(92 170)" filter="url(#shadow)">
+    <rect width="500" height="780" rx="24" fill="#0d2233" stroke="#20d4ff" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">上游：核心零部件</text>
+    <text x="34" y="90" class="desc">发电设备的“卖铲人”，验证周期长</text>
+    <g transform="translate(34 126)"><rect width="432" height="124" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="40" class="cardTitle">精密铸件</text><text x="24" y="76" class="item">联德股份</text><text x="24" y="106" class="small">内燃机缸体 / 燃机零部件 / 制冷+发电双轮</text></g>
+    <g transform="translate(34 284)"><rect width="432" height="124" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="40" class="cardTitle">高温合金与热端部件</text><text x="24" y="76" class="item">应流股份｜万泽股份｜豪迈科技｜冰轮环境</text><text x="24" y="106" class="small">透平叶片 / 高温合金 / 燃机零部件</text></g>
+    <g transform="translate(34 442)"><rect width="432" height="124" rx="16" fill="#2b2a19" stroke="#ffb86b"/><text x="24" y="40" class="cardTitle">余热锅炉与配套</text><text x="24" y="76" class="item">西子洁能｜博盈特焊</text><text x="24" y="106" class="small">HRSG / 联合循环 / 北美AI电力基建</text></g>
+  </g>
+  <g transform="translate(670 170)" filter="url(#shadow)">
+    <rect width="560" height="780" rx="24" fill="#0d2233" stroke="#5cf2b6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">中游：发电设备整机</text>
+    <text x="34" y="90" class="desc">备用电源、主用电源和新型直流电源并行</text>
+    <g transform="translate(34 126)"><rect width="492" height="112" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">柴油发电机</text><text x="24" y="72" class="item">潍柴动力｜科泰电源｜泰豪科技｜中国动力</text><text x="24" y="98" class="small">备用电源 / 10秒满载 / 大缸径发动机</text></g>
+    <g transform="translate(34 260)"><rect width="492" height="112" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">燃气轮机</text><text x="24" y="72" class="item">杰瑞股份｜东方电气｜上海电气</text><text x="24" y="98" class="small">主用电源 / 北美订单 / 产能缺口</text></g>
+    <g transform="translate(34 394)"><rect width="492" height="112" rx="16" fill="#2b2a19" stroke="#ffb86b"/><text x="24" y="38" class="cardTitle">天然气内燃机</text><text x="24" y="72" class="item">潍柴动力｜联德股份供应链</text><text x="24" y="98" class="small">灵活主电源 / 启动快 / 北美模式跑通</text></g>
+    <g transform="translate(34 528)"><rect width="492" height="112" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="38" class="cardTitle">SOFC固体氧化物燃料电池</text><text x="24" y="72" class="item">潍柴动力</text><text x="24" y="98" class="small">800V直流 / 高效率 / 从1到10放量</text></g>
+  </g>
+  <g transform="translate(1308 170)" filter="url(#shadow)">
+    <rect width="440" height="780" rx="24" fill="#0d2233" stroke="#ffb86b" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">下游：AIDC自建发电</text>
+    <text x="34" y="90" class="desc">数据中心从“接电”走向“自发电”</text>
+    <g transform="translate(34 132)"><rect width="372" height="132" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="42" class="cardTitle">备用电源</text><text x="24" y="80" class="item">柴油发电机组</text><text x="24" y="110" class="small">电网故障快速切换，可靠性优先</text></g>
+    <g transform="translate(34 302)"><rect width="372" height="132" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="42" class="cardTitle">主用电源</text><text x="24" y="80" class="item">燃气轮机｜天然气内燃机｜SOFC</text><text x="24" y="110" class="small">7×24小时供电，缓解电网扩容滞后</text></g>
+    <g transform="translate(34 472)"><rect width="372" height="132" rx="16" fill="#2b2a19" stroke="#ffb86b"/><text x="24" y="42" class="cardTitle">系统集成与余热回收</text><text x="24" y="80" class="item">博盈特焊｜西子洁能</text><text x="24" y="110" class="small">HRSG / 联合循环 / 交钥匙方案</text></g>
+    <g transform="translate(34 642)"><rect width="372" height="74" rx="16" fill="#162b3a" stroke="#46677e"/><text x="24" y="46" class="item">缺电倒逼：算力走向自建电源</text></g>
+  </g>
+  <g stroke="#69e7ff" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.92"><path d="M592 560H650"/><path d="M1230 560H1288"/></g>
+  <g transform="translate(92 1010)" filter="url(#shadow)">
+    <rect width="1656" height="142" rx="24" fill="#0c1d2b" stroke="#304c64"/>
+    <text x="34" y="46" class="cardTitle">动态追踪主线</text>
+    <text x="34" y="88" class="item">1. 北美AIDC自建发电项目  2. 燃机/柴发交期  3. 杰瑞北美订单  4. 联德墨西哥产能  5. 潍柴SOFC批量落地  6. HRSG越南产线</text>
+  </g>
+  <text x="92" y="1200" class="small">产业链研究库 · AI算力能源供给侧 · 2026.06.04</text>
+</svg>

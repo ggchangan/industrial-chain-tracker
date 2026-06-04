@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1240" viewBox="0 0 1840 1240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111f"/><stop offset="0.55" stop-color="#10253b"/><stop offset="1" stop-color="#081018"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#74a7c8" stroke-width="0.7" opacity="0.16"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.32"/></filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#69e7ff"/></marker>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:52px;font-weight:800;fill:#f7fbff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;fill:#a9c4d9}
+      .stage{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:34px;font-weight:800;fill:#f7fbff}
+      .desc{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#a9c4d9}
+      .cardTitle{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;font-weight:800;fill:#f7fbff}
+      .item{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#dbe8f2}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:18px;fill:#9cb3c7}
+    </style>
+  </defs>
+  <rect width="1840" height="1240" fill="url(#bg)"/>
+  <rect width="1840" height="1240" fill="url(#grid)"/>
+  <text x="92" y="86" class="title">AI算力基础设施产业链图谱</text>
+  <text x="94" y="126" class="sub">AI芯片/HBM -> AI服务器/光互联/供电散热 -> 智算中心/云服务/AI应用</text>
+  <g transform="translate(92 170)" filter="url(#shadow)">
+    <rect width="500" height="780" rx="24" fill="#0d2233" stroke="#20d4ff" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">上游：基础硬件</text>
+    <text x="34" y="90" class="desc">决定算力、带宽、存储和互联上限</text>
+    <g transform="translate(34 126)"><rect width="432" height="112" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">AI芯片</text><text x="24" y="72" class="item">海光信息｜寒武纪｜景嘉微</text><text x="24" y="98" class="small">GPU / DCU / ASIC / 信创智算</text></g>
+    <g transform="translate(34 260)"><rect width="432" height="112" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="38" class="cardTitle">存储与接口</text><text x="24" y="72" class="item">兆易创新｜澜起科技｜北京君正</text><text x="24" y="98" class="small">HBM / DDR5 / 内存接口 / NOR-DRAM</text></g>
+    <g transform="translate(34 394)"><rect width="432" height="112" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">PCB与光芯片</text><text x="24" y="72" class="item">胜宏科技｜沪电股份｜源杰科技｜光库科技</text><text x="24" y="98" class="small">AI服务器PCB / EML / TFLN / 光互联瓶颈</text></g>
+  </g>
+  <g transform="translate(670 170)" filter="url(#shadow)">
+    <rect width="560" height="780" rx="24" fill="#0d2233" stroke="#8b5cf6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">中游：算力平台与网络</text>
+    <text x="34" y="90" class="desc">将芯片能力转化为可部署的系统能力</text>
+    <g transform="translate(34 126)"><rect width="492" height="112" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">AI服务器</text><text x="24" y="72" class="item">工业富联｜浪潮信息｜中科曙光｜华勤技术</text><text x="24" y="98" class="small">ODM / HGX-DGX / 国产服务器 / 智算交付</text></g>
+    <g transform="translate(34 260)"><rect width="492" height="112" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="38" class="cardTitle">光模块与交换机</text><text x="24" y="72" class="item">中际旭创｜新易盛｜天孚通信｜中兴通讯｜锐捷网络</text><text x="24" y="98" class="small">800G / 1.6T / CPO / 数据中心交换机</text></g>
+    <g transform="translate(34 394)"><rect width="492" height="112" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">液冷散热</text><text x="24" y="72" class="item">英维克｜高澜股份</text><text x="24" y="98" class="small">液冷 / 浸没式 / 高功率机柜散热</text></g>
+    <g transform="translate(34 528)"><rect width="492" height="112" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="38" class="cardTitle">供电系统</text><text x="24" y="72" class="item">中恒电气｜科华数据｜科士达｜盛弘股份</text><text x="24" y="98" class="small">HVDC / UPS / 电能质量 / 高压直流</text></g>
+  </g>
+  <g transform="translate(1308 170)" filter="url(#shadow)">
+    <rect width="440" height="780" rx="24" fill="#0d2233" stroke="#ffd166" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">下游：智算与应用</text>
+    <text x="34" y="90" class="desc">算力最终承载、分发与变现出口</text>
+    <g transform="translate(34 132)"><rect width="372" height="132" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="42" class="cardTitle">智算中心 AIDC</text><text x="24" y="80" class="item">光环新网｜奥飞数据｜数据港</text><text x="24" y="110" class="small">IDC转智算 / 算力租赁 / 机柜上架</text></g>
+    <g transform="translate(34 302)"><rect width="372" height="132" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="42" class="cardTitle">云与算力网络</text><text x="24" y="80" class="item">中国电信｜中国移动｜优刻得</text><text x="24" y="110" class="small">运营商云 / 算力网络 / 云服务分发</text></g>
+    <g transform="translate(34 472)"><rect width="372" height="132" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="42" class="cardTitle">AI模型与应用</text><text x="24" y="80" class="item">训练｜推理｜Agent｜行业应用</text><text x="24" y="110" class="small">算力需求从训练扩散至推理和部署</text></g>
+    <g transform="translate(34 642)"><rect width="372" height="74" rx="16" fill="#162b3a" stroke="#46677e"/><text x="24" y="46" class="item">总需求源：云厂CAPEX与东数西算</text></g>
+  </g>
+  <g stroke="#69e7ff" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.92"><path d="M592 560H650"/><path d="M1230 560H1288"/></g>
+  <g transform="translate(92 1010)" filter="url(#shadow)">
+    <rect width="1656" height="142" rx="24" fill="#0c1d2b" stroke="#304c64"/>
+    <text x="34" y="46" class="cardTitle">动态追踪主线</text>
+    <text x="34" y="88" class="item">1. 云厂CAPEX  2. 国产AI芯片出货  3. AI服务器订单  4. 800G/1.6T光互联  5. 液冷/HVDC渗透率  6. 智算中心上架率</text>
+  </g>
+  <text x="92" y="1200" class="small">产业链研究库 · AI算力基础设施 · 2026.06.04</text>
+</svg>

@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "电力基础设施产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/power-infrastructure-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "特高压与主网",
+      "keywords": ["特高压", "换流阀", "GIS", "变压器", "柔性直流", "主网投资"],
+      "companies": ["国电南瑞", "平高电气", "中国西电", "特变电工", "许继电气", "思源电气", "东方电气", "四方股份"],
+      "whatToTrack": ["特高压开工", "国网招标", "换流阀份额", "GIS订单", "柔直项目", "变压器出口"]
+    },
+    {
+      "segment": "智能配电网",
+      "keywords": ["配网投资", "配电自动化", "智能开关", "故障指示器", "电能质量"],
+      "companies": ["东方电子", "国电南自", "宏力达"],
+      "whatToTrack": ["配网投资占比", "智能开关订单", "配网自动化项目", "毛利率", "中标价格"]
+    },
+    {
+      "segment": "数字电网与算电协同",
+      "keywords": ["算电协同", "数字电网", "电力光网", "量子通信", "电网数字化"],
+      "companies": ["国网信通", "南网数字"],
+      "whatToTrack": ["政策文件", "国网/南网数字化招标", "算力调度项目", "电力通信网络建设"]
+    },
+    {
+      "segment": "AI数据中心供电",
+      "keywords": ["HVDC", "UPS", "AIDC", "干式变压器", "电能质量", "高功率机柜"],
+      "companies": ["中恒电气", "科华数据", "科士达", "金盘科技", "盛弘股份", "四方股份"],
+      "whatToTrack": ["HVDC订单", "单机柜功率", "数据中心电源收入占比", "宁德时代协同", "液冷/供电联动"]
+    },
+    {
+      "segment": "电力设备出海",
+      "keywords": ["变压器出口", "开关出口", "智能电表", "一带一路", "欧洲电网", "美国电网"],
+      "companies": ["思源电气", "三星医疗", "海兴电力", "林洋能源", "汉缆股份", "中国西电"],
+      "whatToTrack": ["海外订单", "出口金额", "欧洲框架合同", "汇率", "贸易政策"]
+    },
+    {
+      "segment": "成本与盈利",
+      "keywords": ["铜", "铝", "硅钢", "中标价格", "毛利率", "原材料"],
+      "companies": ["特变电工", "中国西电", "平高电气", "思源电气", "中恒电气"],
+      "whatToTrack": ["铜铝价格", "硅钢价格", "招标价格", "毛利率", "经营现金流"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立电力基础设施产业链基准逻辑",
+      "impact": "以十五五电网投资、特高压主网、智能配网、算电协同、AI数据中心供电和电力设备出海为主线，追踪电力基础设施从能源配套向算力底座升级。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "电力基础设施产业链深度解析原始稿",
+        "url": "../raw/power-infrastructure-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "算电协同",
+      "signal": "将AI数据中心供电与电网投资作为首要动态观察线",
+      "impact": "电力基础设施与AI算力基础设施开始强耦合，HVDC、干式变压器、数字电网和电力光网等环节需要和AI数据中心建设节奏联动追踪。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "电力基础设施产业链深度解析原始稿",
+        "url": "../raw/power-infrastructure-industry-chain-original.md"
+      },
+      "notes": "建议后续用国网/南网招标、AIDC供电订单、出口数据和公司季报持续更新。"
+    }
+  ]
+}

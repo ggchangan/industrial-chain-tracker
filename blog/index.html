@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>产业链研究库</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav">
+        <a href="#chains">产业链库</a>
+        <a href="#chain">产业链骨架</a>
+        <a href="#logic">核心逻辑</a>
+        <a href="#updates">动态追踪</a>
+        <a href="#library">资料库</a>
+      </nav>
+      <section class="hero">
+        <p class="eyebrow">Industry Chain Watch</p>
+        <h1>产业链研究库</h1>
+        <p class="lead">把每条产业链拆成“骨架、逻辑、图谱、动态、资料”五个层次，后续新增行业时直接并入同一个追踪体系。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#chains">选择产业链</a>
+          <a class="button" href="../README.md">查看维护说明</a>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section id="chains" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Library</p>
+          <h2>已建档产业链</h2>
+          <p>点击卡片切换当前追踪对象。以后新增产业链，也会出现在这里。</p>
+        </div>
+        <div class="industry-grid" id="industryGrid"></div>
+      </section>
+
+      <section class="section current-chain">
+        <div>
+          <p class="eyebrow">Current</p>
+          <h2 id="currentTitle"></h2>
+          <p id="currentTheme"></p>
+        </div>
+        <div class="quick-links" id="quickLinks"></div>
+      </section>
+
+      <section id="chain" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Chain Map</p>
+          <h2>产业链骨架</h2>
+          <p>先固定框架，再追踪变量。每条动态都应该落到具体环节、影响方向和验证状态。</p>
+        </div>
+        <div class="chain-grid" id="chainGrid"></div>
+      </section>
+
+      <section class="section visual-section">
+        <div class="visual-copy">
+          <p class="eyebrow">Diagram</p>
+          <h2>正文配图</h2>
+          <p id="diagramCaption"></p>
+        </div>
+        <a class="diagram-link" id="diagramLink">
+          <img id="diagramImage" alt="产业链全景与价值传导图" />
+        </a>
+      </section>
+
+      <section id="logic" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Logic</p>
+          <h2>核心逻辑</h2>
+          <p>每次行业观点变化，都可以回到这些主线里判断：需求、价格、供给、技术或国产替代是否发生变化。</p>
+        </div>
+        <div class="logic-grid" id="logicGrid"></div>
+      </section>
+
+      <section id="tracking-profile" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Tracking</p>
+          <h2 id="trackingTitle">专属动态追踪</h2>
+          <p id="trackingSummary"></p>
+        </div>
+        <div class="tracking-grid" id="trackingGrid"></div>
+      </section>
+
+      <section id="updates" class="section split">
+        <div>
+          <div class="section-head compact">
+            <p class="eyebrow">Updates</p>
+            <h2>动态追踪</h2>
+            <p>每条更新保留来源、信号、影响、置信度和待核验备注。</p>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+        <aside class="panel">
+          <h3>观察清单</h3>
+          <div id="watchlist"></div>
+        </aside>
+      </section>
+
+      <section id="library" class="section library">
+        <div class="section-head compact">
+          <p class="eyebrow">Files</p>
+          <h2>当前产业链资料</h2>
+          <p>源文件和图片都保留在本地，方便后续继续更新、改写公众号稿或生成新图。</p>
+        </div>
+        <div class="library-grid" id="fileGrid"></div>
+      </section>
+
+      <section class="section template">
+        <div class="section-head compact">
+          <p class="eyebrow">Template</p>
+          <h2>新增产业链与动态模板</h2>
+          <p>新增行业时，复制现有结构：原文放 `content/raw/`，动态数据放 `content/updates/`，图放 `diagram/`，封面放 `cover-image/`，再把条目加入 `blog/assets/data.js`。</p>
+        </div>
+        <pre><code>{
+  "date": "YYYY-MM-DD",
+  "segment": "上游 / 中游 / 下游 / 具体环节",
+  "signal": "一句话描述新变化",
+  "impact": "它如何改变产业链逻辑",
+  "confidence": "待核验 / 已核验 / 高置信",
+  "source": {
+    "type": "公告 / 调研 / 视频 / 研报 / 财报",
+    "platform": "来源平台",
+    "title": "来源标题",
+    "url": "来源链接"
+  },
+  "notes": "待验证问题、关键口径、后续跟踪点"
+}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <span>本页面用于行业研究记录，不构成投资建议。</span>
+      <span id="updatedAt"></span>
+    </footer>
+
+    <script src="./assets/data.js"></script>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>

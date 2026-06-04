@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.48" stop-color="#10243a"/>
+      <stop offset="1" stop-color="#09131d"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#20d4ff"/>
+      <stop offset="0.55" stop-color="#5cf2b6"/>
+      <stop offset="1" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0V46" fill="none" stroke="#6aa4c8" stroke-width="0.7" opacity="0.18"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.52"/>
+  <path d="M0 710 C280 620 430 770 710 690 S1160 550 1600 650 L1600 900 L0 900Z" fill="#102f42" opacity="0.45"/>
+  <g opacity="0.35" stroke="#69d9ff" stroke-width="2" fill="none">
+    <path d="M118 172H428M1086 165h362M126 733h420M1040 718h360"/>
+    <path d="M340 172v130h250M1242 165v132h-190M360 733v-136h258M1238 718v-116h-204"/>
+  </g>
+  <g transform="translate(885 175)" filter="url(#glow)">
+    <rect x="70" y="92" width="360" height="360" rx="34" fill="#07131d" stroke="url(#chip)" stroke-width="5"/>
+    <rect x="130" y="152" width="240" height="240" rx="24" fill="#0d2535" stroke="#52e4ff" stroke-width="2.5"/>
+    <g stroke="#5cf2b6" stroke-width="10" stroke-linecap="round">
+      <path d="M70 150H20M70 210H20M70 270H20M70 330H20M70 390H20"/>
+      <path d="M430 150h50M430 210h50M430 270h50M430 330h50M430 390h50"/>
+      <path d="M150 92V42M210 92V42M270 92V42M330 92V42M390 92V42"/>
+      <path d="M150 452v50M210 452v50M270 452v50M330 452v50M390 452v50"/>
+    </g>
+    <circle cx="250" cy="272" r="74" fill="none" stroke="#ffd166" stroke-width="8"/>
+    <path d="M202 272h96M250 224v96" stroke="#20d4ff" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(132 154)">
+    <text x="0" y="0" fill="#7be7ff" font-family="PingFang SC, Microsoft YaHei, Arial" font-size="34" font-weight="700">产业链深度解析</text>
+    <text x="0" y="92" fill="#f5fbff" font-family="PingFang SC, Microsoft YaHei, Arial" font-size="82" font-weight="800">半导体设备</text>
+    <text x="0" y="166" fill="#f5fbff" font-family="PingFang SC, Microsoft YaHei, Arial" font-size="58" font-weight="800">从零部件到整机制造</text>
+    <rect x="0" y="220" width="695" height="4" rx="2" fill="url(#chip)"/>
+    <text x="0" y="284" fill="#c7d7e8" font-family="PingFang SC, Microsoft YaHei, Arial" font-size="31">AI算力 + 存储扩产 + 国产替代 + 先进封装</text>
+  </g>
+  <g transform="translate(132 560)" font-family="PingFang SC, Microsoft YaHei, Arial">
+    <g>
+      <rect x="0" y="0" width="248" height="104" rx="18" fill="#0d2637" stroke="#20d4ff" opacity="0.95"/>
+      <text x="28" y="43" fill="#f5fbff" font-size="28" font-weight="700">上游</text>
+      <text x="28" y="78" fill="#a9c1d6" font-size="21">零部件 / 特气 / 光学</text>
+    </g>
+    <g transform="translate(286 0)">
+      <rect x="0" y="0" width="248" height="104" rx="18" fill="#102c31" stroke="#5cf2b6" opacity="0.95"/>
+      <text x="28" y="43" fill="#f5fbff" font-size="28" font-weight="700">中游</text>
+      <text x="28" y="78" fill="#a9c1d6" font-size="21">刻蚀 / 沉积 / 清洗</text>
+    </g>
+    <g transform="translate(572 0)">
+      <rect x="0" y="0" width="248" height="104" rx="18" fill="#2a2918" stroke="#ffd166" opacity="0.95"/>
+      <text x="28" y="43" fill="#f5fbff" font-size="28" font-weight="700">下游</text>
+      <text x="28" y="78" fill="#a9c1d6" font-size="21">晶圆厂 / 封装测试</text>
+    </g>
+  </g>
+  <text x="132" y="810" fill="#7f97ad" font-family="PingFang SC, Microsoft YaHei, Arial" font-size="24">产业链研究库 · 2026.06.04</text>
+</svg>

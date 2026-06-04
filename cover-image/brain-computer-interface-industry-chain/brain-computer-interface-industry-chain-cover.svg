@@ -1,0 +1,75 @@
+<svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="48%" stop-color="#151a32"/>
+      <stop offset="100%" stop-color="#0c2b2f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="74%" cy="44%" r="54%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.38"/>
+      <stop offset="52%" stop-color="#22d3ee" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" fill="none" stroke="#243044" stroke-width="0.8"/>
+    </pattern>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <style>
+      text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif}
+      .white{fill:#f8fafc}.muted{fill:#a9b7c8}.cyan{fill:#22d3ee}.violet{fill:#c4b5fd}
+    </style>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)" opacity="0.42"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+  <circle cx="946" cy="146" r="120" fill="#a78bfa" opacity="0.2" filter="url(#soft)"/>
+  <circle cx="842" cy="538" r="168" fill="#22d3ee" opacity="0.12" filter="url(#soft)"/>
+
+  <g transform="translate(710 126)">
+    <path d="M157 34c-61 5-111 52-122 112-12 64 22 129 81 155 3 46 40 83 87 83h108c48 0 87-39 87-87v-54c31-27 50-67 50-110 0-83-68-150-151-150-31 0-60 9-84 25-17-8-36-11-56-9Z" fill="#081827" stroke="#22d3ee" stroke-width="3"/>
+    <path d="M94 186c34-8 47-32 52-66M166 105c34 13 63 36 76 74M241 192c36-19 67-17 104 3M177 245c42 10 78-2 109-35" fill="none" stroke="#a78bfa" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="147" cy="120" r="8" fill="#34d399"/>
+    <circle cx="243" cy="179" r="8" fill="#34d399"/>
+    <circle cx="345" cy="195" r="8" fill="#34d399"/>
+    <circle cx="286" cy="210" r="8" fill="#34d399"/>
+    <path d="M66 378C126 334 189 340 244 374c66 41 130 48 218 2" fill="none" stroke="#22d3ee" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-18 414C90 372 161 394 246 438c83 44 162 34 262-18" fill="none" stroke="#34d399" stroke-width="5" stroke-linecap="round" opacity="0.78"/>
+    <rect x="168" y="368" width="86" height="64" rx="12" fill="#172554" stroke="#60a5fa" stroke-width="2"/>
+    <text x="211" y="407" text-anchor="middle" font-size="17" font-weight="800" fill="#bfdbfe">BCI</text>
+  </g>
+
+  <g transform="translate(82 92)">
+    <rect x="0" y="0" width="152" height="34" rx="17" fill="rgba(34,211,238,0.12)" stroke="#22d3ee"/>
+    <text x="76" y="23" text-anchor="middle" font-size="16" font-weight="700" class="cyan">产业链深度解析</text>
+    <text x="0" y="122" font-size="86" font-weight="900" class="white">脑机接口</text>
+    <text x="4" y="176" font-size="33" font-weight="700" class="violet">从上游核心器件到下游商业化全梳理</text>
+    <text x="4" y="224" font-size="22" class="muted">电极 · 专用芯片 · 系统集成 · 医疗康复商业化</text>
+  </g>
+
+  <g transform="translate(86 410)">
+    <rect x="0" y="0" width="806" height="86" rx="18" fill="rgba(15,23,42,0.72)" stroke="#22d3ee"/>
+    <text x="34" y="54" font-size="23" font-weight="800" class="white">电极/芯片</text>
+    <path d="M156 43H246" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="278" y="54" font-size="23" font-weight="800" class="white">采集解码</text>
+    <path d="M390 43H482" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="514" y="54" font-size="23" font-weight="800" class="white">设备系统</text>
+    <path d="M626 43H714" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+  </g>
+
+  <g transform="translate(86 548)">
+    <rect x="0" y="0" width="138" height="38" rx="19" fill="#172554" stroke="#60a5fa"/>
+    <text x="69" y="25" text-anchor="middle" font-size="16" font-weight="700" fill="#bfdbfe">临床验证</text>
+    <rect x="158" y="0" width="132" height="38" rx="19" fill="#2e1065" stroke="#a78bfa"/>
+    <text x="224" y="25" text-anchor="middle" font-size="16" font-weight="700" class="violet">Neuralink</text>
+    <rect x="310" y="0" width="132" height="38" rx="19" fill="#0e2b34" stroke="#34d399"/>
+    <text x="376" y="25" text-anchor="middle" font-size="16" font-weight="700" fill="#6ee7b7">主动康复</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0,12 4,0 8" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-labelledby="title desc">
+  <title id="title">PCB产业链深度解析</title>
+  <desc id="desc">AI算力驱动下，从电子布、铜箔、环氧树脂到覆铜板、PCB制造和AI服务器的产业链封面图。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101820"/>
+      <stop offset="0.45" stop-color="#16343a"/>
+      <stop offset="1" stop-color="#2b1d16"/>
+    </linearGradient>
+    <linearGradient id="copper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffbf70"/>
+      <stop offset="0.45" stop-color="#c8752b"/>
+      <stop offset="1" stop-color="#7d3f1d"/>
+    </linearGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2bd38f"/>
+      <stop offset="0.4" stop-color="#157a64"/>
+      <stop offset="1" stop-color="#0d443d"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#54f0ff" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#54f0ff" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#9df8ff" stop-opacity="0.1"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#6af7ff" stop-opacity="0.36"/>
+      <stop offset="0.55" stop-color="#1dd8c8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#1dd8c8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow" x="-20%" y="-25%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000" flood-opacity="0.32"/>
+    </filter>
+    <pattern id="fabric" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M0 14H56M0 42H56M14 0V56M42 0V56" fill="none" stroke="#d6efe8" stroke-opacity="0.36" stroke-width="4"/>
+      <path d="M0 28H56M28 0V56" fill="none" stroke="#76d6cf" stroke-opacity="0.18" stroke-width="2"/>
+    </pattern>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#d5f9ff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <style>
+      .title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; font-weight: 800; fill: #f5fbff; letter-spacing: 0; }
+      .subtitle { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; font-weight: 500; fill: #bfeef0; letter-spacing: 0; }
+      .label { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; font-size: 36px; font-weight: 650; fill: #e9fbff; letter-spacing: 0; }
+      .small { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; font-size: 28px; font-weight: 500; fill: #a9d9d8; letter-spacing: 0; }
+      .line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1350" fill="url(#bg)"/>
+  <rect width="2400" height="1350" fill="url(#grid)"/>
+  <ellipse cx="1300" cy="690" rx="760" ry="460" fill="url(#glow)"/>
+  <path d="M0 1150 C390 1030 560 1220 930 1090 C1260 974 1480 1070 1780 980 C2040 902 2220 944 2400 860 V1350 H0Z" fill="#071013" opacity="0.55"/>
+
+  <!-- Light-pull paths from materials to AI servers -->
+  <g opacity="0.9" filter="url(#softGlow)">
+    <path class="line" d="M344 444 C720 385 950 520 1160 600 S1555 710 1918 544" stroke="url(#cyan)" stroke-width="10"/>
+    <path class="line" d="M356 728 C690 665 924 704 1172 700 S1570 708 1932 800" stroke="url(#cyan)" stroke-width="8" opacity="0.75"/>
+    <path class="line" d="M460 940 C790 850 935 820 1165 782 S1574 758 2022 656" stroke="url(#cyan)" stroke-width="6" opacity="0.62"/>
+  </g>
+
+  <!-- Headline -->
+  <g transform="translate(128,126)">
+    <text class="title" x="0" y="0" font-size="88">PCB产业链深度解析</text>
+    <text class="subtitle" x="2" y="72" font-size="38">AI算力驱动的价值重估</text>
+    <rect x="0" y="116" width="510" height="6" rx="3" fill="url(#copper)"/>
+  </g>
+
+  <!-- Upstream material cluster -->
+  <g transform="translate(126,338)">
+    <text class="label" x="0" y="-48">上游材料</text>
+    <text class="small" x="0" y="-10">电子布 · 铜箔 · 树脂 · 设备</text>
+
+    <g filter="url(#shadow)">
+      <path d="M0 82 L300 12 L470 100 L160 186 Z" fill="url(#fabric)" stroke="#a8f0e4" stroke-opacity="0.58" stroke-width="3"/>
+      <path d="M82 206 L404 132 L576 218 L248 298 Z" fill="url(#copper)" stroke="#ffd6a5" stroke-opacity="0.68" stroke-width="3"/>
+      <path d="M54 352 C120 312 202 334 250 384 C308 446 408 414 462 468 C514 520 470 598 366 612 C258 626 110 590 44 522 C-20 456 -14 392 54 352Z" fill="#d78a37" opacity="0.88"/>
+      <path d="M80 370 C144 346 214 364 260 410" fill="none" stroke="#ffe1a6" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
+    </g>
+
+    <g transform="translate(438,372)">
+      <rect x="0" y="0" width="196" height="128" rx="18" fill="#172a30" stroke="#63e5ee" stroke-opacity="0.5" stroke-width="3"/>
+      <path d="M30 88H166M58 34H138M98 34V88" stroke="#6ff2ff" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="98" cy="88" r="17" fill="#ffb057"/>
+      <path d="M98 106 L154 142" stroke="#ffb057" stroke-width="7" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- CCL stack center -->
+  <g transform="translate(900,407)" filter="url(#shadow)">
+    <text class="label" x="18" y="-74">中游枢纽：覆铜板 CCL</text>
+    <text class="small" x="20" y="-36">玻纤布浸渍树脂，两面覆铜热压成型</text>
+
+    <g transform="translate(0,22)">
+      <path d="M0 230 L506 92 L884 258 L374 414 Z" fill="#0b2928" stroke="#77f3e7" stroke-opacity="0.45" stroke-width="4"/>
+      <path d="M34 206 L506 80 L846 232 L374 364 Z" fill="url(#board)" stroke="#92fbe5" stroke-opacity="0.45" stroke-width="3"/>
+
+      <path d="M82 266 L374 346 L794 224" fill="none" stroke="#ffb762" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+      <path d="M138 214 L432 292 L706 212" fill="none" stroke="#dffcff" stroke-width="5" stroke-linecap="round" opacity="0.72"/>
+      <path d="M224 174 L502 246 L630 206" fill="none" stroke="#ffb762" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+      <path d="M318 322 L432 292 L486 318" fill="none" stroke="#92fbe5" stroke-width="5" stroke-linecap="round" opacity="0.95"/>
+
+      <g fill="#dffcff" opacity="0.88">
+        <circle cx="162" cy="244" r="12"/>
+        <circle cx="250" cy="270" r="12"/>
+        <circle cx="432" cy="292" r="12"/>
+        <circle cx="502" cy="246" r="12"/>
+        <circle cx="640" cy="232" r="12"/>
+        <circle cx="722" cy="242" r="12"/>
+      </g>
+
+      <path d="M0 230 L0 318 L374 500 L884 342 L884 258 L374 414 Z" fill="#0a1719" opacity="0.72"/>
+      <path d="M0 318 L374 500 L884 342" fill="none" stroke="#3bd7ca" stroke-opacity="0.38" stroke-width="3"/>
+
+      <path d="M42 250 L374 406 L842 264" fill="none" stroke="#ffb762" stroke-width="11" opacity="0.92"/>
+      <path d="M22 285 L374 452 L864 304" fill="none" stroke="#aaf9ee" stroke-width="9" opacity="0.45"/>
+      <path d="M4 318 L374 500 L884 342" fill="none" stroke="#ffb762" stroke-width="11" opacity="0.75"/>
+    </g>
+  </g>
+
+  <!-- Downstream AI server cluster -->
+  <g transform="translate(1784,320)">
+    <text class="label" x="0" y="-38">下游制造</text>
+    <text class="small" x="0" y="0">PCB制造 → AI服务器</text>
+
+    <g filter="url(#shadow)">
+      <path d="M0 190 L282 112 L470 204 L184 294 Z" fill="#0f5c52" stroke="#71eadc" stroke-width="3" opacity="0.96"/>
+      <path d="M62 220 L170 188 L300 224M112 178 L274 226 L358 198" fill="none" stroke="#ffb762" stroke-width="6" stroke-linecap="round"/>
+      <g fill="#dffcff">
+        <circle cx="108" cy="220" r="9"/>
+        <circle cx="170" cy="188" r="9"/>
+        <circle cx="274" cy="226" r="9"/>
+        <circle cx="358" cy="198" r="9"/>
+      </g>
+
+      <g transform="translate(150,312)">
+        <rect x="0" y="0" width="128" height="388" rx="14" fill="#111d23" stroke="#69e8ef" stroke-opacity="0.46" stroke-width="3"/>
+        <rect x="152" y="-34" width="128" height="422" rx="14" fill="#14232a" stroke="#69e8ef" stroke-opacity="0.5" stroke-width="3"/>
+        <rect x="304" y="22" width="128" height="366" rx="14" fill="#101a20" stroke="#69e8ef" stroke-opacity="0.42" stroke-width="3"/>
+        <g fill="#1dd8c8" opacity="0.72">
+          <rect x="26" y="38" width="76" height="14" rx="7"/>
+          <rect x="26" y="86" width="76" height="14" rx="7"/>
+          <rect x="26" y="134" width="76" height="14" rx="7"/>
+          <rect x="178" y="18" width="76" height="14" rx="7"/>
+          <rect x="178" y="66" width="76" height="14" rx="7"/>
+          <rect x="178" y="114" width="76" height="14" rx="7"/>
+          <rect x="330" y="62" width="76" height="14" rx="7"/>
+          <rect x="330" y="110" width="76" height="14" rx="7"/>
+          <rect x="330" y="158" width="76" height="14" rx="7"/>
+        </g>
+        <g fill="#ffb762">
+          <circle cx="64" cy="330" r="9"/>
+          <circle cx="216" cy="330" r="9"/>
+          <circle cx="368" cy="330" r="9"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom value-chain chips -->
+  <g transform="translate(128,1190)">
+    <rect x="0" y="0" width="206" height="58" rx="29" fill="#163840" stroke="#5ddfe5" stroke-opacity="0.38"/>
+    <rect x="242" y="0" width="190" height="58" rx="29" fill="#3d2a18" stroke="#ffb762" stroke-opacity="0.42"/>
+    <rect x="468" y="0" width="250" height="58" rx="29" fill="#163840" stroke="#5ddfe5" stroke-opacity="0.38"/>
+    <rect x="754" y="0" width="198" height="58" rx="29" fill="#10332e" stroke="#61e7c8" stroke-opacity="0.42"/>
+    <rect x="988" y="0" width="226" height="58" rx="29" fill="#17262e" stroke="#9df8ff" stroke-opacity="0.34"/>
+    <text class="small" x="42" y="38">电子布</text>
+    <text class="small" x="286" y="38">铜箔</text>
+    <text class="small" x="516" y="38">环氧树脂</text>
+    <text class="small" x="806" y="38">覆铜板</text>
+    <text class="small" x="1030" y="38">PCB制造</text>
+  </g>
+
+  <g transform="translate(2040,1174)" opacity="0.8">
+    <path d="M0 48H210" stroke="#6af7ff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M164 18L212 48L164 78" fill="none" stroke="#6af7ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="small" x="-74" y="110">AI算力需求拉动</text>
+  </g>
+</svg>

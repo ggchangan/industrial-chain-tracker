@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-labelledby="title desc">
+  <title id="title">光刻机产业链深度解析</title>
+  <desc id="desc">AI芯片扩产和国产替代驱动下，从光学、光源、电子特气、真空系统到整机制造的光刻机产业链封面图。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d121c"/>
+      <stop offset="0.5" stop-color="#152333"/>
+      <stop offset="1" stop-color="#211914"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7df9ff" stop-opacity="0"/>
+      <stop offset="0.42" stop-color="#7df9ff" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#f9d06a" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="lens" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eefbff"/>
+      <stop offset="0.42" stop-color="#78e8ff"/>
+      <stop offset="1" stop-color="#18526a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd978"/>
+      <stop offset="0.55" stop-color="#d8922d"/>
+      <stop offset="1" stop-color="#8b4e1d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#57f2ff" stop-opacity="0.32"/>
+      <stop offset="0.6" stop-color="#57f2ff" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#57f2ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#dffcff" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-25%" y="-30%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.36"/>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      text { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; letter-spacing: 0; }
+      .title { fill: #f7fbff; font-weight: 850; }
+      .subtitle { fill: #c4ecef; font-weight: 520; }
+      .label { fill: #edf8fb; font-size: 34px; font-weight: 750; }
+      .small { fill: #a8c8d0; font-size: 27px; font-weight: 520; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1350" fill="url(#bg)"/>
+  <rect width="2400" height="1350" fill="url(#grid)"/>
+  <ellipse cx="1220" cy="690" rx="820" ry="520" fill="url(#glow)"/>
+  <path d="M0 1148 C380 1020 560 1230 930 1088 C1308 942 1540 1075 1840 960 C2098 860 2255 930 2400 820 V1350 H0Z" fill="#060d10" opacity="0.58"/>
+
+  <g transform="translate(126,132)">
+    <text class="title" x="0" y="0" font-size="88">光刻机产业链深度解析</text>
+    <text class="subtitle" x="2" y="74" font-size="38">AI芯片扩产 × 国产替代驱动的皇冠明珠</text>
+    <rect x="0" y="116" width="650" height="6" rx="3" fill="url(#gold)"/>
+  </g>
+
+  <g filter="url(#softGlow)">
+    <path d="M390 520 C700 450 950 530 1195 660 S1590 812 2060 710" fill="none" stroke="url(#beam)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M440 790 C770 690 920 715 1198 710 S1600 700 2040 455" fill="none" stroke="url(#beam)" stroke-width="10" stroke-linecap="round" opacity="0.64"/>
+  </g>
+
+  <!-- Upstream modules -->
+  <g transform="translate(126,365)">
+    <text class="label" x="0" y="-42">上游核心零部件</text>
+    <text class="small" x="0" y="-4">光学 · 光源 · 真空温控 · 电子特气</text>
+    <g filter="url(#shadow)">
+      <circle cx="148" cy="150" r="92" fill="url(#lens)" stroke="#dffcff" stroke-width="5" opacity="0.95"/>
+      <circle cx="148" cy="150" r="46" fill="#0e1b24" stroke="#9ef5ff" stroke-width="4" opacity="0.85"/>
+      <path d="M300 86 H552 L610 150 L552 214 H300 L242 150 Z" fill="#142331" stroke="#65f0f2" stroke-width="4"/>
+      <path d="M318 150 H588" stroke="#7df9ff" stroke-width="10" stroke-linecap="round"/>
+      <path d="M86 350 C190 300 330 316 438 386 C532 448 546 560 456 614 C336 686 114 596 48 490 C12 432 28 384 86 350Z" fill="#c98b35"/>
+      <path d="M118 374 C210 334 324 346 402 398" fill="none" stroke="#ffe0a3" stroke-width="8" stroke-linecap="round" opacity="0.52"/>
+    </g>
+  </g>
+
+  <!-- Lithography machine visual -->
+  <g transform="translate(760,326)" filter="url(#shadow)">
+    <text class="label" x="136" y="-42">中游整机制造</text>
+    <text class="small" x="138" y="-4">光源、物镜、掩膜台、工件台系统集成</text>
+    <g transform="translate(0,85)">
+      <rect x="115" y="0" width="620" height="108" rx="20" fill="#101a24" stroke="#65f0f2" stroke-width="4"/>
+      <path d="M168 54 H680" stroke="#7df9ff" stroke-width="7" stroke-linecap="round" opacity="0.82"/>
+      <circle cx="260" cy="54" r="24" fill="#0e1b24" stroke="#9ef5ff" stroke-width="4"/>
+      <circle cx="430" cy="54" r="24" fill="#0e1b24" stroke="#9ef5ff" stroke-width="4"/>
+      <circle cx="600" cy="54" r="24" fill="#0e1b24" stroke="#9ef5ff" stroke-width="4"/>
+      <text class="small" x="425" y="96" font-size="22" text-anchor="middle">SMEE DUV整机光路</text>
+      <rect x="210" y="150" width="430" height="82" rx="14" fill="#1d2b35" stroke="#f7d978" stroke-width="4"/>
+      <path d="M258 190 H590M314 170 V212M424 170 V212M536 170 V212" stroke="#f7d978" stroke-width="6" stroke-linecap="round"/>
+      <path d="M168 306 L724 184 L940 300 L378 456 Z" fill="#101922" stroke="#65f0f2" stroke-width="4"/>
+      <path d="M222 302 L724 210 L884 298 L378 414 Z" fill="#0d5f70" stroke="#9ef5ff" stroke-width="3"/>
+      <path d="M310 332 C450 290 600 288 760 310" fill="none" stroke="#ffd978" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="425" cy="344" r="12" fill="#dffcff"/>
+      <circle cx="566" cy="323" r="12" fill="#dffcff"/>
+      <circle cx="705" cy="324" r="12" fill="#dffcff"/>
+      <path d="M120 542 C240 455 552 454 762 548 L836 606 H46 Z" fill="#17242b" stroke="#7ee7d3" stroke-width="4"/>
+      <circle cx="244" cy="580" r="30" fill="#0a1116" stroke="#7ee7d3" stroke-width="4"/>
+      <circle cx="662" cy="580" r="30" fill="#0a1116" stroke="#7ee7d3" stroke-width="4"/>
+    </g>
+  </g>
+
+  <!-- Downstream fabs -->
+  <g transform="translate(1805,342)">
+    <text class="label" x="0" y="-34">下游需求</text>
+    <text class="small" x="0" y="4">晶圆制造 · 存储扩产 · 先进封装</text>
+    <g filter="url(#shadow)">
+      <rect x="20" y="160" width="140" height="450" rx="14" fill="#101922" stroke="#62e6ef" stroke-width="3"/>
+      <rect x="184" y="112" width="140" height="498" rx="14" fill="#142331" stroke="#62e6ef" stroke-width="3"/>
+      <rect x="348" y="210" width="140" height="400" rx="14" fill="#101922" stroke="#62e6ef" stroke-width="3"/>
+      <g fill="#21c5b7">
+        <rect x="52" y="220" width="86" height="15" rx="7"/>
+        <rect x="52" y="278" width="86" height="15" rx="7"/>
+        <rect x="216" y="176" width="86" height="15" rx="7"/>
+        <rect x="216" y="234" width="86" height="15" rx="7"/>
+        <rect x="380" y="268" width="86" height="15" rx="7"/>
+        <rect x="380" y="326" width="86" height="15" rx="7"/>
+      </g>
+      <path d="M62 686 L446 602 L570 660 L186 748 Z" fill="#0d5f70" stroke="#9ef5ff" stroke-width="4"/>
+      <path d="M112 686 C210 644 340 642 470 658" fill="none" stroke="#ffd978" stroke-width="8" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(126,1190)">
+    <rect x="0" y="0" width="180" height="58" rx="29" fill="#17313c" stroke="#57f2ff" stroke-opacity="0.48"/>
+    <rect x="216" y="0" width="180" height="58" rx="29" fill="#3b2b18" stroke="#ffd978" stroke-opacity="0.5"/>
+    <rect x="432" y="0" width="210" height="58" rx="29" fill="#17313c" stroke="#57f2ff" stroke-opacity="0.48"/>
+    <rect x="678" y="0" width="210" height="58" rx="29" fill="#132d2b" stroke="#35d39a" stroke-opacity="0.5"/>
+    <rect x="924" y="0" width="250" height="58" rx="29" fill="#172538" stroke="#6aa5ff" stroke-opacity="0.48"/>
+    <text class="small" x="48" y="38">光学系统</text>
+    <text class="small" x="264" y="38">光源系统</text>
+    <text class="small" x="474" y="38">电子特气</text>
+    <text class="small" x="732" y="38">整机制造</text>
+    <text class="small" x="972" y="38">晶圆厂/先进封装</text>
+  </g>
+</svg>

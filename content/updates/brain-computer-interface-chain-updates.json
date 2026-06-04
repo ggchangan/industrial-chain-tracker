@@ -1,0 +1,76 @@
+{
+  "chainId": "brain-computer-interface",
+  "title": "脑机接口产业链动态追踪",
+  "createdAt": "2026-06-04",
+  "watchlist": [
+    {
+      "segment": "临床试验与注册审批",
+      "whatToTrack": ["多中心临床入组", "医疗器械注册证", "优先审批目录", "收费/医保口径"],
+      "companies": ["三博脑科", "博睿康", "脑虎科技", "强脑科技"]
+    },
+    {
+      "segment": "侵入式电极与材料",
+      "whatToTrack": ["通道数", "柔性电极认证", "生物相容性", "长期稳定性"],
+      "companies": ["康拓医疗", "汉威科技", "美好医疗", "冠昊生物", "迈普医学"]
+    },
+    {
+      "segment": "BCI专用芯片",
+      "whatToTrack": ["神经信号处理芯片", "脑电采集芯片", "量产出货", "功耗/通道密度"],
+      "companies": ["成都华微", "英集芯", "高德红外相关公司"]
+    },
+    {
+      "segment": "康复商业化",
+      "whatToTrack": ["主动康复设备", "医院导入", "订单/收入", "临床效果数据"],
+      "companies": ["翔宇医疗", "伟思医疗", "创新医疗", "诚益通", "爱朋医疗", "麦澜德"]
+    },
+    {
+      "segment": "一级市场与非侵入式消费",
+      "whatToTrack": ["强脑科技IPO", "融资金额", "仿生手销量", "消费级产品迭代"],
+      "companies": ["强脑科技", "浙江东方", "蓝思科技", "壹网壹创", "科大讯飞"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立脑机接口产业链基准逻辑",
+      "impact": "形成“上游电极/芯片/材料 → 中游系统集成与设备 → 下游医疗康复/消费/工业应用”的跟踪框架。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "用户原始文章",
+        "platform": "本地",
+        "title": "脑机接口产业链深度解析原始稿",
+        "url": "../content/raw/brain-computer-interface-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "临床验证",
+      "signal": "国内全植入式脑机接口多中心临床试验成为核心催化",
+      "impact": "若入组、临床安全性和有效性顺利，将推动侵入式脑机接口从实验室进入规范化医疗器械通道。",
+      "confidence": "待核验",
+      "source": {
+        "type": "用户原始文章",
+        "platform": "本地",
+        "title": "脑机接口产业链深度解析原始稿",
+        "url": "../content/raw/brain-computer-interface-industry-chain-original.md"
+      },
+      "notes": "后续重点补充临床试验登记、入组进度、适应症和主要终点。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "商业化",
+      "signal": "强脑科技非侵入式康复产品和融资进展进入观察池",
+      "impact": "非侵入式路线安全性更高、推广更快，是短期收入兑现更清晰的方向。",
+      "confidence": "待核验",
+      "source": {
+        "type": "用户原始文章",
+        "platform": "本地",
+        "title": "脑机接口产业链深度解析原始稿",
+        "url": "../content/raw/brain-computer-interface-industry-chain-original.md"
+      },
+      "notes": "后续跟踪港股IPO、仿生手/仿生腿出货、上游模组供应关系。"
+    }
+  ]
+}

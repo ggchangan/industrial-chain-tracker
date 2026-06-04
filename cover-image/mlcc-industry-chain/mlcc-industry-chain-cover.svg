@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-labelledby="title desc">
+  <title id="title">MLCC产业链深度解析</title>
+  <desc id="desc">AI算力与新能源车需求驱动下，MLCC从陶瓷粉体、电极浆料到中游制造和下游应用的产业链封面图。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10151d"/>
+      <stop offset="0.45" stop-color="#172634"/>
+      <stop offset="1" stop-color="#221813"/>
+    </linearGradient>
+    <linearGradient id="ceramic" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1efe5"/>
+      <stop offset="0.55" stop-color="#b9c5c8"/>
+      <stop offset="1" stop-color="#7f9299"/>
+    </linearGradient>
+    <linearGradient id="nickel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8e2e7"/>
+      <stop offset="0.45" stop-color="#7b929d"/>
+      <stop offset="1" stop-color="#30424b"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd978"/>
+      <stop offset="0.55" stop-color="#e09a32"/>
+      <stop offset="1" stop-color="#8b4e1d"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#57f2ff" stop-opacity="0"/>
+      <stop offset="0.48" stop-color="#57f2ff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#57f2ff" stop-opacity="0.08"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#57f2ff" stop-opacity="0.3"/>
+      <stop offset="0.6" stop-color="#57f2ff" stop-opacity="0.09"/>
+      <stop offset="1" stop-color="#57f2ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#dffcff" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-25%" y="-30%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.34"/>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      text { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; letter-spacing: 0; }
+      .title { fill: #f7fbff; font-weight: 850; }
+      .subtitle { fill: #c4ecef; font-weight: 520; }
+      .label { fill: #edf8fb; font-size: 34px; font-weight: 750; }
+      .small { fill: #a8c8d0; font-size: 27px; font-weight: 520; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1350" fill="url(#bg)"/>
+  <rect width="2400" height="1350" fill="url(#grid)"/>
+  <ellipse cx="1200" cy="675" rx="800" ry="500" fill="url(#glow)"/>
+  <path d="M0 1158 C360 1020 560 1228 940 1088 C1320 950 1520 1078 1840 950 C2070 858 2260 930 2400 825 V1350 H0Z" fill="#060d10" opacity="0.58"/>
+
+  <g transform="translate(126,132)">
+    <text class="title" x="0" y="0" font-size="88">MLCC产业链深度解析</text>
+    <text class="subtitle" x="2" y="74" font-size="38">AI算力 × 新能源车驱动的高端电容重估</text>
+    <rect x="0" y="116" width="590" height="6" rx="3" fill="url(#gold)"/>
+  </g>
+
+  <g filter="url(#softGlow)" opacity="0.9">
+    <path d="M390 425 C720 380 850 520 1045 590 S1438 710 1930 530" fill="none" stroke="url(#cyan)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M350 780 C670 660 900 730 1080 720 S1510 730 2025 825" fill="none" stroke="url(#cyan)" stroke-width="8" stroke-linecap="round" opacity="0.72"/>
+  </g>
+
+  <!-- Upstream materials -->
+  <g transform="translate(126,358)">
+    <text class="label" x="0" y="-45">上游材料</text>
+    <text class="small" x="0" y="-8">陶瓷粉体 · 电极浆料 · 离型膜</text>
+    <g filter="url(#shadow)">
+      <circle cx="118" cy="155" r="104" fill="#dbe5e7" opacity="0.92"/>
+      <circle cx="77" cy="120" r="18" fill="#f8fafc"/>
+      <circle cx="145" cy="98" r="12" fill="#9fb2bb"/>
+      <circle cx="161" cy="178" r="16" fill="#c7d3d7"/>
+      <circle cx="86" cy="195" r="10" fill="#8199a3"/>
+      <path d="M250 84 C340 30 432 58 478 130 C532 213 430 305 314 270 C224 244 188 132 250 84Z" fill="#c88f3c"/>
+      <path d="M286 110 C348 76 402 82 434 124" fill="none" stroke="#ffe0a3" stroke-width="8" stroke-linecap="round" opacity="0.55"/>
+      <path d="M65 350 L460 268 L610 340 L210 428 Z" fill="#151f27" stroke="#61e5ee" stroke-width="3"/>
+      <path d="M100 350 L455 292" stroke="#dde7ea" stroke-width="8" stroke-linecap="round" opacity="0.55"/>
+      <path d="M145 378 L500 318" stroke="#dde7ea" stroke-width="8" stroke-linecap="round" opacity="0.36"/>
+    </g>
+  </g>
+
+  <!-- MLCC stack -->
+  <g transform="translate(770,380)" filter="url(#shadow)">
+    <text class="label" x="130" y="-54">中游制造：多层陶瓷电容器</text>
+    <text class="small" x="132" y="-16">流延 · 印刷 · 叠层 · 烧结 · 端接</text>
+    <g transform="translate(0,88)">
+      <path d="M0 266 L540 72 L918 232 L378 442 Z" fill="#111a20" stroke="#65f0f2" stroke-width="4" opacity="0.92"/>
+      <path d="M38 236 L540 52 L874 212 L378 396 Z" fill="url(#ceramic)" stroke="#f8fafc" stroke-opacity="0.65" stroke-width="3"/>
+      <path d="M80 260 L378 372 L830 210" fill="none" stroke="url(#nickel)" stroke-width="24" stroke-linecap="round" opacity="0.82"/>
+      <path d="M118 216 L410 316 L728 204" fill="none" stroke="url(#nickel)" stroke-width="18" stroke-linecap="round" opacity="0.82"/>
+      <path d="M188 174 L486 272 L625 218" fill="none" stroke="url(#nickel)" stroke-width="14" stroke-linecap="round" opacity="0.82"/>
+      <path d="M0 266 L0 352 L378 548 L918 318 L918 232 L378 442 Z" fill="#0a1014" opacity="0.78"/>
+      <path d="M0 352 L378 548 L918 318" fill="none" stroke="#67e8f9" stroke-opacity="0.38" stroke-width="3"/>
+      <path d="M20 290 L378 452 L900 254" fill="none" stroke="#f4f0df" stroke-width="13" opacity="0.9"/>
+      <path d="M10 326 L378 506 L910 294" fill="none" stroke="#889aa4" stroke-width="12" opacity="0.82"/>
+      <path d="M0 352 L378 548 L918 318" fill="none" stroke="#f4f0df" stroke-width="13" opacity="0.85"/>
+      <path d="M-28 250 L52 280 L52 370 L-28 336 Z" fill="url(#gold)" stroke="#ffd978" stroke-width="3"/>
+      <path d="M884 220 L948 244 L948 324 L884 298 Z" fill="url(#gold)" stroke="#ffd978" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- Downstream applications -->
+  <g transform="translate(1786,330)">
+    <text class="label" x="0" y="-36">下游应用</text>
+    <text class="small" x="0" y="2">AI服务器 · 新能源车 · 通信</text>
+    <g filter="url(#shadow)">
+      <g transform="translate(0,76)">
+        <rect x="40" y="200" width="128" height="400" rx="14" fill="#101922" stroke="#62e6ef" stroke-width="3" opacity="0.95"/>
+        <rect x="190" y="154" width="128" height="446" rx="14" fill="#142331" stroke="#62e6ef" stroke-width="3" opacity="0.95"/>
+        <rect x="340" y="226" width="128" height="374" rx="14" fill="#101922" stroke="#62e6ef" stroke-width="3" opacity="0.95"/>
+        <g fill="#21c5b7">
+          <rect x="70" y="252" width="78" height="15" rx="7"/>
+          <rect x="70" y="308" width="78" height="15" rx="7"/>
+          <rect x="220" y="210" width="78" height="15" rx="7"/>
+          <rect x="220" y="266" width="78" height="15" rx="7"/>
+          <rect x="370" y="284" width="78" height="15" rx="7"/>
+          <rect x="370" y="340" width="78" height="15" rx="7"/>
+        </g>
+      </g>
+      <g transform="translate(20,0)">
+        <path d="M88 640 C150 560 312 552 408 640 L464 710 L22 710 Z" fill="#17242b" stroke="#7ee7d3" stroke-width="4"/>
+        <circle cx="144" cy="670" r="30" fill="#0a1116" stroke="#7ee7d3" stroke-width="4"/>
+        <circle cx="360" cy="670" r="30" fill="#0a1116" stroke="#7ee7d3" stroke-width="4"/>
+        <path d="M156 616 H332" stroke="#7ee7d3" stroke-width="9" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Chips -->
+  <g transform="translate(126,1190)">
+    <rect x="0" y="0" width="218" height="58" rx="29" fill="#17313c" stroke="#57f2ff" stroke-opacity="0.48"/>
+    <rect x="254" y="0" width="218" height="58" rx="29" fill="#3b2b18" stroke="#ffd978" stroke-opacity="0.5"/>
+    <rect x="508" y="0" width="198" height="58" rx="29" fill="#17313c" stroke="#57f2ff" stroke-opacity="0.48"/>
+    <rect x="742" y="0" width="210" height="58" rx="29" fill="#132d2b" stroke="#35d39a" stroke-opacity="0.5"/>
+    <rect x="988" y="0" width="246" height="58" rx="29" fill="#172538" stroke="#6aa5ff" stroke-opacity="0.48"/>
+    <text class="small" x="46" y="38">陶瓷粉体</text>
+    <text class="small" x="300" y="38">电极浆料</text>
+    <text class="small" x="552" y="38">离型膜</text>
+    <text class="small" x="790" y="38">MLCC制造</text>
+    <text class="small" x="1034" y="38">AI服务器/新能源车</text>
+  </g>
+</svg>

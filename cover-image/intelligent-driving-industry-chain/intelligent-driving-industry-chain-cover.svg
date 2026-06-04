@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07131f"/>
+      <stop offset="52%" stop-color="#102b38"/>
+      <stop offset="100%" stop-color="#102017"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38d9ff"/>
+      <stop offset="55%" stop-color="#66f2b6"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g opacity="0.18" stroke="#dff9ff" stroke-width="1">
+    <path d="M56 116h260M54 204h200M83 512h280M888 110h230M884 530h230"/>
+    <path d="M142 72v485M260 96v390M948 68v510M1082 144v390"/>
+  </g>
+  <g transform="translate(670 178)" filter="url(#glow)">
+    <path d="M84 210c42-80 84-128 170-128s136 48 178 128" fill="none" stroke="#38d9ff" stroke-width="5" opacity="0.7"/>
+    <path d="M42 210c58-136 126-190 212-190s154 54 212 190" fill="none" stroke="#66f2b6" stroke-width="4" opacity="0.5"/>
+    <path d="M230 98h58c26 0 46 16 56 40l20 46h42c20 0 36 16 36 36v52H82v-50c0-20 16-36 36-36h34l34-62c11-15 25-26 44-26z" fill="#0d2130" stroke="url(#accent)" stroke-width="5"/>
+    <circle cx="158" cy="278" r="34" fill="#07131f" stroke="#38d9ff" stroke-width="6"/>
+    <circle cx="366" cy="278" r="34" fill="#07131f" stroke="#38d9ff" stroke-width="6"/>
+    <rect x="226" y="142" width="92" height="60" rx="10" fill="#102f3d" stroke="#ffd166" stroke-width="3"/>
+    <path d="M246 172h52M272 152v40" stroke="#ffd166" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(78 92)">
+    <text x="0" y="0" fill="#9ee7ff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="700">产业链全景解析</text>
+    <text x="0" y="88" fill="#ffffff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="72" font-weight="800">智能驾驶</text>
+    <text x="0" y="150" fill="#d8f7ff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="33" font-weight="650">从感知决策到执行落地的全景图谱</text>
+    <rect x="0" y="204" width="636" height="2" fill="#66f2b6"/>
+    <text x="0" y="263" fill="#f2fbff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="29" font-weight="650">感知 → 决策 → 执行 → 网联</text>
+    <text x="0" y="319" fill="#ffd166" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="27" font-weight="750">FSD入华 · L3量产 · 域控放量 · 车路云协同</text>
+  </g>
+  <g transform="translate(78 556)" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="23" fill="#d9faff">
+    <rect x="0" y="-34" width="154" height="48" rx="10" fill="#14344a" stroke="#38d9ff"/>
+    <text x="25" y="-2">FSD催化</text>
+    <rect x="178" y="-34" width="154" height="48" rx="10" fill="#173d33" stroke="#66f2b6"/>
+    <text x="217" y="-2">L3上路</text>
+    <rect x="356" y="-34" width="184" height="48" rx="10" fill="#3d3218" stroke="#ffd166"/>
+    <text x="386" y="-2">高阶标配化</text>
+  </g>
+</svg>

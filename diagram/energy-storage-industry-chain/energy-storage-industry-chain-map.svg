@@ -1,0 +1,96 @@
+<svg viewBox="0 0 1600 1600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="52%" stop-color="#0e262a"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="#1f3342" stroke-width="0.8"/>
+    </pattern>
+    <marker id="arrow" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
+      <polygon points="0 0,14 5,0 10" fill="#38bdf8"/>
+    </marker>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <style>
+      text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif}
+      .title{fill:#f8fafc;font-size:58px;font-weight:900}
+      .sub{fill:#9fb4c7;font-size:22px}
+      .h{fill:#f8fafc;font-size:30px;font-weight:800}
+      .p{fill:#cbd5e1;font-size:20px}
+      .small{fill:#94a3b8;font-size:17px}
+      .tag{fill:#e2e8f0;font-size:18px;font-weight:700}
+    </style>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#bg)"/>
+  <rect width="1600" height="1600" fill="url(#grid)" opacity="0.48"/>
+  <circle cx="1270" cy="240" r="180" fill="#22d3ee" opacity="0.12" filter="url(#glow)"/>
+  <circle cx="285" cy="1250" r="220" fill="#34d399" opacity="0.12" filter="url(#glow)"/>
+
+  <text x="100" y="116" class="title">储能产业链全景图</text>
+  <text x="103" y="158" class="sub">上游材料 → 中游电芯 / PCS / BMS → 下游系统集成与AI数据中心配储</text>
+
+  <g transform="translate(100 230)">
+    <rect width="1400" height="318" rx="26" fill="#071827" stroke="#34d399" stroke-width="3"/>
+    <rect x="34" y="34" width="176" height="52" rx="26" fill="rgba(52,211,153,0.14)" stroke="#34d399"/>
+    <text x="122" y="69" text-anchor="middle" class="tag" fill="#6ee7b7">01 上游材料</text>
+    <text x="248" y="70" class="h">产业链“粮食端”，决定电芯成本与涨价弹性</text>
+    <text x="54" y="128" class="p">正极材料：磷酸铁锂、磷酸锰铁锂，新型正极与固态电池材料储备</text>
+    <text x="54" y="170" class="p">负极 / 电解液 / 隔膜：石墨负极、六氟磷酸锂、电解液、湿法/干法隔膜</text>
+    <text x="54" y="212" class="p">铜箔与设备：超薄锂电铜箔、涂布/卷绕/化成分容等锂电设备</text>
+    <text x="54" y="270" class="small">代表公司：德方纳米、贝特瑞、天赐材料、新宙邦、恩捷股份、星源材质、嘉元科技、先导智能</text>
+    <g transform="translate(1130 78)">
+      <rect width="190" height="156" rx="18" fill="#0f2e2c" stroke="#34d399"/>
+      <text x="95" y="52" text-anchor="middle" class="tag">关键变量</text>
+      <text x="95" y="91" text-anchor="middle" class="small">碳酸锂价格</text>
+      <text x="95" y="122" text-anchor="middle" class="small">六氟磷酸锂</text>
+    </g>
+  </g>
+
+  <path d="M800 574V674" stroke="#38bdf8" stroke-width="7" marker-end="url(#arrow)" opacity="0.95"/>
+
+  <g transform="translate(100 700)">
+    <rect width="1400" height="318" rx="26" fill="#071827" stroke="#22d3ee" stroke-width="3"/>
+    <rect x="34" y="34" width="188" height="52" rx="26" fill="rgba(34,211,238,0.14)" stroke="#22d3ee"/>
+    <text x="128" y="69" text-anchor="middle" class="tag" fill="#67e8f9">02 中游核心</text>
+    <text x="260" y="70" class="h">电芯制造与电力电子，是价值最集中的环节</text>
+    <text x="54" y="128" class="p">电芯制造：磷酸铁锂储能电芯、钠离子与固态电池等新路线</text>
+    <text x="54" y="170" class="p">储能变流器 PCS：交直流转换、构网型能力、系统效率与并网友好性</text>
+    <text x="54" y="212" class="p">BMS / EMS / 温控：电池安全、能量调度、液冷温控和寿命管理</text>
+    <text x="54" y="270" class="small">代表公司：宁德时代、比亚迪、亿纬锂能、国轩高科、阳光电源、上能电气、固德威、锦浪科技、德业股份</text>
+    <g transform="translate(1110 76)">
+      <rect width="222" height="160" rx="18" fill="#082f49" stroke="#22d3ee"/>
+      <text x="111" y="52" text-anchor="middle" class="tag">核心指标</text>
+      <text x="111" y="91" text-anchor="middle" class="small">GWh出货</text>
+      <text x="111" y="122" text-anchor="middle" class="small">PCS订单 / 毛利率</text>
+    </g>
+  </g>
+
+  <path d="M800 1044V1144" stroke="#38bdf8" stroke-width="7" marker-end="url(#arrow)" opacity="0.95"/>
+
+  <g transform="translate(100 1170)">
+    <rect width="1400" height="300" rx="26" fill="#071827" stroke="#fbbf24" stroke-width="3"/>
+    <rect x="34" y="34" width="188" height="52" rx="26" fill="rgba(251,191,36,0.14)" stroke="#fbbf24"/>
+    <text x="128" y="69" text-anchor="middle" class="tag" fill="#fde68a">03 下游应用</text>
+    <text x="260" y="70" class="h">系统集成与场景落地，放大储能商业价值</text>
+    <text x="54" y="128" class="p">系统集成：电芯、PCS、BMS、EMS、温控集成为标准化储能系统</text>
+    <text x="54" y="170" class="p">AI数据中心配储：备用供电、峰谷套利、平抑负荷、绿电消纳</text>
+    <text x="54" y="212" class="p">新能源配储 / 工商业 / 户储：独立储能、源网侧、欧洲户储修复</text>
+    <text x="54" y="260" class="small">代表公司：海博思创、阿特斯、科华数据、科士达、南都电源、盛弘股份、阳光电源</text>
+  </g>
+
+  <g transform="translate(132 1510)">
+    <rect x="0" y="0" width="250" height="46" rx="23" fill="#0f2e2c" stroke="#34d399"/>
+    <text x="125" y="30" text-anchor="middle" class="tag">AI数据中心配储</text>
+    <rect x="276" y="0" width="190" height="46" rx="23" fill="#082f49" stroke="#22d3ee"/>
+    <text x="371" y="30" text-anchor="middle" class="tag">全球TWh时代</text>
+    <rect x="492" y="0" width="170" height="46" rx="23" fill="#431407" stroke="#fbbf24"/>
+    <text x="577" y="30" text-anchor="middle" class="tag">材料涨价</text>
+    <rect x="688" y="0" width="212" height="46" rx="23" fill="#312e81" stroke="#a78bfa"/>
+    <text x="794" y="30" text-anchor="middle" class="tag">海外需求超预期</text>
+    <rect x="926" y="0" width="214" height="46" rx="23" fill="#4c0519" stroke="#fb7185"/>
+    <text x="1033" y="30" text-anchor="middle" class="tag">系统价格压力</text>
+  </g>
+</svg>

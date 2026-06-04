@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "AI算力能源供给侧产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/ai-energy-supply-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "精密铸件",
+      "keywords": ["铸件", "缸体", "齿轮箱体", "飞轮壳体", "燃机零部件", "墨西哥工厂"],
+      "companies": ["联德股份"],
+      "whatToTrack": ["北美客户订单", "墨西哥投产", "德清二期扩产", "制冷+发电收入占比", "毛利率"]
+    },
+    {
+      "segment": "高温合金与燃机零部件",
+      "keywords": ["高温合金", "透平叶片", "燃机热端", "余热锅炉", "HRSG"],
+      "companies": ["应流股份", "万泽股份", "豪迈科技", "冰轮环境", "西子洁能"],
+      "whatToTrack": ["燃机龙头配套", "叶片订单", "高温合金产能", "余热锅炉交付", "海外客户验证"]
+    },
+    {
+      "segment": "燃气轮机发电",
+      "keywords": ["燃气轮机", "北美数据中心", "发电机组", "主用电源", "本地化工厂"],
+      "companies": ["杰瑞股份", "东方电气", "上海电气"],
+      "whatToTrack": ["燃机订单金额", "北美本地化产能", "交付周期", "燃机产能缺口", "客户数量"]
+    },
+    {
+      "segment": "柴发与天然气内燃机",
+      "keywords": ["柴油发电机", "大缸径发动机", "天然气内燃机", "备用电源", "10秒满载"],
+      "companies": ["潍柴动力", "科泰电源", "泰豪科技", "中国动力"],
+      "whatToTrack": ["数据中心发动机销量", "交付周期", "海外替代", "备用电源订单", "天然气机组需求"]
+    },
+    {
+      "segment": "SOFC",
+      "keywords": ["SOFC", "固体氧化物燃料电池", "800V直流", "热电联产", "Bloom Energy"],
+      "companies": ["潍柴动力"],
+      "whatToTrack": ["SOFC产能落地", "CE认证", "效率指标", "数据中心订单", "从1到10放量"]
+    },
+    {
+      "segment": "系统集成与HRSG",
+      "keywords": ["HRSG", "余热回收", "越南基地", "联合循环", "北美AI电力基建"],
+      "companies": ["博盈特焊", "西子洁能"],
+      "whatToTrack": ["越南产线", "HRSG交付", "北美订单", "毛利率", "垃圾焚烧收入占比下降"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立AI算力能源供给侧产业链基准逻辑",
+      "impact": "以AI数据中心缺电、自建发电、燃气轮机产能缺口、柴发交付差、SOFC放量和HRSG需求为主线，追踪算力基础设施从用电端延伸到能源供给侧。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "AI算力基础设施能源供给侧产业链深度解析原始稿",
+        "url": "../raw/ai-energy-supply-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "自建发电",
+      "signal": "将北美AIDC自建发电与燃机/柴发交付周期作为首要观察线",
+      "impact": "若电网扩容继续慢于数据中心建设，燃气轮机、天然气内燃机、柴发、SOFC和HRSG需求会从备用逻辑升级为主电源逻辑。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "AI算力基础设施能源供给侧产业链深度解析原始稿",
+        "url": "../raw/ai-energy-supply-industry-chain-original.md"
+      },
+      "notes": "建议后续跟踪云厂能源项目、燃机订单、发动机交期、SOFC批量订单和公司出海产能。"
+    }
+  ]
+}

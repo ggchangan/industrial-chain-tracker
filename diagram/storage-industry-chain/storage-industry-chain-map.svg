@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1240" viewBox="0 0 1840 1240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111f"/><stop offset="0.55" stop-color="#10253b"/><stop offset="1" stop-color="#081018"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#74a7c8" stroke-width="0.7" opacity="0.16"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.32"/></filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#69e7ff"/></marker>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:52px;font-weight:800;fill:#f7fbff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;fill:#a9c4d9}
+      .stage{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:34px;font-weight:800;fill:#f7fbff}
+      .desc{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#a9c4d9}
+      .cardTitle{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;font-weight:800;fill:#f7fbff}
+      .item{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#dbe8f2}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:18px;fill:#9cb3c7}
+    </style>
+  </defs>
+  <rect width="1840" height="1240" fill="url(#bg)"/>
+  <rect width="1840" height="1240" fill="url(#grid)"/>
+  <text x="92" y="86" class="title">存储产业链图谱</text>
+  <text x="94" y="126" class="sub">上游设备材料 -> 中游设计/制造/封测 -> 下游模组与AI终端</text>
+  <g transform="translate(92 170)" filter="url(#shadow)">
+    <rect width="500" height="780" rx="24" fill="#0d2233" stroke="#20d4ff" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">上游：设备材料</text>
+    <text x="34" y="90" class="desc">长鑫、长存扩产传导至“卖铲人”</text>
+    <g transform="translate(34 128)"><rect width="432" height="130" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="40" class="cardTitle">前道设备</text><text x="24" y="76" class="item">拓荆科技｜中微公司｜北方华创</text><text x="24" y="108" class="small">PECVD / ALD / 刻蚀 / DRAM份额</text></g>
+    <g transform="translate(34 286)"><rect width="432" height="130" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="40" class="cardTitle">清洗与量检测</text><text x="24" y="76" class="item">芯源微｜中科飞测</text><text x="24" y="108" class="small">涂胶显影 / 化学清洗 / 良率监控</text></g>
+    <g transform="translate(34 444)"><rect width="432" height="130" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="40" class="cardTitle">材料与洁净室</text><text x="24" y="76" class="item">鼎龙股份｜柏诚股份｜圣泉集团</text><text x="24" y="108" class="small">CMP抛光垫 / 洁净室 / HBM-HBF材料</text></g>
+    <g transform="translate(34 602)"><rect width="432" height="130" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="40" class="cardTitle">追踪变量</text><text x="24" y="76" class="item">长鑫/长存订单与扩产CAPEX</text><text x="24" y="108" class="small">反应腔出货 / 工程项目 / 材料验证</text></g>
+  </g>
+  <g transform="translate(670 170)" filter="url(#shadow)">
+    <rect width="560" height="780" rx="24" fill="#0d2233" stroke="#5cf2b6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">中游：设计 / 制造 / 封测</text>
+    <text x="34" y="90" class="desc">国产存储双巨头与A股设计、封测核心资产</text>
+    <g transform="translate(34 128)"><rect width="492" height="116" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">存储设计</text><text x="24" y="74" class="item">兆易创新｜北京君正｜澜起科技｜聚辰股份</text><text x="24" y="100" class="small">NOR / 车规DRAM / DDR5接口 / EEPROM</text></g>
+    <g transform="translate(34 268)"><rect width="492" height="116" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">国产晶圆制造</text><text x="24" y="74" class="item">长鑫科技｜长江存储｜中芯国际</text><text x="24" y="100" class="small">DRAM / HBM / 3D NAND / IPO与扩产</text></g>
+    <g transform="translate(34 408)"><rect width="492" height="136" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="38" class="cardTitle">封测与先进封装</text><text x="24" y="76" class="item">长电科技｜通富微电｜甬矽电子｜华天科技｜金海通</text><text x="24" y="108" class="small">HBM封装 / 2.5D-3D封装 / 测试分选机</text></g>
+    <g transform="translate(34 568)"><rect width="492" height="136" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">核心变量</text><text x="24" y="76" class="item">DDR5渗透率、HBM接口认证、产能利用率</text><text x="24" y="108" class="small">设计毛利率与制造扩产共同决定估值重估</text></g>
+  </g>
+  <g transform="translate(1308 170)" filter="url(#shadow)">
+    <rect width="440" height="780" rx="24" fill="#0d2233" stroke="#ffd166" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">下游：模组与终端</text>
+    <text x="34" y="90" class="desc">涨价周期中业绩弹性最大</text>
+    <g transform="translate(34 132)"><rect width="372" height="132" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="42" class="cardTitle">存储模组</text><text x="24" y="80" class="item">江波龙｜佰维存储｜德明利｜香农芯创</text><text x="24" y="110" class="small">企业级SSD / 端侧AI / 库存红利</text></g>
+    <g transform="translate(34 302)"><rect width="372" height="132" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="42" class="cardTitle">利基存储</text><text x="24" y="80" class="item">普冉股份｜东芯股份｜恒烁股份</text><text x="24" y="110" class="small">NOR / EEPROM / SLC NAND / 毛利率修复</text></g>
+    <g transform="translate(34 472)"><rect width="372" height="132" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="42" class="cardTitle">终端应用</text><text x="24" y="80" class="item">AI服务器｜PC｜手机｜汽车电子</text><text x="24" y="110" class="small">HBM、DDR5、eSSD构成主增量</text></g>
+    <g transform="translate(34 642)"><rect width="372" height="74" rx="16" fill="#162b3a" stroke="#46677e"/><text x="24" y="46" class="item">AI算力驱动存储价值重估</text></g>
+  </g>
+  <g stroke="#69e7ff" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.92"><path d="M592 560H650"/><path d="M1230 560H1288"/></g>
+  <g transform="translate(92 1010)" filter="url(#shadow)">
+    <rect width="1656" height="142" rx="24" fill="#0c1d2b" stroke="#304c64"/>
+    <text x="34" y="46" class="cardTitle">动态追踪主线</text>
+    <text x="34" y="88" class="item">1. HBM/DRAM/NAND价格  2. 长鑫/长存IPO与扩产  3. 模组厂库存与毛利率  4. 封测与设备材料订单  5. 利基存储涨价传导</text>
+  </g>
+  <text x="92" y="1200" class="small">产业链研究库 · 存储 · 2026.06.04</text>
+</svg>

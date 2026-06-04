@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07131f"/>
+      <stop offset="52%" stop-color="#102838"/>
+      <stop offset="100%" stop-color="#0f2119"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38d9ff"/>
+      <stop offset="55%" stop-color="#66f2b6"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:600;fill:#c9efff}
+      .card{fill:#0b1d2a;stroke:#2d5d70;stroke-width:2}
+      .head{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .body{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:500;fill:#dcecf2}
+      .tag{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#09121b}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:650;fill:#aee6f5}
+    </style>
+  </defs>
+  <rect width="1600" height="1700" fill="url(#bg)"/>
+  <text class="title" x="88" y="110" font-size="58">智能驾驶产业链全景图谱</text>
+  <text class="sub" x="90" y="166" font-size="27">摄像头/雷达感知 → 智驾芯片/域控决策 → 线控底盘执行 → V2X车路云协同</text>
+  <rect x="90" y="205" width="1420" height="8" rx="4" fill="url(#bar)"/>
+
+  <g transform="translate(92 270)">
+    <rect class="card" width="1416" height="235" rx="22"/>
+    <rect x="32" y="32" width="210" height="50" rx="25" fill="#38d9ff"/>
+    <text class="tag" x="72" y="66" font-size="25">01 感知层</text>
+    <text class="head" x="285" y="68" font-size="36">车辆的眼睛：摄像头、CIS、激光雷达、毫米波雷达</text>
+    <text class="body" x="285" y="122" font-size="27">8MP ADAS镜头 → 高动态车载CIS → 3D点云 → 多传感器融合</text>
+    <text class="small" x="285" y="173" font-size="24">代表：舜宇光学、联创电子、韦尔股份、思特威-W、禾赛科技、速腾聚创、承泰科技</text>
+  </g>
+
+  <g transform="translate(92 560)">
+    <rect class="card" width="1416" height="235" rx="22"/>
+    <rect x="32" y="32" width="210" height="50" rx="25" fill="#66f2b6"/>
+    <text class="tag" x="72" y="66" font-size="25">02 决策层</text>
+    <text class="head" x="285" y="68" font-size="36">车辆的大脑：高算力智驾芯片、域控制器、算法平台</text>
+    <text class="body" x="285" y="122" font-size="27">感知数据处理 → 决策规划 → 行为预测 → 车辆控制指令输出</text>
+    <text class="small" x="285" y="173" font-size="24">代表：地平线、德赛西威、经纬恒润-W；变量：NOA搭载率、高算力域控、市占率</text>
+  </g>
+
+  <g transform="translate(92 850)">
+    <rect class="card" width="1416" height="235" rx="22"/>
+    <rect x="32" y="32" width="210" height="50" rx="25" fill="#ffd166"/>
+    <text class="tag" x="72" y="66" font-size="25">03 执行层</text>
+    <text class="head" x="285" y="68" font-size="36">车辆的手脚：线控制动、线控转向、线控悬架</text>
+    <text class="body" x="285" y="122" font-size="27">EHB/WCBS → EMB → SBW → 电子信号替代机械/液压连接</text>
+    <text class="small" x="285" y="173" font-size="24">代表：伯特利、亚太股份；变量：EMB定点、现金流、底盘XYZ全系解决方案</text>
+  </g>
+
+  <g transform="translate(92 1140)">
+    <rect class="card" width="1416" height="235" rx="22"/>
+    <rect x="32" y="32" width="210" height="50" rx="25" fill="#9cc7ff"/>
+    <text class="tag" x="72" y="66" font-size="25">04 网联层</text>
+    <text class="head" x="285" y="68" font-size="36">车路云协同：高精地图、V2X、RSU/OBU、云平台</text>
+    <text class="body" x="285" y="122" font-size="27">单车智能 → 超视距感知 → 路侧协同 → 多车协同与云端调度</text>
+    <text class="small" x="285" y="173" font-size="24">代表：四维图新、金溢科技、万集科技；变量：试点城市、路侧招标、V2X出货</text>
+  </g>
+
+  <g stroke="url(#bar)" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M800 507v50"/>
+    <path d="M800 797v50"/>
+    <path d="M800 1087v50"/>
+  </g>
+
+  <g transform="translate(92 1470)">
+    <rect width="1416" height="118" rx="20" fill="#081620" stroke="#2d5d70" stroke-width="2"/>
+    <text class="head" x="38" y="48" font-size="30">核心驱动</text>
+    <text class="body" x="210" y="48" font-size="25">FSD入华 · L3量产 · 高阶智驾下沉 · 域控447.6亿市场 · 车路云协同</text>
+    <text class="small" x="38" y="92" font-size="22">跟踪重点：感知硬件用量、智驾芯片/域控订单、线控底盘定点、V2X招标与政策准入。</text>
+  </g>
+</svg>

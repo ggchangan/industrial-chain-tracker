@@ -1,0 +1,105 @@
+{
+  "chainId": "intelligent-driving",
+  "title": "智能驾驶产业链动态追踪",
+  "watchlist": [
+    {
+      "segment": "FSD与高阶智驾政策",
+      "whatToTrack": [
+        "FSD入华落地进度",
+        "L2强制国标",
+        "L3准入名单",
+        "高阶智驾渗透率"
+      ],
+      "companies": [
+        "德赛西威",
+        "联创电子",
+        "韦尔股份",
+        "伯特利"
+      ]
+    },
+    {
+      "segment": "感知层",
+      "whatToTrack": [
+        "8MP ADAS镜头搭载",
+        "车载CIS份额",
+        "激光雷达出货",
+        "毫米波雷达国产化"
+      ],
+      "companies": [
+        "舜宇光学",
+        "联创电子",
+        "韦尔股份",
+        "思特威-W",
+        "禾赛科技",
+        "速腾聚创"
+      ]
+    },
+    {
+      "segment": "决策层",
+      "whatToTrack": [
+        "高算力芯片市占率",
+        "域控制器订单",
+        "舱驾一体量产",
+        "NOA搭载率"
+      ],
+      "companies": [
+        "地平线",
+        "德赛西威",
+        "经纬恒润-W"
+      ]
+    },
+    {
+      "segment": "执行层",
+      "whatToTrack": [
+        "EHB/WCBS出货",
+        "EMB定点",
+        "线控转向",
+        "经营现金流"
+      ],
+      "companies": [
+        "伯特利",
+        "亚太股份"
+      ]
+    },
+    {
+      "segment": "车路云网联",
+      "whatToTrack": [
+        "高精地图订单",
+        "V2X路侧招标",
+        "RSU/OBU出货",
+        "车路云试点"
+      ],
+      "companies": [
+        "四维图新",
+        "金溢科技",
+        "万集科技"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立智能驾驶产业链基准框架",
+      "impact": "以“感知层 → 决策层 → 执行层 → 网联层”为主线归档，后续动态围绕FSD入华、L3准入、高阶智驾渗透、域控订单和线控底盘放量更新。",
+      "confidence": "基准框架",
+      "source": {
+        "title": "智能驾驶产业链深度解析原始稿",
+        "url": "../raw/intelligent-driving-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "FSD催化",
+      "signal": "待核验：特斯拉FSD监督版2026年5月入华落地",
+      "impact": "若落地节奏持续推进，将倒逼国内高阶智驾功能标配化，并拉动8MP摄像头、CIS、域控制器和线控底盘等环节需求。",
+      "confidence": "待核验",
+      "source": {
+        "title": "用户提供的智能驾驶产业链文章",
+        "url": "../raw/intelligent-driving-industry-chain-original.md"
+      },
+      "notes": "后续需要核验上线范围、定价、法规状态、车型适配和供应链订单兑现情况。"
+    }
+  ]
+}

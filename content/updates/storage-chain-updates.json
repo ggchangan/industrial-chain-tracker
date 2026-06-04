@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "存储产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/storage-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "价格周期",
+      "keywords": ["DRAM", "NAND", "HBM", "DDR5", "企业级SSD", "涨价"],
+      "companies": ["兆易创新", "江波龙", "佰维存储", "德明利", "香农芯创"],
+      "whatToTrack": ["DRAM/NAND现货价", "合约价", "HBM价格", "企业级SSD报价", "模组毛利率"]
+    },
+    {
+      "segment": "国产存储制造",
+      "keywords": ["长鑫科技", "长江存储", "IPO", "DRAM", "3D NAND", "HBM"],
+      "companies": ["长鑫科技", "长江存储", "中芯国际"],
+      "whatToTrack": ["IPO进度", "月产能", "HBM产线", "NAND份额", "资本开支"]
+    },
+    {
+      "segment": "存储设计",
+      "keywords": ["NOR Flash", "车规DRAM", "DDR5接口", "EEPROM", "CXL"],
+      "companies": ["兆易创新", "北京君正", "澜起科技", "聚辰股份"],
+      "whatToTrack": ["产品出货", "毛利率", "长鑫关联采购", "DDR5渗透率", "HBM接口认证"]
+    },
+    {
+      "segment": "封测与先进封装",
+      "keywords": ["HBM封装", "2.5D", "3D封装", "测试分选机"],
+      "companies": ["长电科技", "通富微电", "甬矽电子", "华天科技", "金海通"],
+      "whatToTrack": ["先进封装资本开支", "产能利用率", "HBM订单", "测试设备订单"]
+    },
+    {
+      "segment": "设备材料",
+      "keywords": ["PECVD", "刻蚀", "量检测", "CMP", "洁净室", "HBM材料"],
+      "companies": ["拓荆科技", "中微公司", "北方华创", "芯源微", "中科飞测", "柏诚股份", "鼎龙股份", "圣泉集团"],
+      "whatToTrack": ["长鑫/长存订单", "反应腔出货", "洁净室项目", "CMP抛光垫导入", "HBM材料验证"]
+    },
+    {
+      "segment": "利基存储",
+      "keywords": ["NOR", "SLC NAND", "EEPROM", "DDR3", "DDR4", "毛利率修复"],
+      "companies": ["普冉股份", "东芯股份", "恒烁股份"],
+      "whatToTrack": ["营收环比", "毛利率环比", "海外产能退出", "端侧AI需求"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立存储产业链基准逻辑",
+      "impact": "以AI算力、HBM稀缺、DRAM/NAND涨价、国产存储双巨头IPO和模组厂业绩弹性为主线，追踪从设备材料到模组成品的量价变化。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "存储产业链深度解析原始稿",
+        "url": "../raw/storage-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "模组与价格",
+      "signal": "将模组厂库存红利与DRAM/NAND涨价作为首要观察变量",
+      "impact": "江波龙、佰维存储、德明利、香农芯创等业绩弹性高度依赖涨价持续性，后续需重点跟踪报价、库存、毛利率和经营现金流。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "存储产业链深度解析原始稿",
+        "url": "../raw/storage-industry-chain-original.md"
+      },
+      "notes": "建议后续结合现货价、合约价、公司季报和机构调研持续更新。"
+    }
+  ]
+}

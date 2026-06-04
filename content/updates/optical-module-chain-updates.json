@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "光模块产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/optical-module-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "高速光模块",
+      "keywords": ["800G", "1.6T", "3.2T", "硅光", "LPO", "海外云厂"],
+      "companies": ["中际旭创", "新易盛", "剑桥科技", "华工科技"],
+      "whatToTrack": ["800G/1.6T订单", "海外云厂资本开支", "硅光占比", "产能扩张", "毛利率"]
+    },
+    {
+      "segment": "光芯片",
+      "keywords": ["EML", "CW光源", "PLC", "AWG", "200G EML", "光芯片供需"],
+      "companies": ["源杰科技", "长光华芯", "仕佳光子"],
+      "whatToTrack": ["客户验证", "批量交付", "CW光源导入", "良率", "扣非利润"]
+    },
+    {
+      "segment": "CPO与薄膜铌酸锂",
+      "keywords": ["CPO", "Spectrum-X", "薄膜铌酸锂", "TFLN", "调制器", "光引擎"],
+      "companies": ["光库科技", "天孚通信", "腾景科技", "福晶科技"],
+      "whatToTrack": ["CPO量产节奏", "TFLN订单", "光引擎出货", "OCS零部件订单", "现金流"]
+    },
+    {
+      "segment": "上游材料与封装",
+      "keywords": ["磷化铟", "陶瓷外壳", "陶瓷基板", "陶瓷插芯", "光学晶体"],
+      "companies": ["云南锗业", "中瓷电子", "三环集团", "国瓷材料", "福晶科技"],
+      "whatToTrack": ["InP供需缺口", "订单排期", "陶瓷封装产能", "业务收入占比", "估值匹配度"]
+    },
+    {
+      "segment": "光纤光缆与组网",
+      "keywords": ["三波段多芯光缆", "光纤涨价", "CPO交换机", "智算网络", "Spectrum-X"],
+      "companies": ["长飞光纤", "亨通光电", "中兴通讯"],
+      "whatToTrack": ["光纤价格", "多芯光缆商用", "交换机订单", "运营商/云厂组网项目"]
+    },
+    {
+      "segment": "风险与拥挤度",
+      "keywords": ["通信板块超配", "估值", "CPO替代", "AI资本开支", "基本面背离"],
+      "companies": ["中际旭创", "新易盛", "云南锗业", "长光华芯"],
+      "whatToTrack": ["资金集中度", "PE/利润匹配", "传统模块替代风险", "海外AI CAPEX"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立光模块产业链基准逻辑",
+      "impact": "以AI算力、800G/1.6T放量、CPO硅光交换机量产、上游光芯片紧缺和光纤光缆升级为主线，追踪光互联从容量升级到网络架构重构。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "光模块产业链深度解析原始稿",
+        "url": "../raw/optical-module-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "CPO与光纤光缆",
+      "signal": "将英伟达CPO量产与三波段多芯光缆商用作为首要动态观察线",
+      "impact": "若CPO交换机和多芯光缆进入持续商用，价值链将从可插拔模块向光引擎、硅光、调制器、光器件和底层光纤网络重构。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "光模块产业链深度解析原始稿",
+        "url": "../raw/optical-module-industry-chain-original.md"
+      },
+      "notes": "建议后续用英伟达、云厂CAPEX、LightCounting、公司公告和调研纪要持续核验。"
+    }
+  ]
+}

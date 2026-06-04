@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "消费电子产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/consumer-electronics-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "AI终端",
+      "keywords": ["AI手机", "AIPC", "AI眼镜", "端侧AI", "生成式AI手机"],
+      "companies": ["华勤技术", "兆易创新", "歌尔股份", "蓝思科技"],
+      "whatToTrack": ["AI手机渗透率", "AIPC销量占比", "AI眼镜出货", "端侧存储容量", "终端ASP"]
+    },
+    {
+      "segment": "折叠屏",
+      "keywords": ["折叠屏iPhone", "UTG", "柔性OLED", "铰链", "FPC"],
+      "companies": ["京东方A", "深天马A", "维信诺", "鹏鼎控股", "东山精密", "蓝思科技"],
+      "whatToTrack": ["苹果折叠屏进度", "柔性OLED订单", "FPC用量", "UTG/铰链供应链", "华为份额"]
+    },
+    {
+      "segment": "存储与芯片",
+      "keywords": ["NOR", "DRAM", "MCU", "CIS", "PMIC", "射频"],
+      "companies": ["兆易创新", "普冉股份", "东芯股份", "韦尔股份", "南芯科技", "卓胜微"],
+      "whatToTrack": ["存储价格", "毛利率", "AI终端容量", "CIS出货", "快充渗透", "射频国产替代"]
+    },
+    {
+      "segment": "结构件/散热/电池",
+      "keywords": ["玻璃盖板", "精密功能件", "散热", "VC均热板", "电池", "硅负极"],
+      "companies": ["蓝思科技", "领益智造", "飞荣达", "中石科技", "欣旺达", "德赛电池", "珠海冠宇"],
+      "whatToTrack": ["结构件订单", "散热方案升级", "电池容量", "硅负极渗透", "毛利率"]
+    },
+    {
+      "segment": "声学与可穿戴",
+      "keywords": ["TWS", "AI眼镜", "智能手表", "麦克风阵列", "声学模组", "AR/VR"],
+      "companies": ["歌尔股份", "瑞声科技", "安克创新"],
+      "whatToTrack": ["AI眼镜出货", "TWS复苏", "声学模组价值量", "AR/VR订单", "语音交互"]
+    },
+    {
+      "segment": "政策与需求",
+      "keywords": ["以旧换新", "补贴", "618", "换机潮", "手机出货"],
+      "companies": ["小米集团", "传音控股", "华勤技术", "龙旗科技"],
+      "whatToTrack": ["补贴力度", "订单同比", "库存水位", "ODM出货", "需求透支"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立消费电子产业链基准逻辑",
+      "impact": "以AI端侧渗透、折叠屏iPhone预期、AI眼镜放量、以旧换新补贴和单机价值量提升为主线，追踪消费电子从总量修复转向结构升级。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "消费电子产业链深度解析原始稿",
+        "url": "../raw/consumer-electronics-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "终端升级",
+      "signal": "将AI手机/AIPC、折叠屏iPhone和AI眼镜作为首要观察线",
+      "impact": "消费电子需求的核心变量从出货量切换到单机价值量，存储、散热、电池、FPC、光学、声学和结构件需要联动追踪。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "消费电子产业链深度解析原始稿",
+        "url": "../raw/consumer-electronics-industry-chain-original.md"
+      },
+      "notes": "建议后续结合IDC/Counterpoint、品牌发布会、618数据、公司季报和供应链调研更新。"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1240" viewBox="0 0 1840 1240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111f"/><stop offset="0.55" stop-color="#10253b"/><stop offset="1" stop-color="#081018"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#74a7c8" stroke-width="0.7" opacity="0.16"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.32"/></filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#69e7ff"/></marker>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:52px;font-weight:800;fill:#f7fbff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;fill:#a9c4d9}
+      .stage{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:34px;font-weight:800;fill:#f7fbff}
+      .desc{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#a9c4d9}
+      .cardTitle{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;font-weight:800;fill:#f7fbff}
+      .item{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#dbe8f2}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:18px;fill:#9cb3c7}
+    </style>
+  </defs>
+  <rect width="1840" height="1240" fill="url(#bg)"/>
+  <rect width="1840" height="1240" fill="url(#grid)"/>
+  <text x="92" y="86" class="title">消费电子产业链图谱</text>
+  <text x="94" y="126" class="sub">核心元器件 -> 模组与方案集成 -> 终端品牌与AI新物种</text>
+  <g transform="translate(92 170)" filter="url(#shadow)">
+    <rect width="500" height="780" rx="24" fill="#0d2233" stroke="#20d4ff" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">上游：核心元器件</text>
+    <text x="34" y="90" class="desc">AI端侧升级带动单机价值量提升</text>
+    <g transform="translate(34 126)"><rect width="432" height="104" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="36" class="cardTitle">芯片与存储</text><text x="24" y="68" class="item">兆易创新｜韦尔股份｜南芯科技｜卓胜微</text><text x="24" y="94" class="small">NOR/DRAM / CIS / PMIC / 射频</text></g>
+    <g transform="translate(34 252)"><rect width="432" height="104" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="36" class="cardTitle">显示与光学</text><text x="24" y="68" class="item">京东方A｜维信诺｜水晶光电｜思特威</text><text x="24" y="94" class="small">折叠屏 / OLED / 多摄 / AI视觉</text></g>
+    <g transform="translate(34 378)"><rect width="432" height="104" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="36" class="cardTitle">结构件/散热/电池</text><text x="24" y="68" class="item">蓝思科技｜领益智造｜飞荣达｜欣旺达</text><text x="24" y="94" class="small">玻璃盖板 / 功能件 / VC散热 / 电池容量</text></g>
+    <g transform="translate(34 504)"><rect width="432" height="104" rx="16" fill="#2d1c2a" stroke="#ff7ab6"/><text x="24" y="36" class="cardTitle">声学与PCB/FPC</text><text x="24" y="68" class="item">歌尔股份｜鹏鼎控股｜东山精密｜顺络电子</text><text x="24" y="94" class="small">AI语音 / TWS / 折叠屏FPC / 被动元件</text></g>
+  </g>
+  <g transform="translate(670 170)" filter="url(#shadow)">
+    <rect width="560" height="780" rx="24" fill="#0d2233" stroke="#8b5cf6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">中游：模组与方案集成</text>
+    <text x="34" y="90" class="desc">零部件向整机功能转化的工程枢纽</text>
+    <g transform="translate(34 128)"><rect width="492" height="122" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="40" class="cardTitle">摄像头/显示/声学模组</text><text x="24" y="76" class="item">欧菲光｜舜宇光学｜歌尔股份｜瑞声科技</text><text x="24" y="106" class="small">多摄 / 折叠屏显示 / AI语音交互</text></g>
+    <g transform="translate(34 286)"><rect width="492" height="122" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="40" class="cardTitle">ODM/EMS整机制造</text><text x="24" y="76" class="item">华勤技术｜龙旗科技｜闻泰科技｜光弘科技</text><text x="24" y="106" class="small">手机 / AIPC / 平板 / 可穿戴 / 服务器延伸</text></g>
+    <g transform="translate(34 444)"><rect width="492" height="122" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="40" class="cardTitle">核心变量</text><text x="24" y="76" class="item">AI终端渗透、单机BOM、补贴换机、库存水位</text><text x="24" y="106" class="small">从出货量逻辑转向价值量逻辑</text></g>
+  </g>
+  <g transform="translate(1308 170)" filter="url(#shadow)">
+    <rect width="440" height="780" rx="24" fill="#0d2233" stroke="#ff7ab6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">下游：终端与新物种</text>
+    <text x="34" y="90" class="desc">品牌生态决定换机和创新节奏</text>
+    <g transform="translate(34 132)"><rect width="372" height="132" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="42" class="cardTitle">AI手机与折叠屏</text><text x="24" y="80" class="item">苹果｜华为｜小米｜荣耀</text><text x="24" y="110" class="small">折叠屏iPhone / AI旗舰机 / 鸿蒙生态</text></g>
+    <g transform="translate(34 302)"><rect width="372" height="132" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="42" class="cardTitle">AIPC与平板</text><text x="24" y="80" class="item">高算力笔记本｜32GB+1TB配置</text><text x="24" y="110" class="small">旗舰机吃份额，BOM价值提升</text></g>
+    <g transform="translate(34 472)"><rect width="372" height="132" rx="16" fill="#2d1c2a" stroke="#ff7ab6"/><text x="24" y="42" class="cardTitle">AI眼镜与可穿戴</text><text x="24" y="80" class="item">歌尔股份｜安克创新｜瑞声科技</text><text x="24" y="110" class="small">下一代交互入口，声学光学结构件受益</text></g>
+    <g transform="translate(34 642)"><rect width="372" height="74" rx="16" fill="#162b3a" stroke="#46677e"/><text x="24" y="46" class="item">补贴托底：以旧换新缩短换机周期</text></g>
+  </g>
+  <g stroke="#69e7ff" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.92"><path d="M592 560H650"/><path d="M1230 560H1288"/></g>
+  <g transform="translate(92 1010)" filter="url(#shadow)">
+    <rect width="1656" height="142" rx="24" fill="#0c1d2b" stroke="#304c64"/>
+    <text x="34" y="46" class="cardTitle">动态追踪主线</text>
+    <text x="34" y="88" class="item">1. AI手机/AIPC渗透  2. 折叠屏iPhone进度  3. AI眼镜出货  4. 以旧换新补贴  5. 存储/散热/电池/FPC单机价值量  6. ODM订单与库存</text>
+  </g>
+  <text x="92" y="1200" class="small">产业链研究库 · 消费电子 · 2026.06.04</text>
+</svg>

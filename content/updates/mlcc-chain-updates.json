@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "title": "MLCC产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/mlcc-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "陶瓷粉体",
+      "keywords": ["钛酸钡", "纳米粉体", "高容MLCC", "车规粉体"],
+      "companies": ["国瓷材料"],
+      "whatToTrack": ["粉体价格", "AI服务器验证", "车规客户导入", "扩产节奏"]
+    },
+    {
+      "segment": "电极浆料",
+      "keywords": ["镍粉", "银浆", "铜浆", "MLCC内电极"],
+      "companies": ["博迁新材", "聚和材料"],
+      "whatToTrack": ["三星电机订单", "台系客户送样", "小批量供货", "盈利修复"]
+    },
+    {
+      "segment": "离型膜",
+      "keywords": ["MLCC离型膜", "薄层高容", "基膜自制", "日韩客户"],
+      "companies": ["洁美科技"],
+      "whatToTrack": ["三星/村田验证", "高端离型膜盈利", "良率", "出货占比"]
+    },
+    {
+      "segment": "MLCC制造",
+      "keywords": ["AI服务器MLCC", "车规MLCC", "高容MLCC", "射频微波MLCC"],
+      "companies": ["三环集团", "风华高科", "宏达电子", "宏明电子", "火炬电子", "鸿远电子", "达利凯普"],
+      "whatToTrack": ["高端订单", "ASP涨价", "产能利用率", "国产替代份额"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立MLCC产业链基准逻辑",
+      "impact": "以AI服务器和新能源车需求共振为主线，追踪材料、制造、终端应用的涨价、扩产、认证和国产替代变化。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "MLCC产业链深度解析原始稿",
+        "url": "../raw/mlcc-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    }
+  ]
+}

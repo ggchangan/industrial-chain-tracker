@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07131f"/>
+      <stop offset="52%" stop-color="#14273a"/>
+      <stop offset="100%" stop-color="#10241e"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="55%" stop-color="#7cf3c8"/>
+      <stop offset="100%" stop-color="#f6d365"/>
+    </linearGradient>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:600;fill:#c9efff}
+      .card{fill:#0b1d2a;stroke:#2d5d70;stroke-width:2}
+      .head{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#fff}
+      .body{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:500;fill:#dcecf2}
+      .tag{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:800;fill:#09121b}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-weight:650;fill:#aee6f5}
+    </style>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#bg)"/>
+  <text class="title" x="88" y="110" font-size="58">创新药产业链全景图谱</text>
+  <text class="sub" x="90" y="166" font-size="27">上游外包服务/试剂耗材 → 中游创新药企 → 下游商业化/BD出海/支付</text>
+  <rect x="90" y="205" width="1420" height="8" rx="4" fill="url(#bar)"/>
+
+  <g transform="translate(92 270)">
+    <rect class="card" width="1416" height="255" rx="22"/>
+    <rect x="32" y="32" width="250" height="50" rx="25" fill="#7dd3fc"/>
+    <text class="tag" x="72" y="66" font-size="25">01 上游服务</text>
+    <text class="head" x="330" y="68" font-size="36">CXO、生命科学试剂、药包材：研发链条的卖水人</text>
+    <text class="body" x="330" y="122" font-size="27">药物发现CRO → 临床前CRO → 临床CRO → CDMO/CMO → 试剂耗材/包材</text>
+    <text class="small" x="330" y="174" font-size="24">代表：药明康德、凯莱英、泰格医药、康龙化成、昭衍新药、诺唯赞、义翘神州</text>
+    <text class="small" x="330" y="215" font-size="23">追踪：在手订单、新签订单、TIDES/多肽/寡核苷酸收入、地缘政治风险</text>
+  </g>
+
+  <g transform="translate(92 590)">
+    <rect class="card" width="1416" height="255" rx="22"/>
+    <rect x="32" y="32" width="250" height="50" rx="25" fill="#7cf3c8"/>
+    <text class="tag" x="72" y="66" font-size="25">02 中游药企</text>
+    <text class="head" x="330" y="68" font-size="36">创新药研发与制造：大型药企 + Biopharma + 前沿平台</text>
+    <text class="body" x="330" y="122" font-size="27">靶点发现 → 管线研发 → 临床验证 → 注册上市 → 商业化生产</text>
+    <text class="small" x="330" y="174" font-size="24">代表：恒瑞医药、百济神州、信达生物、荣昌生物、科伦药业、康方生物</text>
+    <text class="small" x="330" y="215" font-size="23">追踪：产品收入、Non-GAAP盈利、扣非利润、经营现金流、ADC/双抗数据</text>
+  </g>
+
+  <g transform="translate(92 910)">
+    <rect class="card" width="1416" height="255" rx="22"/>
+    <rect x="32" y="32" width="250" height="50" rx="25" fill="#f6d365"/>
+    <text class="tag" x="72" y="66" font-size="25">03 下游兑现</text>
+    <text class="head" x="330" y="68" font-size="36">商业化、医保商保、BD出海：价值兑现最后一公里</text>
+    <text class="body" x="330" y="122" font-size="27">医院/DTP药房 → 医保谈判 → 商保目录 → License-out/全球商业化</text>
+    <text class="small" x="330" y="174" font-size="24">代表：恒瑞、百济、信达、荣昌、科伦、君实；BD模式从卖断升级为共同开发商业化</text>
+    <text class="small" x="330" y="215" font-size="23">追踪：首付款、里程碑、销售分成、医保准入、商保创新药目录、销售费用率</text>
+  </g>
+
+  <g stroke="url(#bar)" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M800 527v60"/>
+    <path d="M800 847v60"/>
+  </g>
+
+  <g transform="translate(92 1260)">
+    <rect width="1416" height="142" rx="20" fill="#081620" stroke="#2d5d70" stroke-width="2"/>
+    <text class="head" x="38" y="50" font-size="30">核心驱动</text>
+    <text class="body" x="210" y="50" font-size="25">BD出海超600亿美元 · CXO订单复苏 · 盈利拐点密集出现 · 生物医药列为新兴支柱产业</text>
+    <text class="small" x="38" y="96" font-size="22">跟踪重点：BD交易质量、首付款比例、CXO订单能见度、创新药商业化收入、医保/商保支付环境。</text>
+  </g>
+</svg>

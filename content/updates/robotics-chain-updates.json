@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "title": "机器人产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/robotics-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "特斯拉链",
+      "keywords": ["Optimus", "Gen3", "执行器", "丝杠", "灵巧手", "特斯拉供应链"],
+      "companies": ["三花智控", "拓普集团", "绿的谐波", "五洲新春", "鸣志电器", "奥比中光"],
+      "whatToTrack": ["Gen3投产", "订单确认", "墨西哥/上海产能", "执行器和丝杠BOM价值量"]
+    },
+    {
+      "segment": "减速器",
+      "keywords": ["谐波减速器", "RV减速器", "行星减速器", "关节模组"],
+      "companies": ["绿的谐波", "双环传动", "中大力德"],
+      "whatToTrack": ["T链/NV链卡位", "产能扩张", "毛利率", "机器人业务占比"]
+    },
+    {
+      "segment": "电机与灵巧手",
+      "keywords": ["空心杯电机", "微型电机", "灵巧手", "22自由度", "触觉感知"],
+      "companies": ["鸣志电器", "兆威机电", "江苏雷利", "浙江荣泰"],
+      "whatToTrack": ["小批量供货", "灵巧手模组订单", "微型丝杠份额", "自由度升级"]
+    },
+    {
+      "segment": "传感器",
+      "keywords": ["3D视觉", "六维力传感器", "电子皮肤", "IMU", "力矩传感器"],
+      "companies": ["奥比中光", "柯力传感", "安培龙", "芯动联科", "福莱新材"],
+      "whatToTrack": ["客户验证", "批量供应", "电子皮肤中试", "英伟达/特斯拉生态合作"]
+    },
+    {
+      "segment": "英伟达链",
+      "keywords": ["GR00T", "Jetson Thor", "Isaac", "宇树科技", "H2 Plus"],
+      "companies": ["宇树科技", "绿的谐波", "双环传动", "汇川技术", "奥比中光"],
+      "whatToTrack": ["GR00T平台进展", "宇树IPO", "参考设计量产", "开放生态合作"]
+    },
+    {
+      "segment": "华为链",
+      "keywords": ["鸿蒙具身大脑", "CloudRobo", "盘古大模型", "乐聚机器人"],
+      "companies": ["兆威机电", "拓斯达", "埃斯顿"],
+      "whatToTrack": ["华为生态合作", "工业机器人落地", "通用操作系统适配", "业绩兑现"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立机器人产业链基准逻辑",
+      "impact": "以2026人形机器人量产元年为主线，追踪特斯拉链、英伟达链、华为链及核心零部件放量节奏。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "机器人产业链深度解析原始稿",
+        "url": "../raw/robotics-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    }
+  ]
+}

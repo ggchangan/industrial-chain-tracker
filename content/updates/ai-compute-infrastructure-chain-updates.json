@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "title": "AI算力基础设施产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/ai-compute-infrastructure-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "AI芯片与国产替代",
+      "keywords": ["GPU", "DCU", "ASIC", "昇腾", "海光", "寒武纪", "CoWoS"],
+      "companies": ["海光信息", "寒武纪", "景嘉微"],
+      "whatToTrack": ["国产AI芯片出货", "智算中心导入", "制程供应链", "CoWoS产能", "客户验证"]
+    },
+    {
+      "segment": "存储与高速接口",
+      "keywords": ["HBM", "DDR5", "内存接口", "NOR", "DRAM", "AI服务器内存"],
+      "companies": ["兆易创新", "澜起科技", "北京君正"],
+      "whatToTrack": ["HBM/DDR5供需", "接口芯片出货", "毛利率", "长鑫合作", "服务器内存容量"]
+    },
+    {
+      "segment": "AI服务器与交换机",
+      "keywords": ["AI服务器", "ODM", "HGX", "DGX", "800G交换机", "智算中心"],
+      "companies": ["工业富联", "浪潮信息", "中科曙光", "华勤技术", "中兴通讯", "锐捷网络", "紫光股份"],
+      "whatToTrack": ["服务器订单", "海外云厂CAPEX", "国内智算招标", "800G端口", "交付周期"]
+    },
+    {
+      "segment": "光互联",
+      "keywords": ["800G", "1.6T", "光模块", "CPO", "光芯片", "光引擎"],
+      "companies": ["中际旭创", "新易盛", "天孚通信", "源杰科技", "光库科技"],
+      "whatToTrack": ["1.6T订单", "CPO量产", "光芯片供需", "硅光占比", "模块毛利率"]
+    },
+    {
+      "segment": "散热与供电",
+      "keywords": ["液冷", "浸没式液冷", "HVDC", "UPS", "高功率机柜", "电能质量"],
+      "companies": ["英维克", "高澜股份", "中恒电气", "科华数据", "科士达", "盛弘股份"],
+      "whatToTrack": ["液冷订单", "单机柜功率", "HVDC渗透率", "头部客户导入", "宁德时代协同"]
+    },
+    {
+      "segment": "智算中心与云服务",
+      "keywords": ["AIDC", "东数西算", "算力租赁", "算力网络", "运营商云"],
+      "companies": ["光环新网", "奥飞数据", "数据港", "中国电信", "中国移动", "优刻得"],
+      "whatToTrack": ["国家枢纽节点", "算力租赁价格", "运营商CAPEX", "机柜上架率", "云厂需求"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立AI算力基础设施产业链基准逻辑",
+      "impact": "将AI芯片、存储、PCB、光模块、AI服务器、交换机、液冷、HVDC和智算中心纳入同一个总览框架，作为已有子产业链的上层总图谱。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "AI算力基础设施产业链深度解析原始稿",
+        "url": "../raw/ai-compute-infrastructure-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "资本开支",
+      "signal": "将云厂CAPEX、国产智算招标、液冷/HVDC渗透率作为首要动态观察线",
+      "impact": "AI算力基础设施是多个已建档产业链的总需求源，后续每条动态应判断其向PCB、存储、光模块、半导体设备等子链的传导方向。",
+      "confidence": "待核验",
+      "source": {
+        "type": "article",
+        "platform": "用户原稿",
+        "title": "AI算力基础设施产业链深度解析原始稿",
+        "url": "../raw/ai-compute-infrastructure-industry-chain-original.md"
+      },
+      "notes": "建议后续用云厂财报CAPEX、运营商招标、数据中心上架率和公司订单口径持续核验。"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1120">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0 L0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.6"/>
+    </pattern>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#34d399"/>
+    </marker>
+    <style>
+      text { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; letter-spacing: 0; }
+      .title { fill: #f8fafc; font-size: 32px; font-weight: 850; }
+      .subtitle { fill: #94a3b8; font-size: 15px; font-weight: 500; }
+      .region-title { font-size: 18px; font-weight: 850; }
+      .region-sub { fill: #94a3b8; font-size: 12px; font-weight: 500; }
+      .node-title { fill: #f8fafc; font-size: 15px; font-weight: 850; }
+      .node-sub { fill: #cbd5e1; font-size: 11px; font-weight: 520; }
+      .company { fill: #e2e8f0; font-size: 11px; font-weight: 650; }
+      .tiny { fill: #94a3b8; font-size: 10px; font-weight: 520; }
+      .arrow-label { fill: #bae6fd; font-size: 11px; font-weight: 800; }
+      .note-title { fill: #f8fafc; font-size: 14px; font-weight: 850; }
+      .note { fill: #cbd5e1; font-size: 11px; font-weight: 520; }
+      .pill-text { fill: #f8fafc; font-size: 12px; font-weight: 850; }
+    </style>
+  </defs>
+
+  <rect width="1680" height="1120" fill="#0f172a"/>
+  <rect width="1680" height="1120" fill="url(#grid)"/>
+  <circle cx="820" cy="440" r="330" fill="#0e7490" opacity="0.09"/>
+  <circle cx="1390" cy="340" r="280" fill="#f59e0b" opacity="0.07"/>
+
+  <text x="60" y="62" class="title">MLCC产业链全景与价值传导图</text>
+  <text x="60" y="92" class="subtitle">AI服务器与新能源车需求共振，沿“材料 → MLCC制造 → 终端应用”推动高端MLCC供需缺口与国产替代</text>
+
+  <!-- Regions -->
+  <rect x="50" y="135" width="470" height="620" rx="18" fill="rgba(8,51,68,0.18)" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="82" y="172" class="region-title" fill="#67e8f9">上游：精密材料与制程耗材</text>
+  <text x="82" y="197" class="region-sub">决定容量、耐压、可靠性与良率</text>
+
+  <rect x="620" y="135" width="390" height="620" rx="18" fill="rgba(120,53,15,0.18)" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="652" y="172" class="region-title" fill="#fcd34d">中游：MLCC制造</text>
+  <text x="652" y="197" class="region-sub">流延、印刷、叠层、烧结、端接</text>
+
+  <rect x="1110" y="135" width="520" height="620" rx="18" fill="rgba(6,78,59,0.18)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="1142" y="172" class="region-title" fill="#86efac">下游：终端应用</text>
+  <text x="1142" y="197" class="region-sub">AI服务器、新能源车、通信、消费电子、军工</text>
+
+  <!-- Upstream -->
+  <g>
+    <rect x="82" y="232" width="195" height="112" rx="10" fill="#0f172a"/>
+    <rect x="82" y="232" width="195" height="112" rx="10" fill="rgba(8,51,68,0.42)" stroke="#22d3ee" stroke-width="1.7"/>
+    <text x="179" y="264" class="node-title" text-anchor="middle">陶瓷粉体</text>
+    <text x="179" y="289" class="node-sub" text-anchor="middle">钛酸钡 / 改性粉体</text>
+    <text x="179" y="317" class="company" text-anchor="middle">国瓷材料</text>
+  </g>
+  <g>
+    <rect x="312" y="232" width="185" height="112" rx="10" fill="#0f172a"/>
+    <rect x="312" y="232" width="185" height="112" rx="10" fill="rgba(120,53,15,0.35)" stroke="#f59e0b" stroke-width="1.7"/>
+    <text x="404" y="264" class="node-title" text-anchor="middle">电极浆料</text>
+    <text x="404" y="289" class="node-sub" text-anchor="middle">镍浆 / 银浆 / 铜浆</text>
+    <text x="404" y="317" class="company" text-anchor="middle">博迁 · 聚和</text>
+  </g>
+  <g>
+    <rect x="82" y="382" width="195" height="112" rx="10" fill="#0f172a"/>
+    <rect x="82" y="382" width="195" height="112" rx="10" fill="rgba(6,78,59,0.38)" stroke="#34d399" stroke-width="1.7"/>
+    <text x="179" y="414" class="node-title" text-anchor="middle">离型膜</text>
+    <text x="179" y="439" class="node-sub" text-anchor="middle">流延承载 / 良率关键</text>
+    <text x="179" y="467" class="company" text-anchor="middle">洁美科技</text>
+  </g>
+  <g>
+    <rect x="312" y="382" width="185" height="112" rx="10" fill="#0f172a"/>
+    <rect x="312" y="382" width="185" height="112" rx="10" fill="rgba(59,130,246,0.32)" stroke="#60a5fa" stroke-width="1.7"/>
+    <text x="404" y="414" class="node-title" text-anchor="middle">精密设备</text>
+    <text x="404" y="439" class="node-sub" text-anchor="middle">流延 / 叠层 / 烧结</text>
+    <text x="404" y="467" class="company" text-anchor="middle">制程良率瓶颈</text>
+  </g>
+  <g>
+    <rect x="82" y="540" width="415" height="150" rx="12" fill="#0f172a"/>
+    <rect x="82" y="540" width="415" height="150" rx="12" fill="rgba(30,41,59,0.55)" stroke="#64748b" stroke-width="1.5"/>
+    <text x="110" y="574" class="note-title">上游核心变量</text>
+    <text x="110" y="604" class="note">• 高纯、纳米级粉体决定高容与车规性能</text>
+    <text x="110" y="632" class="note">• 镍粉、银浆、铜浆影响内外电极成本与导入</text>
+    <text x="110" y="660" class="note">• 高端离型膜决定薄层化与产品良率</text>
+  </g>
+
+  <!-- Midstream -->
+  <g>
+    <rect x="672" y="245" width="286" height="170" rx="16" fill="#0f172a"/>
+    <rect x="672" y="245" width="286" height="170" rx="16" fill="rgba(120,53,15,0.38)" stroke="#fbbf24" stroke-width="2.2"/>
+    <text x="815" y="286" class="node-title" font-size="18" text-anchor="middle">MLCC制造</text>
+    <text x="815" y="318" class="node-sub" text-anchor="middle">陶瓷介质层 + 金属内电极</text>
+    <text x="815" y="346" class="node-sub" text-anchor="middle">超薄多层交替堆叠</text>
+    <text x="815" y="382" class="company" text-anchor="middle">三环集团 · 风华高科</text>
+  </g>
+  <g>
+    <rect x="672" y="455" width="286" height="94" rx="10" fill="#0f172a"/>
+    <rect x="672" y="455" width="286" height="94" rx="10" fill="rgba(76,29,149,0.32)" stroke="#a78bfa" stroke-width="1.7"/>
+    <text x="815" y="490" class="node-title" text-anchor="middle">高端产品矩阵</text>
+    <text x="815" y="518" class="node-sub" text-anchor="middle">高容 / 小尺寸 / 高压 / 车规 / 射频</text>
+  </g>
+  <g>
+    <rect x="672" y="590" width="286" height="94" rx="10" fill="#0f172a"/>
+    <rect x="672" y="590" width="286" height="94" rx="10" fill="rgba(136,19,55,0.32)" stroke="#fb7185" stroke-width="1.7"/>
+    <text x="815" y="625" class="node-title" text-anchor="middle">特种与射频MLCC</text>
+    <text x="815" y="653" class="node-sub" text-anchor="middle">宏达 · 宏明 · 火炬 · 鸿远 · 达利凯普</text>
+  </g>
+
+  <!-- Downstream -->
+  <g>
+    <rect x="1145" y="232" width="220" height="112" rx="10" fill="#0f172a"/>
+    <rect x="1145" y="232" width="220" height="112" rx="10" fill="rgba(8,51,68,0.42)" stroke="#22d3ee" stroke-width="1.7"/>
+    <text x="1255" y="264" class="node-title" text-anchor="middle">AI服务器</text>
+    <text x="1255" y="289" class="node-sub" text-anchor="middle">用量8-12倍 / 价值量提升</text>
+    <text x="1255" y="317" class="company" text-anchor="middle">高端MLCC核心增量</text>
+  </g>
+  <g>
+    <rect x="1400" y="232" width="205" height="112" rx="10" fill="#0f172a"/>
+    <rect x="1400" y="232" width="205" height="112" rx="10" fill="rgba(6,78,59,0.42)" stroke="#34d399" stroke-width="1.7"/>
+    <text x="1502" y="264" class="node-title" text-anchor="middle">新能源汽车</text>
+    <text x="1502" y="289" class="node-sub" text-anchor="middle">单车用量约燃油车6倍</text>
+    <text x="1502" y="317" class="company" text-anchor="middle">车规认证壁垒</text>
+  </g>
+  <g>
+    <rect x="1145" y="390" width="460" height="150" rx="12" fill="#0f172a"/>
+    <rect x="1145" y="390" width="460" height="150" rx="12" fill="rgba(59,130,246,0.32)" stroke="#60a5fa" stroke-width="1.7"/>
+    <text x="1375" y="426" class="node-title" text-anchor="middle">其他终端应用</text>
+    <rect x="1180" y="462" width="110" height="42" rx="21" fill="rgba(34,211,238,0.18)" stroke="#22d3ee"/>
+    <text x="1235" y="489" class="pill-text" text-anchor="middle">5G通信</text>
+    <rect x="1312" y="462" width="120" height="42" rx="21" fill="rgba(52,211,153,0.18)" stroke="#34d399"/>
+    <text x="1372" y="489" class="pill-text" text-anchor="middle">消费电子</text>
+    <rect x="1454" y="462" width="110" height="42" rx="21" fill="rgba(251,191,36,0.18)" stroke="#fbbf24"/>
+    <text x="1509" y="489" class="pill-text" text-anchor="middle">军工航天</text>
+    <text x="1375" y="526" class="tiny" text-anchor="middle">消费电子是基本盘，高端化与规格升级贡献增量</text>
+  </g>
+  <g>
+    <rect x="1145" y="590" width="460" height="85" rx="12" fill="#0f172a"/>
+    <rect x="1145" y="590" width="460" height="85" rx="12" fill="rgba(120,53,15,0.26)" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1175" y="625" class="note-title">扩展电容板块</text>
+    <text x="1175" y="654" class="note">铝电解、MLPC、钽电容、超级电容、薄膜电容：江海股份、法拉电子等</text>
+  </g>
+
+  <!-- Arrows -->
+  <path d="M277 288 C420 288 552 295 664 316" fill="none" stroke="#22d3ee" stroke-width="3.2" marker-end="url(#arrow-cyan)"/>
+  <path d="M497 288 C560 294 607 304 664 326" fill="none" stroke="#fbbf24" stroke-width="3.2" marker-end="url(#arrow-amber)"/>
+  <path d="M277 438 C440 430 550 388 664 354" fill="none" stroke="#34d399" stroke-width="3.2" marker-end="url(#arrow-green)"/>
+  <path d="M497 438 C572 434 620 402 664 372" fill="none" stroke="#60a5fa" stroke-width="3.2" marker-end="url(#arrow-cyan)"/>
+  <text x="568" y="276" class="arrow-label" text-anchor="middle">材料导入</text>
+  <path d="M958 330 C1024 324 1080 305 1136 292" fill="none" stroke="#fbbf24" stroke-width="4" marker-end="url(#arrow-amber)"/>
+  <text x="1055" y="305" class="arrow-label" text-anchor="middle">供给终端</text>
+  <path d="M1365 288 L1390 288" fill="none" stroke="#34d399" stroke-width="4" marker-end="url(#arrow-green)"/>
+  <path d="M1480 540 C1438 565 1410 578 1386 588" fill="none" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+
+  <path d="M1515 560 C1400 810 1070 835 820 734 C575 635 405 700 265 730" fill="none" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="10 8" marker-end="url(#arrow-amber)"/>
+  <text x="1040" y="810" fill="#fcd34d" font-size="13" font-weight="850" text-anchor="middle">需求反向拉动：AI + 新能源车 → 高端紧缺 → 涨价 → 国产替代</text>
+
+  <!-- Bottom logic -->
+  <rect x="50" y="800" width="1580" height="248" rx="18" fill="rgba(15,23,42,0.84)" stroke="#334155" stroke-width="1.5"/>
+  <text x="82" y="843" class="region-title" fill="#e2e8f0">行业核心逻辑</text>
+
+  <g>
+    <rect x="90" y="880" width="350" height="112" rx="12" fill="#0f172a"/>
+    <rect x="90" y="880" width="350" height="112" rx="12" fill="rgba(8,51,68,0.42)" stroke="#22d3ee" stroke-width="1.6"/>
+    <text x="118" y="916" class="note-title">1. AI算力需求爆发</text>
+    <text x="118" y="946" class="note">AI服务器MLCC用量与价值量双重提升</text>
+    <text x="118" y="970" class="note">高端MLCC成为关键被动元件成本项</text>
+  </g>
+  <g>
+    <rect x="480" y="880" width="350" height="112" rx="12" fill="#0f172a"/>
+    <rect x="480" y="880" width="350" height="112" rx="12" fill="rgba(6,78,59,0.38)" stroke="#34d399" stroke-width="1.6"/>
+    <text x="508" y="916" class="note-title">2. 新能源车长坡厚雪</text>
+    <text x="508" y="946" class="note">纯电车单车MLCC用量显著高于燃油车</text>
+    <text x="508" y="970" class="note">车规认证周期长，客户绑定稳定</text>
+  </g>
+  <g>
+    <rect x="870" y="880" width="350" height="112" rx="12" fill="#0f172a"/>
+    <rect x="870" y="880" width="350" height="112" rx="12" fill="rgba(120,53,15,0.34)" stroke="#fbbf24" stroke-width="1.6"/>
+    <text x="898" y="916" class="note-title">3. 供给紧张与涨价</text>
+    <text x="898" y="946" class="note">高端扩产受限，日韩龙头产能利用率高</text>
+    <text x="898" y="970" class="note">高端MLCC涨价带动行业景气上行</text>
+  </g>
+  <g>
+    <rect x="1260" y="880" width="330" height="112" rx="12" fill="#0f172a"/>
+    <rect x="1260" y="880" width="330" height="112" rx="12" fill="rgba(76,29,149,0.34)" stroke="#a78bfa" stroke-width="1.6"/>
+    <text x="1288" y="916" class="note-title">4. 国产替代窗口</text>
+    <text x="1288" y="946" class="note">国产份额仍低，高端材料与制造持续突破</text>
+    <text x="1288" y="970" class="note">中低端外溢与高端认证双线推进</text>
+  </g>
+</svg>

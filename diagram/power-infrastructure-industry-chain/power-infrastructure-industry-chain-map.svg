@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1240" viewBox="0 0 1840 1240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111f"/><stop offset="0.55" stop-color="#10253b"/><stop offset="1" stop-color="#081018"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#74a7c8" stroke-width="0.7" opacity="0.16"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.32"/></filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#69e7ff"/></marker>
+    <style>
+      .title{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:52px;font-weight:800;fill:#f7fbff}
+      .sub{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;fill:#a9c4d9}
+      .stage{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:34px;font-weight:800;fill:#f7fbff}
+      .desc{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#a9c4d9}
+      .cardTitle{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:24px;font-weight:800;fill:#f7fbff}
+      .item{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:20px;fill:#dbe8f2}
+      .small{font-family:PingFang SC,Microsoft YaHei,Arial,sans-serif;font-size:18px;fill:#9cb3c7}
+    </style>
+  </defs>
+  <rect width="1840" height="1240" fill="url(#bg)"/>
+  <rect width="1840" height="1240" fill="url(#grid)"/>
+  <text x="92" y="86" class="title">电力基础设施产业链图谱</text>
+  <text x="94" y="126" class="sub">设备制造 -> 电网建设运营 -> 终端用电与算电协同</text>
+  <g transform="translate(92 170)" filter="url(#shadow)">
+    <rect width="500" height="780" rx="24" fill="#0d2233" stroke="#20d4ff" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">上游：设备制造</text>
+    <text x="34" y="90" class="desc">输变电、配电和电力电子硬件底座</text>
+    <g transform="translate(34 126)"><rect width="432" height="112" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">特高压与主网设备</text><text x="24" y="72" class="item">国电南瑞｜平高电气｜中国西电｜特变电工</text><text x="24" y="98" class="small">换流阀 / GIS / 变压器 / 电抗器</text></g>
+    <g transform="translate(34 260)"><rect width="432" height="112" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">直流与柔性直流</text><text x="24" y="72" class="item">许继电气｜思源电气｜东方电气｜四方股份</text><text x="24" y="98" class="small">柔直换流阀 / 控保 / 一次设备 / 系统集成</text></g>
+    <g transform="translate(34 394)"><rect width="432" height="112" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="38" class="cardTitle">AI数据中心供电硬件</text><text x="24" y="72" class="item">中恒电气｜科华数据｜科士达｜金盘科技｜盛弘股份</text><text x="24" y="98" class="small">HVDC / UPS / 干式变压器 / 电能质量</text></g>
+  </g>
+  <g transform="translate(670 170)" filter="url(#shadow)">
+    <rect width="560" height="780" rx="24" fill="#0d2233" stroke="#5cf2b6" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">中游：电网建设运营</text>
+    <text x="34" y="90" class="desc">国网、南网主导的电网投资与数字化升级</text>
+    <g transform="translate(34 126)"><rect width="492" height="112" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="38" class="cardTitle">特高压与主网建设</text><text x="24" y="72" class="item">国网 / 南网 / 跨区输电 / 省级主网</text><text x="24" y="98" class="small">十五五5万亿投资 / 特高压通道 / 主网升级</text></g>
+    <g transform="translate(34 260)"><rect width="492" height="112" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="38" class="cardTitle">智能配电网</text><text x="24" y="72" class="item">东方电子｜国电南自｜宏力达</text><text x="24" y="98" class="small">配网自动化 / 智能开关 / 故障研判</text></g>
+    <g transform="translate(34 394)"><rect width="492" height="112" rx="16" fill="#18233f" stroke="#8b5cf6"/><text x="24" y="38" class="cardTitle">数字电网与算电协同</text><text x="24" y="72" class="item">国网信通｜南网数字</text><text x="24" y="98" class="small">电力光网 / 算力调度 / 电网数字化</text></g>
+    <g transform="translate(34 528)"><rect width="492" height="112" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="38" class="cardTitle">电力设备出海</text><text x="24" y="72" class="item">思源电气｜三星医疗｜海兴电力｜林洋能源｜汉缆股份</text><text x="24" y="98" class="small">欧洲/美国电网升级 / 一带一路 / 智能电表</text></g>
+  </g>
+  <g transform="translate(1308 170)" filter="url(#shadow)">
+    <rect width="440" height="780" rx="24" fill="#0d2233" stroke="#ffd166" stroke-width="2.5"/>
+    <text x="34" y="56" class="stage">下游：终端用电</text>
+    <text x="34" y="90" class="desc">电力需求从传统负荷扩展到算力负荷</text>
+    <g transform="translate(34 132)"><rect width="372" height="132" rx="16" fill="#102f45" stroke="#20d4ff"/><text x="24" y="42" class="cardTitle">AI数据中心 AIDC</text><text x="24" y="80" class="item">高功率机柜｜HVDC｜UPS｜液冷联动</text><text x="24" y="110" class="small">算电协同 / 供电可靠性 / 电能质量</text></g>
+    <g transform="translate(34 302)"><rect width="372" height="132" rx="16" fill="#14352f" stroke="#5cf2b6"/><text x="24" y="42" class="cardTitle">新能源与充电</text><text x="24" y="80" class="item">新能源并网｜储能｜充电桩</text><text x="24" y="110" class="small">分布式接入 / 配网承载力 / 峰谷调节</text></g>
+    <g transform="translate(34 472)"><rect width="372" height="132" rx="16" fill="#2b2a19" stroke="#ffd166"/><text x="24" y="42" class="cardTitle">工业与居民负荷</text><text x="24" y="80" class="item">工业生产｜5G通信｜居民用电</text><text x="24" y="110" class="small">可靠性、电能质量和配网智能化持续升级</text></g>
+    <g transform="translate(34 642)"><rect width="372" height="74" rx="16" fill="#162b3a" stroke="#46677e"/><text x="24" y="46" class="item">能源大动脉：连接发电与算力</text></g>
+  </g>
+  <g stroke="#69e7ff" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.92"><path d="M592 560H650"/><path d="M1230 560H1288"/></g>
+  <g transform="translate(92 1010)" filter="url(#shadow)">
+    <rect width="1656" height="142" rx="24" fill="#0c1d2b" stroke="#304c64"/>
+    <text x="34" y="46" class="cardTitle">动态追踪主线</text>
+    <text x="34" y="88" class="item">1. 国网/南网招标  2. 特高压开工  3. 配网投资占比  4. 算电协同项目  5. AIDC供电订单  6. 电力设备出口与原材料成本</text>
+  </g>
+  <text x="92" y="1200" class="small">产业链研究库 · 电力基础设施 · 2026.06.04</text>
+</svg>

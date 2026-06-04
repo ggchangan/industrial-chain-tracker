@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "光刻胶产业链逻辑追踪",
+    "created": "2026-06-04",
+    "sourceArticle": "../raw/photoresist-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "光刻气/特种气体",
+      "keywords": ["光刻气", "ASML认证", "GIGAPHOTON认证", "高端特气", "氦气"],
+      "companies": ["华特气体"],
+      "whatToTrack": ["双认证进展", "光刻混合气收入", "价格传导", "先进制程客户"]
+    },
+    {
+      "segment": "树脂",
+      "keywords": ["KrF树脂", "ArF树脂", "百吨级量产", "聚羟基苯乙烯"],
+      "companies": ["八亿时空"],
+      "whatToTrack": ["产能爬坡", "客户订单", "单吨毛利", "KrF/ArF树脂验证"]
+    },
+    {
+      "segment": "光引发剂",
+      "keywords": ["光引发剂", "PAG", "PCB光刻胶", "LCD光刻胶", "半导体光刻胶"],
+      "companies": ["强力新材", "兴福电子"],
+      "whatToTrack": ["半导体验证", "30吨产线投产", "经营现金流", "高端PAG突破"]
+    },
+    {
+      "segment": "半导体光刻胶",
+      "keywords": ["KrF", "ArF", "ArFi", "EUV", "g线", "i线"],
+      "companies": ["彤程新材", "南大光电", "上海新阳", "晶瑞电材"],
+      "whatToTrack": ["客户验证", "量产收入", "涨价幅度", "国产化率", "大基金支持"]
+    },
+    {
+      "segment": "材料平台",
+      "keywords": ["CMP", "抛光垫", "蚀刻液", "清洗液", "材料包"],
+      "companies": ["鼎龙股份", "上海新阳"],
+      "whatToTrack": ["材料包协同", "半导体收入占比", "扣非净利", "产能扩张"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-04",
+      "segment": "全产业链",
+      "signal": "建立光刻胶产业链基准逻辑",
+      "impact": "以AI芯片扩产、ArF/KrF高端胶涨价和国产替代验证窗口为主线，追踪上游树脂、光引发剂、特种气体和中游光刻胶制造变化。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "光刻胶产业链深度解析原始稿",
+        "url": "../raw/photoresist-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+    },
+    {
+      "date": "2026-06-04",
+      "segment": "板块催化",
+      "signal": "光刻胶概念持续走强，资金关注ArF/KrF量产与上游材料国产替代",
+      "impact": "市场开始从主题预期转向验证进度、订单放量和业绩兑现，三巨头及上游树脂、光刻气环节成为主要观察对象。",
+      "confidence": "待核验",
+      "source": {
+        "type": "market-note",
+        "platform": "user-provided",
+        "title": "2026年6月近期板块行情",
+        "url": "../raw/photoresist-industry-chain-original.md"
+      },
+      "notes": "需后续核验鼎龙股份、南大光电、华特气体等资金流与涨幅数据。"
+    }
+  ]
+}
