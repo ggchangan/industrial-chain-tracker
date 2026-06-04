@@ -1,0 +1,9 @@
+services:
+  chain-tracker:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: chain-tracker
+    ports:
+      - "8081:80"
+    restart: unless-stopped

@@ -58,49 +58,74 @@ industrial-chain-tracker/
 
 ## 三、部署方案对比
 
-### 方案A：Nginx 子路径（推荐 ⭐）
+### 方案A：Docker 部署（推荐 ⭐）
 
-在现有 3L 项目的 nginx 配置中，加一个 `location /chain/`，别名到 repo 根目录。
+以 `nginx:alpine` 为基础镜像，打包整个仓库为自包含的 Docker 镜像。不依赖宿主机任何环境。
+
+**结构：**
+```
+deploy/
+├── Dockerfile        ← 基于 nginx:alpine，COPY . /app/
+├── nginx.conf        ← root=/app，index=blog/index.html
+└── docker-compose.yml
+```
+
+**容器内部署结构：**
+```
+/app/                    ← nginx root
+├── blog/index.html      ← 首页
+├── diagram/             ← 产业链图
+├── content/             ← 源数据
+├── cover-image/         ← 封面
+└── README.md
+```
+
+**一键运行：**
+```bash
+# 构建
+cd /home/ubuntu/industrial-chain-tracker
+sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
+
+# 启动（8081端口）
+sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chain-tracker:latest
+
+# 或 docker compose
+sudo docker compose -f deploy/docker-compose.yml up -d
+```
+
+**验证：**
+```bash
+curl http://localhost:8081/
+curl http://localhost:8081/blog/assets/app.js
+curl http://localhost:8081/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
+```
+
+**镜像大小：**
+```
+chain-tracker:latest  ~53MB（nginx:alpine ~30MB + 仓库文件 ~23MB）
+```
+
+**更新流程：**
+```bash
+git pull
+sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
+sudo docker stop chain-tracker && sudo docker rm chain-tracker
+sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chain-tracker:latest
+```
 
 **优点：**
-- ✅ 零新增服务、零新增端口
-- ✅ 复用现有 nginx + SSL 证书
-- ✅ 一行配置，无需维护
-- ✅ URL 统一：`https://43.136.177.133/chain/`
+- ✅ 纯 Docker，零宿主机依赖
+- ✅ 环境完全隔离，和其他服务无关
+- ✅ 后续项目改动只需重新构建镜像
+- ✅ 可以推送到镜像仓库供其他机器拉取
 
-**原理：**
-```
-请求 /chain/
-  → nginx alias 到 /home/ubuntu/industrial-chain-tracker/
-  → 默认 index blog/index.html
-  → HTML 中的 ./assets/... 解析为 /chain/blog/assets/... ✓
-  → HTML 中的 ../README.md 解析为 /chain/README.md ✓
-  → data.js 中的 ../diagram/... 解析为 /chain/diagram/... ✓
-```
+### 方案B：Nginx 子路径（备选，不推荐）
 
-**nginx 配置：**
-```nginx
-location /chain/ {
-    alias /home/ubuntu/industrial-chain-tracker/;
-    index blog/index.html;
-}
-```
+在现有 3L 的 nginx 配置上加 location。依赖宿主机 nginx。
 
-**部署操作：** 修改 nginx 配置 → 重载 → 完成
+### 方案C：Python HTTP 服务（不推荐）
 
-### 方案B：独立 Nginx 子域名
-
-新增一个 server 块，绑定子域名（如 `chain.43.136.177.133`）。
-
-**缺点：** ❌ 需要额外 SSL 证书、DNS 配置或自签名证书
-
-### 方案C：Python HTTP 服务
-
-用 `python3 -m http.server` 启动独立端口 + systemd 管理。
-
-**缺点：** ❌ 增加系统服务量、需手动处理 404 回退、比 nginx 直接服务静态文件性能差
-
-**不需要 Docker** — 静态网站用 Docker 是过度设计，nginx 直接服务更简单高效。
+额外系统服务，不如 nginx 直接服务。
 
 ## 四、治理建议
 
