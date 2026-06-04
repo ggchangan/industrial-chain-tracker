@@ -1,16 +1,10 @@
 FROM nginx:alpine
 
-# 无运行时依赖，纯静态文件服务
-# 构建时不需要额外步骤，直接把仓库内容复制进去
+# 目录结构已对齐：index.html + assets/ 在根目录
+# 所有相对路径（./assets/、../diagram/ 等）均正确解析
+# 无需自定义 nginx 配置，默认配置即工作
 
-COPY . /app/
-
-# nginx 配置
-# - web root = /app（对齐 data.js 中的 ../ 相对路径）
-# - 默认首页 = blog/index.html
-# - 纯静态服务，无 SPA 回退
-RUN rm /etc/nginx/conf.d/default.conf
-COPY deploy/nginx.conf /etc/nginx/conf.d/
+COPY . /usr/share/nginx/html/
 
 EXPOSE 80
 

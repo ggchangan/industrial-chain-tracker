@@ -20,63 +20,66 @@
 
 ```
 industrial-chain-tracker/
-├── blog/                     ← 网站根（入口 + 前端资源）
-│   ├── index.html            ← 主页面
-│   └── assets/
-│       ├── app.js            ← 应用逻辑
-│       ├── data.js           ← 产业链配置数据（JSON）
-│       └── styles.css        ← 样式
+├── index.html                 ← 主页面
+├── assets/
+│   ├── app.js                 ← 应用逻辑
+│   ├── data.js                ← 产业链配置数据（JSON）
+│   └── styles.css             ← 样式
 ├── content/
-│   ├── raw/                  ← 18个产业链原始文章（Markdown）
-│   └── updates/              ← 18个产业链动态追踪数据（JSON）
-├── diagram/                  ← 18个产业链图（SVG + PNG）
-├── cover-image/              ← 18个微信封面图（SVG + PNG）
+│   ├── raw/                   ← 18个产业链原始文章（Markdown）
+│   └── updates/               ← 18个产业链动态追踪数据（JSON）
+├── diagram/                   ← 18个产业链图（SVG + PNG）
+├── cover-image/               ← 18个微信封面图（SVG + PNG）
 ├── scripts/
 │   └── sync-blog-data.mjs    ← 数据同步脚本（Node.js，开发工具）
-├── README.md                 ← 项目说明
+├── deploy/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── deploy.sh
+│   └── deployment-analysis.md
+├── README.md
 └── .gitignore
 ```
 
-### 路径引用关系（关键）
+### 路径引用关系（已对齐）
 
-`data.js` 中所有资源路径都是**相对于 HTML 文件**的：
+目录结构调整后，所有相对路径与文件实际位置一致：
 
-```js
-// blog/assets/data.js
-"article": "../content/raw/pcb-industry-chain-original.md",
-"cover":   "../cover-image/pcb-industry-chain/pcb-industry-chain-cover.png",
-"diagram": "../diagram/pcb-industry-chain/pcb-industry-chain-map@2x.png",
-"updateFile": "../content/updates/pcb-chain-updates.json",
 ```
+index.html（/）
+├── ./assets/styles.css    → /assets/styles.css    ✅ 实际在 repo 根 assets/
+├── ./assets/app.js        → /assets/app.js        ✅
+└── ../README.md           → /README.md            ✅ 实际在 repo 根
 
-`index.html` 中 "查看维护说明" 按钮指向：
-```html
-<a class="button" href="../README.md">查看维护说明</a>
+data.js 中的路径：
+├── ../content/raw/xxx     → /content/raw/xxx      ✅
+├── ../diagram/xxx         → /diagram/xxx          ✅
+├── ../cover-image/xxx     → /cover-image/xxx      ✅
+└── ../content/updates/xxx → /content/updates/xxx  ✅
 ```
-
-**这意味着：Web 服务的根目录必须指向仓库根目录（而非 `blog/`），否则所有相对路径会断裂。**
 
 ## 三、部署方案对比
 
 ### 方案A：Docker 部署（推荐 ⭐）
 
-以 `nginx:alpine` 为基础镜像，打包整个仓库为自包含的 Docker 镜像。不依赖宿主机任何环境。
+以 `nginx:alpine` 为基础镜像，打包整个仓库为自包含的 Docker 镜像。目录结构已在仓库根对齐，无需自定义 nginx 配置即可运行。
 
 **结构：**
 ```
 deploy/
-├── Dockerfile        ← 基于 nginx:alpine，COPY . /app/
-├── nginx.conf        ← root=/app，index=blog/index.html
-└── docker-compose.yml
+├── Dockerfile        ← COPY . /usr/share/nginx/html/
+├── nginx.conf        ← 缓存设置（可选，默认配置也可用）
+└── deploy.sh         ← 一键部署脚本
 ```
 
 **容器内部署结构：**
 ```
-/app/                    ← nginx root
-├── blog/index.html      ← 首页
-├── diagram/             ← 产业链图
-├── content/             ← 源数据
-├── cover-image/         ← 封面
+/usr/share/nginx/html/    ← nginx 默认 web 根
+├── index.html            ← 首页
+├── assets/               ← CSS/JS/数据
+├── diagram/              ← 产业链图
+├── content/              ← 源数据
+├── cover-image/          ← 封面
 └── README.md
 ```
 
