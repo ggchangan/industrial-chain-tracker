@@ -167,25 +167,18 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 # Step 1: 确保仓库在服务器上
 ls /home/ubuntu/industrial-chain-tracker/
 
-# Step 2: 修改 nginx 配置
-sudo tee -a /etc/nginx/sites-enabled/3l > /dev/null << 'EOF'
+# Step 2: 一键部署（默认端口 81）
+bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh
 
-    # 产业链研究库（静态站点）
-    location /chain/ {
-        alias /home/ubuntu/industrial-chain-tracker/;
-        index blog/index.html;
-    }
-EOF
+# 或指定端口（不冲突即可）
+bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh 8081
 
-# Step 3: 重载 nginx
-sudo nginx -t && sudo systemctl reload nginx
+# Step 3: 验证
+curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/
+curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/blog/assets/app.js
+curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/README.md
+curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
 
-# Step 4: 验证
-curl -s -o /dev/null -w "%{http_code} %{size_download}B" http://localhost/chain/
-curl -s -o /dev/null -w "%{http_code} %{size_download}B" http://localhost/chain/blog/assets/app.js
-curl -s -o /dev/null -w "%{http_code} %{size_download}B" http://localhost/chain/README.md
-curl -s -o /dev/null -w "%{http_code} %{size_download}B" http://localhost/chain/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
-
-# Step 5: 浏览器访问
-# https://43.136.177.133/chain/
+# Step 4: 浏览器访问
+# http://服务器IP:81/
 ```
