@@ -82,15 +82,18 @@ deploy/
 
 **一键运行：**
 ```bash
-# 构建
+# 默认端口 81
+bash deploy/deploy.sh
+
+# 指定端口
+bash deploy/deploy.sh 8081
+```
+
+**或手动操作：**
+```bash
 cd /home/ubuntu/industrial-chain-tracker
 sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
-
-# 启动（8081端口）
 sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chain-tracker:latest
-
-# 或 docker compose
-sudo docker compose -f deploy/docker-compose.yml up -d
 ```
 
 **验证：**
