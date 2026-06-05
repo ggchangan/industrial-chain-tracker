@@ -503,6 +503,29 @@ function watchArticleHeadings() {
   headings.forEach((heading) => articleHeadingObserver.observe(heading));
 }
 
+function loadTextResource(url) {
+  if (typeof fetch === "function") {
+    return fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.text();
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.onload = () => {
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.responseText);
+      } else {
+        reject(new Error(`HTTP ${request.status}`));
+      }
+    };
+    request.onerror = () => reject(new Error("Network error"));
+    request.send();
+  });
+}
+
 async function renderArticle(chain) {
   const view = document.querySelector("#articleView");
   const toc = document.querySelector("#articleToc");
@@ -511,9 +534,7 @@ async function renderArticle(chain) {
   toc.innerHTML = "";
 
   try {
-    const response = await fetch(chain.article);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const markdown = await response.text();
+    const markdown = await loadTextResource(chain.article);
     if (requestId !== articleRequestId) return;
 
     const rendered = renderMarkdownArticle(markdown);
