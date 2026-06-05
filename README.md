@@ -11,12 +11,12 @@
 
 ## 统一博客入口
 
-- 博客首页：`blog/index.html`
-- 博客数据：`blog/assets/data.js`
-- 博客样式：`blog/assets/styles.css`
-- 博客脚本：`blog/assets/app.js`
+- 博客首页：`index.html`
+- 博客数据：`assets/data.js`
+- 博客样式：`assets/styles.css`
+- 博客脚本：`assets/app.js`
 
-直接打开 `blog/index.html`，即可在页面里切换 PCB、MLCC、光刻机、光刻胶、机器人、智能驾驶、半导体、半导体设备、存储、光模块、AI算力基础设施、电力基础设施、AI能源供给侧、消费电子、创新药、商业航天、储能和脑机接口。
+直接打开 `index.html`，即可在页面里切换 PCB、MLCC、光刻机、光刻胶、机器人、智能驾驶、半导体、半导体设备、存储、光模块、AI算力基础设施、电力基础设施、AI能源供给侧、消费电子、创新药、商业航天、储能和脑机接口。
 
 ## 当前已建档产业链
 
@@ -179,7 +179,7 @@ node scripts/sync-blog-data.mjs
 2. 保存动态追踪数据到 `content/updates/{slug}-chain-updates.json`。
 3. 生成公众号封面到 `cover-image/{slug}-industry-chain/`。
 4. 生成产业链图到 `diagram/{slug}-industry-chain/`。
-5. 在 `blog/assets/data.js` 的 `chains` 数组里新增一条产业链配置。
+5. 在 `assets/data.js` 的 `chains` 数组里新增一条产业链配置。
 6. 运行 `node scripts/sync-blog-data.mjs`，同步动态数据。
 
 ## 建议追踪字段

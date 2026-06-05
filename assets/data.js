@@ -1,7 +1,7 @@
 window.INDUSTRY_CHAIN_LIBRARY = {
   "meta": {
     "title": "产业链研究库",
-    "updated": "2026-06-04",
+    "updated": "2026-06-05",
     "description": "统一沉淀产业链骨架、公众号配图、动态追踪和资料文件。"
   },
   "chains": [

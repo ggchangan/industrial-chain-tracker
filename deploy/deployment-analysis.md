@@ -9,12 +9,12 @@
 |------|----|
 | 类型 | **纯静态网站**（HTML + CSS + JS + 资源文件）|
 | 后端 | 无 |
-| 构建步骤 | 无（`blog/` 下的 HTML/CSS/JS 直接可访问）|
+| 构建步骤 | 无（根目录 `index.html` 与 `assets/` 直接可访问）|
 | 运行时依赖 | 无（只需要一个 HTTP 服务器）|
 | 文件数量 | 117 个 |
 | 总大小 | **51MB**（其中 diagram/ 21MB, cover-image/ 6.9MB, 其他 316KB）|
-| 入口文件 | `blog/index.html` |
-| 数据源 | `blog/assets/data.js`（JSON 配置，引用相对路径）|
+| 入口文件 | `index.html` |
+| 数据源 | `assets/data.js`（JSON 配置，引用相对路径）|
 
 ## 二、目录结构分析
 
@@ -49,13 +49,13 @@ industrial-chain-tracker/
 index.html（/）
 ├── ./assets/styles.css    → /assets/styles.css    ✅ 实际在 repo 根 assets/
 ├── ./assets/app.js        → /assets/app.js        ✅
-└── ../README.md           → /README.md            ✅ 实际在 repo 根
+└── ./README.md            → /README.md            ✅ 实际在 repo 根
 
 data.js 中的路径：
-├── ../content/raw/xxx     → /content/raw/xxx      ✅
-├── ../diagram/xxx         → /diagram/xxx          ✅
-├── ../cover-image/xxx     → /cover-image/xxx      ✅
-└── ../content/updates/xxx → /content/updates/xxx  ✅
+├── ./content/raw/xxx      → /content/raw/xxx      ✅
+├── ./diagram/xxx          → /diagram/xxx          ✅
+├── ./cover-image/xxx      → /cover-image/xxx      ✅
+└── ./content/updates/xxx  → /content/updates/xxx  ✅
 ```
 
 ## 三、部署方案对比
@@ -102,7 +102,7 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 **验证：**
 ```bash
 curl http://localhost:8081/
-curl http://localhost:8081/blog/assets/app.js
+curl http://localhost:8081/assets/app.js
 curl http://localhost:8081/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
 ```
 
@@ -153,7 +153,7 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 ```
 更新 content/raw/*.md 或 content/updates/*.json
   → 运行 scripts/sync-blog-data.mjs（更新 data.js）
-  → 推送到 GitHub（blog/index.html + blog/assets/ 不变，只 data.js 变）
+  → 推送到 GitHub（index.html + assets/ 不变，只 data.js 变）
   → 服务器上 git pull 即可生效（无需重启，nginx 直接读文件）
 ```
 
@@ -178,7 +178,7 @@ bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh 8081
 
 # Step 3: 验证
 curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/
-curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/blog/assets/app.js
+curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/assets/app.js
 curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/README.md
 curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
 

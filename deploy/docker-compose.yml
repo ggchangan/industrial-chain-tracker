@@ -4,6 +4,14 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     container_name: chain-tracker
-    ports:
-      - "8081:80"
+    networks:
+      chain-net:
+        ipv4_address: 172.20.0.2
     restart: unless-stopped
+
+networks:
+  chain-net:
+    name: chain-net
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
