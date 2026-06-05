@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>产业链维护台</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header compact-header">
+      <nav class="nav">
+        <a href="./index.html">返回公开页</a>
+        <a href="./README.md">维护说明</a>
+        <a href="#resources">资源文件</a>
+        <a href="#template">新增模板</a>
+      </nav>
+      <section class="hero">
+        <p class="eyebrow">Maintainer Console</p>
+        <h1>产业链维护台</h1>
+        <p class="lead">这里保留新增产业链、修改原稿、下载图谱和更新动态所需的维护入口。公开阅读页只呈现读者需要的学习路径。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="./README.md">查看维护说明</a>
+          <a class="button" href="./index.html">打开公开页</a>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section id="resources" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Resources</p>
+          <h2>产业链资源文件</h2>
+          <p>按产业链下载或打开原稿、动态追踪、封面和图谱文件。修改内容后，回到公开页验证渲染效果。</p>
+        </div>
+        <div class="maintain-tools">
+          <label for="maintainSearch">筛选产业链</label>
+          <input id="maintainSearch" type="search" placeholder="例如：存储、半导体、AI算力" autocomplete="off" />
+        </div>
+        <div class="maintenance-grid" id="maintenanceGrid"></div>
+      </section>
+
+      <section id="template" class="section">
+        <div class="section-head compact">
+          <p class="eyebrow">Template</p>
+          <h2>新增产业链与动态模板</h2>
+          <p>新增行业时，复制现有结构：原文放 `content/raw/`，动态追踪放 `content/updates/`，图谱放 `diagram/`，封面放 `cover-image/`，再把条目加入 `assets/data.js`。</p>
+        </div>
+        <pre class="maintainer-template"><code>{
+  "date": "YYYY-MM-DD",
+  "segment": "上游 / 中游 / 下游 / 具体环节",
+  "signal": "一句话描述新变化",
+  "impact": "它如何改变产业链逻辑",
+  "confidence": "待核验 / 已核验 / 高置信",
+  "source": {
+    "type": "公告 / 调研 / 视频 / 研报 / 财报",
+    "platform": "来源平台",
+    "title": "来源标题",
+    "url": "来源链接"
+  },
+  "notes": "待验证问题、关键口径、后续跟踪点"
+}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <span>维护台用于内容生产和文件管理；公开阅读请使用首页。</span>
+      <span id="maintainUpdatedAt"></span>
+    </footer>
+
+    <script src="./assets/data.js"></script>
+    <script>
+      const library = window.INDUSTRY_CHAIN_LIBRARY;
+      const grid = document.querySelector("#maintenanceGrid");
+      const search = document.querySelector("#maintainSearch");
+      document.querySelector("#maintainUpdatedAt").textContent = `更新：${library.meta.updated}`;
+
+      function renderCards(query = "") {
+        const normalized = query.trim().toLowerCase();
+        const chains = library.chains.filter((chain) =>
+          `${chain.title} ${chain.shortTitle} ${chain.theme}`.toLowerCase().includes(normalized)
+        );
+
+        grid.innerHTML = chains
+          .map(
+            (chain) => `
+              <article class="maintenance-card">
+                <span>${chain.status}</span>
+                <h3>${chain.title}</h3>
+                <p>${chain.theme}</p>
+                <div class="maintenance-links">
+                  <a href="./index.html?chain=${chain.id}">公开页</a>
+                  <a href="${chain.article}">原稿</a>
+                  <a href="${chain.updateFile}">动态追踪</a>
+                  <a href="${chain.cover}">封面</a>
+                  <a href="${chain.diagram}">图谱 PNG</a>
+                  <a href="${chain.diagramSvg}">图谱 SVG</a>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      search.addEventListener("input", () => renderCards(search.value));
+      renderCards();
+    </script>
+  </body>
+</html>

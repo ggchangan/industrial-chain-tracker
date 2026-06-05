@@ -45,6 +45,10 @@ a {
   padding: 22px clamp(18px, 5vw, 72px) 56px;
 }
 
+.compact-header {
+  min-height: auto;
+}
+
 .nav {
   align-items: center;
   display: flex;
@@ -355,9 +359,7 @@ main {
 .industry-card,
 .logic-card,
 .panel,
-.timeline-item,
-.library-grid a,
-.template pre {
+.timeline-item {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1088,32 +1090,92 @@ main {
   margin: 0;
 }
 
-.library-grid {
+.maintain-tools {
+  align-items: end;
   display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+  max-width: 420px;
 }
 
-.library-grid a {
+.maintain-tools label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.maintain-tools input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+  min-height: 42px;
+  outline: none;
+  padding: 0 12px;
+}
+
+.maintain-tools input:focus {
+  border-color: var(--cyan);
+}
+
+.maintenance-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.maintenance-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 18px;
 }
 
-.library-grid span {
-  color: var(--muted);
+.maintenance-card span {
+  color: var(--green);
   display: block;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
   margin-bottom: 8px;
 }
 
-.library-grid strong {
-  color: #c8f7ff;
-  display: block;
-  font-size: 14px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
+.maintenance-card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
-.template pre {
+.maintenance-card p {
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.maintenance-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.maintenance-links a {
+  background: rgba(106, 165, 255, 0.08);
+  border: 1px solid rgba(106, 165, 255, 0.22);
+  border-radius: var(--radius);
+  color: #dbeafe;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 28px;
+  padding: 5px 8px;
+}
+
+.maintenance-links a:hover {
+  border-color: var(--cyan);
+  color: var(--text);
+}
+
+.maintainer-template {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   color: #d5f6ff;
   font-size: 13px;
   line-height: 1.7;
@@ -1133,6 +1195,11 @@ footer {
   padding: 28px clamp(18px, 5vw, 72px);
 }
 
+footer a {
+  color: #c8f7ff;
+  font-weight: 800;
+}
+
 @media (max-width: 980px) {
   .chain-grid,
   .industry-grid,
@@ -1142,7 +1209,7 @@ footer {
   .split,
   .current-chain,
   .visual-section,
-  .library-grid {
+  .maintenance-grid {
     grid-template-columns: 1fr;
   }
 
