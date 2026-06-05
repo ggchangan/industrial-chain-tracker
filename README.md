@@ -173,6 +173,12 @@
 node scripts/sync-blog-data.mjs
 ```
 
+同步后建议再运行校验脚本，确认页面数据引用的文章、图片、动态文件都存在，动态数据结构也能被页面消费：
+
+```bash
+node scripts/validate-blog-data.mjs
+```
+
 ## 新增一条产业链的方法
 
 1. 保存原始文章到 `content/raw/{slug}-industry-chain-original.md`。
