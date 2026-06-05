@@ -7,11 +7,112 @@ const chainColors = {
   downstream: "var(--green)"
 };
 
+let searchIndex = [];
+
 function el(tag, className, html) {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (html !== undefined) node.innerHTML = html;
   return node;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function normalize(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function compactText(values) {
+  return values.flat(Infinity).filter(Boolean).join(" ");
+}
+
+function createSearchIndex() {
+  searchIndex = library.chains.flatMap((chain) => {
+    const base = {
+      chainId: chain.id,
+      chainTitle: chain.title
+    };
+    const entries = [
+      {
+        ...base,
+        type: "产业链",
+        title: chain.title,
+        body: compactText([chain.shortTitle, chain.theme, chain.status])
+      }
+    ];
+
+    chain.chain.forEach((section) => {
+      entries.push({
+        ...base,
+        type: "骨架",
+        title: section.title || section.name,
+        body: compactText([
+          section.role,
+          (section.items || section.segments || []).map((item) => [
+            item.name,
+            item.detail,
+            item.logic,
+            item.companies
+          ])
+        ])
+      });
+    });
+
+    chain.logic.forEach((item) => {
+      entries.push({
+        ...base,
+        type: "逻辑",
+        title: item.title,
+        body: item.body
+      });
+    });
+
+    (chain.trackingProfile?.metrics || []).forEach((item) => {
+      entries.push({
+        ...base,
+        type: "追踪",
+        title: item.name,
+        body: compactText([item.why, item.signals])
+      });
+    });
+
+    chain.watchlist.forEach((item) => {
+      entries.push({
+        ...base,
+        type: "观察",
+        title: item.segment,
+        body: compactText([item.signals, item.companies])
+      });
+    });
+
+    chain.updates.forEach((item) => {
+      entries.push({
+        ...base,
+        type: "动态",
+        title: item.signal,
+        body: compactText([
+          item.date,
+          item.segment,
+          item.impact,
+          item.confidence,
+          item.sourceTitle,
+          item.notes
+        ])
+      });
+    });
+
+    return entries.map((entry) => ({
+      ...entry,
+      haystack: normalize(`${entry.chainTitle} ${entry.type} ${entry.title} ${entry.body}`)
+    }));
+  });
 }
 
 function activeChain() {
@@ -24,6 +125,77 @@ function setChain(id) {
   url.searchParams.set("chain", id);
   window.history.replaceState({}, "", url);
   render();
+}
+
+function scoreSearchResult(entry, terms) {
+  const title = normalize(entry.title);
+  const chainTitle = normalize(entry.chainTitle);
+  return terms.reduce((score, term) => {
+    if (title.includes(term)) return score + 5;
+    if (chainTitle.includes(term)) return score + 3;
+    if (entry.haystack.includes(term)) return score + 1;
+    return score;
+  }, 0);
+}
+
+function excerptSearchResult(entry, terms) {
+  const body = String(entry.body || "");
+  const normalizedBody = normalize(body);
+  const matchedTerm = terms.find((term) => normalizedBody.includes(term));
+  if (!matchedTerm) return body.slice(0, 96);
+
+  const start = Math.max(0, normalizedBody.indexOf(matchedTerm) - 36);
+  const end = Math.min(body.length, start + 112);
+  return `${start > 0 ? "..." : ""}${body.slice(start, end)}${end < body.length ? "..." : ""}`;
+}
+
+function renderSearchResults(query) {
+  const root = document.querySelector("#searchResults");
+  const terms = normalize(query).split(/\s+/).filter(Boolean);
+
+  if (!terms.length) {
+    root.innerHTML = "";
+    return;
+  }
+
+  const allMatches = searchIndex
+    .filter((entry) => terms.every((term) => entry.haystack.includes(term)))
+    .map((entry) => ({
+      ...entry,
+      score: scoreSearchResult(entry, terms),
+      excerpt: excerptSearchResult(entry, terms)
+    }))
+    .sort((a, b) => b.score - a.score || a.chainTitle.localeCompare(b.chainTitle, "zh-CN"));
+  const matches = allMatches.slice(0, 10);
+
+  if (!matches.length) {
+    root.innerHTML = `<p class="search-empty">没有找到匹配项，换个公司、材料或环节关键词试试。</p>`;
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="search-summary">找到 ${allMatches.length} 条相关结果${allMatches.length > matches.length ? `，显示前 ${matches.length} 条` : ""}</div>
+    <div class="search-list">
+      ${matches
+        .map(
+          (item) => `
+            <button class="search-result" type="button" data-chain="${escapeHtml(item.chainId)}">
+              <span>${escapeHtml(item.type)} · ${escapeHtml(item.chainTitle)}</span>
+              <strong>${escapeHtml(item.title)}</strong>
+              <p>${escapeHtml(item.excerpt)}</p>
+            </button>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+
+  root.querySelectorAll(".search-result").forEach((button) => {
+    button.addEventListener("click", () => {
+      setChain(button.dataset.chain);
+      document.querySelector("#currentTitle").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
 }
 
 function renderIndustryGrid(chain) {
@@ -190,4 +362,18 @@ function render() {
   renderFiles(chain);
 }
 
+function initSearch() {
+  createSearchIndex();
+  const input = document.querySelector("#librarySearch");
+  const clear = document.querySelector("#clearSearch");
+
+  input.addEventListener("input", () => renderSearchResults(input.value));
+  clear.addEventListener("click", () => {
+    input.value = "";
+    renderSearchResults("");
+    input.focus();
+  });
+}
+
+initSearch();
 render();

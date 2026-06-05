@@ -108,6 +108,120 @@ h1 {
   margin-top: 34px;
 }
 
+.search-panel {
+  margin-top: 34px;
+  max-width: 840px;
+}
+
+.search-panel label {
+  color: var(--muted);
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.search-box {
+  align-items: center;
+  background: rgba(17, 26, 36, 0.88);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 8px;
+}
+
+.search-box:focus-within {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(39, 217, 232, 0.14);
+}
+
+.search-box input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  min-height: 42px;
+  min-width: 0;
+  outline: 0;
+  padding: 0 8px;
+}
+
+.search-box input::placeholder {
+  color: #6f828d;
+}
+
+.search-box button {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.search-box button:hover {
+  border-color: var(--cyan);
+}
+
+.search-results {
+  margin-top: 12px;
+}
+
+.search-summary,
+.search-empty {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+.search-list {
+  display: grid;
+  gap: 10px;
+}
+
+.search-result {
+  background: rgba(17, 26, 36, 0.92);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.search-result:hover {
+  border-color: var(--cyan);
+}
+
+.search-result span {
+  color: var(--green);
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.search-result strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.search-result p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
 .button {
   align-items: center;
   border: 1px solid var(--line);
@@ -500,5 +614,13 @@ footer {
 
   .hero {
     padding-top: 52px;
+  }
+
+  .search-box {
+    grid-template-columns: 1fr;
+  }
+
+  .search-box button {
+    width: 100%;
   }
 }
