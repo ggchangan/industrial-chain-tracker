@@ -293,8 +293,9 @@ h1 {
 }
 
 .search-target-flash {
+  background: rgba(118, 222, 180, 0.07);
   box-shadow: 0 0 0 2px rgba(118, 222, 180, 0.46), 0 18px 54px rgba(118, 222, 180, 0.12);
-  transition: box-shadow 180ms ease;
+  transition: background 180ms ease, box-shadow 180ms ease;
 }
 
 .button {

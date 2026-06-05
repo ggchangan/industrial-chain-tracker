@@ -77,14 +77,15 @@ function createCompanyIndex() {
   companyIndex = new Map();
 
   library.chains.forEach((chain) => {
-    chain.chain.forEach((section) => {
+    chain.chain.forEach((section, sectionIndex) => {
       const items = section.items || section.segments || [];
-      items.forEach((item) => {
+      items.forEach((item, itemIndex) => {
         splitCompanies(item.companies).forEach((company) => {
           const appearances = companyIndex.get(company) || [];
           appearances.push({
             chainId: chain.id,
             chainTitle: chain.title,
+            target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`),
             segment: item.name,
             section: section.title || section.name,
             detail: item.detail || item.logic || ""
@@ -125,15 +126,16 @@ function createTopicIndex() {
       }
     });
 
-    chain.chain.forEach((section) => {
+    chain.chain.forEach((section, sectionIndex) => {
       const items = section.items || section.segments || [];
-      items.forEach((item) => {
+      items.forEach((item, itemIndex) => {
         const text = compactText([item.name, item.detail, item.logic, item.companies]);
         trackedTopics.forEach((topic) => {
           if (text.includes(topic)) {
             addTopicAppearance(topic, {
               chainId: chain.id,
               chainTitle: chain.title,
+              target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`),
               segment: item.name,
               context: item.detail || item.logic || section.role,
               companies: item.companies || ""
@@ -143,13 +145,14 @@ function createTopicIndex() {
       });
     });
 
-    chain.watchlist.forEach((item) => {
+    chain.watchlist.forEach((item, index) => {
       const text = compactText([item.segment, item.signals, item.companies]);
       trackedTopics.forEach((topic) => {
         if (text.includes(topic)) {
           addTopicAppearance(topic, {
             chainId: chain.id,
             chainTitle: chain.title,
+            target: searchTargetKey(chain.id, "watch", index),
             segment: item.segment,
             context: item.signals.join("、"),
             companies: item.companies || ""
@@ -298,7 +301,7 @@ function scrollToSearchTarget(targetKey) {
 
   node.scrollIntoView({ behavior: "smooth", block: "center" });
   node.classList.add("search-target-flash");
-  window.setTimeout(() => node.classList.remove("search-target-flash"), 1400);
+  window.setTimeout(() => node.classList.remove("search-target-flash"), 6000);
 }
 
 function openSearchResult(chainId, targetKey) {
@@ -817,7 +820,7 @@ function openCompanyPanel(company) {
         ${appearances
           .map(
             (item) => `
-              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-term="${escapeHtml(item.segment)}">
+              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-target="${escapeHtml(item.target || "")}">
                 <span>${escapeHtml(item.chainTitle)}</span>
                 <strong>${escapeHtml(item.segment)}</strong>
                 <p>${escapeHtml(item.section)} · ${escapeHtml(item.detail)}</p>
@@ -837,8 +840,7 @@ function openCompanyPanel(company) {
   panel.querySelectorAll(".company-appearances button").forEach((button) => {
     button.addEventListener("click", () => {
       closeCompanyPanel();
-      setChain(button.dataset.chain);
-      window.setTimeout(() => focusArticleTerm(button.dataset.term), 120);
+      openSearchResult(button.dataset.chain, button.dataset.target);
     });
   });
 }
@@ -859,7 +861,7 @@ function openTopicPanel(topic) {
         ${appearances
           .map(
             (item) => `
-              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-term="${escapeHtml(item.segment)}">
+              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-target="${escapeHtml(item.target || "")}" data-term="${escapeHtml(item.segment)}">
                 <span>${escapeHtml(item.chainTitle)}</span>
                 <strong>${escapeHtml(item.segment)}</strong>
                 <p>${escapeHtml(item.context || "")}</p>
@@ -885,6 +887,10 @@ function openTopicPanel(topic) {
   panel.querySelectorAll(".company-appearances button").forEach((button) => {
     button.addEventListener("click", () => {
       closeCompanyPanel();
+      if (button.dataset.target) {
+        openSearchResult(button.dataset.chain, button.dataset.target);
+        return;
+      }
       setChain(button.dataset.chain);
       window.setTimeout(() => focusArticleTerm(button.dataset.term), 240);
     });
@@ -974,8 +980,9 @@ function renderChain(chain) {
     card.append(el("p", "role", section.role));
 
     const items = section.items || section.segments || [];
-    items.forEach((item) => {
+    items.forEach((item, itemIndex) => {
       const block = el("div", "chain-item");
+      block.dataset.searchTarget = searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`);
       const itemTopic = topicIndex.has(item.name) ? item.name : "";
       const name = el("button", "chain-node", escapeHtml(item.name));
       name.type = "button";
