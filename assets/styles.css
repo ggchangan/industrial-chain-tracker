@@ -480,6 +480,31 @@ main {
   gap: 6px;
 }
 
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+
+.topic-chip {
+  background: rgba(118, 222, 180, 0.08);
+  border: 1px solid rgba(118, 222, 180, 0.24);
+  border-radius: var(--radius);
+  color: #b9f4d7;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+.topic-chip:hover {
+  border-color: var(--green);
+  color: var(--text);
+}
+
 .company-chip {
   background: rgba(106, 165, 255, 0.08);
   border: 1px solid rgba(106, 165, 255, 0.22);
@@ -1011,12 +1036,39 @@ main {
   border-color: var(--cyan);
 }
 
+.company-appearances small {
+  color: #dbeafe;
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
 .company-appearances span {
   color: var(--green);
   display: block;
   font-size: 12px;
   font-weight: 800;
   margin-bottom: 6px;
+}
+
+.topic-search-button {
+  background: rgba(118, 222, 180, 0.08);
+  border: 1px solid rgba(118, 222, 180, 0.26);
+  border-radius: var(--radius);
+  color: #b9f4d7;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 14px;
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.topic-search-button:hover {
+  border-color: var(--green);
+  color: var(--text);
 }
 
 .company-appearances strong {
