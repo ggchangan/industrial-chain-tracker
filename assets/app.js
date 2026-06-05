@@ -12,7 +12,7 @@ let activeSearchType = "全部";
 let currentSearchQuery = "";
 let searchInput;
 let articleRequestId = 0;
-let articleHeadingObserver;
+let articleScrollCleanup;
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -482,25 +482,36 @@ function renderArticleToc(toc) {
 }
 
 function watchArticleHeadings() {
-  if (articleHeadingObserver) articleHeadingObserver.disconnect();
-
+  if (articleScrollCleanup) articleScrollCleanup();
   const links = [...document.querySelectorAll("#articleToc a")];
-  const headings = [...document.querySelectorAll("#articleView .article-heading")];
-  if (!links.length || !headings.length || !("IntersectionObserver" in window)) return;
+  const headings = links.map((link) => document.getElementById(link.dataset.heading)).filter(Boolean);
+  let frame = 0;
 
-  articleHeadingObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (!visible) return;
+  if (!links.length || !headings.length) return;
 
-      links.forEach((link) => link.classList.toggle("active", link.dataset.heading === visible.target.id));
-    },
-    { rootMargin: "-18% 0px -70% 0px", threshold: [0, 1] }
-  );
+  const setActiveHeading = () => {
+    frame = 0;
+    const offset = Math.min(window.innerHeight * 0.22, 180);
+    const current =
+      headings
+        .map((heading) => ({ heading, top: heading.getBoundingClientRect().top }))
+        .sort((a, b) => Math.abs(a.top - offset) - Math.abs(b.top - offset))[0]?.heading || headings[0];
 
-  headings.forEach((heading) => articleHeadingObserver.observe(heading));
+    links.forEach((link) => link.classList.toggle("active", link.dataset.heading === current.id));
+  };
+
+  const schedule = () => {
+    if (!frame) frame = window.requestAnimationFrame(setActiveHeading);
+  };
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule);
+  articleScrollCleanup = () => {
+    window.removeEventListener("scroll", schedule);
+    window.removeEventListener("resize", schedule);
+    if (frame) window.cancelAnimationFrame(frame);
+  };
+  setActiveHeading();
 }
 
 function loadTextResource(url) {
