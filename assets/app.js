@@ -13,6 +13,7 @@ let currentSearchQuery = "";
 let searchInput;
 let articleRequestId = 0;
 let articleScrollCleanup;
+let pendingArticleTarget = null;
 let companyIndex = new Map();
 let topicIndex = new Map();
 
@@ -297,9 +298,13 @@ function scrollToSearchTarget(targetKey) {
   const fallback = document.querySelector("#currentTitle");
   const node = target || fallback;
 
+  flashAndScroll(node);
+}
+
+function flashAndScroll(node, block = "center") {
   if (!node) return;
 
-  node.scrollIntoView({ behavior: "smooth", block: "center" });
+  node.scrollIntoView({ behavior: "smooth", block });
   node.classList.add("search-target-flash");
   window.setTimeout(() => node.classList.remove("search-target-flash"), 6000);
 }
@@ -307,6 +312,11 @@ function scrollToSearchTarget(targetKey) {
 function openSearchResult(chainId, targetKey) {
   setChain(chainId);
   window.requestAnimationFrame(() => scrollToSearchTarget(targetKey));
+}
+
+function openCompanyArticleTarget(chainId, fallbackTarget, company) {
+  pendingArticleTarget = { chainId, fallbackTarget, term: company };
+  setChain(chainId);
 }
 
 function syncSearchUrl() {
@@ -794,6 +804,18 @@ function findArticleHeading(keyword) {
   return headings.find((heading) => normalize(heading.textContent).includes(normalizedKeyword));
 }
 
+function findArticleMention(keyword) {
+  const normalizedKeyword = normalize(keyword);
+  const headings = [...document.querySelectorAll("#articleView .article-heading")];
+  const bodyNodes = [...document.querySelectorAll("#articleView p, #articleView li, #articleView td, #articleView blockquote")];
+  const match =
+    headings.find((node) => normalize(node.textContent).includes(normalizedKeyword)) ||
+    bodyNodes.find((node) => normalize(node.textContent).includes(normalizedKeyword));
+
+  if (!match) return null;
+  return match.closest("tr, li, blockquote, p, .article-heading") || match;
+}
+
 function focusArticleTerm(term) {
   const target = findArticleHeading(term);
   if (target) {
@@ -803,6 +825,19 @@ function focusArticleTerm(term) {
   }
 
   searchLibrary(term);
+}
+
+function consumePendingArticleTarget(chainId) {
+  if (!pendingArticleTarget || pendingArticleTarget.chainId !== chainId) return;
+
+  const target = findArticleMention(pendingArticleTarget.term);
+  if (target) {
+    flashAndScroll(target, "center");
+  } else {
+    scrollToSearchTarget(pendingArticleTarget.fallbackTarget);
+  }
+
+  pendingArticleTarget = null;
 }
 
 function openCompanyPanel(company) {
@@ -840,7 +875,7 @@ function openCompanyPanel(company) {
   panel.querySelectorAll(".company-appearances button").forEach((button) => {
     button.addEventListener("click", () => {
       closeCompanyPanel();
-      openSearchResult(button.dataset.chain, button.dataset.target);
+      openCompanyArticleTarget(button.dataset.chain, button.dataset.target, company);
     });
   });
 }
@@ -919,6 +954,7 @@ async function renderArticle(chain) {
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
     scrollToArticleHash();
+    consumePendingArticleTarget(chain.id);
   } catch (error) {
     view.innerHTML = `
       <div class="article-error">
@@ -927,6 +963,10 @@ async function renderArticle(chain) {
         <p>${escapeHtml(error.message)}</p>
       </div>
     `;
+    if (pendingArticleTarget?.chainId === chain.id) {
+      scrollToSearchTarget(pendingArticleTarget.fallbackTarget);
+      pendingArticleTarget = null;
+    }
   }
 }
 
