@@ -180,6 +180,39 @@ h1 {
   margin: 0 0 10px;
 }
 
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.search-filter {
+  align-items: center;
+  background: rgba(20, 33, 48, 0.7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.search-filter:hover,
+.search-filter.active {
+  border-color: var(--cyan);
+  color: var(--text);
+}
+
+.search-filter span {
+  color: var(--amber);
+}
+
 .search-list {
   display: grid;
   gap: 10px;
