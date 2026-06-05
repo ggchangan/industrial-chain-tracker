@@ -292,6 +292,11 @@ h1 {
   padding: 0 2px;
 }
 
+.search-target-flash {
+  box-shadow: 0 0 0 2px rgba(118, 222, 180, 0.46), 0 18px 54px rgba(118, 222, 180, 0.12);
+  transition: box-shadow 180ms ease;
+}
+
 .button {
   align-items: center;
   border: 1px solid var(--line);
