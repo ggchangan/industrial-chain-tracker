@@ -320,8 +320,37 @@ function renderSearchResults(query) {
   });
 }
 
-function stripFrontmatter(source) {
-  return source.replace(/^---\n[\s\S]*?\n---\n?/, "");
+function parseFrontmatter(source) {
+  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  const meta = {};
+
+  if (!match) return { body: source, meta };
+
+  const lines = match[1].split(/\r?\n/);
+  let listKey = "";
+
+  lines.forEach((line) => {
+    const listItem = line.match(/^\s+-\s+(.+)$/);
+    if (listItem && listKey) {
+      meta[listKey].push(listItem[1].trim());
+      return;
+    }
+
+    const pair = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+    if (!pair) return;
+
+    const key = pair[1];
+    const value = pair[2].trim().replace(/^["']|["']$/g, "");
+    if (value) {
+      meta[key] = value;
+      listKey = "";
+    } else {
+      meta[key] = [];
+      listKey = key;
+    }
+  });
+
+  return { body: source.slice(match[0].length), meta };
 }
 
 function slugifyHeading(text, index) {
@@ -357,13 +386,16 @@ function isTableDivider(line) {
 }
 
 function articleBlockKind(text) {
-  if (/免责声明|风险提示|核心风险/.test(text)) return "risk";
+  if (/免责声明|股市有风险|不构成投资建议/.test(text)) return "disclaimer";
+  if (/风险提示|核心风险|估值回调风险|供给释放风险|技术路线风险|宏观经济风险/.test(text)) return "risk";
+  if (/阅读提示|核心驱动|核心逻辑/.test(text)) return "insight";
   if (/附录|速查表|财务数据|一季度/.test(text)) return "appendix";
   return "";
 }
 
 function renderMarkdownArticle(markdown) {
-  const lines = stripFrontmatter(markdown).split(/\r?\n/);
+  const parsed = parseFrontmatter(markdown);
+  const lines = parsed.body.split(/\r?\n/);
   const html = [];
   const toc = [];
   let index = 0;
@@ -414,6 +446,7 @@ function renderMarkdownArticle(markdown) {
       }
       html.push(`
         <div class="article-table-wrap${currentKind ? ` ${currentKind}` : ""}">
+          <div class="article-table-hint">横向滚动查看完整表格</div>
           <table>
             <thead><tr>${headers.map((cell) => `<th>${renderInlineMarkdown(cell)}</th>`).join("")}</tr></thead>
             <tbody>
@@ -463,7 +496,7 @@ function renderMarkdownArticle(markdown) {
     html.push(`<p class="${kind ? `article-note ${kind}` : ""}">${renderInlineMarkdown(text)}</p>`);
   }
 
-  return { html: html.join("\n"), toc };
+  return { html: html.join("\n"), meta: parsed.meta, toc };
 }
 
 function renderArticleToc(toc) {
@@ -474,11 +507,29 @@ function renderArticleToc(toc) {
   }
 
   root.innerHTML = `
-    <div class="article-toc-title">目录</div>
-    <nav>
-      ${toc.map((item) => `<a class="toc-level-${item.level}" href="#${item.id}" data-heading="${item.id}">${escapeHtml(item.text)}</a>`).join("")}
-    </nav>
+    <details class="article-toc-details" open>
+      <summary>目录</summary>
+      <nav>
+        ${toc.map((item) => `<a class="toc-level-${item.level}" href="#${item.id}" data-heading="${item.id}">${escapeHtml(item.text)}</a>`).join("")}
+      </nav>
+    </details>
   `;
+
+  root.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const target = document.getElementById(link.dataset.heading);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.replaceState({}, "", `#${link.dataset.heading}`);
+    });
+  });
+
+  const details = root.querySelector(".article-toc-details");
+  const setTocMode = () => {
+    details.open = window.matchMedia("(min-width: 981px)").matches;
+  };
+  setTocMode();
 }
 
 function watchArticleHeadings() {
@@ -537,6 +588,39 @@ function loadTextResource(url) {
   });
 }
 
+function renderArticleMeta(meta, chain) {
+  const tags = Array.isArray(meta.tags) ? meta.tags : [];
+
+  return `
+    <div class="article-meta">
+      <div>
+        <span>原稿</span>
+        <strong>${escapeHtml(meta.title || chain.title)}</strong>
+      </div>
+      <div>
+        <span>创建</span>
+        <strong>${escapeHtml(meta.created || library.meta.updated)}</strong>
+      </div>
+      <div>
+        <span>状态</span>
+        <strong>${escapeHtml(meta.status || "raw")}</strong>
+      </div>
+      <a href="${escapeHtml(chain.article)}">打开 Markdown 原稿</a>
+      ${tags.length ? `<div class="article-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+    </div>
+  `;
+}
+
+function scrollToArticleHash() {
+  if (!window.location.hash) return;
+
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  const target = document.getElementById(id);
+  if (target?.classList.contains("article-heading")) {
+    window.setTimeout(() => target.scrollIntoView({ block: "start" }), 60);
+  }
+}
+
 async function renderArticle(chain) {
   const view = document.querySelector("#articleView");
   const toc = document.querySelector("#articleToc");
@@ -549,9 +633,10 @@ async function renderArticle(chain) {
     if (requestId !== articleRequestId) return;
 
     const rendered = renderMarkdownArticle(markdown);
-    view.innerHTML = rendered.html;
+    view.innerHTML = `${renderArticleMeta(rendered.meta, chain)}${rendered.html}`;
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
+    scrollToArticleHash();
   } catch (error) {
     view.innerHTML = `
       <div class="article-error">
