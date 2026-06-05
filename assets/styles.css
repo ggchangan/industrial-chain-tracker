@@ -445,6 +445,24 @@ main {
   margin-bottom: 8px;
 }
 
+.chain-node {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  padding: 0;
+  text-align: left;
+}
+
+.chain-node:hover {
+  color: var(--cyan);
+}
+
 .chain-item p {
   font-size: 13px;
   margin-bottom: 8px;
@@ -454,6 +472,30 @@ main {
   color: #dbeafe;
   font-size: 12px;
   line-height: 1.6;
+}
+
+.company-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.company-chip {
+  background: rgba(106, 165, 255, 0.08);
+  border: 1px solid rgba(106, 165, 255, 0.22);
+  border-radius: var(--radius);
+  color: #dbeafe;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+.company-chip:hover {
+  border-color: var(--cyan);
+  color: var(--text);
 }
 
 .visual-section {
@@ -898,6 +940,94 @@ main {
   border: 1px solid rgba(243, 111, 145, 0.28);
   border-radius: var(--radius);
   padding: 18px;
+}
+
+.company-panel-backdrop {
+  background: rgba(5, 12, 18, 0.72);
+  inset: 0;
+  position: fixed;
+  z-index: 30;
+}
+
+.company-panel {
+  background: #101a24;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  max-height: min(720px, calc(100vh - 36px));
+  max-width: 560px;
+  overflow: auto;
+  padding: 24px;
+  position: fixed;
+  right: clamp(18px, 5vw, 72px);
+  top: 18px;
+  width: min(560px, calc(100vw - 36px));
+  z-index: 31;
+}
+
+.company-panel-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 22px;
+  height: 36px;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  width: 36px;
+}
+
+.company-panel h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.company-panel p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.company-appearances {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.company-appearances button {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  padding: 14px;
+  text-align: left;
+}
+
+.company-appearances button:hover {
+  border-color: var(--cyan);
+}
+
+.company-appearances span {
+  color: var(--green);
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.company-appearances strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.company-appearances p {
+  font-size: 13px;
+  margin: 0;
 }
 
 .library-grid {

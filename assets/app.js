@@ -13,6 +13,7 @@ let currentSearchQuery = "";
 let searchInput;
 let articleRequestId = 0;
 let articleScrollCleanup;
+let companyIndex = new Map();
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -36,6 +37,37 @@ function normalize(value) {
 
 function compactText(values) {
   return values.flat(Infinity).filter(Boolean).join(" ");
+}
+
+function splitCompanies(value) {
+  return String(value || "")
+    .split(/[、,，/]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .filter((item) => !/瓶颈|基本盘|模块|服务器|数据中心|消费电子|信息娱乐|工业控制/.test(item));
+}
+
+function createCompanyIndex() {
+  companyIndex = new Map();
+
+  library.chains.forEach((chain) => {
+    chain.chain.forEach((section) => {
+      const items = section.items || section.segments || [];
+      items.forEach((item) => {
+        splitCompanies(item.companies).forEach((company) => {
+          const appearances = companyIndex.get(company) || [];
+          appearances.push({
+            chainId: chain.id,
+            chainTitle: chain.title,
+            segment: item.name,
+            section: section.title || section.name,
+            detail: item.detail || item.logic || ""
+          });
+          companyIndex.set(company, appearances);
+        });
+      });
+    });
+  });
 }
 
 function highlightText(value, terms) {
@@ -621,6 +653,73 @@ function scrollToArticleHash() {
   }
 }
 
+function findArticleHeading(keyword) {
+  const normalizedKeyword = normalize(keyword);
+  const headings = [...document.querySelectorAll("#articleView .article-heading")];
+  return headings.find((heading) => normalize(heading.textContent).includes(normalizedKeyword));
+}
+
+function focusArticleTerm(term) {
+  const target = findArticleHeading(term);
+  if (target) {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState({}, "", `#${target.id}`);
+    return;
+  }
+
+  searchInput.value = term;
+  activeSearchType = "全部";
+  renderSearchResults(term);
+  document.querySelector("#chains").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openCompanyPanel(company) {
+  const appearances = companyIndex.get(company) || [];
+  const panel = document.querySelector("#companyPanel");
+
+  panel.innerHTML = `
+    <div class="company-panel-backdrop" data-close="company"></div>
+    <section class="company-panel" role="dialog" aria-modal="true" aria-label="${escapeHtml(company)} 公司卡片">
+      <button class="company-panel-close" type="button" data-close="company" aria-label="关闭">×</button>
+      <p class="eyebrow">Company</p>
+      <h2>${escapeHtml(company)}</h2>
+      <p>该公司在产业链研究库中出现 ${appearances.length} 次。</p>
+      <div class="company-appearances">
+        ${appearances
+          .map(
+            (item) => `
+              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-term="${escapeHtml(item.segment)}">
+                <span>${escapeHtml(item.chainTitle)}</span>
+                <strong>${escapeHtml(item.segment)}</strong>
+                <p>${escapeHtml(item.section)} · ${escapeHtml(item.detail)}</p>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+  panel.hidden = false;
+
+  panel.querySelectorAll("[data-close='company']").forEach((button) => {
+    button.addEventListener("click", closeCompanyPanel);
+  });
+
+  panel.querySelectorAll(".company-appearances button").forEach((button) => {
+    button.addEventListener("click", () => {
+      closeCompanyPanel();
+      setChain(button.dataset.chain);
+      window.setTimeout(() => focusArticleTerm(button.dataset.term), 120);
+    });
+  });
+}
+
+function closeCompanyPanel() {
+  const panel = document.querySelector("#companyPanel");
+  panel.hidden = true;
+  panel.innerHTML = "";
+}
+
 async function renderArticle(chain) {
   const view = document.querySelector("#articleView");
   const toc = document.querySelector("#articleToc");
@@ -699,9 +798,25 @@ function renderChain(chain) {
     const items = section.items || section.segments || [];
     items.forEach((item) => {
       const block = el("div", "chain-item");
-      block.append(el("strong", "", item.name));
+      const name = el("button", "chain-node", escapeHtml(item.name));
+      name.type = "button";
+      name.addEventListener("click", () => focusArticleTerm(item.name));
+      block.append(name);
       block.append(el("p", "", item.detail || item.logic));
-      block.append(el("div", "company", item.companies));
+
+      const companies = el("div", "company company-chips");
+      const parsedCompanies = splitCompanies(item.companies);
+      if (parsedCompanies.length) {
+        parsedCompanies.forEach((company) => {
+          const chip = el("button", "company-chip", escapeHtml(company));
+          chip.type = "button";
+          chip.addEventListener("click", () => openCompanyPanel(company));
+          companies.append(chip);
+        });
+      } else {
+        companies.textContent = item.companies;
+      }
+      block.append(companies);
       card.append(block);
     });
 
@@ -816,6 +931,7 @@ function render() {
 
 function initSearch() {
   createSearchIndex();
+  createCompanyIndex();
   searchInput = document.querySelector("#librarySearch");
   const clear = document.querySelector("#clearSearch");
   const params = new URLSearchParams(window.location.search);
