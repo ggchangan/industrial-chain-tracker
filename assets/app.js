@@ -14,6 +14,28 @@ let searchInput;
 let articleRequestId = 0;
 let articleScrollCleanup;
 let companyIndex = new Map();
+let topicIndex = new Map();
+
+const trackedTopics = [
+  "AI服务器",
+  "新能源车",
+  "新能源汽车",
+  "车规",
+  "军工",
+  "消费电子",
+  "数据中心",
+  "先进封装",
+  "国产替代",
+  "高频高速",
+  "低介电",
+  "光模块",
+  "液冷",
+  "特高压",
+  "储能",
+  "机器人",
+  "医疗康复",
+  "商业航天"
+];
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -68,6 +90,75 @@ function createCompanyIndex() {
       });
     });
   });
+}
+
+function addTopicAppearance(topic, appearance) {
+  const appearances = topicIndex.get(topic) || [];
+  if (
+    !appearances.some(
+      (item) => item.chainId === appearance.chainId && item.segment === appearance.segment && item.context === appearance.context
+    )
+  ) {
+    appearances.push(appearance);
+  }
+  topicIndex.set(topic, appearances);
+}
+
+function createTopicIndex() {
+  topicIndex = new Map();
+
+  library.chains.forEach((chain) => {
+    const chainText = compactText([chain.title, chain.theme, chain.logic.map((item) => [item.title, item.body])]);
+    trackedTopics.forEach((topic) => {
+      if (chainText.includes(topic)) {
+        addTopicAppearance(topic, {
+          chainId: chain.id,
+          chainTitle: chain.title,
+          segment: "产业链主题",
+          context: chain.theme,
+          companies: ""
+        });
+      }
+    });
+
+    chain.chain.forEach((section) => {
+      const items = section.items || section.segments || [];
+      items.forEach((item) => {
+        const text = compactText([item.name, item.detail, item.logic, item.companies]);
+        trackedTopics.forEach((topic) => {
+          if (text.includes(topic)) {
+            addTopicAppearance(topic, {
+              chainId: chain.id,
+              chainTitle: chain.title,
+              segment: item.name,
+              context: item.detail || item.logic || section.role,
+              companies: item.companies || ""
+            });
+          }
+        });
+      });
+    });
+
+    chain.watchlist.forEach((item) => {
+      const text = compactText([item.segment, item.signals, item.companies]);
+      trackedTopics.forEach((topic) => {
+        if (text.includes(topic)) {
+          addTopicAppearance(topic, {
+            chainId: chain.id,
+            chainTitle: chain.title,
+            segment: item.segment,
+            context: item.signals.join("、"),
+            companies: item.companies || ""
+          });
+        }
+      });
+    });
+  });
+}
+
+function topicsInText(value) {
+  const text = String(value || "");
+  return trackedTopics.filter((topic) => text.includes(topic) && topicIndex.has(topic));
 }
 
 function highlightText(value, terms) {
@@ -714,6 +805,57 @@ function openCompanyPanel(company) {
   });
 }
 
+function openTopicPanel(topic) {
+  const appearances = topicIndex.get(topic) || [];
+  const panel = document.querySelector("#companyPanel");
+
+  panel.innerHTML = `
+    <div class="company-panel-backdrop" data-close="company"></div>
+    <section class="company-panel topic-panel" role="dialog" aria-modal="true" aria-label="${escapeHtml(topic)} 主题图谱">
+      <button class="company-panel-close" type="button" data-close="company" aria-label="关闭">×</button>
+      <p class="eyebrow">Topic Map</p>
+      <h2>${escapeHtml(topic)}</h2>
+      <p>该主题在产业链研究库中关联 ${appearances.length} 个环节，可用于查看需求、材料、制造和应用之间的交叉关系。</p>
+      <button class="topic-search-button" type="button" data-topic-search="${escapeHtml(topic)}">查看全库搜索</button>
+      <div class="company-appearances">
+        ${appearances
+          .map(
+            (item) => `
+              <button type="button" data-chain="${escapeHtml(item.chainId)}" data-term="${escapeHtml(item.segment)}">
+                <span>${escapeHtml(item.chainTitle)}</span>
+                <strong>${escapeHtml(item.segment)}</strong>
+                <p>${escapeHtml(item.context || "")}</p>
+                ${item.companies ? `<small>${escapeHtml(item.companies)}</small>` : ""}
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+  panel.hidden = false;
+
+  panel.querySelectorAll("[data-close='company']").forEach((button) => {
+    button.addEventListener("click", closeCompanyPanel);
+  });
+
+  panel.querySelector("[data-topic-search]").addEventListener("click", () => {
+    closeCompanyPanel();
+    searchInput.value = topic;
+    activeSearchType = "全部";
+    renderSearchResults(topic);
+    document.querySelector("#chains").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  panel.querySelectorAll(".company-appearances button").forEach((button) => {
+    button.addEventListener("click", () => {
+      closeCompanyPanel();
+      setChain(button.dataset.chain);
+      window.setTimeout(() => focusArticleTerm(button.dataset.term), 240);
+    });
+  });
+}
+
 function closeCompanyPanel() {
   const panel = document.querySelector("#companyPanel");
   panel.hidden = true;
@@ -798,11 +940,30 @@ function renderChain(chain) {
     const items = section.items || section.segments || [];
     items.forEach((item) => {
       const block = el("div", "chain-item");
+      const itemTopic = topicIndex.has(item.name) ? item.name : "";
       const name = el("button", "chain-node", escapeHtml(item.name));
       name.type = "button";
-      name.addEventListener("click", () => focusArticleTerm(item.name));
+      name.addEventListener("click", () => {
+        if (itemTopic) {
+          openTopicPanel(itemTopic);
+          return;
+        }
+        focusArticleTerm(item.name);
+      });
       block.append(name);
       block.append(el("p", "", item.detail || item.logic));
+
+      const topics = topicsInText(compactText([item.name, item.detail, item.logic, item.companies]));
+      if (topics.length) {
+        const topicChips = el("div", "topic-chips");
+        topics.forEach((topic) => {
+          const chip = el("button", "topic-chip", escapeHtml(topic));
+          chip.type = "button";
+          chip.addEventListener("click", () => openTopicPanel(topic));
+          topicChips.append(chip);
+        });
+        block.append(topicChips);
+      }
 
       const companies = el("div", "company company-chips");
       const parsedCompanies = splitCompanies(item.companies);
@@ -932,6 +1093,7 @@ function render() {
 function initSearch() {
   createSearchIndex();
   createCompanyIndex();
+  createTopicIndex();
   searchInput = document.querySelector("#librarySearch");
   const clear = document.querySelector("#clearSearch");
   const params = new URLSearchParams(window.location.search);
