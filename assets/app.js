@@ -11,6 +11,8 @@ let searchIndex = [];
 let activeSearchType = "全部";
 let currentSearchQuery = "";
 let searchInput;
+let articleRequestId = 0;
+let articleScrollCleanup;
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -318,6 +320,249 @@ function renderSearchResults(query) {
   });
 }
 
+function stripFrontmatter(source) {
+  return source.replace(/^---\n[\s\S]*?\n---\n?/, "");
+}
+
+function slugifyHeading(text, index) {
+  return `article-${index}-${normalize(text)
+    .replace(/[^\w\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "")}`;
+}
+
+function safeLinkHref(href) {
+  const value = href.trim();
+  if (/^(https?:|\.\/|\/|#)/i.test(value)) return escapeHtml(value);
+  return "#";
+}
+
+function renderInlineMarkdown(value) {
+  return escapeHtml(value)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${safeLinkHref(href)}">${text}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+}
+
+function splitTableRow(line) {
+  return line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function isTableDivider(line) {
+  return splitTableRow(line).every((cell) => /^:?-{3,}:?$/.test(cell));
+}
+
+function articleBlockKind(text) {
+  if (/免责声明|风险提示|核心风险/.test(text)) return "risk";
+  if (/附录|速查表|财务数据|一季度/.test(text)) return "appendix";
+  return "";
+}
+
+function renderMarkdownArticle(markdown) {
+  const lines = stripFrontmatter(markdown).split(/\r?\n/);
+  const html = [];
+  const toc = [];
+  let index = 0;
+  let headingIndex = 0;
+  let currentKind = "";
+
+  while (index < lines.length) {
+    const line = lines[index];
+
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,4})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      const text = heading[2].trim();
+      const id = slugifyHeading(text, headingIndex);
+      currentKind = articleBlockKind(text) || currentKind;
+      const kindClass = currentKind ? ` ${currentKind}` : "";
+      html.push(`<h${level} id="${id}" class="article-heading${kindClass}">${renderInlineMarkdown(text)}</h${level}>`);
+      if (level <= 3) toc.push({ id, level, text });
+      headingIndex += 1;
+      index += 1;
+      continue;
+    }
+
+    if (line.trim().startsWith(">")) {
+      const quote = [];
+      while (index < lines.length && lines[index].trim().startsWith(">")) {
+        quote.push(lines[index].replace(/^\s*>\s?/, ""));
+        index += 1;
+      }
+      const text = quote.join(" ");
+      const kind = articleBlockKind(text);
+      html.push(`<blockquote class="${kind ? `article-note ${kind}` : ""}">${renderInlineMarkdown(text)}</blockquote>`);
+      continue;
+    }
+
+    if (index + 1 < lines.length && line.includes("|") && isTableDivider(lines[index + 1])) {
+      const headers = splitTableRow(line);
+      const rows = [];
+      index += 2;
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim()) {
+        rows.push(splitTableRow(lines[index]));
+        index += 1;
+      }
+      html.push(`
+        <div class="article-table-wrap${currentKind ? ` ${currentKind}` : ""}">
+          <table>
+            <thead><tr>${headers.map((cell) => `<th>${renderInlineMarkdown(cell)}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map((row) => `<tr>${row.map((cell) => `<td>${renderInlineMarkdown(cell)}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      `);
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\s*[-*]\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*[-*]\s+/, ""));
+        index += 1;
+      }
+      html.push(`<ul class="${currentKind ? `article-list ${currentKind}` : "article-list"}">${items.map((item) => `<li>${renderInlineMarkdown(item)}</li>`).join("")}</ul>`);
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\s*\d+\.\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*\d+\.\s+/, ""));
+        index += 1;
+      }
+      html.push(`<ol class="${currentKind ? `article-list ${currentKind}` : "article-list"}">${items.map((item) => `<li>${renderInlineMarkdown(item)}</li>`).join("")}</ol>`);
+      continue;
+    }
+
+    const paragraph = [];
+    while (
+      index < lines.length &&
+      lines[index].trim() &&
+      !/^(#{1,4})\s+/.test(lines[index]) &&
+      !lines[index].trim().startsWith(">") &&
+      !(index + 1 < lines.length && lines[index].includes("|") && isTableDivider(lines[index + 1])) &&
+      !/^\s*[-*]\s+/.test(lines[index]) &&
+      !/^\s*\d+\.\s+/.test(lines[index])
+    ) {
+      paragraph.push(lines[index]);
+      index += 1;
+    }
+    const text = paragraph.join(" ");
+    const kind = articleBlockKind(text);
+    html.push(`<p class="${kind ? `article-note ${kind}` : ""}">${renderInlineMarkdown(text)}</p>`);
+  }
+
+  return { html: html.join("\n"), toc };
+}
+
+function renderArticleToc(toc) {
+  const root = document.querySelector("#articleToc");
+  if (!toc.length) {
+    root.innerHTML = "";
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="article-toc-title">目录</div>
+    <nav>
+      ${toc.map((item) => `<a class="toc-level-${item.level}" href="#${item.id}" data-heading="${item.id}">${escapeHtml(item.text)}</a>`).join("")}
+    </nav>
+  `;
+}
+
+function watchArticleHeadings() {
+  if (articleScrollCleanup) articleScrollCleanup();
+  const links = [...document.querySelectorAll("#articleToc a")];
+  const headings = links.map((link) => document.getElementById(link.dataset.heading)).filter(Boolean);
+  let frame = 0;
+
+  if (!links.length || !headings.length) return;
+
+  const setActiveHeading = () => {
+    frame = 0;
+    const offset = Math.min(window.innerHeight * 0.22, 180);
+    const current =
+      headings
+        .map((heading) => ({ heading, top: heading.getBoundingClientRect().top }))
+        .sort((a, b) => Math.abs(a.top - offset) - Math.abs(b.top - offset))[0]?.heading || headings[0];
+
+    links.forEach((link) => link.classList.toggle("active", link.dataset.heading === current.id));
+  };
+
+  const schedule = () => {
+    if (!frame) frame = window.requestAnimationFrame(setActiveHeading);
+  };
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule);
+  articleScrollCleanup = () => {
+    window.removeEventListener("scroll", schedule);
+    window.removeEventListener("resize", schedule);
+    if (frame) window.cancelAnimationFrame(frame);
+  };
+  setActiveHeading();
+}
+
+function loadTextResource(url) {
+  if (typeof fetch === "function") {
+    return fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.text();
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.onload = () => {
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.responseText);
+      } else {
+        reject(new Error(`HTTP ${request.status}`));
+      }
+    };
+    request.onerror = () => reject(new Error("Network error"));
+    request.send();
+  });
+}
+
+async function renderArticle(chain) {
+  const view = document.querySelector("#articleView");
+  const toc = document.querySelector("#articleToc");
+  const requestId = ++articleRequestId;
+  view.innerHTML = `<p class="article-loading">正在加载原文...</p>`;
+  toc.innerHTML = "";
+
+  try {
+    const markdown = await loadTextResource(chain.article);
+    if (requestId !== articleRequestId) return;
+
+    const rendered = renderMarkdownArticle(markdown);
+    view.innerHTML = rendered.html;
+    renderArticleToc(rendered.toc);
+    watchArticleHeadings();
+  } catch (error) {
+    view.innerHTML = `
+      <div class="article-error">
+        <strong>原文加载失败</strong>
+        <p>请通过资料库打开 Markdown 原稿：<a href="${escapeHtml(chain.article)}">${escapeHtml(chain.article.replace("./", ""))}</a></p>
+        <p>${escapeHtml(error.message)}</p>
+      </div>
+    `;
+  }
+}
+
 function renderIndustryGrid(chain) {
   const root = document.querySelector("#industryGrid");
   root.innerHTML = "";
@@ -344,7 +589,8 @@ function renderCurrent(chain) {
   const quick = document.querySelector("#quickLinks");
   quick.innerHTML = "";
   [
-    ["原始文章", chain.article],
+    ["原文阅读", "#article"],
+    ["原稿文件", chain.article],
     ["Cover图", chain.cover],
     ["产业链图", chain.diagram],
     ["动态数据", chain.updateFile]
@@ -480,6 +726,7 @@ function render() {
   renderTimeline(chain);
   renderWatchlist(chain);
   renderFiles(chain);
+  renderArticle(chain);
 }
 
 function initSearch() {
