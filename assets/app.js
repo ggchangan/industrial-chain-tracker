@@ -203,6 +203,34 @@ function searchTypeCounts(matches) {
   return counts;
 }
 
+async function copySearchLink(button) {
+  const link = window.location.href;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(link);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = link;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    button.textContent = "已复制";
+  } catch {
+    button.textContent = "复制失败";
+  }
+
+  window.setTimeout(() => {
+    button.textContent = "复制链接";
+  }, 1400);
+}
+
 function renderSearchResults(query) {
   const root = document.querySelector("#searchResults");
   currentSearchQuery = query;
@@ -240,7 +268,10 @@ function renderSearchResults(query) {
   }
 
   root.innerHTML = `
-    <div class="search-summary">找到 ${allMatches.length} 条相关结果${filteredMatches.length > matches.length ? `，当前显示前 ${matches.length} 条` : ""}</div>
+    <div class="search-tools">
+      <div class="search-summary">找到 ${allMatches.length} 条相关结果${filteredMatches.length > matches.length ? `，当前显示前 ${matches.length} 条` : ""}</div>
+      <button class="copy-search-link" type="button">复制链接</button>
+    </div>
     <div class="search-filters" role="group" aria-label="搜索结果类型筛选">
       ${availableTypes
         .map(
@@ -266,6 +297,10 @@ function renderSearchResults(query) {
         .join("")}
     </div>
   `;
+
+  root.querySelector(".copy-search-link").addEventListener("click", (event) => {
+    copySearchLink(event.currentTarget);
+  });
 
   root.querySelectorAll(".search-filter").forEach((button) => {
     button.addEventListener("click", () => {
