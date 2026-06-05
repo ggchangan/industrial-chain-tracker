@@ -8,6 +8,8 @@ const chainColors = {
 };
 
 let searchIndex = [];
+let activeSearchType = "全部";
+let currentSearchQuery = "";
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -173,12 +175,22 @@ function excerptSearchResult(entry, terms) {
   return `${start > 0 ? "..." : ""}${body.slice(start, end)}${end < body.length ? "..." : ""}`;
 }
 
+function searchTypeCounts(matches) {
+  const counts = { "全部": matches.length };
+  matches.forEach((item) => {
+    counts[item.type] = (counts[item.type] || 0) + 1;
+  });
+  return counts;
+}
+
 function renderSearchResults(query) {
   const root = document.querySelector("#searchResults");
+  currentSearchQuery = query;
   const terms = normalize(query).split(/\s+/).filter(Boolean);
 
   if (!terms.length) {
     root.innerHTML = "";
+    activeSearchType = "全部";
     return;
   }
 
@@ -190,7 +202,15 @@ function renderSearchResults(query) {
       excerpt: excerptSearchResult(entry, terms)
     }))
     .sort((a, b) => b.score - a.score || a.chainTitle.localeCompare(b.chainTitle, "zh-CN"));
-  const matches = allMatches.slice(0, 10);
+  const typeCounts = searchTypeCounts(allMatches);
+  const availableTypes = ["全部", "产业链", "骨架", "逻辑", "追踪", "观察", "动态"].filter((type) => typeCounts[type]);
+
+  if (!typeCounts[activeSearchType]) {
+    activeSearchType = "全部";
+  }
+
+  const filteredMatches = activeSearchType === "全部" ? allMatches : allMatches.filter((item) => item.type === activeSearchType);
+  const matches = filteredMatches.slice(0, 10);
 
   if (!matches.length) {
     root.innerHTML = `<p class="search-empty">没有找到匹配项，换个公司、材料或环节关键词试试。</p>`;
@@ -198,7 +218,18 @@ function renderSearchResults(query) {
   }
 
   root.innerHTML = `
-    <div class="search-summary">找到 ${allMatches.length} 条相关结果${allMatches.length > matches.length ? `，显示前 ${matches.length} 条` : ""}</div>
+    <div class="search-summary">找到 ${allMatches.length} 条相关结果${filteredMatches.length > matches.length ? `，当前显示前 ${matches.length} 条` : ""}</div>
+    <div class="search-filters" role="group" aria-label="搜索结果类型筛选">
+      ${availableTypes
+        .map(
+          (type) => `
+            <button class="search-filter${type === activeSearchType ? " active" : ""}" type="button" data-type="${escapeHtml(type)}" aria-pressed="${type === activeSearchType}">
+              ${escapeHtml(type)} <span>${typeCounts[type]}</span>
+            </button>
+          `
+        )
+        .join("")}
+    </div>
     <div class="search-list">
       ${matches
         .map(
@@ -213,6 +244,13 @@ function renderSearchResults(query) {
         .join("")}
     </div>
   `;
+
+  root.querySelectorAll(".search-filter").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeSearchType = button.dataset.type;
+      renderSearchResults(currentSearchQuery);
+    });
+  });
 
   root.querySelectorAll(".search-result").forEach((button) => {
     button.addEventListener("click", () => {
