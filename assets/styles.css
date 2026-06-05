@@ -621,6 +621,59 @@ main {
   padding: clamp(22px, 4vw, 42px);
 }
 
+.article-meta {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-bottom: 30px;
+  padding: 16px;
+}
+
+.article-meta div {
+  min-width: 110px;
+}
+
+.article-meta span {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.article-meta strong {
+  color: var(--text);
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.article-meta a {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--cyan);
+  font-size: 13px;
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.article-tags span {
+  background: rgba(39, 217, 232, 0.08);
+  border: 1px solid rgba(39, 217, 232, 0.2);
+  border-radius: 999px;
+  color: #d8f7ff;
+  padding: 4px 8px;
+}
+
 .article-view h1,
 .article-view h2,
 .article-view h3,
@@ -711,6 +764,22 @@ main {
   border-left-color: var(--rose);
 }
 
+.article-view blockquote.disclaimer,
+.article-note.disclaimer,
+.article-list.disclaimer {
+  background: rgba(150, 170, 181, 0.09);
+  border-left-color: var(--muted);
+  color: #b7c7ce;
+  font-size: 14px;
+}
+
+.article-view blockquote.insight,
+.article-note.insight,
+.article-list.insight {
+  background: rgba(53, 211, 154, 0.08);
+  border-left-color: var(--green);
+}
+
 .article-view .appendix,
 .article-table-wrap.appendix {
   opacity: 0.92;
@@ -721,6 +790,16 @@ main {
   border-radius: var(--radius);
   margin: 22px 0;
   overflow-x: auto;
+  position: relative;
+}
+
+.article-table-hint {
+  background: rgba(20, 33, 48, 0.92);
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 12px;
 }
 
 .article-table-wrap table {
@@ -760,11 +839,29 @@ main {
   top: 18px;
 }
 
-.article-toc-title {
+.article-toc details {
+  margin: 0;
+}
+
+.article-toc summary {
   color: var(--text);
+  cursor: pointer;
   font-size: 15px;
   font-weight: 800;
+  list-style: none;
   margin-bottom: 12px;
+}
+
+.article-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.article-toc summary::after {
+  color: var(--muted);
+  content: "展开/收起";
+  float: right;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .article-toc nav {
@@ -872,7 +969,13 @@ footer {
   .article-toc {
     max-height: none;
     order: -1;
+    padding: 14px;
     position: static;
+  }
+
+  .article-toc nav {
+    max-height: 42vh;
+    overflow: auto;
   }
 
   .chain-card {
