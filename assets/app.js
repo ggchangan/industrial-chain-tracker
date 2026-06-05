@@ -170,7 +170,7 @@ function renderFiles(chain) {
     ["产业链图 PNG", chain.diagram],
     ["产业链图 SVG", chain.diagramSvg]
   ].forEach(([label, href]) => {
-    const link = el("a", "", `<span>${label}</span><strong>${href.replace("../", "")}</strong>`);
+    const link = el("a", "", `<span>${label}</span><strong>${href.replace("./", "")}</strong>`);
     link.href = href;
     root.append(link);
   });
