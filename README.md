@@ -170,13 +170,13 @@
 然后运行同步脚本，刷新博客页面数据：
 
 ```bash
-node scripts/sync-blog-data.mjs
+npm run sync
 ```
 
 同步后建议再运行校验脚本，确认页面数据引用的文章、图片、动态文件都存在，动态数据结构也能被页面消费：
 
 ```bash
-node scripts/validate-blog-data.mjs
+npm run validate
 ```
 
 ## 新增一条产业链的方法
@@ -186,7 +186,8 @@ node scripts/validate-blog-data.mjs
 3. 生成公众号封面到 `cover-image/{slug}-industry-chain/`。
 4. 生成产业链图到 `diagram/{slug}-industry-chain/`。
 5. 在 `assets/data.js` 的 `chains` 数组里新增一条产业链配置。
-6. 运行 `node scripts/sync-blog-data.mjs`，同步动态数据。
+6. 运行 `npm run sync`，同步动态数据。
+7. 运行 `npm run validate`，确认页面数据和文件引用完整。
 
 ## 建议追踪字段
 

@@ -1,0 +1,10 @@
+{
+  "name": "industrial-chain-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check assets/app.js && node --check scripts/sync-blog-data.mjs && node --check scripts/validate-blog-data.mjs",
+    "sync": "node scripts/sync-blog-data.mjs",
+    "validate": "node scripts/validate-blog-data.mjs"
+  }
+}

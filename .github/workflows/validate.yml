@@ -19,10 +19,7 @@ jobs:
           node-version: 20
 
       - name: Check JavaScript syntax
-        run: |
-          node --check assets/app.js
-          node --check scripts/sync-blog-data.mjs
-          node --check scripts/validate-blog-data.mjs
+        run: npm run check
 
       - name: Validate blog data
-        run: node scripts/validate-blog-data.mjs
+        run: npm run validate
