@@ -10,6 +10,7 @@ const chainColors = {
 let searchIndex = [];
 let activeSearchType = "全部";
 let currentSearchQuery = "";
+let searchInput;
 
 function el(tag, className, html) {
   const node = document.createElement(tag);
@@ -153,6 +154,25 @@ function setChain(id) {
   render();
 }
 
+function syncSearchUrl() {
+  const url = new URL(window.location.href);
+  const query = currentSearchQuery.trim();
+
+  if (query) {
+    url.searchParams.set("q", query);
+  } else {
+    url.searchParams.delete("q");
+  }
+
+  if (query && activeSearchType !== "全部") {
+    url.searchParams.set("type", activeSearchType);
+  } else {
+    url.searchParams.delete("type");
+  }
+
+  window.history.replaceState({}, "", url);
+}
+
 function scoreSearchResult(entry, terms) {
   const title = normalize(entry.title);
   const chainTitle = normalize(entry.chainTitle);
@@ -191,6 +211,7 @@ function renderSearchResults(query) {
   if (!terms.length) {
     root.innerHTML = "";
     activeSearchType = "全部";
+    syncSearchUrl();
     return;
   }
 
@@ -208,6 +229,7 @@ function renderSearchResults(query) {
   if (!typeCounts[activeSearchType]) {
     activeSearchType = "全部";
   }
+  syncSearchUrl();
 
   const filteredMatches = activeSearchType === "全部" ? allMatches : allMatches.filter((item) => item.type === activeSearchType);
   const matches = filteredMatches.slice(0, 10);
@@ -249,6 +271,7 @@ function renderSearchResults(query) {
     button.addEventListener("click", () => {
       activeSearchType = button.dataset.type;
       renderSearchResults(currentSearchQuery);
+      searchInput?.focus();
     });
   });
 
@@ -426,15 +449,21 @@ function render() {
 
 function initSearch() {
   createSearchIndex();
-  const input = document.querySelector("#librarySearch");
+  searchInput = document.querySelector("#librarySearch");
   const clear = document.querySelector("#clearSearch");
+  const params = new URLSearchParams(window.location.search);
+  const initialQuery = params.get("q") || "";
+  activeSearchType = params.get("type") || "全部";
 
-  input.addEventListener("input", () => renderSearchResults(input.value));
+  searchInput.value = initialQuery;
+  searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
   clear.addEventListener("click", () => {
-    input.value = "";
+    searchInput.value = "";
     renderSearchResults("");
-    input.focus();
+    searchInput.focus();
   });
+
+  if (initialQuery) renderSearchResults(initialQuery);
 }
 
 initSearch();
