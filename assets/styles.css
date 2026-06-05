@@ -173,11 +173,41 @@ h1 {
   margin-top: 12px;
 }
 
-.search-summary,
 .search-empty {
   color: var(--muted);
   font-size: 13px;
   margin: 0 0 10px;
+}
+
+.search-tools {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin: 0 0 10px;
+}
+
+.search-summary {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.copy-search-link {
+  background: rgba(20, 33, 48, 0.7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.copy-search-link:hover {
+  border-color: var(--cyan);
 }
 
 .search-filters {
