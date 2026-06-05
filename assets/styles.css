@@ -366,17 +366,21 @@ main {
 }
 
 .industry-grid {
-  display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  scroll-snap-type: x proximity;
 }
 
 .industry-card {
+  flex: 0 0 min(360px, 82vw);
   color: var(--text);
   cursor: pointer;
   font: inherit;
-  min-height: 190px;
-  padding: 22px;
+  min-height: 132px;
+  padding: 18px;
+  scroll-snap-align: start;
   text-align: left;
 }
 
@@ -385,24 +389,16 @@ main {
   border-color: var(--cyan);
 }
 
-.industry-card span {
-  color: var(--green);
-  display: block;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 14px;
-}
-
 .industry-card strong {
   display: block;
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 .industry-card p {
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -531,17 +527,15 @@ main {
   color: var(--text);
 }
 
-.visual-section {
-  align-items: start;
-  display: grid;
-  gap: 28px;
-  grid-template-columns: 320px 1fr;
+.chain-map-panel {
+  margin-top: 34px;
 }
 
 .diagram-link {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   display: block;
+  max-width: 1280px;
   overflow: hidden;
 }
 
@@ -1208,7 +1202,6 @@ footer a {
   .article-layout,
   .split,
   .current-chain,
-  .visual-section,
   .maintenance-grid {
     grid-template-columns: 1fr;
   }
