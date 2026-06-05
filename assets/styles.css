@@ -222,6 +222,13 @@ h1 {
   margin: 0;
 }
 
+.search-result mark {
+  background: rgba(242, 168, 59, 0.24);
+  border-radius: 4px;
+  color: #ffe8b5;
+  padding: 0 2px;
+}
+
 .button {
   align-items: center;
   border: 1px solid var(--line);

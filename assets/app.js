@@ -33,6 +33,30 @@ function compactText(values) {
   return values.flat(Infinity).filter(Boolean).join(" ");
 }
 
+function highlightText(value, terms) {
+  const text = String(value ?? "");
+  const normalizedText = text.toLowerCase();
+  const uniqueTerms = [...new Set(terms)].sort((a, b) => b.length - a.length);
+  let html = "";
+  let index = 0;
+
+  while (index < text.length) {
+    const term = uniqueTerms.find((item) => normalizedText.startsWith(item, index));
+
+    if (!term) {
+      html += escapeHtml(text[index]);
+      index += 1;
+      continue;
+    }
+
+    const end = index + term.length;
+    html += `<mark>${escapeHtml(text.slice(index, end))}</mark>`;
+    index = end;
+  }
+
+  return html;
+}
+
 function createSearchIndex() {
   searchIndex = library.chains.flatMap((chain) => {
     const base = {
@@ -180,9 +204,9 @@ function renderSearchResults(query) {
         .map(
           (item) => `
             <button class="search-result" type="button" data-chain="${escapeHtml(item.chainId)}">
-              <span>${escapeHtml(item.type)} · ${escapeHtml(item.chainTitle)}</span>
-              <strong>${escapeHtml(item.title)}</strong>
-              <p>${escapeHtml(item.excerpt)}</p>
+              <span>${escapeHtml(item.type)} · ${highlightText(item.chainTitle, terms)}</span>
+              <strong>${highlightText(item.title, terms)}</strong>
+              <p>${highlightText(item.excerpt, terms)}</p>
             </button>
           `
         )
