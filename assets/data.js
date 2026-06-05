@@ -57,11 +57,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/pcb-industry-chain-original.md",
-      "cover": "../cover-image/pcb-industry-chain/pcb-industry-chain-cover.png",
-      "diagram": "../diagram/pcb-industry-chain/pcb-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/pcb-industry-chain/pcb-industry-chain-map.svg",
-      "updateFile": "../content/updates/pcb-chain-updates.json",
+      "article": "./content/raw/pcb-industry-chain-original.md",
+      "cover": "./cover-image/pcb-industry-chain/pcb-industry-chain-cover.png",
+      "diagram": "./diagram/pcb-industry-chain/pcb-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/pcb-industry-chain/pcb-industry-chain-map.svg",
+      "updateFile": "./content/updates/pcb-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -213,7 +213,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI服务器需求为主线，形成“上游材料 → CCL → PCB制造 → 终端应用”的传导框架，后续动态围绕涨价、扩产、认证、订单四类变量更新。",
           "confidence": "基准框架",
           "sourceTitle": "PCB产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/pcb-industry-chain-original.md",
+          "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         }
       ]
@@ -280,11 +280,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/mlcc-industry-chain-original.md",
-      "cover": "../cover-image/mlcc-industry-chain/mlcc-industry-chain-cover.png",
-      "diagram": "../diagram/mlcc-industry-chain/mlcc-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/mlcc-industry-chain/mlcc-industry-chain-map.svg",
-      "updateFile": "../content/updates/mlcc-chain-updates.json",
+      "article": "./content/raw/mlcc-industry-chain-original.md",
+      "cover": "./cover-image/mlcc-industry-chain/mlcc-industry-chain-cover.png",
+      "diagram": "./diagram/mlcc-industry-chain/mlcc-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/mlcc-industry-chain/mlcc-industry-chain-map.svg",
+      "updateFile": "./content/updates/mlcc-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -426,7 +426,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI服务器和新能源车需求共振为主线，追踪材料、制造、终端应用的涨价、扩产、认证和国产替代变化。",
           "confidence": "基准框架",
           "sourceTitle": "MLCC产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/mlcc-industry-chain-original.md",
+          "sourceUrl": "./content/raw/mlcc-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         }
       ]
@@ -493,11 +493,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/lithography-industry-chain-original.md",
-      "cover": "../cover-image/lithography-industry-chain/lithography-industry-chain-cover.png",
-      "diagram": "../diagram/lithography-industry-chain/lithography-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/lithography-industry-chain/lithography-industry-chain-map.svg",
-      "updateFile": "../content/updates/lithography-chain-updates.json",
+      "article": "./content/raw/lithography-industry-chain-original.md",
+      "cover": "./cover-image/lithography-industry-chain/lithography-industry-chain-cover.png",
+      "diagram": "./diagram/lithography-industry-chain/lithography-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/lithography-industry-chain/lithography-industry-chain-map.svg",
+      "updateFile": "./content/updates/lithography-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -659,7 +659,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI芯片扩产、自主可控和SMEE整机突破为主线，追踪光学、光源、真空结构件、电子特气、整机制造和直写光刻路线变化。",
           "confidence": "基准框架",
           "sourceTitle": "光刻机产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/lithography-industry-chain-original.md",
+          "sourceUrl": "./content/raw/lithography-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -669,7 +669,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "市场短期将电子特气、精密零部件、光学系统和直写光刻视为国产替代最具弹性的方向。",
           "confidence": "待核验",
           "sourceTitle": "2026年6月4日板块热点回顾",
-          "sourceUrl": "../content/raw/lithography-industry-chain-original.md",
+          "sourceUrl": "./content/raw/lithography-industry-chain-original.md",
           "notes": "需后续核验中船特气、华特气体、新莱应材、芯碁微装等涨幅及资金流数据。"
         }
       ]
@@ -736,11 +736,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/photoresist-industry-chain-original.md",
-      "cover": "../cover-image/photoresist-industry-chain/photoresist-industry-chain-cover.png",
-      "diagram": "../diagram/photoresist-industry-chain/photoresist-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/photoresist-industry-chain/photoresist-industry-chain-map.svg",
-      "updateFile": "../content/updates/photoresist-chain-updates.json",
+      "article": "./content/raw/photoresist-industry-chain-original.md",
+      "cover": "./cover-image/photoresist-industry-chain/photoresist-industry-chain-cover.png",
+      "diagram": "./diagram/photoresist-industry-chain/photoresist-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/photoresist-industry-chain/photoresist-industry-chain-map.svg",
+      "updateFile": "./content/updates/photoresist-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -893,7 +893,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI芯片扩产、ArF/KrF高端胶涨价和国产替代验证窗口为主线，追踪上游树脂、光引发剂、特种气体和中游光刻胶制造变化。",
           "confidence": "基准框架",
           "sourceTitle": "光刻胶产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/photoresist-industry-chain-original.md",
+          "sourceUrl": "./content/raw/photoresist-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -903,7 +903,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "市场开始从主题预期转向验证进度、订单放量和业绩兑现，三巨头及上游树脂、光刻气环节成为主要观察对象。",
           "confidence": "待核验",
           "sourceTitle": "2026年6月近期板块行情",
-          "sourceUrl": "../content/raw/photoresist-industry-chain-original.md",
+          "sourceUrl": "./content/raw/photoresist-industry-chain-original.md",
           "notes": "需后续核验鼎龙股份、南大光电、华特气体等资金流与涨幅数据。"
         }
       ]
@@ -970,11 +970,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/robotics-industry-chain-original.md",
-      "cover": "../cover-image/robotics-industry-chain/robotics-industry-chain-cover.png",
-      "diagram": "../diagram/robotics-industry-chain/robotics-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/robotics-industry-chain/robotics-industry-chain-map.svg",
-      "updateFile": "../content/updates/robotics-chain-updates.json",
+      "article": "./content/raw/robotics-industry-chain-original.md",
+      "cover": "./cover-image/robotics-industry-chain/robotics-industry-chain-cover.png",
+      "diagram": "./diagram/robotics-industry-chain/robotics-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/robotics-industry-chain/robotics-industry-chain-map.svg",
+      "updateFile": "./content/updates/robotics-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -1136,7 +1136,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以2026人形机器人量产元年为主线，追踪特斯拉链、英伟达链、华为链及核心零部件放量节奏。",
           "confidence": "基准框架",
           "sourceTitle": "机器人产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/robotics-industry-chain-original.md",
+          "sourceUrl": "./content/raw/robotics-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         }
       ]
@@ -1193,11 +1193,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/intelligent-driving-industry-chain-original.md",
-      "cover": "../cover-image/intelligent-driving-industry-chain/intelligent-driving-industry-chain-cover.png",
-      "diagram": "../diagram/intelligent-driving-industry-chain/intelligent-driving-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/intelligent-driving-industry-chain/intelligent-driving-industry-chain-map.svg",
-      "updateFile": "../content/updates/intelligent-driving-chain-updates.json",
+      "article": "./content/raw/intelligent-driving-industry-chain-original.md",
+      "cover": "./cover-image/intelligent-driving-industry-chain/intelligent-driving-industry-chain-cover.png",
+      "diagram": "./diagram/intelligent-driving-industry-chain/intelligent-driving-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/intelligent-driving-industry-chain/intelligent-driving-industry-chain-map.svg",
+      "updateFile": "./content/updates/intelligent-driving-chain-updates.json",
       "chain": [
         {
           "id": "perception",
@@ -1351,7 +1351,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以“感知层 → 决策层 → 执行层 → 网联层”为主线归档，后续动态围绕FSD入华、L3准入、高阶智驾渗透、域控订单和线控底盘放量更新。",
           "confidence": "基准框架",
           "sourceTitle": "智能驾驶产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/intelligent-driving-industry-chain-original.md",
+          "sourceUrl": "./content/raw/intelligent-driving-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -1361,7 +1361,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若落地节奏持续推进，将倒逼国内高阶智驾功能标配化，并拉动8MP摄像头、CIS、域控制器和线控底盘等环节需求。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的智能驾驶产业链文章",
-          "sourceUrl": "../content/raw/intelligent-driving-industry-chain-original.md",
+          "sourceUrl": "./content/raw/intelligent-driving-industry-chain-original.md",
           "notes": "后续需要核验上线范围、定价、法规状态、车型适配和供应链订单兑现情况。"
         }
       ]
@@ -1418,11 +1418,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/semiconductor-industry-chain-original.md",
-      "cover": "../cover-image/semiconductor-industry-chain/semiconductor-industry-chain-cover.png",
-      "diagram": "../diagram/semiconductor-industry-chain/semiconductor-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/semiconductor-industry-chain/semiconductor-industry-chain-map.svg",
-      "updateFile": "../content/updates/semiconductor-chain-updates.json",
+      "article": "./content/raw/semiconductor-industry-chain-original.md",
+      "cover": "./cover-image/semiconductor-industry-chain/semiconductor-industry-chain-cover.png",
+      "diagram": "./diagram/semiconductor-industry-chain/semiconductor-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/semiconductor-industry-chain/semiconductor-industry-chain-map.svg",
+      "updateFile": "./content/updates/semiconductor-chain-updates.json",
       "chain": [
         {
           "id": "design",
@@ -1593,7 +1593,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "将芯片设计、晶圆制造、封装测试、设备、材料五大环节统一归档，并与半导体设备、存储、光刻机、光刻胶等子系列形成母篇导航关系。",
           "confidence": "基准框架",
           "sourceTitle": "半导体产业链全景解析原始稿",
-          "sourceUrl": "../content/raw/semiconductor-industry-chain-original.md",
+          "sourceUrl": "./content/raw/semiconductor-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。后续重点跟踪WSTS预测、存储涨价、国产设备导入、先进封装订单和材料认证进展。"
         },
         {
@@ -1603,7 +1603,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若预测兑现，存储、AI芯片、先进封装和设备材料将成为全行业景气度最强的主线。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的半导体产业链文章",
-          "sourceUrl": "../content/raw/semiconductor-industry-chain-original.md",
+          "sourceUrl": "./content/raw/semiconductor-industry-chain-original.md",
           "notes": "需要后续补充WSTS原始报告、预测口径、按产品类别拆分和同比基数验证。"
         }
       ]
@@ -1670,11 +1670,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/semiconductor-equipment-industry-chain-original.md",
-      "cover": "../cover-image/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-cover.png",
-      "diagram": "../diagram/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-map.svg",
-      "updateFile": "../content/updates/semiconductor-equipment-chain-updates.json",
+      "article": "./content/raw/semiconductor-equipment-industry-chain-original.md",
+      "cover": "./cover-image/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-cover.png",
+      "diagram": "./diagram/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/semiconductor-equipment-industry-chain/semiconductor-equipment-industry-chain-map.svg",
+      "updateFile": "./content/updates/semiconductor-equipment-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -1841,7 +1841,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI算力、存储扩产、国产替代和政策周期四重共振为主线，分层追踪零部件、前道设备、后道封测设备与材料延伸。",
           "confidence": "基准框架",
           "sourceTitle": "半导体设备产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/semiconductor-equipment-industry-chain-original.md",
+          "sourceUrl": "./content/raw/semiconductor-equipment-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -1851,7 +1851,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "后续博客可重点追踪半导体设备ETF、设备龙头Q2订单、存储厂扩产与先进封装资本开支是否持续共振。",
           "confidence": "待核验",
           "sourceTitle": "半导体设备产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/semiconductor-equipment-industry-chain-original.md",
+          "sourceUrl": "./content/raw/semiconductor-equipment-industry-chain-original.md",
           "notes": "建议后续用公告、季报、ETF成分及机构调研逐项核验。"
         }
       ]
@@ -1918,11 +1918,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/storage-industry-chain-original.md",
-      "cover": "../cover-image/storage-industry-chain/storage-industry-chain-cover.png",
-      "diagram": "../diagram/storage-industry-chain/storage-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/storage-industry-chain/storage-industry-chain-map.svg",
-      "updateFile": "../content/updates/storage-chain-updates.json",
+      "article": "./content/raw/storage-industry-chain-original.md",
+      "cover": "./cover-image/storage-industry-chain/storage-industry-chain-cover.png",
+      "diagram": "./diagram/storage-industry-chain/storage-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/storage-industry-chain/storage-industry-chain-map.svg",
+      "updateFile": "./content/updates/storage-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -2083,7 +2083,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI算力、HBM稀缺、DRAM/NAND涨价、国产存储双巨头IPO和模组厂业绩弹性为主线，追踪从设备材料到模组成品的量价变化。",
           "confidence": "基准框架",
           "sourceTitle": "存储产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/storage-industry-chain-original.md",
+          "sourceUrl": "./content/raw/storage-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2093,7 +2093,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "江波龙、佰维存储、德明利、香农芯创等业绩弹性高度依赖涨价持续性，后续需重点跟踪报价、库存、毛利率和经营现金流。",
           "confidence": "待核验",
           "sourceTitle": "存储产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/storage-industry-chain-original.md",
+          "sourceUrl": "./content/raw/storage-industry-chain-original.md",
           "notes": "建议后续结合现货价、合约价、公司季报和机构调研持续更新。"
         }
       ]
@@ -2160,11 +2160,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/optical-module-industry-chain-original.md",
-      "cover": "../cover-image/optical-module-industry-chain/optical-module-industry-chain-cover.png",
-      "diagram": "../diagram/optical-module-industry-chain/optical-module-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/optical-module-industry-chain/optical-module-industry-chain-map.svg",
-      "updateFile": "../content/updates/optical-module-chain-updates.json",
+      "article": "./content/raw/optical-module-industry-chain-original.md",
+      "cover": "./cover-image/optical-module-industry-chain/optical-module-industry-chain-cover.png",
+      "diagram": "./diagram/optical-module-industry-chain/optical-module-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/optical-module-industry-chain/optical-module-industry-chain-map.svg",
+      "updateFile": "./content/updates/optical-module-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -2325,7 +2325,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI算力、800G/1.6T放量、CPO硅光交换机量产、上游光芯片紧缺和光纤光缆升级为主线，追踪光互联从容量升级到网络架构重构。",
           "confidence": "基准框架",
           "sourceTitle": "光模块产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/optical-module-industry-chain-original.md",
+          "sourceUrl": "./content/raw/optical-module-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2335,7 +2335,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若CPO交换机和多芯光缆进入持续商用，价值链将从可插拔模块向光引擎、硅光、调制器、光器件和底层光纤网络重构。",
           "confidence": "待核验",
           "sourceTitle": "光模块产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/optical-module-industry-chain-original.md",
+          "sourceUrl": "./content/raw/optical-module-industry-chain-original.md",
           "notes": "建议后续用英伟达、云厂CAPEX、LightCounting、公司公告和调研纪要持续核验。"
         }
       ]
@@ -2412,11 +2412,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/ai-compute-infrastructure-industry-chain-original.md",
-      "cover": "../cover-image/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-cover.png",
-      "diagram": "../diagram/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-map.svg",
-      "updateFile": "../content/updates/ai-compute-infrastructure-chain-updates.json",
+      "article": "./content/raw/ai-compute-infrastructure-industry-chain-original.md",
+      "cover": "./cover-image/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-cover.png",
+      "diagram": "./diagram/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/ai-compute-infrastructure-industry-chain/ai-compute-infrastructure-industry-chain-map.svg",
+      "updateFile": "./content/updates/ai-compute-infrastructure-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -2584,7 +2584,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "将AI芯片、存储、PCB、光模块、AI服务器、交换机、液冷、HVDC和智算中心纳入同一个总览框架，作为已有子产业链的上层总图谱。",
           "confidence": "基准框架",
           "sourceTitle": "AI算力基础设施产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/ai-compute-infrastructure-industry-chain-original.md",
+          "sourceUrl": "./content/raw/ai-compute-infrastructure-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2594,7 +2594,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "AI算力基础设施是多个已建档产业链的总需求源，后续每条动态应判断其向PCB、存储、光模块、半导体设备等子链的传导方向。",
           "confidence": "待核验",
           "sourceTitle": "AI算力基础设施产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/ai-compute-infrastructure-industry-chain-original.md",
+          "sourceUrl": "./content/raw/ai-compute-infrastructure-industry-chain-original.md",
           "notes": "建议后续用云厂财报CAPEX、运营商招标、数据中心上架率和公司订单口径持续核验。"
         }
       ]
@@ -2671,11 +2671,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/power-infrastructure-industry-chain-original.md",
-      "cover": "../cover-image/power-infrastructure-industry-chain/power-infrastructure-industry-chain-cover.png",
-      "diagram": "../diagram/power-infrastructure-industry-chain/power-infrastructure-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/power-infrastructure-industry-chain/power-infrastructure-industry-chain-map.svg",
-      "updateFile": "../content/updates/power-infrastructure-chain-updates.json",
+      "article": "./content/raw/power-infrastructure-industry-chain-original.md",
+      "cover": "./cover-image/power-infrastructure-industry-chain/power-infrastructure-industry-chain-cover.png",
+      "diagram": "./diagram/power-infrastructure-industry-chain/power-infrastructure-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/power-infrastructure-industry-chain/power-infrastructure-industry-chain-map.svg",
+      "updateFile": "./content/updates/power-infrastructure-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -2843,7 +2843,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以十五五电网投资、特高压主网、智能配网、算电协同、AI数据中心供电和电力设备出海为主线，追踪电力基础设施从能源配套向算力底座升级。",
           "confidence": "基准框架",
           "sourceTitle": "电力基础设施产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/power-infrastructure-industry-chain-original.md",
+          "sourceUrl": "./content/raw/power-infrastructure-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2853,7 +2853,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "电力基础设施与AI算力基础设施开始强耦合，HVDC、干式变压器、数字电网和电力光网等环节需要和AI数据中心建设节奏联动追踪。",
           "confidence": "待核验",
           "sourceTitle": "电力基础设施产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/power-infrastructure-industry-chain-original.md",
+          "sourceUrl": "./content/raw/power-infrastructure-industry-chain-original.md",
           "notes": "建议后续用国网/南网招标、AIDC供电订单、出口数据和公司季报持续更新。"
         }
       ]
@@ -2930,11 +2930,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/ai-energy-supply-industry-chain-original.md",
-      "cover": "../cover-image/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-cover.png",
-      "diagram": "../diagram/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-map.svg",
-      "updateFile": "../content/updates/ai-energy-supply-chain-updates.json",
+      "article": "./content/raw/ai-energy-supply-industry-chain-original.md",
+      "cover": "./cover-image/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-cover.png",
+      "diagram": "./diagram/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/ai-energy-supply-industry-chain/ai-energy-supply-industry-chain-map.svg",
+      "updateFile": "./content/updates/ai-energy-supply-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -3102,7 +3102,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI数据中心缺电、自建发电、燃气轮机产能缺口、柴发交付差、SOFC放量和HRSG需求为主线，追踪算力基础设施从用电端延伸到能源供给侧。",
           "confidence": "基准框架",
           "sourceTitle": "AI算力基础设施能源供给侧产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/ai-energy-supply-industry-chain-original.md",
+          "sourceUrl": "./content/raw/ai-energy-supply-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3112,7 +3112,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若电网扩容继续慢于数据中心建设，燃气轮机、天然气内燃机、柴发、SOFC和HRSG需求会从备用逻辑升级为主电源逻辑。",
           "confidence": "待核验",
           "sourceTitle": "AI算力基础设施能源供给侧产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/ai-energy-supply-industry-chain-original.md",
+          "sourceUrl": "./content/raw/ai-energy-supply-industry-chain-original.md",
           "notes": "建议后续跟踪云厂能源项目、燃机订单、发动机交期、SOFC批量订单和公司出海产能。"
         }
       ]
@@ -3189,11 +3189,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/consumer-electronics-industry-chain-original.md",
-      "cover": "../cover-image/consumer-electronics-industry-chain/consumer-electronics-industry-chain-cover.png",
-      "diagram": "../diagram/consumer-electronics-industry-chain/consumer-electronics-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/consumer-electronics-industry-chain/consumer-electronics-industry-chain-map.svg",
-      "updateFile": "../content/updates/consumer-electronics-chain-updates.json",
+      "article": "./content/raw/consumer-electronics-industry-chain-original.md",
+      "cover": "./cover-image/consumer-electronics-industry-chain/consumer-electronics-industry-chain-cover.png",
+      "diagram": "./diagram/consumer-electronics-industry-chain/consumer-electronics-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/consumer-electronics-industry-chain/consumer-electronics-industry-chain-map.svg",
+      "updateFile": "./content/updates/consumer-electronics-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -3357,7 +3357,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以AI端侧渗透、折叠屏iPhone预期、AI眼镜放量、以旧换新补贴和单机价值量提升为主线，追踪消费电子从总量修复转向结构升级。",
           "confidence": "基准框架",
           "sourceTitle": "消费电子产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/consumer-electronics-industry-chain-original.md",
+          "sourceUrl": "./content/raw/consumer-electronics-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3367,7 +3367,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "消费电子需求的核心变量从出货量切换到单机价值量，存储、散热、电池、FPC、光学、声学和结构件需要联动追踪。",
           "confidence": "待核验",
           "sourceTitle": "消费电子产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/consumer-electronics-industry-chain-original.md",
+          "sourceUrl": "./content/raw/consumer-electronics-industry-chain-original.md",
           "notes": "建议后续结合IDC/Counterpoint、品牌发布会、618数据、公司季报和供应链调研更新。"
         }
       ]
@@ -3434,11 +3434,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/innovative-drug-industry-chain-original.md",
-      "cover": "../cover-image/innovative-drug-industry-chain/innovative-drug-industry-chain-cover.png",
-      "diagram": "../diagram/innovative-drug-industry-chain/innovative-drug-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/innovative-drug-industry-chain/innovative-drug-industry-chain-map.svg",
-      "updateFile": "../content/updates/innovative-drug-chain-updates.json",
+      "article": "./content/raw/innovative-drug-industry-chain-original.md",
+      "cover": "./cover-image/innovative-drug-industry-chain/innovative-drug-industry-chain-cover.png",
+      "diagram": "./diagram/innovative-drug-industry-chain/innovative-drug-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/innovative-drug-industry-chain/innovative-drug-industry-chain-map.svg",
+      "updateFile": "./content/updates/innovative-drug-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -3584,7 +3584,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以“上游CXO/试剂耗材 → 中游创新药企 → 下游商业化/BD出海/支付”为主线归档，后续动态围绕BD出海、CXO订单、盈利拐点、技术平台和支付环境更新。",
           "confidence": "基准框架",
           "sourceTitle": "创新药产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/innovative-drug-industry-chain-original.md",
+          "sourceUrl": "./content/raw/innovative-drug-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3594,7 +3594,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若全年延续，将推动中国创新药从研发投入期进入全球价值重估和商业兑现期，恒瑞、信达、荣昌、科伦等具备出海能力的药企优先受益。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的创新药产业链文章",
-          "sourceUrl": "../content/raw/innovative-drug-industry-chain-original.md",
+          "sourceUrl": "./content/raw/innovative-drug-industry-chain-original.md",
           "notes": "后续需核验交易总额统计口径、首付款比例、是否包含未披露条款以及里程碑兑现概率。"
         }
       ]
@@ -3661,11 +3661,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/commercial-space-industry-chain-original.md",
-      "cover": "../cover-image/commercial-space-industry-chain/commercial-space-industry-chain-cover.png",
-      "diagram": "../diagram/commercial-space-industry-chain/commercial-space-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/commercial-space-industry-chain/commercial-space-industry-chain-map.svg",
-      "updateFile": "../content/updates/commercial-space-chain-updates.json",
+      "article": "./content/raw/commercial-space-industry-chain-original.md",
+      "cover": "./cover-image/commercial-space-industry-chain/commercial-space-industry-chain-cover.png",
+      "diagram": "./diagram/commercial-space-industry-chain/commercial-space-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/commercial-space-industry-chain/commercial-space-industry-chain-map.svg",
+      "updateFile": "./content/updates/commercial-space-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -3813,7 +3813,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以“上游卫星/火箭研发制造 → 中游发射运营与地面设备 → 下游卫星应用与服务”为主线归档，后续动态围绕星座组网、可复用火箭、SpaceX IPO、ETF资金和核心零部件订单更新。",
           "confidence": "基准框架",
           "sourceTitle": "商业航天产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/commercial-space-industry-chain-original.md",
+          "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3823,7 +3823,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若组网节奏持续推进，将直接拉动卫星总装、星载载荷、T/R组件、激光通信、电源系统和地面终端需求。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的商业航天产业链文章",
-          "sourceUrl": "../content/raw/commercial-space-industry-chain-original.md",
+          "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
           "notes": "后续需要核验发射时间、卫星数量、承制单位、订单确认节奏和收入确认口径。"
         },
         {
@@ -3833,7 +3833,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若IPO落地，可能重塑全球商业航天估值体系，但也需警惕利好兑现后的板块资金退潮。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的商业航天产业链文章",
-          "sourceUrl": "../content/raw/commercial-space-industry-chain-original.md",
+          "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
           "notes": "后续重点跟踪IPO真实文件、融资额、估值口径、上市进度以及A股SpaceX供应链订单兑现。"
         }
       ]
@@ -3900,11 +3900,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/energy-storage-industry-chain-original.md",
-      "cover": "../cover-image/energy-storage-industry-chain/energy-storage-industry-chain-cover.png",
-      "diagram": "../diagram/energy-storage-industry-chain/energy-storage-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/energy-storage-industry-chain/energy-storage-industry-chain-map.svg",
-      "updateFile": "../content/updates/energy-storage-chain-updates.json",
+      "article": "./content/raw/energy-storage-industry-chain-original.md",
+      "cover": "./cover-image/energy-storage-industry-chain/energy-storage-industry-chain-cover.png",
+      "diagram": "./diagram/energy-storage-industry-chain/energy-storage-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/energy-storage-industry-chain/energy-storage-industry-chain-map.svg",
+      "updateFile": "./content/updates/energy-storage-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -4061,7 +4061,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "以“上游材料 → 中游电芯/PCS/BMS → 下游系统集成与应用”为主线归档，后续动态围绕AI数据中心配储、全球装机、材料涨价、PCS订单和系统价格压力更新。",
           "confidence": "基准框架",
           "sourceTitle": "储能产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/energy-storage-industry-chain-original.md",
+          "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -4071,7 +4071,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若AIDC储能订单持续落地，储能需求将从新能源消纳扩展到算力基础设施刚需，直接利好PCS、系统集成和数据中心电源相关企业。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的储能产业链文章",
-          "sourceUrl": "../content/raw/energy-storage-industry-chain-original.md",
+          "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
           "notes": "后续重点核验AIDC项目实际配储比例、订单客户、并网方式、收益模型和收入确认节奏。"
         },
         {
@@ -4081,7 +4081,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若装机预测兑现，储能电芯、PCS、系统集成及材料端均有望维持高景气，但系统价格下行仍会压缩集成商利润。",
           "confidence": "待核验",
           "sourceTitle": "用户提供的储能产业链文章",
-          "sourceUrl": "../content/raw/energy-storage-industry-chain-original.md",
+          "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
           "notes": "需补充国金证券、BNEF等原始预测口径，区分功率GW与容量GWh，以及国内/海外/户储/大储结构。"
         }
       ]
@@ -4148,11 +4148,11 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           }
         ]
       },
-      "article": "../content/raw/brain-computer-interface-industry-chain-original.md",
-      "cover": "../cover-image/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-cover.png",
-      "diagram": "../diagram/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-map@2x.png",
-      "diagramSvg": "../diagram/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-map.svg",
-      "updateFile": "../content/updates/brain-computer-interface-chain-updates.json",
+      "article": "./content/raw/brain-computer-interface-industry-chain-original.md",
+      "cover": "./cover-image/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-cover.png",
+      "diagram": "./diagram/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/brain-computer-interface-industry-chain/brain-computer-interface-industry-chain-map.svg",
+      "updateFile": "./content/updates/brain-computer-interface-chain-updates.json",
       "chain": [
         {
           "id": "upstream",
@@ -4299,7 +4299,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "形成“上游电极/芯片/材料 → 中游系统集成与设备 → 下游医疗康复/消费/工业应用”的跟踪框架。",
           "confidence": "基准框架",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
           "notes": "初始版本来自用户提供文章，尚未逐项外部核验。"
         },
         {
@@ -4309,7 +4309,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "若入组、临床安全性和有效性顺利，将推动侵入式脑机接口从实验室进入规范化医疗器械通道。",
           "confidence": "待核验",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
           "notes": "后续重点补充临床试验登记、入组进度、适应症和主要终点。"
         },
         {
@@ -4319,7 +4319,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "非侵入式路线安全性更高、推广更快，是短期收入兑现更清晰的方向。",
           "confidence": "待核验",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
-          "sourceUrl": "../content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
           "notes": "后续跟踪港股IPO、仿生手/仿生腿出货、上游模组供应关系。"
         }
       ]
