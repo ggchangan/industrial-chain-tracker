@@ -356,6 +356,21 @@ async function copySearchLink(button) {
   }, 1400);
 }
 
+function focusSearchPanel() {
+  const url = new URL(window.location.href);
+  url.hash = "";
+  window.history.replaceState({}, "", url);
+  document.querySelector(".search-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  window.setTimeout(() => searchInput?.focus({ preventScroll: true }), 180);
+}
+
+function searchLibrary(query) {
+  searchInput.value = query;
+  activeSearchType = "全部";
+  renderSearchResults(query);
+  focusSearchPanel();
+}
+
 function renderSearchResults(query) {
   const root = document.querySelector("#searchResults");
   currentSearchQuery = query;
@@ -758,10 +773,7 @@ function focusArticleTerm(term) {
     return;
   }
 
-  searchInput.value = term;
-  activeSearchType = "全部";
-  renderSearchResults(term);
-  document.querySelector("#chains").scrollIntoView({ behavior: "smooth", block: "start" });
+  searchLibrary(term);
 }
 
 function openCompanyPanel(company) {
@@ -841,10 +853,7 @@ function openTopicPanel(topic) {
 
   panel.querySelector("[data-topic-search]").addEventListener("click", () => {
     closeCompanyPanel();
-    searchInput.value = topic;
-    activeSearchType = "全部";
-    renderSearchResults(topic);
-    document.querySelector("#chains").scrollIntoView({ behavior: "smooth", block: "start" });
+    searchLibrary(topic);
   });
 
   panel.querySelectorAll(".company-appearances button").forEach((button) => {
