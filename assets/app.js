@@ -61,6 +61,10 @@ function compactText(values) {
   return values.flat(Infinity).filter(Boolean).join(" ");
 }
 
+function searchTargetKey(chainId, type, index) {
+  return `${chainId}:${type}:${index}`;
+}
+
 function splitCompanies(value) {
   return String(value || "")
     .split(/[、,，/]/)
@@ -200,9 +204,10 @@ function createSearchIndex() {
       }
     ];
 
-    chain.chain.forEach((section) => {
+    chain.chain.forEach((section, index) => {
       entries.push({
         ...base,
+        target: searchTargetKey(chain.id, "chain", index),
         type: "骨架",
         title: section.title || section.name,
         body: compactText([
@@ -217,36 +222,40 @@ function createSearchIndex() {
       });
     });
 
-    chain.logic.forEach((item) => {
+    chain.logic.forEach((item, index) => {
       entries.push({
         ...base,
+        target: searchTargetKey(chain.id, "logic", index),
         type: "逻辑",
         title: item.title,
         body: item.body
       });
     });
 
-    (chain.trackingProfile?.metrics || []).forEach((item) => {
+    (chain.trackingProfile?.metrics || []).forEach((item, index) => {
       entries.push({
         ...base,
+        target: searchTargetKey(chain.id, "tracking", index),
         type: "追踪",
         title: item.name,
         body: compactText([item.why, item.signals])
       });
     });
 
-    chain.watchlist.forEach((item) => {
+    chain.watchlist.forEach((item, index) => {
       entries.push({
         ...base,
+        target: searchTargetKey(chain.id, "watch", index),
         type: "观察",
         title: item.segment,
         body: compactText([item.signals, item.companies])
       });
     });
 
-    chain.updates.forEach((item) => {
+    chain.updates.forEach((item, index) => {
       entries.push({
         ...base,
+        target: searchTargetKey(chain.id, "update", index),
         type: "动态",
         title: item.signal,
         body: compactText([
@@ -275,8 +284,26 @@ function setChain(id) {
   currentId = id;
   const url = new URL(window.location.href);
   url.searchParams.set("chain", id);
+  url.hash = "";
   window.history.replaceState({}, "", url);
   render();
+}
+
+function scrollToSearchTarget(targetKey) {
+  const target = targetKey ? document.querySelector(`[data-search-target="${targetKey}"]`) : null;
+  const fallback = document.querySelector("#currentTitle");
+  const node = target || fallback;
+
+  if (!node) return;
+
+  node.scrollIntoView({ behavior: "smooth", block: "center" });
+  node.classList.add("search-target-flash");
+  window.setTimeout(() => node.classList.remove("search-target-flash"), 1400);
+}
+
+function openSearchResult(chainId, targetKey) {
+  setChain(chainId);
+  window.requestAnimationFrame(() => scrollToSearchTarget(targetKey));
 }
 
 function syncSearchUrl() {
@@ -427,7 +454,7 @@ function renderSearchResults(query) {
       ${matches
         .map(
           (item) => `
-            <button class="search-result" type="button" data-chain="${escapeHtml(item.chainId)}">
+            <button class="search-result" type="button" data-chain="${escapeHtml(item.chainId)}" data-target="${escapeHtml(item.target || "")}">
               <span>${escapeHtml(item.type)} · ${highlightText(item.chainTitle, terms)}</span>
               <strong>${highlightText(item.title, terms)}</strong>
               <p>${highlightText(item.excerpt, terms)}</p>
@@ -452,8 +479,7 @@ function renderSearchResults(query) {
 
   root.querySelectorAll(".search-result").forEach((button) => {
     button.addEventListener("click", () => {
-      setChain(button.dataset.chain);
-      document.querySelector("#currentTitle").scrollIntoView({ behavior: "smooth", block: "center" });
+      openSearchResult(button.dataset.chain, button.dataset.target);
     });
   });
 }
@@ -940,8 +966,9 @@ function renderChain(chain) {
   const root = document.querySelector("#chainGrid");
   root.innerHTML = "";
 
-  chain.chain.forEach((section) => {
+  chain.chain.forEach((section, sectionIndex) => {
     const card = el("article", "chain-card");
+    card.dataset.searchTarget = searchTargetKey(chain.id, "chain", sectionIndex);
     card.style.borderColor = chainColors[section.id] || "var(--line)";
     card.append(el("h3", "", section.title || section.name));
     card.append(el("p", "role", section.role));
@@ -1008,6 +1035,7 @@ function renderLogic(chain) {
 
   chain.logic.forEach((item, index) => {
     const card = el("article", "logic-card");
+    card.dataset.searchTarget = searchTargetKey(chain.id, "logic", index);
     const colors = ["var(--cyan)", "var(--amber)", "var(--green)", "#a78bfa"];
     card.style.borderColor = colors[index % colors.length];
     card.append(el("h3", "", `${index + 1}. ${item.title}`));
@@ -1028,6 +1056,7 @@ function renderTrackingProfile(chain) {
 
   (profile?.metrics || []).forEach((item, index) => {
     const card = el("article", "tracking-card");
+    card.dataset.searchTarget = searchTargetKey(chain.id, "tracking", index);
     const colors = ["var(--cyan)", "var(--amber)", "var(--green)", "var(--blue)", "#a78bfa"];
     card.style.borderColor = colors[index % colors.length];
     card.append(el("h3", "", item.name));
@@ -1041,8 +1070,9 @@ function renderTimeline(chain) {
   const root = document.querySelector("#timeline");
   root.innerHTML = "";
 
-  chain.updates.forEach((item) => {
+  chain.updates.forEach((item, index) => {
     const card = el("article", "timeline-item");
+    card.dataset.searchTarget = searchTargetKey(chain.id, "update", index);
     card.append(el("div", "timeline-meta", `<span>${item.date}</span><span class="tag">${item.segment}</span><span>${item.confidence}</span>`));
     card.append(el("h3", "", item.signal));
     card.append(el("p", "", item.impact));
@@ -1058,8 +1088,9 @@ function renderWatchlist(chain) {
   const root = document.querySelector("#watchlist");
   root.innerHTML = "";
 
-  chain.watchlist.forEach((item) => {
+  chain.watchlist.forEach((item, index) => {
     const block = el("div", "watch-item");
+    block.dataset.searchTarget = searchTargetKey(chain.id, "watch", index);
     block.append(el("strong", "", item.segment));
     block.append(el("ul", "", item.signals.map((signal) => `<li>${signal}</li>`).join("")));
     block.append(el("p", "", item.companies));
