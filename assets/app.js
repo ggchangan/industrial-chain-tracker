@@ -771,7 +771,7 @@ function renderArticleMeta(meta, chain) {
   return `
     <div class="article-meta">
       <div>
-        <span>原稿</span>
+        <span>文章</span>
         <strong>${escapeHtml(meta.title || chain.title)}</strong>
       </div>
       <div>
@@ -780,9 +780,8 @@ function renderArticleMeta(meta, chain) {
       </div>
       <div>
         <span>状态</span>
-        <strong>${escapeHtml(meta.status || "raw")}</strong>
+        <strong>${escapeHtml(meta.status || "已整理")}</strong>
       </div>
-      <a href="${escapeHtml(chain.article)}">打开 Markdown 原稿</a>
       ${tags.length ? `<div class="article-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
     </div>
   `;
@@ -959,8 +958,7 @@ async function renderArticle(chain) {
     view.innerHTML = `
       <div class="article-error">
         <strong>原文加载失败</strong>
-        <p>请通过资料库打开 Markdown 原稿：<a href="${escapeHtml(chain.article)}">${escapeHtml(chain.article.replace("./", ""))}</a></p>
-        <p>${escapeHtml(error.message)}</p>
+        <p>文章内容暂时无法加载，请稍后刷新页面重试。</p>
       </div>
     `;
     if (pendingArticleTarget?.chainId === chain.id) {
@@ -991,16 +989,16 @@ function renderIndustryGrid(chain) {
 function renderCurrent(chain) {
   document.querySelector("#currentTitle").textContent = chain.title;
   document.querySelector("#currentTheme").textContent = chain.theme;
-  document.querySelector("#diagramCaption").textContent = `${chain.title}正文配图，适合放进公众号文章用于快速建立产业链地图。`;
+  document.querySelector("#diagramCaption").textContent = `${chain.title}全景图，帮助快速理解上下游关系、价值传导路径和核心变量。`;
 
   const quick = document.querySelector("#quickLinks");
   quick.innerHTML = "";
   [
+    ["产业链骨架", "#chain"],
+    ["产业链图谱", "#map"],
+    ["核心逻辑", "#logic"],
+    ["动态追踪", "#updates"],
     ["原文阅读", "#article"],
-    ["原稿文件", chain.article],
-    ["Cover图", chain.cover],
-    ["产业链图", chain.diagram],
-    ["动态数据", chain.updateFile]
   ].forEach(([label, href]) => {
     const link = el("a", "button", label);
     link.href = href;
@@ -1145,23 +1143,6 @@ function renderWatchlist(chain) {
   });
 }
 
-function renderFiles(chain) {
-  const root = document.querySelector("#fileGrid");
-  root.innerHTML = "";
-
-  [
-    ["原始文章", chain.article],
-    ["动态数据", chain.updateFile],
-    ["公众号封面", chain.cover],
-    ["产业链图 PNG", chain.diagram],
-    ["产业链图 SVG", chain.diagramSvg]
-  ].forEach(([label, href]) => {
-    const link = el("a", "", `<span>${label}</span><strong>${href.replace("./", "")}</strong>`);
-    link.href = href;
-    root.append(link);
-  });
-}
-
 function render() {
   const chain = activeChain();
   document.querySelector("#updatedAt").textContent = `更新：${library.meta.updated}`;
@@ -1173,7 +1154,6 @@ function render() {
   renderTrackingProfile(chain);
   renderTimeline(chain);
   renderWatchlist(chain);
-  renderFiles(chain);
   renderArticle(chain);
 }
 
