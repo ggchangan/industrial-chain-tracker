@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import vm from "node:vm";
 
-const dataPath = new URL("../blog/assets/data.js", import.meta.url);
-const blogIndexPath = new URL("../blog/index.html", import.meta.url);
+const dataPath = new URL("../assets/data.js", import.meta.url);
+const blogIndexPath = new URL("../index.html", import.meta.url);
 const dataSource = await readFile(dataPath, "utf8");
 const sandbox = { window: {} };
 vm.createContext(sandbox);
@@ -10,7 +10,7 @@ vm.runInContext(dataSource, sandbox);
 
 const library = sandbox.window.INDUSTRY_CHAIN_LIBRARY;
 if (!library?.chains?.length) {
-  throw new Error("blog/assets/data.js does not expose window.INDUSTRY_CHAIN_LIBRARY");
+  throw new Error("assets/data.js does not expose window.INDUSTRY_CHAIN_LIBRARY");
 }
 
 for (const chain of library.chains) {
@@ -32,9 +32,7 @@ for (const chain of library.chains) {
     impact: item.impact,
     confidence: item.confidence,
     sourceTitle: item.source.title,
-    sourceUrl: item.source.url.startsWith("../raw/")
-      ? item.source.url.replace("../raw/", "../content/raw/")
-      : item.source.url,
+    sourceUrl: normalizeSourceUrl(item.source.url),
     notes: item.notes
   }));
 }
@@ -47,4 +45,15 @@ await writeFile(
   "utf8"
 );
 
-console.log(`Synced ${library.chains.length} chains to blog/assets/data.js`);
+console.log("Synced " + library.chains.length + " chains to assets/data.js");
+
+function normalizeSourceUrl(url) {
+  if (url.startsWith("../raw/")) {
+    return url.replace("../raw/", "./content/raw/");
+  }
+  if (url.startsWith("../content/")) {
+    return url.replace("../content/", "./content/");
+  }
+  return url;
+}
+
