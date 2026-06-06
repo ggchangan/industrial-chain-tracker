@@ -977,7 +977,6 @@ function renderIndustryGrid(chain) {
     if (item.id === chain.id) card.classList.add("active");
     card.type = "button";
     card.innerHTML = `
-      <span>${item.status}</span>
       <strong>${item.title}</strong>
       <p>${item.theme}</p>
     `;
