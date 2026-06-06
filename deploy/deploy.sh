@@ -6,6 +6,7 @@ IMAGE_NAME="chain-tracker"
 CONTAINER_NAME="chain-tracker"
 NETWORK_NAME="chain-net"
 CONTAINER_IP="172.20.0.2"
+ENV_FILE="$REPO_DIR/.env"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -31,6 +32,15 @@ log "Docker 已就绪"
 # ── Step 2: 构建镜像 ──
 echo "[2/5] 构建 Docker 镜像…"
 cd "$REPO_DIR"
+if [[ ! -f "$ENV_FILE" ]]; then
+    err "缺少 .env。请复制 .env.example 为 .env，并设置 ADMIN_PASSWORD 与 ADMIN_SESSION_SECRET"
+fi
+if ! grep -q '^ADMIN_PASSWORD=.\{10,\}$' "$ENV_FILE"; then
+    err ".env 中 ADMIN_PASSWORD 至少需要 10 个字符"
+fi
+if ! grep -q '^ADMIN_SESSION_SECRET=.\{32,\}$' "$ENV_FILE"; then
+    err ".env 中 ADMIN_SESSION_SECRET 至少需要 32 个字符"
+fi
 sudo docker build -t "$IMAGE_NAME:latest" -f deploy/Dockerfile . 2>&1 | tail -1
 log "镜像构建完成"
 
@@ -60,6 +70,9 @@ sudo docker run -d \
     --name "$CONTAINER_NAME" \
     --network "$NETWORK_NAME" \
     --ip "$CONTAINER_IP" \
+    --env-file "$ENV_FILE" \
+    -e NODE_ENV=production \
+    -e PORT=4173 \
     --restart unless-stopped \
     "$IMAGE_NAME:latest" >/dev/null
 
@@ -68,11 +81,11 @@ log "容器已启动"
 
 # ── 验证 ──
 echo ""
-if curl -s -o /dev/null -w "%{http_code}" "http://${CONTAINER_IP}/" | grep -q 200; then
+if curl -s -o /dev/null -w "%{http_code}" "http://${CONTAINER_IP}:4173/api/v1/health" | grep -q 200; then
     log "部署成功！"
     echo ""
     echo "════════════════════════════════════════"
-    echo "  容器IP: http://${CONTAINER_IP}/"
+    echo "  容器IP: http://${CONTAINER_IP}:4173/"
     echo "  公网访问需要 nginx 反代"
     echo "  示例 nginx 配置:"
     echo ""
@@ -80,7 +93,7 @@ if curl -s -o /dev/null -w "%{http_code}" "http://${CONTAINER_IP}/" | grep -q 20
     echo "      listen 80;"
     echo "      server_name your.domain.com;"
     echo "      location / {"
-    echo "          proxy_pass http://${CONTAINER_IP}:80;"
+    echo "          proxy_pass http://${CONTAINER_IP}:4173;"
     echo "      }"
     echo "  }"
     echo "════════════════════════════════════════"

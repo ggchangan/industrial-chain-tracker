@@ -5,7 +5,79 @@
 1. 原始文章：保存长文源稿。
 2. 微信公众号素材：保存 cover 图和正文产业链图。
 3. 动态追踪数据：记录涨价、扩产、认证、订单、调研、财报等变化。
-4. 统一博客页面：在一个入口中切换查看不同产业链。
+4. 统一内容 API：供网页、微信小程序、iOS 和 Android 共用。
+5. 统一博客页面：在一个入口中切换查看不同产业链。
+
+## 运行方式
+
+项目现在由轻量 Node 服务统一提供静态页面、内容 API 和维护者登录：
+
+```bash
+cp .env.example .env
+# 修改 .env 中的维护密码和会话密钥
+set -a && source .env && set +a
+npm start
+```
+
+本地开发也可以运行 `npm run dev`。生产环境不要使用其中的示例密码。
+
+访问地址：
+
+- 公开阅读：`http://127.0.0.1:4173/`
+- API 健康检查：`http://127.0.0.1:4173/api/v1/health`
+- 维护者登录：`http://127.0.0.1:4173/admin-login.html`
+
+## 内容 API
+
+首期 API 供网页版与微信小程序共用：
+
+| 接口 | 用途 |
+|---|---|
+| `GET /api/v1/health` | 服务状态与产业链数量 |
+| `GET /api/v1/library` | 完整产业链资料库 |
+| `GET /api/v1/chains` | 产业链列表 |
+| `GET /api/v1/chains/{id}` | 单条产业链 |
+| `GET /api/v1/chains/{id}?article=1` | 单条产业链及 Markdown 正文 |
+| `GET /api/v1/chains/{id}?article=html` | 单条产业链及已渲染正文 |
+| `GET /api/v1/search?q=关键词` | 跨产业链搜索 |
+| `POST /api/v1/admin/login` | 维护者登录 |
+| `POST /api/v1/admin/logout` | 退出登录 |
+
+网页启动时优先读取 `/api/v1/library`，API 不可用时回退到 `assets/data.js`，因此本地纯静态预览仍可使用。
+
+## 维护权限
+
+公开阅读页不再显示维护入口。`maintain.html` 和 `README.md` 由服务端校验签名会话，未登录访问会跳转到 `admin-login.html`。
+
+维护密码只允许通过环境变量配置：
+
+```bash
+ADMIN_PASSWORD=至少10位的随机密码
+ADMIN_SESSION_SECRET=至少32位的随机会话密钥
+```
+
+不要把真实 `.env` 提交到 Git。当前维护台用于查看和下载内容资源，内容修改仍通过 Git 工作流完成。
+
+## 微信小程序与 App
+
+移动端源码位于 `apps/mobile/`，采用 uni-app Vue 3/Vite：
+
+```bash
+cd apps/mobile
+cp .env.example .env
+npm install
+npm run build:mp-weixin
+```
+
+首版覆盖产业链列表、搜索、图谱、骨架、核心逻辑、动态追踪和正文阅读。微信小程序发布前需要：
+
+1. 在 `apps/mobile/src/manifest.json` 填写小程序 AppID。
+2. 部署 HTTPS API 域名。
+3. 在微信公众平台配置 request 合法域名。
+
+产品与技术阶段安排见 `docs/mobile-roadmap.md`。
+
+当前 uni-app 官方模板的 Node 构建依赖存在审计告警。不要运行会降级 DCloud 包的 `npm audit fix --force`；小程序上线前应升级到官方兼容版本并重新编译、审计。
 
 统一的是入口和数据结构，不是追踪指标。每条产业链都要维护自己的专属动态追踪：PCB 重点看电子布、铜箔、CCL调价和PCB扩产；MLCC 重点看陶瓷粉体、电极浆料、离型膜、AI服务器用量和车规导入；智能驾驶重点看FSD入华、L3准入、高阶智驾渗透、感知硬件、域控制器、线控底盘和车路云招标；半导体总览重点看WSTS预测、存储周期、国产替代导入、先进封装和设备材料验证；半导体设备重点看晶圆厂CAPEX、前道设备订单、后道封测利润弹性、零部件/特气认证和量检测等低国产化环节突破；存储重点看HBM/DRAM/NAND价格、长鑫长存IPO与扩产、模组库存红利、封测和设备材料订单；光模块重点看800G/1.6T订单、CPO硅光量产、InP/EML/CW光芯片供需、薄膜铌酸锂和光纤光缆涨价；AI算力基础设施作为总图谱，重点看云厂CAPEX、AI服务器订单、光互联、液冷/HVDC和智算中心上架率；电力基础设施重点看国网/南网招标、特高压开工、智能配网、算电协同、AIDC供电订单和电力设备出海；AI能源供给侧重点看AIDC自建发电、燃气轮机/柴发交期、SOFC批量落地、精密铸件和HRSG产线；消费电子重点看AI手机/AIPC、折叠屏iPhone、AI眼镜、以旧换新和终端单机价值量提升；创新药重点看BD出海、CXO订单、盈利拐点、ADC/双抗临床数据和医保商保支付环境；商业航天重点看千帆/GW星座组网、可复用火箭、SpaceX IPO、航天ETF资金、核心零部件订单和亏损企业风险；储能重点看AI数据中心配储、全球装机与招标、锂电材料价格、电芯/PCS订单和系统集成盈利；脑机接口重点看临床试验/注册审批、侵入式电极材料、BCI专用芯片、康复商业化和强脑科技等一级市场进展。
 

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>维护者登录</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body class="admin-login-page">
+    <main class="admin-login-shell">
+      <section class="admin-login-panel">
+        <p class="eyebrow">Maintainer Access</p>
+        <h1>维护者登录</h1>
+        <p>产业链原稿、动态文件和维护说明仅向维护者开放。</p>
+        <form id="adminLoginForm" class="admin-login-form">
+          <label for="adminPassword">维护密码</label>
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" required autofocus />
+          <button class="button primary" type="submit">登录</button>
+        </form>
+        <p id="adminLoginMessage" class="admin-login-message" aria-live="polite"></p>
+        <a class="admin-back-link" href="./index.html">返回产业链研究库</a>
+      </section>
+    </main>
+    <script src="./assets/admin-login.js"></script>
+  </body>
+</html>

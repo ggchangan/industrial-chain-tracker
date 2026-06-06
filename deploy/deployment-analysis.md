@@ -7,10 +7,10 @@
 
 | 项目 | 值 |
 |------|----|
-| 类型 | **纯静态网站**（HTML + CSS + JS + 资源文件）|
-| 后端 | 无 |
-| 构建步骤 | 无（根目录 `index.html` 与 `assets/` 直接可访问）|
-| 运行时依赖 | 无（只需要一个 HTTP 服务器）|
+| 类型 | **内容 API + 静态阅读前端** |
+| 后端 | Node.js 内置 HTTP 服务 |
+| 构建步骤 | 无前端编译；内容更新后运行 `npm run sync` |
+| 运行时依赖 | Node.js 22 |
 | 文件数量 | 117 个 |
 | 总大小 | **51MB**（其中 diagram/ 21MB, cover-image/ 6.9MB, 其他 316KB）|
 | 入口文件 | `index.html` |
@@ -24,7 +24,12 @@ industrial-chain-tracker/
 ├── assets/
 │   ├── app.js                 ← 应用逻辑
 │   ├── data.js                ← 产业链配置数据（JSON）
+│   ├── bootstrap.js           ← API 优先、静态数据回退
 │   └── styles.css             ← 样式
+├── server/
+│   ├── server.mjs             ← 静态服务、API 与路由
+│   ├── auth.mjs               ← 维护密码和签名会话
+│   └── library.mjs            ← 数据读取与服务端搜索
 ├── content/
 │   ├── raw/                   ← 18个产业链原始文章（Markdown）
 │   └── updates/               ← 18个产业链动态追踪数据（JSON）
@@ -62,19 +67,19 @@ data.js 中的路径：
 
 ### 方案A：Docker 部署（推荐 ⭐）
 
-以 `nginx:alpine` 为基础镜像，打包整个仓库为自包含的 Docker 镜像。目录结构已在仓库根对齐，无需自定义 nginx 配置即可运行。
+以 `node:22-alpine` 为基础镜像，统一提供公开页面、内容 API 和受保护的维护台。外层 Nginx 只负责域名、HTTPS 和反向代理。
 
 **结构：**
 ```
 deploy/
-├── Dockerfile        ← COPY . /usr/share/nginx/html/
-├── nginx.conf        ← 缓存设置（可选，默认配置也可用）
-└── deploy.sh         ← 一键部署脚本
+├── Dockerfile        ← Node 22 运行镜像
+├── nginx.conf        ← 外层反向代理示例
+└── deploy.sh         ← 带环境变量检查的一键部署
 ```
 
 **容器内部署结构：**
 ```
-/usr/share/nginx/html/    ← nginx 默认 web 根
+/app/                     ← 应用根目录
 ├── index.html            ← 首页
 ├── assets/               ← CSS/JS/数据
 ├── diagram/              ← 产业链图
@@ -85,30 +90,27 @@ deploy/
 
 **一键运行：**
 ```bash
-# 默认端口 81
+# 容器固定使用 4173 端口和 chain-net 网络
 bash deploy/deploy.sh
-
-# 指定端口
-bash deploy/deploy.sh 8081
 ```
 
 **或手动操作：**
 ```bash
 cd /home/ubuntu/industrial-chain-tracker
 sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
-sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chain-tracker:latest
+sudo docker run -d --name chain-tracker --env-file .env -p 4173:4173 --restart unless-stopped chain-tracker:latest
 ```
 
 **验证：**
 ```bash
-curl http://localhost:8081/
-curl http://localhost:8081/assets/app.js
-curl http://localhost:8081/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
+curl http://localhost:4173/
+curl http://localhost:4173/api/v1/health
+curl "http://localhost:4173/api/v1/chains/pcb?article=1"
 ```
 
 **镜像大小：**
 ```
-chain-tracker:latest  ~53MB（nginx:alpine ~30MB + 仓库文件 ~23MB）
+镜像包含 Node 运行时和研究资料，实际大小随产业链图片数量变化。
 ```
 
 **更新流程：**
@@ -116,7 +118,7 @@ chain-tracker:latest  ~53MB（nginx:alpine ~30MB + 仓库文件 ~23MB）
 git pull
 sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
 sudo docker stop chain-tracker && sudo docker rm chain-tracker
-sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chain-tracker:latest
+sudo docker run -d --name chain-tracker --env-file .env -p 4173:4173 --restart unless-stopped chain-tracker:latest
 ```
 
 **优点：**
@@ -137,7 +139,7 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 
 ### 4.1 数据同步脚本
 
-`scripts/sync-blog-data.mjs` 用 Node.js 编写。生产环境中部署不需要 Node — 它是**开发工具**，用于同步数据到 `data.js`，不在运行时调用。
+`scripts/sync-blog-data.mjs` 用于把各产业链的动态文件同步到 `data.js`。生产运行时由 Node 服务读取同步后的资料库。
 
 ### 4.2 大文件优化（可选）
 
@@ -146,15 +148,15 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 | `diagram/` | 21MB | SVG + PNG，可考虑只保留 SVG 减小体积 |
 | `cover-image/` | 6.9MB | SVG + PNG，同上 |
 
-当前 51MB 对 nginx 无压力，不做强制要求。如果想优化，每个产业链只保留 SVG（放弃 PNG @2x），可缩减约 50%。
+当前图片体积对内容服务压力不大。如果想优化，可增加 WebP 和对象存储/CDN，而不是删除维护所需的 SVG/PNG 原稿。
 
 ### 4.3 内容更新流程
 
 ```
 更新 content/raw/*.md 或 content/updates/*.json
   → 运行 scripts/sync-blog-data.mjs（更新 data.js）
-  → 推送到 GitHub（index.html + assets/ 不变，只 data.js 变）
-  → 服务器上 git pull 即可生效（无需重启，nginx 直接读文件）
+  → 推送到 GitHub
+  → 重新构建并启动容器，使 Node 服务载入新数据
 ```
 
 ### 4.4 Git 追踪建议
@@ -170,18 +172,15 @@ sudo docker run -d --name chain-tracker -p 8081:80 --restart unless-stopped chai
 # Step 1: 确保仓库在服务器上
 ls /home/ubuntu/industrial-chain-tracker/
 
-# Step 2: 一键部署（默认端口 81）
+# Step 2: 配置密码并一键部署
+cp .env.example .env
+# 编辑 .env
 bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh
 
-# 或指定端口（不冲突即可）
-bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh 8081
-
 # Step 3: 验证
-curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/
-curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/assets/app.js
-curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/README.md
-curl -s -o /dev/null -w "%{http_code} %{size_download}B\n" http://localhost:81/diagram/pcb-industry-chain/pcb-industry-chain-map.svg
+curl http://172.20.0.2:4173/api/v1/health
+curl http://172.20.0.2:4173/
 
 # Step 4: 浏览器访问
-# http://服务器IP:81/
+# 通过外层 Nginx 配置的 HTTPS 域名访问
 ```

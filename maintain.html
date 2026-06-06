@@ -13,6 +13,7 @@
         <a href="./README.md">维护说明</a>
         <a href="#resources">资源文件</a>
         <a href="#template">新增模板</a>
+        <button id="adminLogout" class="nav-button" type="button">退出登录</button>
       </nav>
       <section class="hero">
         <p class="eyebrow">Maintainer Console</p>
@@ -102,6 +103,13 @@
       }
 
       search.addEventListener("input", () => renderCards(search.value));
+      document.querySelector("#adminLogout").addEventListener("click", async () => {
+        await fetch("./api/v1/admin/logout", {
+          method: "POST",
+          credentials: "same-origin"
+        });
+        window.location.replace("./admin-login.html");
+      });
       renderCards();
     </script>
   </body>
