@@ -41,7 +41,7 @@ a {
 }
 
 .site-header {
-  min-height: 360px;
+  min-height: 620px;
   padding: 22px clamp(18px, 5vw, 72px) 44px;
 }
 
@@ -71,7 +71,7 @@ a {
 }
 
 .hero {
-  max-width: 980px;
+  max-width: 1180px;
   padding-top: 58px;
 }
 
@@ -106,7 +106,7 @@ h1 {
 }
 
 .search-panel {
-  margin-bottom: 18px;
+  margin: 28px 0 16px;
   max-width: 920px;
 }
 
