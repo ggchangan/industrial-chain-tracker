@@ -4551,6 +4551,256 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "notes": "重点跟踪试验线良率、客户概念认证、小批量供货和实际收入贡献。"
         }
       ]
+    },
+    {
+      "id": "physical-ai",
+      "title": "物理AI产业链",
+      "shortTitle": "物理AI",
+      "theme": "世界模型、仿真训练与具身智能加速融合，AI正从数字空间走向机器人、智能驾驶和工业现场。",
+      "status": "已建档",
+      "trackingProfile": {
+        "title": "物理AI专属动态追踪",
+        "summary": "重点跟踪世界模型能力、仿真训练效率、端侧算力、多模态感知、执行硬件和真实场景订单。",
+        "metrics": [
+          {
+            "name": "世界模型能力",
+            "why": "模型对物理规律、空间关系和动作结果的理解决定系统泛化上限。",
+            "signals": [
+              "模型新版本",
+              "动作生成质量",
+              "开源范围",
+              "跨本体适配"
+            ]
+          },
+          {
+            "name": "仿真与数据闭环",
+            "why": "合成数据和Sim-to-Real效率决定训练成本与产品迭代速度。",
+            "signals": [
+              "仿真平台订单",
+              "合成数据规模",
+              "迁移成功率",
+              "现实数据回流"
+            ]
+          },
+          {
+            "name": "感知与执行硬件",
+            "why": "传感器精度、执行器可靠性和传动良率决定数字决策能否稳定落地。",
+            "signals": [
+              "客户定点",
+              "批量供货",
+              "量产良率",
+              "机器人收入占比"
+            ]
+          },
+          {
+            "name": "真实场景商业化",
+            "why": "部署量、连续运行、任务成功率和客户复购是产业从演示走向生产力的证据。",
+            "signals": [
+              "工厂部署量",
+              "运行时长",
+              "任务成功率",
+              "客户复购"
+            ]
+          }
+        ]
+      },
+      "article": "./content/raw/physical-ai-industry-chain-original.md",
+      "cover": "./cover-image/physical-ai-industry-chain/physical-ai-industry-chain-cover.png",
+      "diagram": "./diagram/physical-ai-industry-chain/physical-ai-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/physical-ai-industry-chain/physical-ai-industry-chain-map.svg",
+      "updateFile": "./content/updates/physical-ai-chain-updates.json",
+      "chain": [
+        {
+          "id": "infrastructure",
+          "title": "底层：算力、数据与仿真",
+          "role": "为世界模型和控制策略提供训练算力、合成数据与安全试错环境。",
+          "items": [
+            {
+              "name": "AI训练与边缘算力",
+              "detail": "GPU集群、AI服务器和端侧推理芯片",
+              "companies": "英伟达、工业富联"
+            },
+            {
+              "name": "物理仿真与数字孪生",
+              "detail": "CAE、多物理场、合成数据和Sim-to-Real",
+              "companies": "索辰科技、英伟达Isaac/Omniverse"
+            },
+            {
+              "name": "现实数据采集",
+              "detail": "视频、传感器、遥操作和动作轨迹形成训练数据",
+              "companies": "盛视科技及机器人数据服务商"
+            }
+          ]
+        },
+        {
+          "id": "platform",
+          "title": "平台：世界模型与具身大脑",
+          "role": "理解物理环境、生成动作计划，并连接模型、操作系统和机器人硬件。",
+          "items": [
+            {
+              "name": "世界基础模型",
+              "detail": "环境生成、状态预测、空间关系和物理规律建模",
+              "companies": "英伟达Cosmos、国内世界模型团队"
+            },
+            {
+              "name": "具身大脑与VLA",
+              "detail": "视觉语言行动模型、任务理解和闭环控制",
+              "companies": "英伟达GR00T、华为盘古、Figure AI"
+            },
+            {
+              "name": "操作系统与开发工具",
+              "detail": "模型部署、硬件适配、任务编排和生态连接",
+              "companies": "英伟达Isaac、华为鸿蒙"
+            }
+          ]
+        },
+        {
+          "id": "hardware",
+          "title": "硬件：感知与执行",
+          "role": "将现实状态转化为数字输入，再把模型决策转化为可靠物理动作。",
+          "items": [
+            {
+              "name": "多模态感知",
+              "detail": "3D视觉、力矩、六维力、IMU与电子皮肤",
+              "companies": "奥比中光、柯力传感、安培龙、芯动联科、汉威科技"
+            },
+            {
+              "name": "执行器与精密传动",
+              "detail": "执行器、谐波减速器、行星滚柱丝杠和关节模组",
+              "companies": "拓普集团、五洲新春、绿的谐波、恒立液压"
+            },
+            {
+              "name": "灵巧手与微型驱动",
+              "detail": "空心杯电机、微型丝杠、微型传动与触觉反馈",
+              "companies": "鸣志电器、兆威机电、北特科技"
+            }
+          ]
+        },
+        {
+          "id": "applications",
+          "title": "应用：本体与真实场景",
+          "role": "通过稳定作业、部署规模、客户复购和数据回流验证商业价值。",
+          "items": [
+            {
+              "name": "人形机器人",
+              "detail": "工厂、仓储、商业与家庭服务",
+              "companies": "特斯拉Optimus、宇树科技、优必选、Figure AI"
+            },
+            {
+              "name": "智能驾驶",
+              "detail": "感知、预测、决策和车辆控制构成成熟物理AI闭环",
+              "companies": "特斯拉、华为、小鹏汽车"
+            },
+            {
+              "name": "工业自动化",
+              "detail": "装配、搬运、巡检、质检和数字孪生",
+              "companies": "比亚迪、小米及工业机器人厂商"
+            }
+          ]
+        }
+      ],
+      "logic": [
+        {
+          "title": "世界模型补齐数据短板",
+          "body": "仿真与生成数据覆盖稀有和危险场景，降低现实采集成本并加快策略训练。"
+        },
+        {
+          "title": "软硬件闭环决定能力",
+          "body": "算力、模型、传感器和执行系统需要共同优化，单一模型或硬件难以独立形成商业壁垒。"
+        },
+        {
+          "title": "真实运行形成数据飞轮",
+          "body": "部署后的感知、动作与异常数据回流训练系统，推动模型泛化和硬件控制持续改善。"
+        },
+        {
+          "title": "订单和复购验证商业化",
+          "body": "部署量、运行时间、任务成功率、客户复购和零部件收入，是区分演示与生产力的关键。"
+        }
+      ],
+      "watchlist": [
+        {
+          "segment": "世界模型与平台",
+          "signals": [
+            "新版本与开源范围",
+            "动作生成质量",
+            "机器人形态适配",
+            "真实场景案例"
+          ],
+          "companies": "英伟达、华为、Figure AI"
+        },
+        {
+          "segment": "算力与仿真",
+          "signals": [
+            "AI服务器收入",
+            "仿真产品订单",
+            "客户扩张",
+            "仿真到现实迁移效率"
+          ],
+          "companies": "工业富联、索辰科技、盛视科技"
+        },
+        {
+          "segment": "感知系统",
+          "signals": [
+            "客户验证",
+            "批量供应",
+            "精度与延迟",
+            "量产良率"
+          ],
+          "companies": "奥比中光、柯力传感、安培龙、芯动联科、汉威科技"
+        },
+        {
+          "segment": "执行与精密传动",
+          "signals": [
+            "定点与订单",
+            "扩产进度",
+            "单机价值量",
+            "机器人业务收入"
+          ],
+          "companies": "拓普集团、五洲新春、绿的谐波、鸣志电器、兆威机电"
+        },
+        {
+          "segment": "本体与应用",
+          "signals": [
+            "真实部署量",
+            "任务成功率",
+            "连续运行时间",
+            "客户复购"
+          ],
+          "companies": "特斯拉、宇树科技、优必选、小米、比亚迪"
+        }
+      ],
+      "updates": [
+        {
+          "date": "2026-06-06",
+          "segment": "全产业链",
+          "signal": "建立物理AI四层产业链基准框架",
+          "impact": "形成“算力与仿真 → 世界模型与中间件 → 感知执行硬件 → 本体与真实场景”的研究路径。",
+          "confidence": "基准框架",
+          "sourceTitle": "物理AI产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "notes": "初始版本来自用户提供文章，涉及2026年事件、财务数据和合作关系的内容仍需逐项外部核验。"
+        },
+        {
+          "date": "2026-06-06",
+          "segment": "世界模型",
+          "signal": "世界模型、视觉语言行动模型与机器人开发平台成为物理AI核心观察点",
+          "impact": "若模型能够降低现实数据采集成本并提高任务泛化能力，将加快机器人和智能驾驶的商业化。",
+          "confidence": "待核验",
+          "sourceTitle": "物理AI产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "notes": "后续以英伟达、华为和相关开发者平台的官方发布核验版本、能力和合作伙伴。"
+        },
+        {
+          "date": "2026-06-06",
+          "segment": "商业化",
+          "signal": "真实场景部署和零部件订单进入产业兑现验证窗口",
+          "impact": "工厂部署量、连续运行时间、任务成功率和客户复购将成为区分产品能力与概念映射的关键指标。",
+          "confidence": "待核验",
+          "sourceTitle": "物理AI产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "notes": "重点跟踪本体厂公告、供应商定点、订单、产能利用率和机器人业务收入。"
+        }
+      ]
     }
   ]
 };

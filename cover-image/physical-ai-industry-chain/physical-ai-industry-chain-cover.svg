@@ -1,0 +1,66 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#1e293b" stroke-width="0.7"/>
+    </pattern>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.52" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <style>
+      text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#0b1120"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <text x="82" y="96" fill="#22d3ee" font-size="19" font-weight="700">PHYSICAL AI INDUSTRY CHAIN</text>
+  <text x="82" y="184" fill="#f8fafc" font-size="62" font-weight="750">物理AI产业链</text>
+  <text x="82" y="238" fill="#cbd5e1" font-size="25">从数字大脑到现实行动</text>
+  <text x="82" y="292" fill="#94a3b8" font-size="16">世界模型 · 仿真训练 · 多模态感知 · 闭环执行 · 真实场景</text>
+
+  <path d="M 888 156 C 1100 92, 1372 164, 1460 362 C 1538 538, 1410 724, 1194 746 C 982 768, 820 638, 836 446 C 846 326, 854 238, 888 156Z"
+        fill="rgba(8,51,68,0.25)" stroke="#22d3ee" stroke-width="2"/>
+  <circle cx="1145" cy="370" r="120" fill="rgba(76,29,149,0.30)" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="1145" cy="370" r="68" fill="#0b1120" stroke="#34d399" stroke-width="2"/>
+  <text x="1145" y="360" fill="#f8fafc" font-size="19" font-weight="700" text-anchor="middle">WORLD</text>
+  <text x="1145" y="388" fill="#f8fafc" font-size="19" font-weight="700" text-anchor="middle">MODEL</text>
+
+  <g fill="#0b1120" stroke-width="2">
+    <rect x="866" y="250" width="190" height="86" rx="8" stroke="#fbbf24"/>
+    <rect x="1236" y="250" width="190" height="86" rx="8" stroke="#22d3ee"/>
+    <rect x="866" y="506" width="190" height="86" rx="8" stroke="#34d399"/>
+    <rect x="1236" y="506" width="190" height="86" rx="8" stroke="#fb7185"/>
+  </g>
+  <text x="961" y="285" fill="#f8fafc" font-size="16" font-weight="700" text-anchor="middle">训练与仿真</text>
+  <text x="961" y="311" fill="#94a3b8" font-size="12" text-anchor="middle">算力 · CAE · 合成数据</text>
+  <text x="1331" y="285" fill="#f8fafc" font-size="16" font-weight="700" text-anchor="middle">感知系统</text>
+  <text x="1331" y="311" fill="#94a3b8" font-size="12" text-anchor="middle">视觉 · 力觉 · 触觉</text>
+  <text x="961" y="541" fill="#f8fafc" font-size="16" font-weight="700" text-anchor="middle">执行硬件</text>
+  <text x="961" y="567" fill="#94a3b8" font-size="12" text-anchor="middle">电机 · 减速器 · 丝杠</text>
+  <text x="1331" y="541" fill="#f8fafc" font-size="16" font-weight="700" text-anchor="middle">真实场景</text>
+  <text x="1331" y="567" fill="#94a3b8" font-size="12" text-anchor="middle">机器人 · 汽车 · 工业</text>
+
+  <g fill="none" stroke="url(#signal)" stroke-width="4">
+    <path d="M1056 293 C1090 293, 1096 318, 1106 334"/>
+    <path d="M1236 293 C1200 293, 1192 318, 1182 334"/>
+    <path d="M1056 549 C1090 549, 1096 500, 1106 448"/>
+    <path d="M1236 549 C1200 549, 1192 500, 1182 448"/>
+  </g>
+
+  <rect x="82" y="386" width="625" height="88" rx="7" fill="rgba(120,53,15,0.22)" stroke="#fbbf24"/>
+  <text x="112" y="420" fill="#fde68a" font-size="15" font-weight="700">核心变化</text>
+  <text x="112" y="450" fill="#e2e8f0" font-size="15">AI从生成内容，走向理解、预测并改变现实世界</text>
+
+  <rect x="82" y="502" width="625" height="88" rx="7" fill="rgba(6,78,59,0.24)" stroke="#34d399"/>
+  <text x="112" y="536" fill="#a7f3d0" font-size="15" font-weight="700">价值闭环</text>
+  <text x="112" y="566" fill="#e2e8f0" font-size="15">数据 → 模型 → 动作 → 反馈 → 再训练</text>
+
+  <rect x="82" y="618" width="625" height="88" rx="7" fill="rgba(76,29,149,0.25)" stroke="#a78bfa"/>
+  <text x="112" y="652" fill="#ddd6fe" font-size="15" font-weight="700">商业化锚点</text>
+  <text x="112" y="682" fill="#e2e8f0" font-size="15">稳定作业、规模部署、客户复购与硬件订单</text>
+
+  <line x1="82" y1="790" x2="1518" y2="790" stroke="#334155"/>
+  <text x="82" y="832" fill="#64748b" font-size="13">INDUSTRIAL CHAIN TRACKER · 2026</text>
+</svg>

@@ -1,0 +1,132 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.6"/>
+    </pattern>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24"/>
+    </marker>
+    <style>
+      text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
+      .title { fill: #f8fafc; font-size: 28px; font-weight: 700; }
+      .subtitle { fill: #94a3b8; font-size: 13px; }
+      .layer { fill: #e2e8f0; font-size: 17px; font-weight: 700; }
+      .name { fill: #f8fafc; font-size: 14px; font-weight: 650; }
+      .desc { fill: #94a3b8; font-size: 11px; }
+      .small { fill: #cbd5e1; font-size: 10px; }
+      .note { fill: #fecdd3; font-size: 11px; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#0b1120"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <text x="58" y="62" class="title">物理AI产业链：从数字大脑到现实行动</text>
+  <text x="58" y="91" class="subtitle">训练与仿真 → 世界模型与决策 → 感知与执行 → 本体与真实场景，形成数据回流闭环</text>
+
+  <path d="M 390 454 L 420 454" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+  <path d="M 775 454 L 805 454" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+  <path d="M 1160 454 L 1190 454" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+
+  <rect x="45" y="126" width="345" height="590" rx="12" fill="#0b1120"/>
+  <rect x="45" y="126" width="345" height="590" rx="12" fill="rgba(120,53,15,0.20)" stroke="#fbbf24" stroke-width="2"/>
+  <text x="70" y="164" class="layer">01 底层基础设施</text>
+  <text x="70" y="188" class="desc">提供训练算力、数据和安全试错环境</text>
+
+  <rect x="70" y="226" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="70" y="226" width="295" height="112" rx="7" fill="rgba(120,53,15,0.28)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="217" y="262" class="name" text-anchor="middle">AI训练与边缘算力</text>
+  <text x="217" y="288" class="desc" text-anchor="middle">GPU集群 · AI服务器 · 端侧芯片</text>
+  <text x="217" y="314" class="small" text-anchor="middle">英伟达 · 工业富联</text>
+
+  <rect x="70" y="366" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="70" y="366" width="295" height="112" rx="7" fill="rgba(120,53,15,0.28)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="217" y="402" class="name" text-anchor="middle">物理仿真与合成数据</text>
+  <text x="217" y="428" class="desc" text-anchor="middle">CAE · 数字孪生 · Sim-to-Real</text>
+  <text x="217" y="454" class="small" text-anchor="middle">索辰科技 · Isaac / Omniverse</text>
+
+  <rect x="70" y="506" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="70" y="506" width="295" height="112" rx="7" fill="rgba(120,53,15,0.28)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="217" y="542" class="name" text-anchor="middle">现实数据采集</text>
+  <text x="217" y="568" class="desc" text-anchor="middle">视频 · 传感器 · 遥操作 · 动作数据</text>
+  <text x="217" y="594" class="small" text-anchor="middle">数据质量决定模型上限</text>
+
+  <rect x="430" y="126" width="345" height="590" rx="12" fill="#0b1120"/>
+  <rect x="430" y="126" width="345" height="590" rx="12" fill="rgba(76,29,149,0.24)" stroke="#a78bfa" stroke-width="2"/>
+  <text x="455" y="164" class="layer">02 世界模型与平台</text>
+  <text x="455" y="188" class="desc">理解环境、规划动作并连接软硬件</text>
+
+  <rect x="455" y="226" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="455" y="226" width="295" height="112" rx="7" fill="rgba(76,29,149,0.34)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="602" y="262" class="name" text-anchor="middle">世界基础模型</text>
+  <text x="602" y="288" class="desc" text-anchor="middle">环境生成 · 状态预测 · 物理推理</text>
+  <text x="602" y="314" class="small" text-anchor="middle">Cosmos · 国内世界模型</text>
+
+  <rect x="455" y="366" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="455" y="366" width="295" height="112" rx="7" fill="rgba(76,29,149,0.34)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="602" y="402" class="name" text-anchor="middle">具身大脑与VLA</text>
+  <text x="602" y="428" class="desc" text-anchor="middle">任务理解 · 动作规划 · 闭环控制</text>
+  <text x="602" y="454" class="small" text-anchor="middle">GR00T · 盘古 · Figure AI</text>
+
+  <rect x="455" y="506" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="455" y="506" width="295" height="112" rx="7" fill="rgba(76,29,149,0.34)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="602" y="542" class="name" text-anchor="middle">操作系统与开发工具</text>
+  <text x="602" y="568" class="desc" text-anchor="middle">模型部署 · 硬件适配 · 任务编排</text>
+  <text x="602" y="594" class="small" text-anchor="middle">Isaac · 鸿蒙 · Agent Toolkit</text>
+
+  <rect x="815" y="126" width="345" height="590" rx="12" fill="#0b1120"/>
+  <rect x="815" y="126" width="345" height="590" rx="12" fill="rgba(6,78,59,0.24)" stroke="#34d399" stroke-width="2"/>
+  <text x="840" y="164" class="layer">03 感知与执行硬件</text>
+  <text x="840" y="188" class="desc">把数字决策转化为可靠的物理动作</text>
+
+  <rect x="840" y="226" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="840" y="226" width="295" height="112" rx="7" fill="rgba(6,78,59,0.34)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="987" y="262" class="name" text-anchor="middle">多模态感知</text>
+  <text x="987" y="288" class="desc" text-anchor="middle">3D视觉 · 六维力 · IMU · 电子皮肤</text>
+  <text x="987" y="314" class="small" text-anchor="middle">奥比中光 · 柯力 · 安培龙 · 芯动联科</text>
+
+  <rect x="840" y="366" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="840" y="366" width="295" height="112" rx="7" fill="rgba(6,78,59,0.34)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="987" y="402" class="name" text-anchor="middle">执行器与精密传动</text>
+  <text x="987" y="428" class="desc" text-anchor="middle">电机 · 减速器 · 丝杠 · 关节模组</text>
+  <text x="987" y="454" class="small" text-anchor="middle">拓普 · 五洲新春 · 绿的谐波</text>
+
+  <rect x="840" y="506" width="295" height="112" rx="7" fill="#0b1120"/>
+  <rect x="840" y="506" width="295" height="112" rx="7" fill="rgba(6,78,59,0.34)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="987" y="542" class="name" text-anchor="middle">灵巧操作</text>
+  <text x="987" y="568" class="desc" text-anchor="middle">空心杯电机 · 微型传动 · 触觉反馈</text>
+  <text x="987" y="594" class="small" text-anchor="middle">鸣志电器 · 兆威机电 · 汉威科技</text>
+
+  <rect x="1200" y="126" width="355" height="590" rx="12" fill="#0b1120"/>
+  <rect x="1200" y="126" width="355" height="590" rx="12" fill="rgba(8,51,68,0.26)" stroke="#22d3ee" stroke-width="2"/>
+  <text x="1225" y="164" class="layer">04 本体与真实场景</text>
+  <text x="1225" y="188" class="desc">以稳定作业、成本和复购验证商业价值</text>
+
+  <rect x="1225" y="226" width="305" height="112" rx="7" fill="#0b1120"/>
+  <rect x="1225" y="226" width="305" height="112" rx="7" fill="rgba(8,51,68,0.38)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="1377" y="262" class="name" text-anchor="middle">人形机器人</text>
+  <text x="1377" y="288" class="desc" text-anchor="middle">工厂 · 仓储 · 商业与家庭服务</text>
+  <text x="1377" y="314" class="small" text-anchor="middle">Optimus · 宇树 · 优必选 · Figure</text>
+
+  <rect x="1225" y="366" width="305" height="112" rx="7" fill="#0b1120"/>
+  <rect x="1225" y="366" width="305" height="112" rx="7" fill="rgba(8,51,68,0.38)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="1377" y="402" class="name" text-anchor="middle">智能驾驶</text>
+  <text x="1377" y="428" class="desc" text-anchor="middle">感知 · 预测 · 决策 · 车辆控制</text>
+  <text x="1377" y="454" class="small" text-anchor="middle">端到端模型与世界模型训练</text>
+
+  <rect x="1225" y="506" width="305" height="112" rx="7" fill="#0b1120"/>
+  <rect x="1225" y="506" width="305" height="112" rx="7" fill="rgba(8,51,68,0.38)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="1377" y="542" class="name" text-anchor="middle">工业自动化</text>
+  <text x="1377" y="568" class="desc" text-anchor="middle">装配 · 搬运 · 巡检 · 数字孪生</text>
+  <text x="1377" y="594" class="small" text-anchor="middle">标准化任务优先形成收入</text>
+
+  <path d="M 1378 694 C 1378 790, 218 790, 218 694" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="9 6" marker-end="url(#arrow-amber)"/>
+  <rect x="542" y="758" width="520" height="44" rx="22" fill="#0b1120" stroke="#fbbf24"/>
+  <text x="802" y="786" fill="#fde68a" font-size="13" font-weight="650" text-anchor="middle">真实运行数据回流：持续训练模型、优化仿真与硬件控制</text>
+
+  <rect x="45" y="830" width="1510" height="46" rx="7" fill="rgba(136,19,55,0.28)" stroke="#fb7185"/>
+  <text x="70" y="858" class="note">商业化验证：部署量 · 连续运行时间 · 任务成功率 · 故障恢复 · 单机成本 · 客户复购 · 零部件订单</text>
+</svg>

@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "物理AI产业链逻辑追踪",
+    "created": "2026-06-06",
+    "sourceArticle": "../raw/physical-ai-industry-chain-original.md",
+    "schema": "date, segment, signal, impact, confidence, source, notes"
+  },
+  "watchlist": [
+    {
+      "segment": "世界模型与平台",
+      "keywords": ["Cosmos", "GR00T", "Isaac", "世界模型", "视觉语言行动模型"],
+      "companies": ["英伟达", "华为", "Figure AI"],
+      "whatToTrack": ["新版本与开源范围", "动作生成质量", "机器人形态适配", "真实场景案例"]
+    },
+    {
+      "segment": "算力与仿真",
+      "keywords": ["AI服务器", "CAE", "物理仿真", "合成数据", "数字孪生"],
+      "companies": ["工业富联", "索辰科技", "盛视科技"],
+      "whatToTrack": ["AI服务器收入", "仿真产品订单", "客户扩张", "仿真到现实迁移效率"]
+    },
+    {
+      "segment": "感知系统",
+      "keywords": ["3D视觉", "六维力", "IMU", "电子皮肤", "多模态融合"],
+      "companies": ["奥比中光", "柯力传感", "安培龙", "芯动联科", "汉威科技"],
+      "whatToTrack": ["客户验证", "批量供应", "精度与延迟", "量产良率"]
+    },
+    {
+      "segment": "执行与精密传动",
+      "keywords": ["执行器", "谐波减速器", "行星滚柱丝杠", "空心杯电机", "灵巧手"],
+      "companies": ["拓普集团", "五洲新春", "绿的谐波", "鸣志电器", "兆威机电"],
+      "whatToTrack": ["定点与订单", "扩产进度", "单机价值量", "机器人业务收入"]
+    },
+    {
+      "segment": "本体与应用",
+      "keywords": ["Optimus", "宇树科技", "优必选", "智能驾驶", "工业自动化"],
+      "companies": ["特斯拉", "宇树科技", "优必选", "小米", "比亚迪"],
+      "whatToTrack": ["真实部署量", "任务成功率", "连续运行时间", "客户复购"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-06",
+      "segment": "全产业链",
+      "signal": "建立物理AI四层产业链基准框架",
+      "impact": "形成“算力与仿真 → 世界模型与中间件 → 感知执行硬件 → 本体与真实场景”的研究路径。",
+      "confidence": "基准框架",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "物理AI产业链深度解析原始稿",
+        "url": "../raw/physical-ai-industry-chain-original.md"
+      },
+      "notes": "初始版本来自用户提供文章，涉及2026年事件、财务数据和合作关系的内容仍需逐项外部核验。"
+    },
+    {
+      "date": "2026-06-06",
+      "segment": "世界模型",
+      "signal": "世界模型、视觉语言行动模型与机器人开发平台成为物理AI核心观察点",
+      "impact": "若模型能够降低现实数据采集成本并提高任务泛化能力，将加快机器人和智能驾驶的商业化。",
+      "confidence": "待核验",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "物理AI产业链深度解析原始稿",
+        "url": "../raw/physical-ai-industry-chain-original.md"
+      },
+      "notes": "后续以英伟达、华为和相关开发者平台的官方发布核验版本、能力和合作伙伴。"
+    },
+    {
+      "date": "2026-06-06",
+      "segment": "商业化",
+      "signal": "真实场景部署和零部件订单进入产业兑现验证窗口",
+      "impact": "工厂部署量、连续运行时间、任务成功率和客户复购将成为区分产品能力与概念映射的关键指标。",
+      "confidence": "待核验",
+      "source": {
+        "type": "internal",
+        "platform": "Codex",
+        "title": "物理AI产业链深度解析原始稿",
+        "url": "../raw/physical-ai-industry-chain-original.md"
+      },
+      "notes": "重点跟踪本体厂公告、供应商定点、订单、产能利用率和机器人业务收入。"
+    }
+  ]
+}
