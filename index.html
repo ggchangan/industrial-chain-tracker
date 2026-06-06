@@ -24,6 +24,16 @@
           <a class="button primary" href="#chains">选择产业链</a>
           <a class="button" href="#article">阅读原文</a>
         </div>
+      </section>
+    </header>
+
+    <main>
+      <section id="chains" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Explore</p>
+          <h2>发现产业链</h2>
+          <p>搜索公司、环节、材料、主题，或从下方产业链列表切换研究对象。</p>
+        </div>
         <div class="search-panel" role="search">
           <label for="librarySearch">搜索产业链、公司、环节、动态</label>
           <div class="search-box">
@@ -32,26 +42,23 @@
           </div>
           <div class="search-results" id="searchResults" aria-live="polite"></div>
         </div>
-      </section>
-    </header>
-
-    <main>
-      <section id="chains" class="section">
-        <div class="section-head">
-          <p class="eyebrow">Library</p>
-          <h2>选择产业链</h2>
-          <p>点击卡片切换研究对象，从不同产业链进入公司、环节和主题的交叉关系。</p>
-        </div>
         <div class="industry-grid" id="industryGrid"></div>
       </section>
 
       <section class="section current-chain">
-        <div>
-          <p class="eyebrow">Current</p>
-          <h2 id="currentTitle"></h2>
-          <p id="currentTheme"></p>
+        <div class="current-chain-head">
+          <div>
+            <p class="eyebrow">Current</p>
+            <h2 id="currentTitle"></h2>
+            <p id="currentTheme"></p>
+          </div>
+          <div class="quick-links" id="quickLinks"></div>
         </div>
-        <div class="quick-links" id="quickLinks"></div>
+        <div id="map" class="chain-map-panel">
+          <a class="diagram-link" id="diagramLink">
+            <img id="diagramImage" alt="产业链全景与价值传导图" />
+          </a>
+        </div>
       </section>
 
       <section id="chain" class="section">
@@ -61,16 +68,6 @@
           <p>先看清上游、中游、下游和关键公司，再顺着材料、工艺、需求和主题交叉探索。</p>
         </div>
         <div class="chain-grid" id="chainGrid"></div>
-        <div id="map" class="chain-map-panel">
-          <div class="section-head compact">
-            <p class="eyebrow">Diagram</p>
-            <h2>产业链图谱</h2>
-            <p id="diagramCaption"></p>
-          </div>
-          <a class="diagram-link" id="diagramLink">
-            <img id="diagramImage" alt="产业链全景与价值传导图" />
-          </a>
-        </div>
       </section>
 
       <section id="logic" class="section">
