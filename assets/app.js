@@ -988,13 +988,11 @@ function renderIndustryGrid(chain) {
 function renderCurrent(chain) {
   document.querySelector("#currentTitle").textContent = chain.title;
   document.querySelector("#currentTheme").textContent = chain.theme;
-  document.querySelector("#diagramCaption").textContent = `${chain.title}全景图，帮助快速理解上下游关系、价值传导路径和核心变量。`;
 
   const quick = document.querySelector("#quickLinks");
   quick.innerHTML = "";
   [
     ["产业链骨架", "#chain"],
-    ["产业链图谱", "#map"],
     ["核心逻辑", "#logic"],
     ["动态追踪", "#updates"],
     ["原文阅读", "#article"],
