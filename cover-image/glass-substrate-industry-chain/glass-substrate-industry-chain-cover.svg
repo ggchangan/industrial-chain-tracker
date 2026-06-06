@@ -1,0 +1,59 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#1f3342" stroke-width="0.8"/>
+    </pattern>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#60a5fa" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity=".48"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#020617" flood-opacity=".7"/>
+    </filter>
+    <style>
+      text { font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; }
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#0b1118"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <g transform="translate(970 165)" filter="url(#shadow)">
+    <g transform="rotate(-12 240 250)">
+      <rect x="20" y="25" width="470" height="500" rx="18" fill="#07131c" stroke="#22d3ee" stroke-width="3"/>
+      <rect x="45" y="50" width="420" height="450" rx="12" fill="url(#glass)" stroke="#7dd3fc" stroke-width="1.5"/>
+      <g fill="#dbeafe" opacity=".84">
+        <circle cx="100" cy="110" r="9"/><circle cx="170" cy="110" r="9"/><circle cx="240" cy="110" r="9"/><circle cx="310" cy="110" r="9"/><circle cx="380" cy="110" r="9"/>
+        <circle cx="100" cy="180" r="9"/><circle cx="170" cy="180" r="9"/><circle cx="240" cy="180" r="9"/><circle cx="310" cy="180" r="9"/><circle cx="380" cy="180" r="9"/>
+        <circle cx="100" cy="250" r="9"/><circle cx="170" cy="250" r="9"/><circle cx="240" cy="250" r="9"/><circle cx="310" cy="250" r="9"/><circle cx="380" cy="250" r="9"/>
+        <circle cx="100" cy="320" r="9"/><circle cx="170" cy="320" r="9"/><circle cx="240" cy="320" r="9"/><circle cx="310" cy="320" r="9"/><circle cx="380" cy="320" r="9"/>
+        <circle cx="100" cy="390" r="9"/><circle cx="170" cy="390" r="9"/><circle cx="240" cy="390" r="9"/><circle cx="310" cy="390" r="9"/><circle cx="380" cy="390" r="9"/>
+      </g>
+      <g stroke="#fbbf24" stroke-width="3" opacity=".85">
+        <path d="M100 110H380M100 180H380M100 250H380M100 320H380M100 390H380"/>
+        <path d="M100 110V390M170 110V390M240 110V390M310 110V390M380 110V390"/>
+      </g>
+    </g>
+  </g>
+
+  <text x="90" y="150" fill="#22d3ee" font-size="22" font-weight="700">INDUSTRY CHAIN WATCH</text>
+  <text x="90" y="260" fill="#f8fafc" font-size="78" font-weight="800">玻璃基板</text>
+  <text x="90" y="350" fill="#f8fafc" font-size="78" font-weight="800">产业链</text>
+  <text x="90" y="415" fill="#cbd5e1" font-size="28">从显示底座到 AI 算力“新基建”</text>
+
+  <g transform="translate(90 510)">
+    <rect width="700" height="74" rx="8" fill="rgba(8,51,68,.55)" stroke="#22d3ee"/>
+    <text x="26" y="31" fill="#f8fafc" font-size="20" font-weight="700">材料升级</text>
+    <text x="26" y="56" fill="#94a3b8" font-size="16">低翘曲 · 低介电损耗 · 高平整度</text>
+  </g>
+  <g transform="translate(90 605)">
+    <rect width="700" height="74" rx="8" fill="rgba(6,78,59,.5)" stroke="#34d399"/>
+    <text x="26" y="31" fill="#f8fafc" font-size="20" font-weight="700">核心工艺</text>
+    <text x="26" y="56" fill="#94a3b8" font-size="16">TGV成孔 · 金属化填充 · RDL布线</text>
+  </g>
+  <g transform="translate(90 700)">
+    <rect width="700" height="74" rx="8" fill="rgba(76,29,149,.5)" stroke="#a78bfa"/>
+    <text x="26" y="31" fill="#f8fafc" font-size="20" font-weight="700">下游应用</text>
+    <text x="26" y="56" fill="#94a3b8" font-size="16">先进封装 · CPO · AI芯片 · 6G射频</text>
+  </g>
+</svg>

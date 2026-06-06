@@ -1,7 +1,7 @@
 window.INDUSTRY_CHAIN_LIBRARY = {
   "meta": {
     "title": "产业链研究库",
-    "updated": "2026-06-05",
+    "updated": "2026-06-06",
     "description": "统一沉淀产业链骨架、公众号配图、动态追踪和资料文件。"
   },
   "chains": [
@@ -4321,6 +4321,234 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "sourceTitle": "脑机接口产业链深度解析原始稿",
           "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
           "notes": "后续跟踪港股IPO、仿生手/仿生腿出货、上游模组供应关系。"
+        }
+      ]
+    },
+    {
+      "id": "glass-substrate",
+      "title": "玻璃基板产业链",
+      "shortTitle": "玻璃基板",
+      "theme": "AI芯片转向先进封装，玻璃基板凭借低翘曲、低介电损耗和高平整度进入商业化验证窗口。",
+      "status": "已建档",
+      "trackingProfile": {
+        "title": "玻璃基板专属动态追踪",
+        "summary": "重点跟踪海外量产进程、封装级玻璃材料、TGV设备工艺、国内送样转订单和先进封装/CPO客户验证。",
+        "metrics": [
+          {
+            "name": "海外商业化进程",
+            "why": "英特尔、三星和台积电的量产与客户采用决定行业标准化和渗透速度。",
+            "signals": [
+              "量产基地进度",
+              "中试线良率",
+              "CoPoS路线",
+              "大客户采用"
+            ]
+          },
+          {
+            "name": "TGV工艺与良率",
+            "why": "成孔、金属化填充和RDL布线决定玻璃基板能否从样品走向规模量产。",
+            "signals": [
+              "孔径与深宽比",
+              "铜填充可靠性",
+              "面板级良率",
+              "单位成本"
+            ]
+          },
+          {
+            "name": "国内送样转订单",
+            "why": "客户认证、小批量供货和产线利用率是主题投资转向收入兑现的关键。",
+            "signals": [
+              "客户概念认证",
+              "小批量供货",
+              "正式订单",
+              "TGV收入占比"
+            ]
+          },
+          {
+            "name": "AI与CPO应用",
+            "why": "AI芯片载板、1.6T光模块和CPO导入决定玻璃基板的需求弹性。",
+            "signals": [
+              "AI芯片尺寸",
+              "先进封装资本开支",
+              "1.6T送样",
+              "CPO量产"
+            ]
+          }
+        ]
+      },
+      "article": "./content/raw/glass-substrate-industry-chain-original.md",
+      "cover": "./cover-image/glass-substrate-industry-chain/glass-substrate-industry-chain-cover.png",
+      "diagram": "./diagram/glass-substrate-industry-chain/glass-substrate-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/glass-substrate-industry-chain/glass-substrate-industry-chain-map.svg",
+      "updateFile": "./content/updates/glass-substrate-chain-updates.json",
+      "chain": [
+        {
+          "id": "upstream",
+          "title": "上游：材料与设备",
+          "role": "决定玻璃基板的物理性能、通孔精度和规模化制造成本。",
+          "items": [
+            {
+              "name": "特种玻璃与高纯原料",
+              "detail": "高纯石英砂、高硼硅/铝硼硅玻璃、封装级玻璃原片",
+              "companies": "彩虹股份、凯盛科技、安彩高科、南玻A"
+            },
+            {
+              "name": "TGV激光钻孔设备",
+              "detail": "高深宽比微孔、孔径一致性和加工效率是核心指标",
+              "companies": "帝尔激光、迈为股份"
+            },
+            {
+              "name": "金属化与检测设备",
+              "detail": "孔内铜填充、电镀、RDL布线与缺陷检测决定量产良率",
+              "companies": "三超新材等"
+            }
+          ]
+        },
+        {
+          "id": "midstream",
+          "title": "中游：TGV精密加工",
+          "role": "价值最集中环节，将玻璃原片加工为具备高密度电气互连能力的封装基板。",
+          "items": [
+            {
+              "name": "玻璃基封装载板平台",
+              "detail": "显示玻璃能力向面板级封装载板延伸，处于试验线和客户认证阶段",
+              "companies": "京东方A、彩虹股份"
+            },
+            {
+              "name": "TGV全流程加工",
+              "detail": "成孔、金属化填充、RDL布线与小批量供货",
+              "companies": "沃格光电"
+            },
+            {
+              "name": "玻璃晶圆与精密加工",
+              "detail": "玻璃晶圆、精密光学加工和TGV配套能力",
+              "companies": "蓝特光学、五方光电、美迪凯"
+            }
+          ]
+        },
+        {
+          "id": "downstream",
+          "title": "下游：先进封装与应用",
+          "role": "封测厂和终端客户完成技术验证，决定玻璃基板从送样走向规模量产。",
+          "items": [
+            {
+              "name": "先进封装与封测",
+              "detail": "玻璃基板与芯片集成、晶圆级封装和大客户量产验证",
+              "companies": "长电科技、晶方科技"
+            },
+            {
+              "name": "AI芯片与高性能计算",
+              "detail": "大尺寸芯片、高密度互连和低翘曲需求最强",
+              "companies": "英特尔、台积电、AMD、英伟达"
+            },
+            {
+              "name": "CPO与高频应用",
+              "detail": "1.6T光模块、光电共封装、6G射频和毫米波封装",
+              "companies": "沃格光电、京东方A、蓝特光学"
+            }
+          ]
+        }
+      ],
+      "logic": [
+        {
+          "title": "先进封装材料升级",
+          "body": "AI芯片尺寸和互连密度提升，使低翘曲、低损耗和高平整度成为封装基板升级的核心方向。"
+        },
+        {
+          "title": "海外巨头验证商业化",
+          "body": "英特尔、三星和台积电的产线、工艺标准和客户采用将决定玻璃基板的量产节奏。"
+        },
+        {
+          "title": "材料设备先行",
+          "body": "产业导入初期，特种玻璃、激光钻孔、金属化和检测设备通常先于下游规模收入释放订单。"
+        },
+        {
+          "title": "国产链从送样到订单",
+          "body": "国内企业能否完成客户认证、小批量供货、良率提升和正式订单，是估值兑现的关键。"
+        }
+      ],
+      "watchlist": [
+        {
+          "segment": "海外商业化进程",
+          "signals": [
+            "英特尔量产基地",
+            "三星/Absolics中试",
+            "台积电CoPoS路线",
+            "苹果/AMD/英伟达采用"
+          ],
+          "companies": "英特尔、三星电机、Absolics、台积电"
+        },
+        {
+          "segment": "特种玻璃材料",
+          "signals": [
+            "封装级玻璃配方",
+            "TGV基材中试",
+            "客户认证",
+            "良率与价格"
+          ],
+          "companies": "彩虹股份、凯盛科技、安彩高科、南玻A"
+        },
+        {
+          "segment": "TGV设备与工艺",
+          "signals": [
+            "激光钻孔设备订单",
+            "孔径与深宽比",
+            "金属化填充",
+            "检测设备与良率"
+          ],
+          "companies": "帝尔激光、迈为股份、三超新材"
+        },
+        {
+          "segment": "玻璃基板精密加工",
+          "signals": [
+            "送样转订单",
+            "小批量供货",
+            "产线利用率",
+            "TGV业务收入"
+          ],
+          "companies": "沃格光电、京东方A、五方光电、美迪凯、蓝特光学"
+        },
+        {
+          "segment": "先进封装与应用",
+          "signals": [
+            "封测客户验证",
+            "AI芯片载板",
+            "1.6T/CPO送样",
+            "6G射频封装"
+          ],
+          "companies": "长电科技、晶方科技、沃格光电、京东方A"
+        }
+      ],
+      "updates": [
+        {
+          "date": "2026-06-06",
+          "segment": "全产业链",
+          "signal": "建立玻璃基板产业链基准逻辑",
+          "impact": "形成“特种玻璃材料与设备 → TGV成孔/金属化/RDL精密加工 → 先进封装/CPO/AI应用”的跟踪框架。",
+          "confidence": "基准框架",
+          "sourceTitle": "玻璃基板产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "notes": "初始版本来自用户提供文章，行业数据和商业化时间点仍需持续外部核验。"
+        },
+        {
+          "date": "2026-06-06",
+          "segment": "商业化",
+          "signal": "海外巨头玻璃基板量产与中试进度进入核心观察窗口",
+          "impact": "英特尔、三星和台积电的产线与客户采用节奏，将决定玻璃基板从技术验证走向标准化量产的速度。",
+          "confidence": "待核验",
+          "sourceTitle": "玻璃基板产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "notes": "后续补充公司公告、工厂建设进度、量产时间、产能和客户采用口径。"
+        },
+        {
+          "date": "2026-06-06",
+          "segment": "国内协同",
+          "signal": "京东方A与康宁合作、国内TGV企业送样成为国产链验证主线",
+          "impact": "若材料、加工、封测和CPO客户形成协同验证，国内玻璃基板产业有望从概念映射进入订单兑现阶段。",
+          "confidence": "待核验",
+          "sourceTitle": "玻璃基板产业链深度解析原始稿",
+          "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "notes": "重点跟踪试验线良率、客户概念认证、小批量供货和实际收入贡献。"
         }
       ]
     }

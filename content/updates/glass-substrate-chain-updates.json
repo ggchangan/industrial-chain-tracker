@@ -1,0 +1,73 @@
+{
+  "watchlist": [
+    {
+      "segment": "海外商业化进程",
+      "whatToTrack": ["英特尔量产基地", "三星/Absolics中试", "台积电CoPoS路线", "苹果/AMD/英伟达采用"],
+      "companies": ["英特尔", "三星电机", "Absolics", "台积电"]
+    },
+    {
+      "segment": "特种玻璃材料",
+      "whatToTrack": ["封装级玻璃配方", "TGV基材中试", "客户认证", "良率与价格"],
+      "companies": ["彩虹股份", "凯盛科技", "安彩高科", "南玻A"]
+    },
+    {
+      "segment": "TGV设备与工艺",
+      "whatToTrack": ["激光钻孔设备订单", "孔径与深宽比", "金属化填充", "检测设备与良率"],
+      "companies": ["帝尔激光", "迈为股份", "三超新材"]
+    },
+    {
+      "segment": "玻璃基板精密加工",
+      "whatToTrack": ["送样转订单", "小批量供货", "产线利用率", "TGV业务收入"],
+      "companies": ["沃格光电", "京东方A", "五方光电", "美迪凯", "蓝特光学"]
+    },
+    {
+      "segment": "先进封装与应用",
+      "whatToTrack": ["封测客户验证", "AI芯片载板", "1.6T/CPO送样", "6G射频封装"],
+      "companies": ["长电科技", "晶方科技", "沃格光电", "京东方A"]
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-06-06",
+      "segment": "全产业链",
+      "signal": "建立玻璃基板产业链基准逻辑",
+      "impact": "形成“特种玻璃材料与设备 → TGV成孔/金属化/RDL精密加工 → 先进封装/CPO/AI应用”的跟踪框架。",
+      "confidence": "基准框架",
+      "notes": "初始版本来自用户提供文章，行业数据和商业化时间点仍需持续外部核验。",
+      "source": {
+        "type": "用户提供文章",
+        "platform": "本地资料",
+        "title": "玻璃基板产业链深度解析原始稿",
+        "url": "../raw/glass-substrate-industry-chain-original.md"
+      }
+    },
+    {
+      "date": "2026-06-06",
+      "segment": "商业化",
+      "signal": "海外巨头玻璃基板量产与中试进度进入核心观察窗口",
+      "impact": "英特尔、三星和台积电的产线与客户采用节奏，将决定玻璃基板从技术验证走向标准化量产的速度。",
+      "confidence": "待核验",
+      "notes": "后续补充公司公告、工厂建设进度、量产时间、产能和客户采用口径。",
+      "source": {
+        "type": "用户提供文章",
+        "platform": "本地资料",
+        "title": "玻璃基板产业链深度解析原始稿",
+        "url": "../raw/glass-substrate-industry-chain-original.md"
+      }
+    },
+    {
+      "date": "2026-06-06",
+      "segment": "国内协同",
+      "signal": "京东方A与康宁合作、国内TGV企业送样成为国产链验证主线",
+      "impact": "若材料、加工、封测和CPO客户形成协同验证，国内玻璃基板产业有望从概念映射进入订单兑现阶段。",
+      "confidence": "待核验",
+      "notes": "重点跟踪试验线良率、客户概念认证、小批量供货和实际收入贡献。",
+      "source": {
+        "type": "用户提供文章",
+        "platform": "本地资料",
+        "title": "玻璃基板产业链深度解析原始稿",
+        "url": "../raw/glass-substrate-industry-chain-original.md"
+      }
+    }
+  ]
+}
