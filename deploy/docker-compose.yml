@@ -4,10 +4,21 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     container_name: chain-tracker
+    environment:
+      NODE_ENV: production
+      PORT: 4173
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
     networks:
       chain-net:
         ipv4_address: 172.20.0.2
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4173/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
 networks:
   chain-net:
