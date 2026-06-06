@@ -41,7 +41,7 @@ a {
 }
 
 .site-header {
-  min-height: 420px;
+  min-height: 620px;
   padding: 22px clamp(18px, 5vw, 72px) 44px;
 }
 
@@ -71,8 +71,8 @@ a {
 }
 
 .hero {
-  max-width: 980px;
-  padding-top: 64px;
+  max-width: 1180px;
+  padding-top: 58px;
 }
 
 .eyebrow {
@@ -105,15 +105,8 @@ h1 {
   max-width: 760px;
 }
 
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 34px;
-}
-
 .search-panel {
-  margin-bottom: 18px;
+  margin: 28px 0 16px;
   max-width: 920px;
 }
 
