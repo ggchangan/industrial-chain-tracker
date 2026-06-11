@@ -3,6 +3,10 @@
 > 从运维工程师视角分析 `industrial-chain-tracker` 项目的结构、依赖、部署方案。
 > 分支: feat/deployment-analysis
 
+> 本文保留早期方案分析。当前生产操作以
+> `docs/production-deployment.md` 为准：镜像发布到腾讯云 CCR，容器端口仅绑定
+> `127.0.0.1:4173`，不再使用固定容器 IP。
+
 ## 一、项目概览
 
 | 项目 | 值 |
@@ -90,15 +94,8 @@ deploy/
 
 **一键运行：**
 ```bash
-# 容器固定使用 4173 端口和 chain-net 网络
+# 从腾讯云 CCR 拉取指定版本并绑定到本机回环地址
 bash deploy/deploy.sh
-```
-
-**或手动操作：**
-```bash
-cd /home/ubuntu/industrial-chain-tracker
-sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
-sudo docker run -d --name chain-tracker --env-file .env -p 4173:4173 --restart unless-stopped chain-tracker:latest
 ```
 
 **验证：**
@@ -115,10 +112,8 @@ curl "http://localhost:4173/api/v1/chains/pcb?article=1"
 
 **更新流程：**
 ```bash
-git pull
-sudo docker build -t chain-tracker:latest -f deploy/Dockerfile .
-sudo docker stop chain-tracker && sudo docker rm chain-tracker
-sudo docker run -d --name chain-tracker --env-file .env -p 4173:4173 --restart unless-stopped chain-tracker:latest
+git pull --ff-only origin main
+bash deploy/deploy.sh <Git短提交号>
 ```
 
 **优点：**
@@ -178,8 +173,8 @@ cp .env.example .env
 bash /home/ubuntu/industrial-chain-tracker/deploy/deploy.sh
 
 # Step 3: 验证
-curl http://172.20.0.2:4173/api/v1/health
-curl http://172.20.0.2:4173/
+curl http://127.0.0.1:4173/api/v1/health
+curl http://127.0.0.1:4173/
 
 # Step 4: 浏览器访问
 # 通过外层 Nginx 配置的 HTTPS 域名访问

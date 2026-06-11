@@ -1,28 +1,26 @@
 services:
   chain-tracker:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+    image: ccr.ccs.tencentyun.com/ygys30ds/industrial-chain-tracker:${IMAGE_TAG:-latest}
     container_name: chain-tracker
     environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:?ADMIN_SESSION_SECRET is required}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://industry.ygys30ds.cloud}
       NODE_ENV: production
       PORT: 4173
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}
-      CORS_ORIGIN: ${CORS_ORIGIN:-}
-    networks:
-      chain-net:
-        ipv4_address: 172.20.0.2
+      HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:4173:4173"
     restart: unless-stopped
+    init: true
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4173/api/v1/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-
-networks:
-  chain-net:
-    name: chain-net
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
