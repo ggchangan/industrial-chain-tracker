@@ -14,8 +14,8 @@
 ## 上线顺序
 
 1. 将生产配置分支合并到 `main`。
-2. 从最新 `main` 构建并推送腾讯云 CCR 镜像。
-3. 在服务器运行 `bash deploy/deploy.sh <Git短提交号>`。
+2. 在服务器最新 `main` 上运行 `bash deploy/release.sh`。
+3. 确认脚本完成 CCR 推送、容器更新和健康检查。
 4. 应用 `deploy/nginx.conf` 中的四域名 Nginx 配置。
 5. 验证：
 

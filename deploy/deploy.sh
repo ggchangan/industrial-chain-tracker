@@ -37,6 +37,18 @@ export IMAGE_TAG
 
 echo "Deploying industrial-chain-tracker:${IMAGE_TAG}"
 "${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" pull
+
+existing_container_id="$("${DOCKER[@]}" ps -aq --filter 'name=^/chain-tracker$')"
+if [[ -n "$existing_container_id" ]]; then
+    compose_project="$("${DOCKER[@]}" inspect \
+        --format '{{ index .Config.Labels "com.docker.compose.project" }}' \
+        "$existing_container_id" 2>/dev/null || true)"
+    if [[ -z "$compose_project" || "$compose_project" == "<no value>" ]]; then
+        echo "Removing legacy chain-tracker container"
+        "${DOCKER[@]}" rm -f chain-tracker >/dev/null
+    fi
+fi
+
 "${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --remove-orphans
 
 for attempt in {1..20}; do
