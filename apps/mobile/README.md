@@ -10,12 +10,14 @@ cp .env.example .env
 npm install
 ```
 
-将 `.env` 中的 `VITE_API_BASE_URL` 改为部署后的 HTTPS 内容服务域名。
+生产 API 已配置为 `https://industry.ygys30ds.cloud`。本地调试时可在 `.env` 中覆盖 `VITE_API_BASE_URL`。
 
 ## 微信小程序
 
-1. 在 `src/manifest.json` 的 `mp-weixin.appid` 填写小程序 AppID。
-2. 在微信公众平台把 API 域名加入 request 合法域名。
+当前 AppID：`wxc099f3e25b3ee919`。
+
+1. 确认 `https://industry.ygys30ds.cloud` 使用与域名匹配的可信 HTTPS 证书。
+2. 在微信公众平台把 `https://industry.ygys30ds.cloud` 加入 request 合法域名。
 3. 编译并使用微信开发者工具打开：
 
 ```bash
@@ -29,6 +31,8 @@ npm run build:mp-weixin
 ```
 
 产物位于 `dist/build/mp-weixin`。
+
+小程序头像使用 `src/static/brand/mini-program-avatar-v2.png`，在微信公众平台后台单独上传。
 
 ## 当前功能
 
