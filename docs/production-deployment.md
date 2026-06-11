@@ -11,21 +11,20 @@ GitHub main
   -> Nginx HTTPS 四域名
 ```
 
-## 1. 合并并发布镜像
+## 日常发布：一条命令
 
-只从最新 `main` 发布生产镜像：
+完成首次配置后，在服务器仓库执行：
 
 ```bash
+cd /home/ubuntu/industrial-chain-tracker
 git switch main
-git pull --ff-only origin main
-docker login ccr.ccs.tencentyun.com
-bash deploy/publish-image.sh
+bash deploy/release.sh
 ```
 
-脚本同时推送 Git 短提交号标签和 `latest`。生产部署应优先使用提交号标签，
-例如 `3ac4ff8`，便于确认版本和回滚。
+该命令会自动拉取最新 `main`、构建镜像、推送 CCR、更新容器并进行健康检查。
+镜像同时保留 Git 短提交号标签和 `latest`，便于确认版本和回滚。
 
-## 2. 首次准备服务器
+## 1. 首次准备服务器
 
 ```bash
 ssh ubuntu@43.136.177.133
@@ -60,6 +59,7 @@ IMAGE_TAG=latest
 ```
 
 不要提交 `.env`，也不要通过聊天或工单传递其中的秘密。
+Compose 使用 raw env-file 模式注入这些值，因此密码中的 `$`、`#` 等字符不会被变量替换。
 
 登录 CCR：
 
@@ -67,7 +67,9 @@ IMAGE_TAG=latest
 docker login ccr.ccs.tencentyun.com
 ```
 
-## 3. 部署指定版本
+CCR 登录通常只需在凭据有效期内执行一次。
+
+## 2. 仅部署指定版本
 
 ```bash
 cd /home/ubuntu/industrial-chain-tracker
@@ -77,9 +79,10 @@ bash deploy/deploy.sh <Git短提交号>
 ```
 
 脚本会拉取镜像、更新容器并检查
-`http://127.0.0.1:4173/api/v1/health`。
+`http://127.0.0.1:4173/api/v1/health`。如果发现早期手动创建的同名容器，
+脚本会自动移除并迁移到 Compose 管理。
 
-## 4. 配置 Nginx
+## 3. 配置 Nginx
 
 复制配置和公共片段：
 
@@ -105,7 +108,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## 5. 验证
+## 4. 验证
 
 ```bash
 curl https://industry.ygys30ds.cloud/api/v1/health
@@ -123,7 +126,7 @@ curl -I https://admin.industry.ygys30ds.cloud/admin-login.html
 | `static.industry.ygys30ds.cloud` | 图片、图谱和前端静态资源 |
 | `admin.industry.ygys30ds.cloud` | 密码保护的维护入口 |
 
-## 6. 回滚
+## 5. 回滚
 
 查找上一个已发布的提交号标签，然后部署该标签：
 

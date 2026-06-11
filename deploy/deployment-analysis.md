@@ -94,8 +94,8 @@ deploy/
 
 **一键运行：**
 ```bash
-# 从腾讯云 CCR 拉取指定版本并绑定到本机回环地址
-bash deploy/deploy.sh
+# 日常发布：拉取 main、构建、推送、部署和健康检查
+bash deploy/release.sh
 ```
 
 **验证：**

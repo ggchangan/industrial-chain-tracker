@@ -12,8 +12,8 @@ else
     DOCKER=(sudo docker)
 fi
 
-if ! "${DOCKER[@]}" compose version >/dev/null 2>&1; then
-    echo "Docker Compose plugin is required." >&2
+if ! "${DOCKER[@]}" compose version --short >/dev/null 2>&1; then
+    echo "Docker Compose v2.30 or newer is required." >&2
     echo "Ubuntu 24.04: sudo apt update && sudo apt install -y docker-compose-v2" >&2
     exit 1
 fi
@@ -36,18 +36,30 @@ fi
 export IMAGE_TAG
 
 echo "Deploying industrial-chain-tracker:${IMAGE_TAG}"
-"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" pull
-"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --remove-orphans
+"${DOCKER[@]}" compose -f "$COMPOSE_FILE" pull
+
+existing_container_id="$("${DOCKER[@]}" ps -aq --filter 'name=^/chain-tracker$')"
+if [[ -n "$existing_container_id" ]]; then
+    compose_project="$("${DOCKER[@]}" inspect \
+        --format '{{ index .Config.Labels "com.docker.compose.project" }}' \
+        "$existing_container_id" 2>/dev/null || true)"
+    if [[ -z "$compose_project" || "$compose_project" == "<no value>" ]]; then
+        echo "Removing legacy chain-tracker container"
+        "${DOCKER[@]}" rm -f chain-tracker >/dev/null
+    fi
+fi
+
+"${DOCKER[@]}" compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
 for attempt in {1..20}; do
     if curl --fail --silent http://127.0.0.1:4173/api/v1/health >/dev/null; then
         echo "Deployment is healthy: ${IMAGE_TAG}"
-        "${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps
+        "${DOCKER[@]}" compose -f "$COMPOSE_FILE" ps
         exit 0
     fi
     sleep 2
 done
 
 echo "Health check failed. Recent logs:" >&2
-"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" logs --tail=100 chain-tracker >&2
+"${DOCKER[@]}" compose -f "$COMPOSE_FILE" logs --tail=100 chain-tracker >&2
 exit 1

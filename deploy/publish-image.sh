@@ -24,4 +24,3 @@ docker push "${REGISTRY_IMAGE}:${IMAGE_TAG}"
 docker push "${REGISTRY_IMAGE}:latest"
 
 echo "Published ${REGISTRY_IMAGE}:${IMAGE_TAG}"
-echo "Deploy with: bash deploy/deploy.sh ${IMAGE_TAG}"
