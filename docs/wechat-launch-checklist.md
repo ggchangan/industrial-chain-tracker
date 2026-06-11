@@ -5,7 +5,7 @@
 - AppID：`wxc099f3e25b3ee919`
 - 生产 API：`https://api.industry.ygys30ds.cloud`
 - 静态资源：`https://static.industry.ygys30ds.cloud`
-- 小程序头像：`apps/mobile/src/static/brand/mini-program-avatar-v2.png`
+- 小程序头像：`assets/brand/mini-program-avatar-v2-512.png`
 - 内容 API、服务端搜索和 HTML 正文
 - 维护者密码登录与服务端访问控制
 - 四个生产域名均已解析至 `43.136.177.133`

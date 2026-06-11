@@ -35,7 +35,8 @@ npm run build:mp-weixin
 
 产物位于 `dist/build/mp-weixin`。
 
-小程序头像使用 `src/static/brand/mini-program-avatar-v2.png`，在微信公众平台后台单独上传。
+小程序头像使用仓库根目录的
+`assets/brand/mini-program-avatar-v2-512.png`，在微信公众平台后台单独上传。
 
 ## 当前功能
 
