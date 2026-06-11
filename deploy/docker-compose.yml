@@ -2,10 +2,10 @@ services:
   chain-tracker:
     image: ccr.ccs.tencentyun.com/ygys30ds/industrial-chain-tracker:${IMAGE_TAG:-latest}
     container_name: chain-tracker
+    env_file:
+      - path: ../.env
+        format: raw
     environment:
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
-      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:?ADMIN_SESSION_SECRET is required}
-      CORS_ORIGIN: ${CORS_ORIGIN:-https://industry.ygys30ds.cloud}
       NODE_ENV: production
       PORT: 4173
       HOST: 0.0.0.0

@@ -59,6 +59,7 @@ IMAGE_TAG=latest
 ```
 
 不要提交 `.env`，也不要通过聊天或工单传递其中的秘密。
+Compose 使用 raw env-file 模式注入这些值，因此密码中的 `$`、`#` 等字符不会被变量替换。
 
 登录 CCR：
 
