@@ -2,103 +2,52 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-IMAGE_NAME="chain-tracker"
-CONTAINER_NAME="chain-tracker"
-NETWORK_NAME="chain-net"
-CONTAINER_IP="172.20.0.2"
+COMPOSE_FILE="$REPO_DIR/deploy/docker-compose.yml"
 ENV_FILE="$REPO_DIR/.env"
+IMAGE_TAG="${1:-${IMAGE_TAG:-latest}}"
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
-
-log()  { echo -e "${GREEN}[✓]${NC} $1"; }
-warn() { echo -e "${YELLOW}[!]${NC} $1"; }
-err()  { echo -e "${RED}[✗]${NC} $1"; exit 1; }
-
-echo "════════════════════════════════════════"
-echo "  产业链研究库 — 一键部署"
-echo "════════════════════════════════════════"
-echo ""
-
-# ── Step 1: 检查 Docker ──
-echo "[1/5] 检查 Docker…"
-if ! command -v docker &>/dev/null; then
-    err "Docker 未安装。请先安装 Docker: curl -fsSL https://get.docker.com | bash"
-fi
-log "Docker 已就绪"
-
-# ── Step 2: 构建镜像 ──
-echo "[2/5] 构建 Docker 镜像…"
-cd "$REPO_DIR"
-if [[ ! -f "$ENV_FILE" ]]; then
-    err "缺少 .env。请复制 .env.example 为 .env，并设置 ADMIN_PASSWORD 与 ADMIN_SESSION_SECRET"
-fi
-if ! grep -q '^ADMIN_PASSWORD=.\{10,\}$' "$ENV_FILE"; then
-    err ".env 中 ADMIN_PASSWORD 至少需要 10 个字符"
-fi
-if ! grep -q '^ADMIN_SESSION_SECRET=.\{32,\}$' "$ENV_FILE"; then
-    err ".env 中 ADMIN_SESSION_SECRET 至少需要 32 个字符"
-fi
-sudo docker build -t "$IMAGE_NAME:latest" -f deploy/Dockerfile . 2>&1 | tail -1
-log "镜像构建完成"
-
-# ── Step 3: 创建网络 ──
-echo "[3/5] 检查 Docker 网络…"
-if ! sudo docker network ls --format '{{.Name}}' | grep -q "^${NETWORK_NAME}$"; then
-    sudo docker network create --subnet=172.20.0.0/16 "$NETWORK_NAME"
-    log "网络 $NETWORK_NAME 已创建"
+if docker info >/dev/null 2>&1; then
+    DOCKER=(docker)
 else
-    log "网络 $NETWORK_NAME 已存在"
+    DOCKER=(sudo docker)
 fi
 
-# ── Step 4: 停止并清理旧容器 ──
-echo "[4/5] 检查旧容器…"
-if sudo docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-    warn "发现旧容器，正在停止并删除…"
-    sudo docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
-    sudo docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
-    log "旧容器已清理"
-else
-    log "无旧容器"
-fi
-
-# ── Step 5: 启动新容器（无端口映射，固定IP）──
-echo "[5/5] 启动新容器 (IP: ${CONTAINER_IP})…"
-sudo docker run -d \
-    --name "$CONTAINER_NAME" \
-    --network "$NETWORK_NAME" \
-    --ip "$CONTAINER_IP" \
-    --env-file "$ENV_FILE" \
-    -e NODE_ENV=production \
-    -e PORT=4173 \
-    --restart unless-stopped \
-    "$IMAGE_NAME:latest" >/dev/null
-
-sleep 2
-log "容器已启动"
-
-# ── 验证 ──
-echo ""
-if curl -s -o /dev/null -w "%{http_code}" "http://${CONTAINER_IP}:4173/api/v1/health" | grep -q 200; then
-    log "部署成功！"
-    echo ""
-    echo "════════════════════════════════════════"
-    echo "  容器IP: http://${CONTAINER_IP}:4173/"
-    echo "  公网访问需要 nginx 反代"
-    echo "  示例 nginx 配置:"
-    echo ""
-    echo "  server {"
-    echo "      listen 80;"
-    echo "      server_name your.domain.com;"
-    echo "      location / {"
-    echo "          proxy_pass http://${CONTAINER_IP}:4173;"
-    echo "      }"
-    echo "  }"
-    echo "════════════════════════════════════════"
-else
-    warn "服务响应异常，查看容器日志："
-    sudo docker logs "$CONTAINER_NAME" --tail 10
+if ! "${DOCKER[@]}" compose version >/dev/null 2>&1; then
+    echo "Docker Compose plugin is required." >&2
+    echo "Ubuntu 24.04: sudo apt update && sudo apt install -y docker-compose-v2" >&2
     exit 1
 fi
+
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "Missing $ENV_FILE. Copy .env.example to .env and configure production secrets." >&2
+    exit 1
+fi
+
+if ! grep -Eq '^ADMIN_PASSWORD=.{10,}$' "$ENV_FILE"; then
+    echo "ADMIN_PASSWORD must contain at least 10 characters." >&2
+    exit 1
+fi
+
+if ! grep -Eq '^ADMIN_SESSION_SECRET=.{32,}$' "$ENV_FILE"; then
+    echo "ADMIN_SESSION_SECRET must contain at least 32 characters." >&2
+    exit 1
+fi
+
+export IMAGE_TAG
+
+echo "Deploying industrial-chain-tracker:${IMAGE_TAG}"
+"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" pull
+"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --remove-orphans
+
+for attempt in {1..20}; do
+    if curl --fail --silent http://127.0.0.1:4173/api/v1/health >/dev/null; then
+        echo "Deployment is healthy: ${IMAGE_TAG}"
+        "${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps
+        exit 0
+    fi
+    sleep 2
+done
+
+echo "Health check failed. Recent logs:" >&2
+"${DOCKER[@]}" compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" logs --tail=100 chain-tracker >&2
+exit 1

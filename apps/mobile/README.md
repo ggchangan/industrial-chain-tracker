@@ -10,15 +10,18 @@ cp .env.example .env
 npm install
 ```
 
-生产 API 已配置为 `https://industry.ygys30ds.cloud`。本地调试时可在 `.env` 中覆盖 `VITE_API_BASE_URL`。
+生产 API 已配置为 `https://api.industry.ygys30ds.cloud`，图片等静态资源使用
+`https://static.industry.ygys30ds.cloud`。本地调试时可在 `.env` 中覆盖
+`VITE_API_BASE_URL` 和 `VITE_STATIC_BASE_URL`。
 
 ## 微信小程序
 
 当前 AppID：`wxc099f3e25b3ee919`。
 
-1. 确认 `https://industry.ygys30ds.cloud` 使用与域名匹配的可信 HTTPS 证书。
-2. 在微信公众平台把 `https://industry.ygys30ds.cloud` 加入 request 合法域名。
-3. 编译并使用微信开发者工具打开：
+1. 确认 API 与静态资源域名均使用可信 HTTPS 证书。
+2. 在微信公众平台将 `https://api.industry.ygys30ds.cloud` 加入 request 合法域名。
+3. 将 `https://static.industry.ygys30ds.cloud` 加入 downloadFile 合法域名。
+4. 编译并使用微信开发者工具打开：
 
 ```bash
 npm run dev:mp-weixin

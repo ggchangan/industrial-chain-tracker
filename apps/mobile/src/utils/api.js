@@ -1,4 +1,5 @@
 const API_BASE = String(import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
+const STATIC_BASE = String(import.meta.env.VITE_STATIC_BASE_URL || API_BASE).replace(/\/$/, "");
 
 export function getChains() {
   return request("/api/v1/chains");
@@ -14,7 +15,7 @@ export function searchChains(query) {
 
 export function assetUrl(relativePath) {
   const path = String(relativePath || "").replace(/^\.\//, "");
-  return `${API_BASE}/${path}`;
+  return `${STATIC_BASE}/${path}`;
 }
 
 function request(path) {
