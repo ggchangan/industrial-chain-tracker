@@ -16,8 +16,14 @@ export async function loadLibrary(rootDir) {
   return structuredClone(library);
 }
 
-export async function loadArticle(rootDir, chain) {
+export async function loadArticle(rootDir, chain, dataDir = "") {
   const relativePath = String(chain.article || "").replace(/^\.\//, "");
+  if (relativePath.startsWith("/managed/") || String(chain.article || "").startsWith("/managed/")) {
+    const managedRelativePath = String(chain.article).replace(/^\/managed\//, "");
+    const articlePath = path.resolve(dataDir, managedRelativePath);
+    assertInsideRoot(dataDir, articlePath);
+    return readFile(articlePath, "utf8");
+  }
   const articlePath = path.resolve(rootDir, relativePath);
   assertInsideRoot(rootDir, articlePath);
   return readFile(articlePath, "utf8");

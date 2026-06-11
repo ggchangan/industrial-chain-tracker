@@ -2,6 +2,7 @@
 .gitignore
 .DS_Store
 .env
+.runtime-data
 .baoyu-skills
 apps/mobile/node_modules
 apps/mobile/dist

@@ -4,34 +4,139 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="stylesheet" href="./assets/styles.css?v=admin-content-1" />
   </head>
-  <body>
+  <body class="maintainer-page">
     <header class="site-header compact-header">
       <nav class="nav">
-        <a href="./index.html">返回公开页</a>
-        <a href="./README.md">维护说明</a>
-        <a href="#resources">资源文件</a>
-        <a href="#template">新增模板</a>
+        <a href="./index.html">公开阅读页</a>
+        <a href="#create-chain">新增产业链</a>
+        <a href="#add-update">添加动态</a>
+        <a href="#resources">内容资源</a>
         <button id="adminLogout" class="nav-button" type="button">退出登录</button>
       </nav>
       <section class="hero">
-        <p class="eyebrow">Maintainer Console</p>
-        <h1>产业链维护台</h1>
-        <p class="lead">这里保留新增产业链、修改原稿、下载图谱和更新动态所需的维护入口。公开阅读页只呈现读者需要的学习路径。</p>
-        <div class="hero-actions">
-          <a class="button primary" href="./README.md">查看维护说明</a>
-          <a class="button" href="./index.html">打开公开页</a>
-        </div>
+        <p class="eyebrow">Content Console</p>
+        <h1>产业链内容后台</h1>
+        <p class="lead">上传 Markdown 建立新的产业链骨架，或给已建档产业链追加文章、视频、公告和调研线索。</p>
       </section>
     </header>
 
     <main>
+      <section class="section admin-workspace">
+        <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
+
+        <div class="admin-form-grid">
+          <article id="create-chain" class="admin-form-panel">
+            <div class="section-head compact">
+              <p class="eyebrow">New Chain</p>
+              <h2>上传 Markdown 建档</h2>
+              <p>系统会读取标题和章节，自动生成三段式基础骨架、追踪框架和轻量图谱。建档后可继续通过 Git 完善精细数据和正式配图。</p>
+            </div>
+
+            <form id="createChainForm" class="admin-form">
+              <label>
+                <span>Markdown 原稿</span>
+                <input id="chainMarkdownFile" name="markdownFile" type="file" accept=".md,text/markdown,text/plain" required />
+                <small id="markdownFileHint">选择不超过 2MB 的 `.md` 文件</small>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>英文 ID</span>
+                  <input name="id" type="text" pattern="[a-z0-9-]+" placeholder="例如：solid-state-battery" required />
+                </label>
+                <label>
+                  <span>短标题</span>
+                  <input name="shortTitle" type="text" placeholder="例如：固态电池" required />
+                </label>
+              </div>
+
+              <label>
+                <span>页面标题</span>
+                <input name="title" type="text" placeholder="例如：固态电池产业链" required />
+              </label>
+
+              <label>
+                <span>一句话主题</span>
+                <textarea name="theme" rows="3" placeholder="说明核心驱动、产业变化和主要传导方向"></textarea>
+              </label>
+
+              <button class="button primary admin-submit" type="submit">上传并建立产业链</button>
+            </form>
+          </article>
+
+          <article id="add-update" class="admin-form-panel">
+            <div class="section-head compact">
+              <p class="eyebrow">New Update</p>
+              <h2>添加动态追踪</h2>
+              <p>支持抖音、公众号文章、新闻、公告、研报和其他网页链接。动态保存后会立即出现在公开页和小程序 API。</p>
+            </div>
+
+            <form id="addUpdateForm" class="admin-form">
+              <label>
+                <span>选择产业链</span>
+                <select id="updateChainId" name="chainId" required></select>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>日期</span>
+                  <input name="date" type="date" required />
+                </label>
+                <label>
+                  <span>所属环节</span>
+                  <input name="segment" type="text" placeholder="例如：电子布 / 全产业链" required />
+                </label>
+              </div>
+
+              <label>
+                <span>动态摘要</span>
+                <textarea name="signal" rows="3" placeholder="一句话说明发生了什么" required></textarea>
+              </label>
+
+              <label>
+                <span>产业链影响</span>
+                <textarea name="impact" rows="3" placeholder="说明它改变了什么逻辑、影响哪些环节" required></textarea>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>置信度</span>
+                  <select name="confidence">
+                    <option value="待核验">待核验</option>
+                    <option value="已核验">已核验</option>
+                    <option value="高置信">高置信</option>
+                    <option value="基准框架">基准框架</option>
+                  </select>
+                </label>
+                <label>
+                  <span>来源标题</span>
+                  <input name="sourceTitle" type="text" placeholder="视频或文章标题" required />
+                </label>
+              </div>
+
+              <label>
+                <span>来源链接</span>
+                <input name="sourceUrl" type="url" placeholder="https://..." required />
+              </label>
+
+              <label>
+                <span>备注与后续跟踪</span>
+                <textarea name="notes" rows="3" placeholder="记录待验证口径、关键问题或下一步观察点"></textarea>
+              </label>
+
+              <button class="button primary admin-submit" type="submit">保存动态追踪</button>
+            </form>
+          </article>
+        </div>
+      </section>
+
       <section id="resources" class="section">
         <div class="section-head">
-          <p class="eyebrow">Resources</p>
-          <h2>产业链资源文件</h2>
-          <p>按产业链下载或打开原稿、动态追踪、封面和图谱文件。修改内容后，回到公开页验证渲染效果。</p>
+          <p class="eyebrow">Library</p>
+          <h2>已建档内容</h2>
+          <p>查看公开效果和资源文件。后台新增内容保存在独立持久化卷中，不会因重新部署而丢失。</p>
         </div>
         <div class="maintain-tools">
           <label for="maintainSearch">筛选产业链</label>
@@ -39,78 +144,13 @@
         </div>
         <div class="maintenance-grid" id="maintenanceGrid"></div>
       </section>
-
-      <section id="template" class="section">
-        <div class="section-head compact">
-          <p class="eyebrow">Template</p>
-          <h2>新增产业链与动态模板</h2>
-          <p>新增行业时，复制现有结构：原文放 `content/raw/`，动态追踪放 `content/updates/`，图谱放 `diagram/`，封面放 `cover-image/`，再把条目加入 `assets/data.js`。</p>
-        </div>
-        <pre class="maintainer-template"><code>{
-  "date": "YYYY-MM-DD",
-  "segment": "上游 / 中游 / 下游 / 具体环节",
-  "signal": "一句话描述新变化",
-  "impact": "它如何改变产业链逻辑",
-  "confidence": "待核验 / 已核验 / 高置信",
-  "source": {
-    "type": "公告 / 调研 / 视频 / 研报 / 财报",
-    "platform": "来源平台",
-    "title": "来源标题",
-    "url": "来源链接"
-  },
-  "notes": "待验证问题、关键口径、后续跟踪点"
-}</code></pre>
-      </section>
     </main>
 
     <footer>
-      <span>维护台用于内容生产和文件管理；公开阅读请使用首页。</span>
+      <span>内容后台只对已登录维护者开放。</span>
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/data.js"></script>
-    <script>
-      const library = window.INDUSTRY_CHAIN_LIBRARY;
-      const grid = document.querySelector("#maintenanceGrid");
-      const search = document.querySelector("#maintainSearch");
-      document.querySelector("#maintainUpdatedAt").textContent = `更新：${library.meta.updated}`;
-
-      function renderCards(query = "") {
-        const normalized = query.trim().toLowerCase();
-        const chains = library.chains.filter((chain) =>
-          `${chain.title} ${chain.shortTitle} ${chain.theme}`.toLowerCase().includes(normalized)
-        );
-
-        grid.innerHTML = chains
-          .map(
-            (chain) => `
-              <article class="maintenance-card">
-                <span>${chain.status}</span>
-                <h3>${chain.title}</h3>
-                <p>${chain.theme}</p>
-                <div class="maintenance-links">
-                  <a href="./index.html?chain=${chain.id}">公开页</a>
-                  <a href="${chain.article}">原稿</a>
-                  <a href="${chain.updateFile}">动态追踪</a>
-                  <a href="${chain.cover}">封面</a>
-                  <a href="${chain.diagram}">图谱 PNG</a>
-                  <a href="${chain.diagramSvg}">图谱 SVG</a>
-                </div>
-              </article>
-            `
-          )
-          .join("");
-      }
-
-      search.addEventListener("input", () => renderCards(search.value));
-      document.querySelector("#adminLogout").addEventListener("click", async () => {
-        await fetch("./api/v1/admin/logout", {
-          method: "POST",
-          credentials: "same-origin"
-        });
-        window.location.replace("./admin-login.html");
-      });
-      renderCards();
-    </script>
+    <script src="./assets/maintain.js"></script>
   </body>
 </html>

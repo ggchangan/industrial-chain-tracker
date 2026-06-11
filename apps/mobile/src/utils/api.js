@@ -14,7 +14,7 @@ export function searchChains(query) {
 }
 
 export function assetUrl(relativePath) {
-  const path = String(relativePath || "").replace(/^\.\//, "");
+  const path = String(relativePath || "").replace(/^\.?\//, "");
   return `${STATIC_BASE}/${path}`;
 }
 

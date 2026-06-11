@@ -9,10 +9,13 @@ services:
       NODE_ENV: production
       PORT: 4173
       HOST: 0.0.0.0
+      DATA_DIR: /data
     ports:
       - "127.0.0.1:4173:4173"
     restart: unless-stopped
     init: true
+    volumes:
+      - chain-data:/data
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:4173/api/v1/health"]
       interval: 30s
@@ -24,3 +27,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  chain-data:
+    name: industrial-chain-tracker-data
