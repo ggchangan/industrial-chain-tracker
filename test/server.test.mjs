@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -13,6 +13,12 @@ let dataDir;
 
 test.before(async () => {
   dataDir = await mkdtemp(path.join(os.tmpdir(), "chain-tracker-test-"));
+  await writeFile(path.join(dataDir, "managed-content.json"), JSON.stringify({
+    managedChains: [{ id: "semiconductor-material-industry-chain" }],
+    articleOverrides: {},
+    updatesByChain: {},
+    updatedAt: ""
+  }));
   server = await createAppServer({
     rootDir,
     dataDir,
@@ -37,6 +43,8 @@ test("health and library APIs expose synchronized content", async () => {
   const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
   assert.equal(library.chains.length, health.chains);
   assert.ok(library.chains.some((chain) => chain.id === "physical-ai"));
+  assert.ok(library.chains.some((chain) => chain.id === "semiconductor-material"));
+  assert.ok(!library.chains.some((chain) => chain.id === "semiconductor-material-industry-chain"));
 });
 
 test("chain API can include Markdown article content", async () => {

@@ -9,6 +9,9 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
   await mkdir(resolvedDataDir, { recursive: true });
 
   let state = await readState(resolvedDataDir);
+  if (migrateDeprecatedChains(baseLibrary, state)) {
+    await saveState(resolvedDataDir, state);
+  }
   let library = mergeLibrary(baseLibrary, state);
 
   async function createChain(input) {
@@ -160,8 +163,28 @@ function mergeLibrary(baseLibrary, state) {
     if (managedUpdates.length) chain.updates = [...managedUpdates, ...(chain.updates || [])];
   }
 
-  if (state.updatedAt) library.meta.updated = state.updatedAt.slice(0, 10);
+  if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
   return library;
+}
+
+function formatChinaDate(value) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(value));
+}
+
+function migrateDeprecatedChains(baseLibrary, state) {
+  if (!baseLibrary.chains.some((chain) => chain.id === "semiconductor-material")) return false;
+  const previousLength = state.managedChains.length;
+  state.managedChains = state.managedChains.filter((chain) => chain.id !== "semiconductor-material-industry-chain");
+  const hadUpdates = Boolean(state.updatesByChain["semiconductor-material-industry-chain"]);
+  const hadOverride = Boolean(state.articleOverrides["semiconductor-material-industry-chain"]);
+  delete state.updatesByChain["semiconductor-material-industry-chain"];
+  delete state.articleOverrides["semiconductor-material-industry-chain"];
+  return previousLength !== state.managedChains.length || hadUpdates || hadOverride;
 }
 
 async function readState(dataDir) {

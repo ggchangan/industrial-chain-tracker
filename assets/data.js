@@ -1,7 +1,7 @@
 window.INDUSTRY_CHAIN_LIBRARY = {
   "meta": {
     "title": "产业链研究库",
-    "updated": "2026-06-06",
+    "updated": "2026-06-11",
     "description": "统一沉淀产业链骨架、公众号配图、动态追踪和资料文件。"
   },
   "chains": [
@@ -4799,6 +4799,286 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "sourceTitle": "物理AI产业链深度解析原始稿",
           "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
           "notes": "重点跟踪本体厂公告、供应商定点、订单、产能利用率和机器人业务收入。"
+        }
+      ]
+    },
+    {
+      "id": "semiconductor-material",
+      "title": "半导体材料产业链",
+      "shortTitle": "半导体材料",
+      "theme": "晶圆厂扩产与AI需求共振，硅片、光刻胶、电子特气、CMP、靶材和封装材料进入国产替代兑现期。",
+      "status": "已建档",
+      "trackingProfile": {
+        "title": "半导体材料专属动态追踪",
+        "summary": "重点跟踪晶圆厂扩产、高端材料客户认证、国产份额、价格交期、量产良率和先进封装材料放量。",
+        "metrics": [
+          {
+            "name": "晶圆厂扩产与稼动率",
+            "why": "晶圆厂资本开支、新产能投产和稼动率决定材料需求的总量与持续性。",
+            "signals": [
+              "资本开支",
+              "新增晶圆产能",
+              "产能利用率",
+              "材料采购量"
+            ]
+          },
+          {
+            "name": "高端材料客户认证",
+            "why": "光刻胶、光掩模版、CMP和靶材验证周期长，认证与批量供货是国产替代的核心证据。",
+            "signals": [
+              "制程节点",
+              "客户验证",
+              "批量供货",
+              "材料收入占比"
+            ]
+          },
+          {
+            "name": "价格、交期与盈利",
+            "why": "电子特气和高纯化学品的报价、交期与毛利率能够反映真实供需紧张程度。",
+            "signals": [
+              "产品报价",
+              "交付周期",
+              "毛利率",
+              "经营现金流"
+            ]
+          },
+          {
+            "name": "先进封装材料放量",
+            "why": "AI芯片与先进封装提升FC-BGA基板、塑封料和引线框架的性能要求与单机价值。",
+            "signals": [
+              "FC-BGA量产",
+              "先进封装订单",
+              "产线良率",
+              "客户导入"
+            ]
+          }
+        ]
+      },
+      "article": "./content/raw/semiconductor-material-industry-chain-original.md",
+      "cover": "./cover-image/semiconductor-material-industry-chain/semiconductor-material-industry-chain-cover.png",
+      "diagram": "./diagram/semiconductor-material-industry-chain/semiconductor-material-industry-chain-map@2x.png",
+      "diagramSvg": "./diagram/semiconductor-material-industry-chain/semiconductor-material-industry-chain-map.svg",
+      "updateFile": "./content/updates/semiconductor-material-chain-updates.json",
+      "chain": [
+        {
+          "id": "upstream",
+          "title": "上游：基础原料与制造设备",
+          "role": "提供高纯硅料、金属与化工原料，以及材料提纯、晶体生长和检测设备。",
+          "items": [
+            {
+              "name": "高纯硅与衬底原料",
+              "detail": "电子级多晶硅、石英坩埚和晶体生长原料决定硅片纯度",
+              "companies": "沪硅产业、TCL中环、立昂微"
+            },
+            {
+              "name": "高纯金属与化工原料",
+              "detail": "铜、铝、钨、钽及高纯酸碱、树脂和光敏材料",
+              "companies": "江丰电子、雅克科技及高纯化工供应商"
+            },
+            {
+              "name": "材料制造与检测设备",
+              "detail": "拉晶、切磨抛、提纯、混配、缺陷检测与洁净输送",
+              "companies": "晶盛机电等材料设备与检测厂商"
+            }
+          ]
+        },
+        {
+          "id": "wafer-materials",
+          "title": "核心：晶圆制造材料",
+          "role": "约占全球半导体材料市场六成，贯穿光刻、刻蚀、沉积、清洗和平坦化。",
+          "items": [
+            {
+              "name": "硅片",
+              "detail": "300mm抛光片、外延片与SOI片，是芯片制造的基础衬底",
+              "companies": "沪硅产业、TCL中环、立昂微"
+            },
+            {
+              "name": "光刻胶",
+              "detail": "g/i线、KrF、ArF与EUV胶，先进制程国产化率最低",
+              "companies": "彤程新材、南大光电、上海新阳、鼎龙股份、雅克科技"
+            },
+            {
+              "name": "电子特气",
+              "detail": "用于刻蚀、成膜、清洗、光刻和掺杂，纯度与稳定供应是关键",
+              "companies": "中船特气、华特气体、金宏气体、昊华科技"
+            },
+            {
+              "name": "湿电子化学品与CMP",
+              "detail": "高纯酸碱、清洗液、抛光液和抛光垫支撑清洗与晶圆平坦化",
+              "companies": "安集科技、晶瑞电材、江化微、鼎龙股份"
+            },
+            {
+              "name": "溅射靶材",
+              "detail": "PVD金属薄膜沉积材料，覆盖铝、钛、铜、钽等高纯靶材",
+              "companies": "江丰电子"
+            },
+            {
+              "name": "光掩模版",
+              "detail": "承载电路图形的高精度光刻底片，中高端国产化率仍低",
+              "companies": "路维光电、清溢光电、冠石科技、龙图光罩"
+            },
+            {
+              "name": "前驱体与其他工艺材料",
+              "detail": "ALD/CVD前驱体、电镀液、蚀刻液和清洗液构成材料平台",
+              "companies": "雅克科技、上海新阳、南大光电"
+            }
+          ]
+        },
+        {
+          "id": "packaging-materials",
+          "title": "中后道：封装材料",
+          "role": "先进封装提高基板、互连和包封材料的性能要求，是增速更快的价值环节。",
+          "items": [
+            {
+              "name": "封装基板",
+              "detail": "FC-CSP、FC-BGA等高密度载板连接芯片与PCB",
+              "companies": "深南电路、兴森科技"
+            },
+            {
+              "name": "引线框架与键合材料",
+              "detail": "冲压/蚀刻引线框架、键合丝和互连材料",
+              "companies": "康强电子"
+            },
+            {
+              "name": "包封与先进封装材料",
+              "detail": "环氧塑封料、底部填充与高可靠包封材料",
+              "companies": "华海诚科、鼎龙股份"
+            }
+          ]
+        },
+        {
+          "id": "downstream",
+          "title": "下游：晶圆制造与封装测试",
+          "role": "晶圆厂和封测厂的认证、采购与扩产最终决定材料企业的收入和盈利兑现。",
+          "items": [
+            {
+              "name": "晶圆代工与逻辑制造",
+              "detail": "先进逻辑、成熟制程和特色工艺持续拉动工艺材料需求",
+              "companies": "中芯国际、华虹公司等"
+            },
+            {
+              "name": "存储芯片制造",
+              "detail": "DRAM、NAND与HBM扩产增加硅片、前驱体、特气和CMP用量",
+              "companies": "长江存储、长鑫科技等"
+            },
+            {
+              "name": "封装测试",
+              "detail": "先进封装与传统封装共同拉动基板、引线框架和塑封料",
+              "companies": "长电科技、通富微电、华天科技等"
+            }
+          ]
+        }
+      ],
+      "logic": [
+        {
+          "title": "晶圆厂扩产形成需求底座",
+          "body": "国内逻辑与存储产能持续建设，材料消耗随晶圆产出增长，并由一次性设备投资转化为长期耗材需求。"
+        },
+        {
+          "title": "低国产化率打开替代空间",
+          "body": "ArF光刻胶、高端掩模版、靶材和先进封装基板仍高度依赖进口，客户认证突破将直接带来份额提升。"
+        },
+        {
+          "title": "高壁垒材料进入业绩验证",
+          "body": "行业观察重点从概念布局转向批量供货、收入占比、毛利率、良率和经营现金流。"
+        },
+        {
+          "title": "AI推动先进制程与封装升级",
+          "body": "AI芯片、HBM和先进封装提高光刻、沉积、CMP及FC-BGA材料的用量和性能门槛。"
+        }
+      ],
+      "watchlist": [
+        {
+          "segment": "晶圆厂扩产与材料需求",
+          "signals": [
+            "晶圆厂资本开支",
+            "新增产能投产",
+            "材料采购量",
+            "产能利用率"
+          ],
+          "companies": "中芯国际、华虹公司、长江存储、长鑫科技"
+        },
+        {
+          "segment": "硅片与衬底",
+          "signals": [
+            "300mm产能",
+            "客户认证",
+            "稼动率",
+            "折旧与毛利率"
+          ],
+          "companies": "沪硅产业、TCL中环、立昂微"
+        },
+        {
+          "segment": "光刻胶与光掩模版",
+          "signals": [
+            "高端胶客户验证",
+            "批量销售收入",
+            "制程节点突破",
+            "掩模版交付"
+          ],
+          "companies": "彤程新材、南大光电、上海新阳、鼎龙股份、路维光电、清溢光电"
+        },
+        {
+          "segment": "电子特气与湿电子化学品",
+          "signals": [
+            "产品价格与交期",
+            "高纯等级",
+            "晶圆厂导入",
+            "经营现金流"
+          ],
+          "companies": "中船特气、华特气体、金宏气体、昊华科技、晶瑞电材、江化微"
+        },
+        {
+          "segment": "CMP与溅射靶材",
+          "signals": [
+            "新产品验证",
+            "国产份额",
+            "先进制程适配",
+            "毛利率"
+          ],
+          "companies": "安集科技、鼎龙股份、江丰电子"
+        },
+        {
+          "segment": "封装材料",
+          "signals": [
+            "FC-BGA量产",
+            "产线良率",
+            "先进封装订单",
+            "材料收入占比"
+          ],
+          "companies": "深南电路、兴森科技、康强电子、华海诚科"
+        }
+      ],
+      "updates": [
+        {
+          "date": "2026-06-12",
+          "segment": "全产业链",
+          "signal": "重建半导体材料产业链正式基准框架",
+          "impact": "形成“基础原料与设备 → 晶圆制造七大材料 → 封装材料 → 晶圆厂与封测厂”的研究和动态追踪路径。",
+          "confidence": "基准框架",
+          "sourceTitle": "半导体材料产业链深度解析完整终版",
+          "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "notes": "本版以用户提供的完整终稿为基础，财务数据、市场规模与客户关系仍应结合公告和权威行业资料持续核验。"
+        },
+        {
+          "date": "2026-06-12",
+          "segment": "晶圆制造材料",
+          "signal": "光刻胶、电子特气、CMP和光掩模版成为高壁垒国产替代主线",
+          "impact": "这些环节国产化率低、验证周期长，客户认证与批量收入比概念映射更能验证产业兑现。",
+          "confidence": "待核验",
+          "sourceTitle": "半导体材料产业链深度解析完整终版",
+          "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "notes": "后续重点记录客户认证、量产节点、收入占比、毛利率和经营现金流。"
+        },
+        {
+          "date": "2026-06-12",
+          "segment": "封装材料",
+          "signal": "AI与先进封装推动FC-BGA基板、引线框架和塑封料价值量提升",
+          "impact": "封装材料市场增速高于晶圆制造材料，国内企业从传统封装向高端载板和先进封装材料升级。",
+          "confidence": "待核验",
+          "sourceTitle": "半导体材料产业链深度解析完整终版",
+          "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "notes": "重点跟踪FC-BGA批量进度、产能利用率、良率和先进封装客户订单。"
         }
       ]
     }
