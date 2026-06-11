@@ -43,7 +43,11 @@ npm start
 | `POST /api/v1/admin/login` | 维护者登录 |
 | `POST /api/v1/admin/logout` | 退出登录 |
 | `GET /api/v1/admin/chains` | 获取维护台产业链列表 |
+| `POST /api/v1/admin/chains/preview` | 从 Markdown 生成可编辑结构草稿 |
 | `POST /api/v1/admin/chains` | 上传 Markdown 并建立新产业链 |
+| `GET /api/v1/admin/chains/{id}` | 读取后台创建产业链的原稿与结构 |
+| `PUT /api/v1/admin/chains/{id}` | 更新后台创建的产业链 |
+| `DELETE /api/v1/admin/chains/{id}` | 删除后台创建的产业链 |
 | `POST /api/v1/admin/chains/{id}/updates` | 给已有产业链追加动态追踪 |
 
 网页启动时优先读取 `/api/v1/library`，API 不可用时回退到 `assets/data.js`，因此本地纯静态预览仍可使用。
@@ -59,7 +63,8 @@ ADMIN_PASSWORD=至少10位的随机密码
 ADMIN_SESSION_SECRET=至少32位的随机会话密钥
 ```
 
-不要把真实 `.env` 提交到 Git。维护台可以上传 Markdown 建档，也可以给已有产业链追加动态。
+不要把真实 `.env` 提交到 Git。维护台可以上传 Markdown、检查结构草稿、上传正式封面和
+图谱后发布，也可以编辑或删除后台创建的产业链，并给任意产业链追加动态。
 后台新增内容写入 `DATA_DIR`；生产 Compose 使用命名卷
 `industrial-chain-tracker-data`，重新发布容器不会覆盖这些内容。
 

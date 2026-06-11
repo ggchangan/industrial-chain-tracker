@@ -1250,6 +1250,13 @@ main {
   min-height: 76px;
 }
 
+.admin-form .admin-json-editor {
+  min-height: 420px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .admin-form input:focus,
 .admin-form textarea:focus,
 .admin-form select:focus {
@@ -1276,6 +1283,12 @@ main {
   justify-self: start;
   border: 0;
   cursor: pointer;
+}
+
+.admin-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .admin-submit:disabled {

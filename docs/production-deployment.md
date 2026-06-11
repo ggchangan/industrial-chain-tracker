@@ -26,6 +26,8 @@ bash deploy/release.sh
 
 后台上传的 Markdown、新产业链和动态追踪保存在 Docker 命名卷
 `industrial-chain-tracker-data`，重新发布镜像不会覆盖这些内容。
+新增产业链采用“解析草稿 → 人工检查 → 上传正式封面与图谱 → 发布”的流程，不会把
+自动占位图片直接发布到公开页。
 
 ## 1. 首次准备服务器
 

@@ -165,16 +165,42 @@ async function handleApi(context) {
         id: chain.id,
         title: chain.title,
         shortTitle: chain.shortTitle,
-        updates: chain.updates?.length || 0
+        updates: chain.updates?.length || 0,
+        managed: contentStore.isManagedChain(chain.id)
       }))
     });
     return;
   }
 
-  if (request.method === "POST" && pathname === "/api/v1/admin/chains") {
+  if (request.method === "POST" && pathname === "/api/v1/admin/chains/preview") {
     const body = await readJsonBody(request, 2 * 1024 * 1024);
+    sendJson(response, 200, { draft: contentStore.previewChain(body) });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/v1/admin/chains") {
+    const body = await readJsonBody(request, 18 * 1024 * 1024);
     const chain = await contentStore.createChain(body);
     sendJson(response, 201, { chain });
+    return;
+  }
+
+  const managedChainMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)$/);
+  if (request.method === "GET" && managedChainMatch) {
+    sendJson(response, 200, await contentStore.getManagedChain(managedChainMatch[1]));
+    return;
+  }
+
+  if (request.method === "PUT" && managedChainMatch) {
+    const body = await readJsonBody(request, 18 * 1024 * 1024);
+    const chain = await contentStore.updateManagedChain(managedChainMatch[1], body);
+    sendJson(response, 200, { chain });
+    return;
+  }
+
+  if (request.method === "DELETE" && managedChainMatch) {
+    await contentStore.deleteManagedChain(managedChainMatch[1]);
+    sendJson(response, 200, { deleted: true });
     return;
   }
 

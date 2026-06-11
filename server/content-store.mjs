@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const STATE_FILE = "managed-content.json";
@@ -18,15 +18,22 @@ export async function createContentStore({ baseLibrary, dataDir }) {
       throw validationError(`产业链 ID 已存在：${id}`);
     }
 
-    const generated = buildChain({ ...input, id, markdown: article.markdown, articleTitle: article.title });
+    const generated = normalizeChainDraft(input.structure || buildChainDraft({
+      ...input,
+      id,
+      markdown: article.markdown,
+      articleTitle: article.title
+    }), { ...input, id, articleTitle: article.title });
+    const cover = normalizeAsset(input.cover, "封面");
+    const diagram = normalizeAsset(input.diagram, "产业链图谱");
     const articleRelativePath = path.join("raw", `${id}-industry-chain-original.md`);
-    const diagramRelativePath = path.join("generated", `${id}-industry-chain-map.svg`);
-    const coverRelativePath = path.join("generated", `${id}-industry-chain-cover.svg`);
+    const diagramRelativePath = path.join("uploads", `${id}-industry-chain-map${diagram.extension}`);
+    const coverRelativePath = path.join("uploads", `${id}-industry-chain-cover${cover.extension}`);
 
     await Promise.all([
       writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown),
-      writeManagedFile(resolvedDataDir, diagramRelativePath, createDiagramSvg(generated)),
-      writeManagedFile(resolvedDataDir, coverRelativePath, createCoverSvg(generated))
+      writeManagedBinary(resolvedDataDir, diagramRelativePath, diagram.contents),
+      writeManagedBinary(resolvedDataDir, coverRelativePath, cover.contents)
     ]);
 
     const chain = {
@@ -58,12 +65,104 @@ export async function createContentStore({ baseLibrary, dataDir }) {
     return structuredClone(update);
   }
 
+  async function getManagedChain(chainId) {
+    const chain = state.managedChains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("该产业链不是通过后台创建的，暂不支持在线编辑");
+    const markdown = await readManagedArticle(resolvedDataDir, chain.article);
+    return { chain: structuredClone(chain), markdown };
+  }
+
+  async function updateManagedChain(chainId, input) {
+    const index = state.managedChains.findIndex((item) => item.id === chainId);
+    if (index < 0) throw notFoundError("该产业链不是通过后台创建的，暂不支持在线编辑");
+
+    const previous = state.managedChains[index];
+    const article = normalizeArticleInput(input);
+    const generated = normalizeChainDraft(input.structure, {
+      ...input,
+      id: chainId,
+      articleTitle: article.title
+    });
+    const articleRelativePath = path.join("raw", `${chainId}-industry-chain-original.md`);
+    const writes = [writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown)];
+
+    let coverUrl = previous.cover;
+    if (input.cover) {
+      const cover = normalizeAsset(input.cover, "封面");
+      const relativePath = path.join("uploads", `${chainId}-industry-chain-cover${cover.extension}`);
+      writes.push(writeManagedBinary(resolvedDataDir, relativePath, cover.contents));
+      coverUrl = managedUrl(relativePath);
+    }
+
+    let diagramUrl = previous.diagram;
+    if (input.diagram) {
+      const diagram = normalizeAsset(input.diagram, "产业链图谱");
+      const relativePath = path.join("uploads", `${chainId}-industry-chain-map${diagram.extension}`);
+      writes.push(writeManagedBinary(resolvedDataDir, relativePath, diagram.contents));
+      diagramUrl = managedUrl(relativePath);
+    }
+
+    await Promise.all(writes);
+    state.managedChains[index] = {
+      ...generated,
+      article: managedUrl(articleRelativePath),
+      cover: coverUrl,
+      diagram: diagramUrl,
+      diagramSvg: diagramUrl.endsWith(".svg") ? diagramUrl : "",
+      updateFile: "",
+      watchlist: previous.watchlist || [],
+      updates: []
+    };
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(state.managedChains[index]);
+  }
+
+  async function deleteManagedChain(chainId) {
+    const index = state.managedChains.findIndex((item) => item.id === chainId);
+    if (index < 0) throw notFoundError("该产业链不是通过后台创建的，无法删除");
+    const [chain] = state.managedChains.splice(index, 1);
+    delete state.updatesByChain[chainId];
+    await Promise.all([
+      removeManagedFile(resolvedDataDir, chain.article),
+      removeManagedFile(resolvedDataDir, chain.cover),
+      removeManagedFile(resolvedDataDir, chain.diagram)
+    ]);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+  }
+
   return {
     addUpdate,
     createChain,
+    deleteManagedChain,
+    previewChain: (input) => buildChainDraft({
+      ...input,
+      id: normalizeId(input.id || "new-chain"),
+      markdown: normalizeArticleInput(input).markdown,
+      articleTitle: normalizeArticleInput(input).title
+    }),
+    getManagedChain,
+    isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
+    updateManagedChain,
     dataDir: resolvedDataDir,
     getLibrary: () => library
   };
+}
+
+async function readManagedArticle(dataDir, articleUrl) {
+  const relativePath = String(articleUrl || "").replace(/^\/managed\//, "");
+  const target = path.resolve(dataDir, relativePath);
+  assertInside(dataDir, target);
+  return readFile(target, "utf8");
+}
+
+async function removeManagedFile(dataDir, fileUrl) {
+  if (!String(fileUrl || "").startsWith("/managed/")) return;
+  const relativePath = fileUrl.replace(/^\/managed\//, "");
+  const target = path.resolve(dataDir, relativePath);
+  assertInside(dataDir, target);
+  await rm(target, { force: true });
 }
 
 function mergeLibrary(baseLibrary, state) {
@@ -109,6 +208,13 @@ async function writeManagedFile(dataDir, relativePath, contents) {
   await writeFile(target, contents, "utf8");
 }
 
+async function writeManagedBinary(dataDir, relativePath, contents) {
+  const target = path.resolve(dataDir, relativePath);
+  assertInside(dataDir, target);
+  await mkdir(path.dirname(target), { recursive: true });
+  await writeFile(target, contents);
+}
+
 function managedUrl(relativePath) {
   return `/managed/${relativePath.split(path.sep).join("/")}`;
 }
@@ -125,7 +231,7 @@ function normalizeArticleInput(input) {
   return { markdown: `${markdown}\n`, title };
 }
 
-function buildChain(input) {
+function buildChainDraft(input) {
   const sections = extractSections(input.markdown);
   const chainSections = buildChainSections(sections);
   const title = String(input.title || input.articleTitle).trim();
@@ -155,6 +261,45 @@ function buildChain(input) {
   };
 }
 
+function normalizeChainDraft(draft, input) {
+  const title = required(draft.title || input.title || input.articleTitle, "请输入页面标题");
+  const shortTitle = required(draft.shortTitle || input.shortTitle, "请输入短标题");
+  const theme = required(draft.theme || input.theme, "请输入一句话主题");
+  if (!Array.isArray(draft.chain) || !draft.chain.length) throw validationError("产业链骨架不能为空");
+  if (!Array.isArray(draft.logic) || !draft.logic.length) throw validationError("核心逻辑不能为空");
+
+  return {
+    id: input.id,
+    title,
+    shortTitle,
+    theme,
+    status: "已建档",
+    trackingProfile: draft.trackingProfile || {
+      title: `${shortTitle}专属动态追踪`,
+      summary: "围绕产业进展、订单验证、产能变化和关键公司动态持续更新。",
+      metrics: [{
+        name: "产业进展",
+        why: "判断产业是否从概念验证进入订单和规模化阶段。",
+        signals: ["政策与标准", "客户验证", "订单与交付", "产能与良率"]
+      }]
+    },
+    chain: draft.chain.map((section, index) => ({
+      id: normalizeId(section.id || `section-${index + 1}`) || `section-${index + 1}`,
+      title: required(section.title || section.name, "骨架章节标题不能为空"),
+      role: required(section.role, "骨架章节说明不能为空"),
+      items: (section.items || section.segments || []).map((item) => ({
+        name: required(item.name, "骨架环节名称不能为空"),
+        detail: required(item.detail || item.logic, "骨架环节说明不能为空"),
+        companies: required(item.companies || "待补充", "骨架公司不能为空")
+      }))
+    })),
+    logic: draft.logic.map((item) => ({
+      title: required(item.title, "核心逻辑标题不能为空"),
+      body: required(item.body, "核心逻辑内容不能为空")
+    }))
+  };
+}
+
 function extractSections(markdown) {
   const lines = markdown.split(/\r?\n/);
   const sections = [];
@@ -173,35 +318,54 @@ function extractSections(markdown) {
 }
 
 function buildChainSections(sections) {
-  const groups = [
-    { id: "upstream", label: "上游", matcher: /上游|材料|设备|基础设施/ },
-    { id: "midstream", label: "中游", matcher: /中游|制造|加工|平台|系统|核心零部件/ },
-    { id: "downstream", label: "下游", matcher: /下游|应用|终端|场景/ }
-  ];
+  const topLevel = sections.filter((section) =>
+    section.level === 2 && !/概览|总结|风险|附录|市场热点|为什么|能力/.test(section.title)
+  );
+  const candidates = topLevel.slice(0, 5);
 
-  return groups.map((group) => {
-    const matches = sections.filter((section) => group.matcher.test(section.title));
-    const source = matches.length ? matches : sections.filter((section) => section.level >= 3).slice(0, 3);
-    const items = source.slice(0, 6).map((section) => ({
-      name: section.title.replace(/^[(（]?[一二三四五六七八九十\d]+[)）.、\s-]*/, "").slice(0, 40) || "待完善环节",
-      detail: section.body.join(" ").slice(0, 160) || "根据原稿自动建档，等待补充环节说明。",
-      companies: extractCompanies(section.body.join(" ")) || "待补充"
+  return candidates.map((section, index) => {
+    const start = sections.indexOf(section);
+    const endOffset = sections.slice(start + 1).findIndex((item) => item.level === 2);
+    const end = endOffset < 0 ? sections.length : start + 1 + endOffset;
+    const children = sections.slice(start + 1, end).filter((item) => item.level === 3);
+    const items = children.slice(0, 8).map((child) => ({
+      name: cleanHeading(child.title).slice(0, 42),
+      detail: child.body.join(" ").slice(0, 180) || "请根据原稿补充环节说明。",
+      companies: extractCompanies(child.body.join(" ")) || "待补充"
     }));
 
     return {
-      id: group.id,
-      title: `${group.label}：${matches[0]?.title.replace(/^.*?[：:]/, "") || "待完善"}`,
-      role: matches[0]?.body.join(" ").slice(0, 100) || "根据 Markdown 原稿自动生成的基础骨架。",
-      items: items.length ? items : [{ name: "待完善环节", detail: "请根据原稿进一步补充。", companies: "待补充" }]
+      id: `section-${index + 1}`,
+      title: cleanHeading(section.title),
+      role: section.body.join(" ").slice(0, 140) || "根据 Markdown 原稿章节生成，请在发布前检查。",
+      items: items.length ? items : [{
+        name: cleanHeading(section.title),
+        detail: section.body.join(" ").slice(0, 180) || "请根据原稿补充环节说明。",
+        companies: extractCompanies(section.body.join(" ")) || "待补充"
+      }]
     };
   });
 }
 
 function buildLogic(sections, theme) {
-  const candidates = sections.filter((section) => /驱动|逻辑|总结|催化|趋势|核心/.test(section.title));
-  const source = candidates.length ? candidates : sections.filter((section) => section.level === 2);
+  const summary = sections.find((section) => section.level === 2 && /核心逻辑|逻辑总结|核心驱动|产业趋势/.test(section.title));
+  let source = [];
+  if (summary) {
+    const start = sections.indexOf(summary);
+    const endOffset = sections.slice(start + 1).findIndex((item) => item.level === 2);
+    const end = endOffset < 0 ? sections.length : start + 1 + endOffset;
+    source = sections.slice(start + 1, end).filter((section) =>
+      section.level === 3 &&
+      /驱动|逻辑|催化|趋势/.test(section.title) &&
+      !/优先级|风险/.test(section.title)
+    );
+  }
+  if (!source.length) {
+    source = sections.filter((section) => section.level === 2 && /驱动|逻辑|总结|催化|趋势|核心/.test(section.title));
+  }
+  if (!source.length) source = sections.filter((section) => section.level === 2);
   const logic = source.slice(0, 4).map((section) => ({
-    title: section.title.slice(0, 40),
+    title: cleanHeading(section.title).slice(0, 40),
     body: section.body.join(" ").slice(0, 220) || theme
   }));
   return logic.length ? logic : [{ title: "核心逻辑", body: theme }];
@@ -249,8 +413,15 @@ function normalizeId(value) {
     .toLowerCase()
     .replace(/产业链.*$/, "")
     .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-industry-chain$/, "")
     .replace(/^-+|-+$/g, "")
     .slice(0, 64);
+}
+
+function cleanHeading(value) {
+  return String(value || "")
+    .replace(/^[(（]?[一二三四五六七八九十\d]+[)）.、\s-]*/, "")
+    .trim();
 }
 
 function cleanMarkdown(value) {
@@ -261,47 +432,23 @@ function cleanMarkdown(value) {
     .trim();
 }
 
-function createDiagramSvg(chain) {
-  const columns = chain.chain.map((section, index) => {
-    const x = 60 + index * 380;
-    const items = section.items.slice(0, 4).map((item, itemIndex) =>
-      `<text x="${x + 24}" y="${190 + itemIndex * 54}" class="item">${escapeXml(item.name)}</text>`
-    ).join("");
-    return `<g>
-      <rect x="${x}" y="88" width="320" height="330" rx="12" class="panel"/>
-      <text x="${x + 24}" y="132" class="section">${escapeXml(section.title)}</text>
-      ${items}
-    </g>`;
-  }).join("");
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
-  <style>
-    .bg{fill:#0c1118}.panel{fill:#142130;stroke:#2b4052;stroke-width:2}
-    .title{fill:#edf5f7;font:700 30px sans-serif}.section{fill:#27d9e8;font:700 20px sans-serif}
-    .item{fill:#d7e5ea;font:16px sans-serif}
-  </style>
-  <rect width="1200" height="500" class="bg"/>
-  <text x="60" y="52" class="title">${escapeXml(chain.title)}图谱</text>
-  ${columns}
-</svg>`;
-}
-
-function createCoverSvg(chain) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500">
-  <rect width="900" height="500" fill="#0c1118"/>
-  <path d="M80 330H820M170 170V330M450 120V330M730 190V330" stroke="#27d9e8" stroke-width="5" opacity=".8"/>
-  <circle cx="170" cy="170" r="18" fill="#35d39a"/><circle cx="450" cy="120" r="18" fill="#f5b942"/>
-  <circle cx="730" cy="190" r="18" fill="#27d9e8"/>
-  <text x="80" y="80" fill="#96aab5" font-family="sans-serif" font-size="24">产业链研究库</text>
-  <text x="80" y="265" fill="#edf5f7" font-family="sans-serif" font-weight="700" font-size="48">${escapeXml(chain.shortTitle)}</text>
-  <text x="80" y="410" fill="#96aab5" font-family="sans-serif" font-size="22">${escapeXml(chain.theme.slice(0, 42))}</text>
-</svg>`;
-}
-
-function escapeXml(value) {
-  return String(value).replace(/[<>&'"]/g, (character) => ({
-    "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;"
-  })[character]);
+function normalizeAsset(asset, label) {
+  if (!asset || typeof asset !== "object") throw validationError(`请上传正式${label}文件`);
+  const type = String(asset.type || "").toLowerCase();
+  const allowed = {
+    "image/png": ".png",
+    "image/jpeg": ".jpg",
+    "image/webp": ".webp",
+    "image/svg+xml": ".svg"
+  };
+  const extension = allowed[type];
+  if (!extension) throw validationError(`${label}仅支持 PNG、JPG、WebP 或 SVG`);
+  const data = String(asset.data || "").replace(/^data:[^;]+;base64,/, "");
+  const contents = Buffer.from(data, "base64");
+  if (!contents.length || contents.length > 8 * 1024 * 1024) {
+    throw validationError(`${label}文件无效或超过 8MB`);
+  }
+  return { contents, extension };
 }
 
 function assertInside(rootDir, targetPath) {

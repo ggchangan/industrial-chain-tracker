@@ -31,13 +31,13 @@
             <div class="section-head compact">
               <p class="eyebrow">New Chain</p>
               <h2>上传 Markdown 建档</h2>
-              <p>系统会读取标题和章节，自动生成三段式基础骨架、追踪框架和轻量图谱。建档后可继续通过 Git 完善精细数据和正式配图。</p>
+              <p>系统先按原文章节生成可编辑草稿。检查骨架后，再上传正式封面和产业链图谱并发布，避免低质量占位内容进入公开页。</p>
             </div>
 
             <form id="createChainForm" class="admin-form">
               <label>
                 <span>Markdown 原稿</span>
-                <input id="chainMarkdownFile" name="markdownFile" type="file" accept=".md,text/markdown,text/plain" required />
+                <input id="chainMarkdownFile" name="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
                 <small id="markdownFileHint">选择不超过 2MB 的 `.md` 文件</small>
               </label>
 
@@ -62,7 +62,31 @@
                 <textarea name="theme" rows="3" placeholder="说明核心驱动、产业变化和主要传导方向"></textarea>
               </label>
 
-              <button class="button primary admin-submit" type="submit">上传并建立产业链</button>
+              <button id="previewChainButton" class="button admin-submit" type="button">解析原稿并生成草稿</button>
+
+              <label>
+                <span>骨架与核心逻辑草稿</span>
+                <textarea id="chainStructure" name="structure" class="admin-json-editor" rows="18" placeholder="先点击“解析原稿并生成草稿”，再检查和修改 JSON" required></textarea>
+                <small>这是发布前的结构化内容。请删除错误章节、修正公司和环节，不确认不要发布。</small>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>正式封面</span>
+                  <input id="chainCoverFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" />
+                  <small>建议沿用现有封面风格，最大 8MB</small>
+                </label>
+                <label>
+                  <span>正式产业链图谱</span>
+                  <input id="chainDiagramFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" />
+                  <small>建议上传宽版高清图，最大 8MB</small>
+                </label>
+              </div>
+
+              <div class="admin-form-actions">
+                <button class="button primary admin-submit" type="submit">确认内容并正式发布</button>
+                <button id="cancelChainEdit" class="button admin-submit" type="button" hidden>取消编辑</button>
+              </div>
             </form>
           </article>
 

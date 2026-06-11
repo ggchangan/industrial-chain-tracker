@@ -145,7 +145,9 @@ test("authenticated maintainer can create a chain and append an update", async (
       title: "固态电池产业链",
       shortTitle: "固态电池",
       theme: "产业化验证加速。",
-      markdown
+      markdown,
+      cover: testSvgAsset("封面"),
+      diagram: testSvgAsset("图谱")
     })
   });
   assert.equal(createResponse.status, 201);
@@ -178,6 +180,27 @@ test("authenticated maintainer can create a chain and append an update", async (
   const persisted = JSON.parse(await readFile(path.join(dataDir, "managed-content.json"), "utf8"));
   assert.ok(persisted.managedChains.some((chain) => chain.id === "solid-state-battery-test"));
   assert.equal(persisted.updatesByChain["solid-state-battery-test"][0].signal, "头部企业启动中试线验证");
+
+  const managedPayload = await fetch(`${baseUrl}/api/v1/admin/chains/solid-state-battery-test`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.match(managedPayload.markdown, /固态电池产业链深度解析/);
+
+  const updatedStructure = {
+    title: "固态电池材料产业链",
+    shortTitle: "固态电池材料",
+    theme: "材料体系进入中试验证。",
+    trackingProfile: managedPayload.chain.trackingProfile,
+    chain: managedPayload.chain.chain,
+    logic: managedPayload.chain.logic
+  };
+  const editResponse = await fetch(`${baseUrl}/api/v1/admin/chains/solid-state-battery-test`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({ markdown, structure: updatedStructure })
+  });
+  assert.equal(editResponse.status, 200);
+  assert.equal((await editResponse.json()).chain.title, "固态电池材料产业链");
 });
 
 async function login() {
@@ -188,4 +211,13 @@ async function login() {
   });
   assert.equal(response.status, 200);
   return response.headers.get("set-cookie").split(";")[0];
+}
+
+function testSvgAsset(label) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><text x="10" y="50">${label}</text></svg>`;
+  return {
+    name: `${label}.svg`,
+    type: "image/svg+xml",
+    data: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`
+  };
 }
