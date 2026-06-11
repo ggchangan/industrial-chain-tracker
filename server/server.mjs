@@ -15,6 +15,7 @@ export async function createAppServer(options = {}) {
   const baseLibrary = await loadLibrary(rootDir);
   const contentStore = await createContentStore({
     baseLibrary,
+    rootDir,
     dataDir: options.dataDir || process.env.DATA_DIR || path.join(rootDir, ".runtime-data")
   });
   const auth = createAuth({
@@ -172,28 +173,15 @@ async function handleApi(context) {
     return;
   }
 
-  if (request.method === "POST" && pathname === "/api/v1/admin/chains/preview") {
-    const body = await readJsonBody(request, 2 * 1024 * 1024);
-    sendJson(response, 200, { draft: contentStore.previewChain(body) });
-    return;
-  }
-
-  if (request.method === "POST" && pathname === "/api/v1/admin/chains") {
-    const body = await readJsonBody(request, 18 * 1024 * 1024);
-    const chain = await contentStore.createChain(body);
-    sendJson(response, 201, { chain });
-    return;
-  }
-
   const managedChainMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)$/);
   if (request.method === "GET" && managedChainMatch) {
-    sendJson(response, 200, await contentStore.getManagedChain(managedChainMatch[1]));
+    sendJson(response, 200, await contentStore.getEditableChain(managedChainMatch[1]));
     return;
   }
 
   if (request.method === "PUT" && managedChainMatch) {
-    const body = await readJsonBody(request, 18 * 1024 * 1024);
-    const chain = await contentStore.updateManagedChain(managedChainMatch[1], body);
+    const body = await readJsonBody(request, 2 * 1024 * 1024);
+    const chain = await contentStore.updateArticle(managedChainMatch[1], body);
     sendJson(response, 200, { chain });
     return;
   }

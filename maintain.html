@@ -10,7 +10,7 @@
     <header class="site-header compact-header">
       <nav class="nav">
         <a href="./index.html">公开阅读页</a>
-        <a href="#create-chain">新增产业链</a>
+        <a href="#edit-article">更新原文</a>
         <a href="#add-update">添加动态</a>
         <a href="#resources">内容资源</a>
         <button id="adminLogout" class="nav-button" type="button">退出登录</button>
@@ -18,7 +18,7 @@
       <section class="hero">
         <p class="eyebrow">Content Console</p>
         <h1>产业链内容后台</h1>
-        <p class="lead">上传 Markdown 建立新的产业链骨架，或给已建档产业链追加文章、视频、公告和调研线索。</p>
+        <p class="lead">维护已建档产业链的原文，并追加文章、视频、公告和调研线索。新产业链首次建档由完整制作流程发布。</p>
       </section>
     </header>
 
@@ -27,66 +27,32 @@
         <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
 
         <div class="admin-form-grid">
-          <article id="create-chain" class="admin-form-panel">
+          <article id="edit-article" class="admin-form-panel">
             <div class="section-head compact">
-              <p class="eyebrow">New Chain</p>
-              <h2>上传 Markdown 建档</h2>
-              <p>系统先按原文章节生成可编辑草稿。检查骨架后，再上传正式封面和产业链图谱并发布，避免低质量占位内容进入公开页。</p>
+              <p class="eyebrow">Article</p>
+              <h2>更新产业链原文</h2>
+              <p>选择已建档产业链，载入当前 Markdown 原稿后直接修改，或上传新的 `.md` 文件整体替换。</p>
             </div>
 
-            <form id="createChainForm" class="admin-form">
+            <form id="editArticleForm" class="admin-form">
               <label>
-                <span>Markdown 原稿</span>
+                <span>选择产业链</span>
+                <select id="articleChainId" name="chainId" required></select>
+              </label>
+
+              <label>
+                <span>替换 Markdown 文件（可选）</span>
                 <input id="chainMarkdownFile" name="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
-                <small id="markdownFileHint">选择不超过 2MB 的 `.md` 文件</small>
-              </label>
-
-              <div class="admin-field-row">
-                <label>
-                  <span>英文 ID</span>
-                  <input name="id" type="text" pattern="[a-z0-9-]+" placeholder="例如：solid-state-battery" required />
-                </label>
-                <label>
-                  <span>短标题</span>
-                  <input name="shortTitle" type="text" placeholder="例如：固态电池" required />
-                </label>
-              </div>
-
-              <label>
-                <span>页面标题</span>
-                <input name="title" type="text" placeholder="例如：固态电池产业链" required />
+                <small id="markdownFileHint">也可以在下方直接编辑，原稿最大 2MB</small>
               </label>
 
               <label>
-                <span>一句话主题</span>
-                <textarea name="theme" rows="3" placeholder="说明核心驱动、产业变化和主要传导方向"></textarea>
+                <span>Markdown 原文</span>
+                <textarea id="articleMarkdown" name="markdown" class="admin-json-editor" rows="26" spellcheck="false" required></textarea>
+                <small>保存后公开网页和小程序 API 会读取这份原文；产业链骨架、封面和图谱不会改变。</small>
               </label>
 
-              <button id="previewChainButton" class="button admin-submit" type="button">解析原稿并生成草稿</button>
-
-              <label>
-                <span>骨架与核心逻辑草稿</span>
-                <textarea id="chainStructure" name="structure" class="admin-json-editor" rows="18" placeholder="先点击“解析原稿并生成草稿”，再检查和修改 JSON" required></textarea>
-                <small>这是发布前的结构化内容。请删除错误章节、修正公司和环节，不确认不要发布。</small>
-              </label>
-
-              <div class="admin-field-row">
-                <label>
-                  <span>正式封面</span>
-                  <input id="chainCoverFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" />
-                  <small>建议沿用现有封面风格，最大 8MB</small>
-                </label>
-                <label>
-                  <span>正式产业链图谱</span>
-                  <input id="chainDiagramFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" />
-                  <small>建议上传宽版高清图，最大 8MB</small>
-                </label>
-              </div>
-
-              <div class="admin-form-actions">
-                <button class="button primary admin-submit" type="submit">确认内容并正式发布</button>
-                <button id="cancelChainEdit" class="button admin-submit" type="button" hidden>取消编辑</button>
-              </div>
+              <button class="button primary admin-submit" type="submit">保存原文更新</button>
             </form>
           </article>
 
@@ -160,7 +126,7 @@
         <div class="section-head">
           <p class="eyebrow">Library</p>
           <h2>已建档内容</h2>
-          <p>查看公开效果和资源文件。后台新增内容保存在独立持久化卷中，不会因重新部署而丢失。</p>
+          <p>查看公开效果和资源文件。原文更新与动态追踪保存在独立持久化卷中，不会因重新部署而丢失。</p>
         </div>
         <div class="maintain-tools">
           <label for="maintainSearch">筛选产业链</label>

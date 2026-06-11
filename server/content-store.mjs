@@ -3,8 +3,9 @@ import path from "node:path";
 
 const STATE_FILE = "managed-content.json";
 
-export async function createContentStore({ baseLibrary, dataDir }) {
+export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
   const resolvedDataDir = path.resolve(dataDir);
+  const resolvedRootDir = path.resolve(rootDir);
   await mkdir(resolvedDataDir, { recursive: true });
 
   let state = await readState(resolvedDataDir);
@@ -65,57 +66,30 @@ export async function createContentStore({ baseLibrary, dataDir }) {
     return structuredClone(update);
   }
 
-  async function getManagedChain(chainId) {
-    const chain = state.managedChains.find((item) => item.id === chainId);
-    if (!chain) throw notFoundError("该产业链不是通过后台创建的，暂不支持在线编辑");
-    const markdown = await readManagedArticle(resolvedDataDir, chain.article);
+  async function getEditableChain(chainId) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const markdown = await readChainArticle(resolvedRootDir, resolvedDataDir, chain.article);
     return { chain: structuredClone(chain), markdown };
   }
 
-  async function updateManagedChain(chainId, input) {
-    const index = state.managedChains.findIndex((item) => item.id === chainId);
-    if (index < 0) throw notFoundError("该产业链不是通过后台创建的，暂不支持在线编辑");
-
-    const previous = state.managedChains[index];
+  async function updateArticle(chainId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
     const article = normalizeArticleInput(input);
-    const generated = normalizeChainDraft(input.structure, {
-      ...input,
-      id: chainId,
-      articleTitle: article.title
-    });
     const articleRelativePath = path.join("raw", `${chainId}-industry-chain-original.md`);
-    const writes = [writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown)];
+    const articleUrl = managedUrl(articleRelativePath);
+    await writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown);
 
-    let coverUrl = previous.cover;
-    if (input.cover) {
-      const cover = normalizeAsset(input.cover, "封面");
-      const relativePath = path.join("uploads", `${chainId}-industry-chain-cover${cover.extension}`);
-      writes.push(writeManagedBinary(resolvedDataDir, relativePath, cover.contents));
-      coverUrl = managedUrl(relativePath);
+    const managedIndex = state.managedChains.findIndex((item) => item.id === chainId);
+    if (managedIndex >= 0) {
+      state.managedChains[managedIndex].article = articleUrl;
+    } else {
+      state.articleOverrides[chainId] = articleUrl;
     }
-
-    let diagramUrl = previous.diagram;
-    if (input.diagram) {
-      const diagram = normalizeAsset(input.diagram, "产业链图谱");
-      const relativePath = path.join("uploads", `${chainId}-industry-chain-map${diagram.extension}`);
-      writes.push(writeManagedBinary(resolvedDataDir, relativePath, diagram.contents));
-      diagramUrl = managedUrl(relativePath);
-    }
-
-    await Promise.all(writes);
-    state.managedChains[index] = {
-      ...generated,
-      article: managedUrl(articleRelativePath),
-      cover: coverUrl,
-      diagram: diagramUrl,
-      diagramSvg: diagramUrl.endsWith(".svg") ? diagramUrl : "",
-      updateFile: "",
-      watchlist: previous.watchlist || [],
-      updates: []
-    };
     await saveState(resolvedDataDir, state);
     library = mergeLibrary(baseLibrary, state);
-    return structuredClone(state.managedChains[index]);
+    return structuredClone(library.chains.find((item) => item.id === chainId));
   }
 
   async function deleteManagedChain(chainId) {
@@ -142,18 +116,24 @@ export async function createContentStore({ baseLibrary, dataDir }) {
       markdown: normalizeArticleInput(input).markdown,
       articleTitle: normalizeArticleInput(input).title
     }),
-    getManagedChain,
+    getEditableChain,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
-    updateManagedChain,
+    updateArticle,
     dataDir: resolvedDataDir,
     getLibrary: () => library
   };
 }
 
-async function readManagedArticle(dataDir, articleUrl) {
-  const relativePath = String(articleUrl || "").replace(/^\/managed\//, "");
-  const target = path.resolve(dataDir, relativePath);
-  assertInside(dataDir, target);
+async function readChainArticle(rootDir, dataDir, articleUrl) {
+  if (String(articleUrl || "").startsWith("/managed/")) {
+    const relativePath = String(articleUrl).replace(/^\/managed\//, "");
+    const target = path.resolve(dataDir, relativePath);
+    assertInside(dataDir, target);
+    return readFile(target, "utf8");
+  }
+  const relativePath = String(articleUrl || "").replace(/^\.\//, "");
+  const target = path.resolve(rootDir, relativePath);
+  assertInside(rootDir, target);
   return readFile(target, "utf8");
 }
 
@@ -167,6 +147,11 @@ async function removeManagedFile(dataDir, fileUrl) {
 
 function mergeLibrary(baseLibrary, state) {
   const library = structuredClone(baseLibrary);
+  for (const chain of library.chains) {
+    if (state.articleOverrides?.[chain.id]) {
+      chain.article = state.articleOverrides[chain.id];
+    }
+  }
   const managedChains = structuredClone(state.managedChains || []);
   library.chains.push(...managedChains);
 
@@ -184,12 +169,13 @@ async function readState(dataDir) {
     const state = JSON.parse(await readFile(path.join(dataDir, STATE_FILE), "utf8"));
     return {
       managedChains: Array.isArray(state.managedChains) ? state.managedChains : [],
+      articleOverrides: state.articleOverrides && typeof state.articleOverrides === "object" ? state.articleOverrides : {},
       updatesByChain: state.updatesByChain && typeof state.updatesByChain === "object" ? state.updatesByChain : {},
       updatedAt: state.updatedAt || ""
     };
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    return { managedChains: [], updatesByChain: {}, updatedAt: "" };
+    return { managedChains: [], articleOverrides: {}, updatesByChain: {}, updatedAt: "" };
   }
 }
 

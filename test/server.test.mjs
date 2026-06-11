@@ -105,102 +105,54 @@ test("admin APIs require authentication", async () => {
   assert.equal(response.status, 401);
 });
 
-test("authenticated maintainer can create a chain and append an update", async () => {
+test("authenticated maintainer can update an existing article and append an update", async () => {
   const cookie = await login();
-  const markdown = `# 固态电池产业链深度解析
-
-> **核心驱动**：新能源车安全与能量密度升级推动固态电池产业化。
-
-## 一、产业链全景
-
-形成材料、制造与整车应用三层结构。
-
-## 二、上游材料
-
-### 固态电解质
-
-硫化物与氧化物路线并行，材料验证决定量产节奏。
-
-## 三、中游制造
-
-### 电芯制造
-
-设备与工艺需要重新适配。
-
-## 四、下游应用
-
-### 新能源汽车
-
-头部车企推动装车验证。
-
-## 五、核心逻辑总结
-
-产业从实验室验证进入中试阶段。`;
-
   const createResponse = await fetch(`${baseUrl}/api/v1/admin/chains`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Cookie: cookie },
-    body: JSON.stringify({
-      id: "solid-state-battery-test",
-      title: "固态电池产业链",
-      shortTitle: "固态电池",
-      theme: "产业化验证加速。",
-      markdown,
-      cover: testSvgAsset("封面"),
-      diagram: testSvgAsset("图谱")
-    })
+    body: JSON.stringify({ title: "不应由维护台直接创建" })
   });
-  assert.equal(createResponse.status, 201);
+  assert.equal(createResponse.status, 404);
 
-  const updateResponse = await fetch(`${baseUrl}/api/v1/admin/chains/solid-state-battery-test/updates`, {
+  const currentPayload = await fetch(`${baseUrl}/api/v1/admin/chains/pcb`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.match(currentPayload.markdown, /PCB产业链/);
+
+  const markdown = `${currentPayload.markdown.trim()}\n\n## 维护测试章节\n\n验证后台原文覆盖能够持久化。\n`;
+  const articleResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({ markdown })
+  });
+  assert.equal(articleResponse.status, 200);
+  assert.equal((await articleResponse.json()).chain.id, "pcb");
+
+  const updateResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb/updates`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Cookie: cookie },
     body: JSON.stringify({
       date: "2026-06-12",
-      segment: "电芯制造",
-      signal: "头部企业启动中试线验证",
-      impact: "推动设备与材料进入客户认证阶段。",
+      segment: "全产业链",
+      signal: "维护后台追加测试动态",
+      impact: "验证动态追踪持久化。",
       confidence: "待核验",
       sourceTitle: "产业进展文章",
       sourceUrl: "https://example.com/article",
-      notes: "继续跟踪量产时间。"
+      notes: "仅用于自动测试。"
     })
   });
   assert.equal(updateResponse.status, 201);
 
-  const chainPayload = await fetch(`${baseUrl}/api/v1/chains/solid-state-battery-test?article=html`)
+  const chainPayload = await fetch(`${baseUrl}/api/v1/chains/pcb?article=html`)
     .then((response) => response.json());
   assert.equal(chainPayload.chain.updates[0].sourceUrl, "https://example.com/article");
-  assert.match(chainPayload.article.html, /固态电池产业链深度解析/);
-
-  const managedDiagram = await fetch(`${baseUrl}${chainPayload.chain.diagram}`);
-  assert.equal(managedDiagram.status, 200);
-  assert.match(managedDiagram.headers.get("content-type"), /image\/svg/);
+  assert.match(chainPayload.article.html, /维护测试章节/);
+  assert.match(chainPayload.chain.article, /^\/managed\/raw\//);
 
   const persisted = JSON.parse(await readFile(path.join(dataDir, "managed-content.json"), "utf8"));
-  assert.ok(persisted.managedChains.some((chain) => chain.id === "solid-state-battery-test"));
-  assert.equal(persisted.updatesByChain["solid-state-battery-test"][0].signal, "头部企业启动中试线验证");
-
-  const managedPayload = await fetch(`${baseUrl}/api/v1/admin/chains/solid-state-battery-test`, {
-    headers: { Cookie: cookie }
-  }).then((response) => response.json());
-  assert.match(managedPayload.markdown, /固态电池产业链深度解析/);
-
-  const updatedStructure = {
-    title: "固态电池材料产业链",
-    shortTitle: "固态电池材料",
-    theme: "材料体系进入中试验证。",
-    trackingProfile: managedPayload.chain.trackingProfile,
-    chain: managedPayload.chain.chain,
-    logic: managedPayload.chain.logic
-  };
-  const editResponse = await fetch(`${baseUrl}/api/v1/admin/chains/solid-state-battery-test`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", Cookie: cookie },
-    body: JSON.stringify({ markdown, structure: updatedStructure })
-  });
-  assert.equal(editResponse.status, 200);
-  assert.equal((await editResponse.json()).chain.title, "固态电池材料产业链");
+  assert.match(persisted.articleOverrides.pcb, /^\/managed\/raw\//);
+  assert.equal(persisted.updatesByChain.pcb[0].signal, "维护后台追加测试动态");
 });
 
 async function login() {
@@ -211,13 +163,4 @@ async function login() {
   });
   assert.equal(response.status, 200);
   return response.headers.get("set-cookie").split(";")[0];
-}
-
-function testSvgAsset(label) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><text x="10" y="50">${label}</text></svg>`;
-  return {
-    name: `${label}.svg`,
-    type: "image/svg+xml",
-    data: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`
-  };
 }
