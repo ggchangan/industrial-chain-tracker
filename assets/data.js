@@ -9,50 +9,60 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "id": "pcb",
       "title": "PCB产业链",
       "shortTitle": "PCB",
-      "theme": "AI服务器高频高速PCB需求拉动，上游电子布、铜箔与中游覆铜板进入价值重估。",
+      "theme": "AI服务器推动PCB向高层数、高频高速和高阶HDI升级，电子布、HVLP铜箔、PPO/PPE树脂与高端CCL形成紧缺传导。",
       "status": "已建档",
       "trackingProfile": {
         "title": "PCB专属动态追踪",
-        "summary": "重点看高频高速PCB需求是否继续向电子布、铜箔、CCL和PCB扩产传导。",
+        "summary": "从AI服务器订单出发，重点看电子布、HVLP铜箔、PPO/PPE树脂的价格与供给，CCL高端等级认证，以及PCB厂扩产能否转化为订单、毛利率和现金流。",
         "metrics": [
           {
-            "name": "电子布价格与交期",
-            "why": "电子布是CCL骨架，涨价和交期拉长通常最早反映高端材料紧缺。",
+            "name": "高频高速材料供需",
+            "why": "电子布、石英布、HVLP铜箔与PPO/PPE共同决定高速信号性能和CCL成本。",
             "signals": [
-              "连续涨价月数",
-              "Low-Dk认证",
-              "极薄/超薄布产能",
-              "织布机瓶颈"
-            ]
-          },
-          {
-            "name": "铜箔高端认证",
-            "why": "HVLP/RTF铜箔决定AI服务器高速信号损耗，是国产替代关键环节。",
-            "signals": [
+              "电子布提价",
               "HVLP代际",
-              "头部PCB厂认证",
-              "产能利用率",
-              "加工费"
+              "PPO树脂价格",
+              "石英布/PTFE认证"
             ]
           },
           {
-            "name": "CCL调价与M等级升级",
-            "why": "CCL是价值转化枢纽，龙头调价和M9/M10认证决定产业链定价权。",
+            "name": "CCL等级与定价权",
+            "why": "M7-M10认证和龙头调价决定材料升级价值能否兑现。",
             "signals": [
-              "调价函",
-              "M7/M8/M9/M10",
-              "海外客户导入",
-              "毛利率"
+              "M9/M10认证",
+              "FR-4调价",
+              "PP半固化片",
+              "产品结构与毛利率"
             ]
           },
           {
-            "name": "PCB厂AI订单与扩产",
-            "why": "下游订单决定景气持续性，资本开支会反向拉动设备和材料。",
+            "name": "PCB订单与技术路线",
+            "why": "服务器PCB、HDI、FPC、IC载板和内埋器件对应不同增长曲线。",
             "signals": [
               "AI服务器订单",
-              "高阶HDI扩产",
+              "高阶HDI",
+              "FPC与光模块",
+              "FC-BGA/内埋器件"
+            ]
+          },
+          {
+            "name": "扩产与设备订单",
+            "why": "PCB厂资本开支反向拉动钻孔、曝光、检测、湿制程设备和化学品。",
+            "signals": [
               "资本开支",
-              "单机价值量"
+              "设备认证",
+              "订单交付",
+              "产能爬坡"
+            ]
+          },
+          {
+            "name": "盈利兑现质量",
+            "why": "原料涨价与大规模扩产会造成收入、毛利率和现金流分化。",
+            "signals": [
+              "毛利率",
+              "扣非净利",
+              "经营现金流",
+              "存货与应收"
             ]
           }
         ]
@@ -64,115 +74,181 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updateFile": "./content/updates/pcb-chain-updates.json",
       "chain": [
         {
-          "id": "upstream",
-          "title": "上游：材料与设备",
-          "role": "决定性能与成本，是本轮涨价最敏感的环节",
+          "id": "materials",
+          "title": "上游：高频高速材料",
+          "role": "决定信号损耗、可靠性和覆铜板材料等级",
           "items": [
             {
-              "name": "电子布",
-              "detail": "玻纤布、Low-Dk、极薄/超薄布",
-              "companies": "中国巨石、宏和科技、中材科技、国际复材"
+              "name": "电子布与石英布",
+              "detail": "Low-Dk/Low-CTE、极薄布、M9石英电子布",
+              "companies": "中国巨石、宏和科技、中材科技、国际复材、菲利华"
             },
             {
-              "name": "铜箔",
-              "detail": "RTF、HVLP、高端PCB铜箔",
-              "companies": "铜冠铜箔、嘉元科技"
+              "name": "高端铜箔",
+              "detail": "RTF、HVLP、载体铜箔与高端电子电路铜箔",
+              "companies": "铜冠铜箔、嘉元科技、德福科技"
+            },
+            {
+              "name": "PPO/PPE与特种树脂",
+              "detail": "PPO、碳氢树脂、BMI、PTFE，支撑M6-M10升级",
+              "companies": "圣泉集团、东材科技、呈和科技、沃特股份、银禧科技"
             },
             {
               "name": "环氧树脂",
-              "detail": "CCL黏合剂，受化工品价格影响",
+              "detail": "传统CCL黏合体系，成本受基础化工品影响",
               "companies": "宏昌电子"
-            },
-            {
-              "name": "设备/化学品",
-              "detail": "激光钻孔、直写光刻、湿制程",
-              "companies": "大族激光、芯碁微装、光华科技"
             }
           ]
         },
         {
-          "id": "midstream",
+          "id": "support",
+          "title": "制造支撑：化学品与设备",
+          "role": "PCB扩产与工艺升级带动湿制程、钻孔、曝光和检测设备",
+          "items": [
+            {
+              "name": "湿制程与电子化学品",
+              "detail": "沉铜、电镀、蚀刻液及高纯湿电子化学品",
+              "companies": "光华科技、新宙邦"
+            },
+            {
+              "name": "钻孔与成型设备",
+              "detail": "激光钻孔、机械钻孔、压合、成型与检测",
+              "companies": "大族激光、大族数控"
+            },
+            {
+              "name": "直写光刻",
+              "detail": "高阶HDI与先进封装曝光工艺",
+              "companies": "芯碁微装"
+            },
+            {
+              "name": "IC载板激光设备",
+              "detail": "高端激光打孔与差异化载板装备",
+              "companies": "华工科技"
+            }
+          ]
+        },
+        {
+          "id": "ccl",
           "title": "中游：覆铜板 CCL",
-          "role": "承上启下，把材料价值转化为PCB核心基材",
+          "role": "把电子布、树脂和铜箔转化为PCB核心基材与定价枢纽",
           "items": [
             {
-              "name": "CCL制造",
-              "detail": "电子布浸渍树脂，两面覆铜热压",
-              "companies": "建滔积层板、生益科技、金安国纪、南亚新材、华正新材"
+              "name": "全球与A股龙头",
+              "detail": "规模、成本、认证与客户绑定构成综合壁垒",
+              "companies": "建滔积层板、生益科技"
             },
             {
-              "name": "高端材料",
-              "detail": "FR-4向M7/M8/M9/M10升级",
-              "companies": "生益科技、南亚新材、华正新材等"
+              "name": "高弹性扩产",
+              "detail": "产能爬坡与产品结构升级带来利润弹性",
+              "companies": "金安国纪、南亚新材、华正新材"
             },
             {
-              "name": "价格信号",
-              "detail": "龙头调价具有风向标意义",
-              "companies": "建滔积层板、金安国纪等"
+              "name": "材料代际",
+              "detail": "FR-4向M7/M8/M9/M10及Ultra-low loss升级",
+              "companies": "高端认证周期长达2-3年"
+            },
+            {
+              "name": "价格传导",
+              "detail": "树脂、电子布、铜箔涨价推动CCL连续调价",
+              "companies": "建滔、生益、金安国纪等"
             }
           ]
         },
         {
-          "id": "downstream",
+          "id": "pcb-products",
           "title": "下游：PCB制造与终端",
-          "role": "直接承接AI服务器、通信、汽车电子等需求",
+          "role": "AI服务器、交换机、消费电子和先进封装兑现材料升级价值",
           "items": [
             {
-              "name": "PCB制造",
-              "detail": "高层数、高频高速、高阶HDI",
-              "companies": "胜宏科技、沪电股份、深南电路、鹏鼎控股"
+              "name": "综合PCB龙头",
+              "detail": "高层数、高频高速、高阶HDI与全球化产能",
+              "companies": "鹏鼎控股、胜宏科技、沪电股份、深南电路"
+            },
+            {
+              "name": "算力服务器PCB",
+              "detail": "高层板、UBB/OAM、GPU主板与高速交换板",
+              "companies": "广合科技"
+            },
+            {
+              "name": "差异化PCB路线",
+              "detail": "内埋器件、电源管理、FPC与光通信协同",
+              "companies": "中富电路、东山精密"
+            },
+            {
+              "name": "IC载板/封装基板",
+              "detail": "CSP、FC-BGA与端侧AI芯片封装",
+              "companies": "兴森科技、深南电路"
             },
             {
               "name": "终端应用",
-              "detail": "AI服务器是本轮增量核心",
-              "companies": "服务器、通信设备、汽车电子、消费电子"
-            },
-            {
-              "name": "扩产周期",
-              "detail": "资本开支拉动设备与材料需求",
-              "companies": "头部PCB厂与上游设备商"
+              "detail": "AI服务器、1.6T光模块、交换机、汽车与消费电子",
+              "companies": "AI算力基础设施是本轮核心增量"
             }
           ]
         }
       ],
       "logic": [
         {
-          "title": "AI算力浪潮",
-          "body": "GB200、Vera Rubin等平台拉动高端PCB价值量提升，需求从量增走向量价齐升。"
+          "title": "AI算力拉动升级",
+          "body": "服务器平台迭代推动PCB向更高层数、更高速率与更高材料等级演进。"
         },
         {
-          "title": "涨价传导",
-          "body": "电子布、铜箔等上游材料先涨，CCL龙头提价，再向PCB与终端传导。"
+          "title": "三类材料紧缺传导",
+          "body": "电子布、HVLP铜箔和PPO/PPE树脂共同形成高频高速CCL的供给瓶颈。"
         },
         {
-          "title": "扩产重启",
-          "body": "头部PCB企业资本开支加速，设备、化学品与材料环节形成正反馈。"
+          "title": "CCL定价与认证",
+          "body": "连续调价体现供需，M9/M10认证与客户导入决定长期竞争壁垒。"
         },
         {
-          "title": "技术升级",
-          "body": "高频高速材料从FR-4升级至M9/M10，认证周期拉长龙头壁垒。"
+          "title": "扩产形成正反馈",
+          "body": "PCB厂资本开支反向拉动钻孔、光刻、湿制程设备和上游材料需求。"
+        },
+        {
+          "title": "差异化路线并行",
+          "body": "服务器PCB、高阶HDI、FPC、内埋器件和IC载板分别承接不同终端增量。"
         }
       ],
       "watchlist": [
         {
-          "segment": "电子布",
+          "segment": "电子布与石英布",
           "signals": [
-            "月度报价",
-            "低介电布认证",
-            "新增产能点火/达产",
-            "库存与交期"
+            "月度报价与提价轮次",
+            "低介电/低膨胀认证",
+            "石英布批量进度",
+            "新增产能点火与交期"
           ],
-          "companies": "中国巨石、宏和科技、中材科技、国际复材"
+          "companies": "中国巨石、宏和科技、中材科技、国际复材、菲利华"
         },
         {
-          "segment": "铜箔",
+          "segment": "高端铜箔",
           "signals": [
-            "高端铜箔认证",
-            "产能利用率",
-            "加工费",
-            "客户导入"
+            "HVLP代际与认证",
+            "高端产品满产率",
+            "加工费与价格",
+            "扩产资本开支"
           ],
-          "companies": "铜冠铜箔、嘉元科技"
+          "companies": "铜冠铜箔、嘉元科技、德福科技"
+        },
+        {
+          "segment": "PPO/PPE与特种树脂",
+          "signals": [
+            "全球供给恢复",
+            "PPO树脂价格与供需缺口",
+            "新增产能投产",
+            "头部CCL客户认证"
+          ],
+          "companies": "圣泉集团、东材科技、呈和科技、沃特股份、银禧科技"
+        },
+        {
+          "segment": "化学品与PCB设备",
+          "signals": [
+            "PCB厂资本开支",
+            "AI服务器设备认证",
+            "订单与交付",
+            "经营现金流"
+          ],
+          "companies": "光华科技、新宙邦、大族激光、大族数控、芯碁微装、华工科技"
         },
         {
           "segment": "覆铜板 CCL",
@@ -180,7 +256,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
             "龙头调价函",
             "高端材料认证",
             "海外客户导入",
-            "毛利率变化"
+            "产品结构与毛利率"
           ],
           "companies": "建滔积层板、生益科技、金安国纪、南亚新材、华正新材"
         },
@@ -188,33 +264,43 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "segment": "PCB制造",
           "signals": [
             "AI服务器订单",
-            "扩产节奏",
-            "产品结构",
-            "单机价值量"
+            "高端扩产节奏",
+            "产品结构与毛利率",
+            "客户与平台认证"
           ],
-          "companies": "鹏鼎控股、胜宏科技、沪电股份、深南电路"
+          "companies": "鹏鼎控股、胜宏科技、沪电股份、深南电路、广合科技、中富电路、东山精密、兴森科技"
         }
       ],
       "updates": [
         {
-          "date": "2026-06-04",
-          "segment": "电子布",
-          "signal": "待核验：机构调研观点称电子布连续7个月涨价",
-          "impact": "若属实，说明上游电子布供需紧张仍在延续，涨价压力会继续向CCL和PCB环节传导。",
-          "confidence": "待核验",
-          "sourceTitle": "机构调研日记：电子布机构最新观点梳理",
-          "sourceUrl": "https://v.douyin.com/wl4Ub_vsx0U/",
-          "notes": "用户提供线索：0.71 复制打开抖音，看看【机构调研日记的作品】电子布机构最新观点梳理，连续7个月涨价。后续需要补充原始调研纪要、报价口径、涨价品类和对应公司验证。"
+          "date": "2026-06-12",
+          "segment": "全产业链",
+          "signal": "根据新版完整原稿升级PCB研究框架",
+          "impact": "上游新增PPO/PPE、PTFE、石英电子布和HVLP5铜箔，设备与化学品独立追踪，下游补充服务器PCB、内埋器件、FPC与IC载板等差异化路线。",
+          "confidence": "基准框架",
+          "sourceTitle": "PCB产业链深度解析：从上游材料到下游制造全梳理",
+          "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
+          "notes": "本次为结构性升级；原稿中的新闻、价格、认证和财务数据仍需随公告和公开报道持续核验。"
+        },
+        {
+          "date": "2026-06-12",
+          "segment": "PPO/PPE树脂",
+          "signal": "高频高速树脂成为电子布和铜箔之外的第三条上游紧缺主线",
+          "impact": "PPO/PPE供应、价格和国产产能投放将直接影响M6-M10覆铜板成本、交期与国产替代节奏。",
+          "confidence": "重点观察",
+          "sourceTitle": "PCB产业链深度解析：从上游材料到下游制造全梳理",
+          "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
+          "notes": "重点跟踪圣泉集团、东材科技、呈和科技及银禧科技的产能、客户认证和满产状态。"
         },
         {
           "date": "2026-06-04",
-          "segment": "全产业链",
-          "signal": "建立PCB产业链基准逻辑",
-          "impact": "以AI服务器需求为主线，形成“上游材料 → CCL → PCB制造 → 终端应用”的传导框架，后续动态围绕涨价、扩产、认证、订单四类变量更新。",
-          "confidence": "基准框架",
-          "sourceTitle": "PCB产业链深度解析原始稿",
-          "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
-          "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
+          "segment": "电子布",
+          "signal": "待核验：机构调研观点称电子布连续涨价",
+          "impact": "电子布供需紧张若持续，将继续向CCL和PCB环节传导成本与涨价压力。",
+          "confidence": "待核验",
+          "sourceTitle": "机构调研日记：电子布机构最新观点梳理",
+          "sourceUrl": "https://v.douyin.com/wl4Ub_vsx0U/",
+          "notes": "后续补充原始调研纪要、报价口径、涨价品类和公司公告验证。"
         }
       ]
     },
