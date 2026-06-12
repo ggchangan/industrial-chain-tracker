@@ -274,6 +274,7 @@ function createSearchIndex() {
         title: item.signal,
         body: compactText([
           item.date,
+          item.type,
           item.segment,
           item.impact,
           item.confidence,
@@ -1135,7 +1136,11 @@ function renderTimeline(chain) {
   chain.updates.forEach((item, index) => {
     const card = el("article", "timeline-item");
     card.dataset.searchTarget = searchTargetKey(chain.id, "update", index);
-    card.append(el("div", "timeline-meta", `<span>${item.date}</span><span class="tag">${item.segment}</span><span>${item.confidence}</span>`));
+    card.append(el(
+      "div",
+      "timeline-meta",
+      `<span>${escapeHtml(item.date)}</span><span class="update-type">${escapeHtml(item.type || "产业事件")}</span><span class="tag">${escapeHtml(item.segment)}</span><span>${escapeHtml(item.confidence)}</span>`
+    ));
     card.append(el("h3", "", item.signal));
     card.append(el("p", "", item.impact));
     card.append(el("p", "", item.notes));

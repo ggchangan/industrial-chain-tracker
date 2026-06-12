@@ -67,7 +67,11 @@
       <view class="section">
         <text class="section-label">最新动态</text>
         <view v-for="item in chain.updates" :key="`${item.date}-${item.signal}`" class="update">
-          <text class="update-meta">{{ item.date }} · {{ item.segment }} · {{ item.confidence }}</text>
+          <view class="update-meta-row">
+            <text class="update-date">{{ item.date }}</text>
+            <text class="update-type">{{ item.type || "产业事件" }}</text>
+            <text class="update-detail">{{ item.segment }} · {{ item.confidence }}</text>
+          </view>
           <text class="item-name">{{ item.signal }}</text>
           <text class="item-detail">{{ item.impact }}</text>
         </view>
@@ -469,6 +473,29 @@ function decorateArticleHtml(html) {
 
 .update-meta {
   margin-bottom: 10rpx;
+}
+
+.update-meta-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.update-date,
+.update-detail {
+  color: #94a3b8;
+  font-size: 22rpx;
+}
+
+.update-type {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1rpx solid rgba(34, 211, 238, 0.35);
+  color: #a5f3fc;
+  font-size: 21rpx;
+  font-weight: 700;
+  padding: 5rpx 10rpx;
 }
 
 .article-section {

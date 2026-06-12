@@ -274,6 +274,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-12",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "根据新版完整原稿升级PCB研究框架",
           "impact": "上游新增PPO/PPE、PTFE、石英电子布和HVLP5铜箔，设备与化学品独立追踪，下游补充服务器PCB、内埋器件、FPC与IC载板等差异化路线。",
@@ -284,6 +285,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-12",
+          "type": "产业事件",
           "segment": "PPO/PPE树脂",
           "signal": "高频高速树脂成为电子布和铜箔之外的第三条上游紧缺主线",
           "impact": "PPO/PPE供应、价格和国产产能投放将直接影响M6-M10覆铜板成本、交期与国产替代节奏。",
@@ -294,6 +296,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "机构逻辑",
           "segment": "电子布",
           "signal": "待核验：机构调研观点称电子布连续涨价",
           "impact": "电子布供需紧张若持续，将继续向CCL和PCB环节传导成本与涨价压力。",
@@ -304,6 +307,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-12",
+          "type": "机构逻辑",
           "segment": "覆铜板 CCL",
           "signal": "待核验：视频观点称CCL年内经历四轮涨价，累计涨幅超过40%",
           "impact": "若涨价轮次和幅度得到调价函、公司公告或报价数据验证，说明电子布、铜箔和树脂的成本与供需压力正向CCL价格传导；下一步需观察PCB厂能否向下游转嫁成本，以及高端CCL产品结构和盈利质量是否同步改善。",
@@ -517,6 +521,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立MLCC产业链基准逻辑",
           "impact": "以AI服务器和新能源车需求共振为主线，追踪材料、制造、终端应用的涨价、扩产、认证和国产替代变化。",
@@ -750,6 +755,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立光刻机产业链基准逻辑",
           "impact": "以AI芯片扩产、自主可控和SMEE整机突破为主线，追踪光学、光源、真空结构件、电子特气、整机制造和直写光刻路线变化。",
@@ -760,6 +766,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "板块催化",
           "signal": "光刻机概念板块震荡走强，电子特气与核心零部件领涨",
           "impact": "市场短期将电子特气、精密零部件、光学系统和直写光刻视为国产替代最具弹性的方向。",
@@ -984,6 +991,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立光刻胶产业链基准逻辑",
           "impact": "以AI芯片扩产、ArF/KrF高端胶涨价和国产替代验证窗口为主线，追踪上游树脂、光引发剂、特种气体和中游光刻胶制造变化。",
@@ -994,6 +1002,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "板块催化",
           "signal": "光刻胶概念持续走强，资金关注ArF/KrF量产与上游材料国产替代",
           "impact": "市场开始从主题预期转向验证进度、订单放量和业绩兑现，三巨头及上游树脂、光刻气环节成为主要观察对象。",
@@ -1227,6 +1236,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立机器人产业链基准逻辑",
           "impact": "以2026人形机器人量产元年为主线，追踪特斯拉链、英伟达链、华为链及核心零部件放量节奏。",
@@ -1442,6 +1452,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立智能驾驶产业链基准框架",
           "impact": "以“感知层 → 决策层 → 执行层 → 网联层”为主线归档，后续动态围绕FSD入华、L3准入、高阶智驾渗透、域控订单和线控底盘放量更新。",
@@ -1452,6 +1463,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "FSD催化",
           "signal": "待核验：特斯拉FSD监督版2026年5月入华落地",
           "impact": "若落地节奏持续推进，将倒逼国内高阶智驾功能标配化，并拉动8MP摄像头、CIS、域控制器和线控底盘等环节需求。",
@@ -1684,6 +1696,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立半导体产业链总览基准框架",
           "impact": "将芯片设计、晶圆制造、封装测试、设备、材料五大环节统一归档，并与半导体设备、存储、光刻机、光刻胶等子系列形成母篇导航关系。",
@@ -1694,6 +1707,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "周期判断",
           "signal": "待核验：WSTS将2026年全球半导体市场规模上修至1.5112万亿美元",
           "impact": "若预测兑现，存储、AI芯片、先进封装和设备材料将成为全行业景气度最强的主线。",
@@ -1994,6 +2008,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-12",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "根据新版完整原稿重建产业链框架",
           "impact": "上游新增先锋精科、恒运昌、华亚智能及晶升股份，前道设备按工艺拆分，后道封装测试独立成层，形成从核心零部件到下游资本开支的完整追踪结构。",
@@ -2004,6 +2019,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-12",
+          "type": "产业事件",
           "segment": "核心零部件",
           "signal": "国产替代观察从机械件扩展至射频电源、真空系统、光学与晶体生长设备",
           "impact": "设备国产化的判断不再只看整机份额，还需追踪关键零部件批量导入、先进制程验证和客户集中度变化。",
@@ -2014,6 +2030,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "设备板块",
           "signal": "将存储与AI扩产作为设备景气的首条动态观察线",
           "impact": "持续追踪设备龙头订单、存储厂扩产、先进封装资本开支及后道测试设备盈利弹性是否共振。",
@@ -2246,6 +2263,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立存储产业链基准逻辑",
           "impact": "以AI算力、HBM稀缺、DRAM/NAND涨价、国产存储双巨头IPO和模组厂业绩弹性为主线，追踪从设备材料到模组成品的量价变化。",
@@ -2256,6 +2274,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "模组与价格",
           "signal": "将模组厂库存红利与DRAM/NAND涨价作为首要观察变量",
           "impact": "江波龙、佰维存储、德明利、香农芯创等业绩弹性高度依赖涨价持续性，后续需重点跟踪报价、库存、毛利率和经营现金流。",
@@ -2488,6 +2507,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立光模块产业链基准逻辑",
           "impact": "以AI算力、800G/1.6T放量、CPO硅光交换机量产、上游光芯片紧缺和光纤光缆升级为主线，追踪光互联从容量升级到网络架构重构。",
@@ -2498,6 +2518,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "CPO与光纤光缆",
           "signal": "将英伟达CPO量产与三波段多芯光缆商用作为首要动态观察线",
           "impact": "若CPO交换机和多芯光缆进入持续商用，价值链将从可插拔模块向光引擎、硅光、调制器、光器件和底层光纤网络重构。",
@@ -2747,6 +2768,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立AI算力基础设施产业链基准逻辑",
           "impact": "将AI芯片、存储、PCB、光模块、AI服务器、交换机、液冷、HVDC和智算中心纳入同一个总览框架，作为已有子产业链的上层总图谱。",
@@ -2757,6 +2779,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "资本开支",
           "signal": "将云厂CAPEX、国产智算招标、液冷/HVDC渗透率作为首要动态观察线",
           "impact": "AI算力基础设施是多个已建档产业链的总需求源，后续每条动态应判断其向PCB、存储、光模块、半导体设备等子链的传导方向。",
@@ -3006,6 +3029,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立电力基础设施产业链基准逻辑",
           "impact": "以十五五电网投资、特高压主网、智能配网、算电协同、AI数据中心供电和电力设备出海为主线，追踪电力基础设施从能源配套向算力底座升级。",
@@ -3016,6 +3040,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "算电协同",
           "signal": "将AI数据中心供电与电网投资作为首要动态观察线",
           "impact": "电力基础设施与AI算力基础设施开始强耦合，HVDC、干式变压器、数字电网和电力光网等环节需要和AI数据中心建设节奏联动追踪。",
@@ -3265,6 +3290,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立AI算力能源供给侧产业链基准逻辑",
           "impact": "以AI数据中心缺电、自建发电、燃气轮机产能缺口、柴发交付差、SOFC放量和HRSG需求为主线，追踪算力基础设施从用电端延伸到能源供给侧。",
@@ -3275,6 +3301,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "自建发电",
           "signal": "将北美AIDC自建发电与燃机/柴发交付周期作为首要观察线",
           "impact": "若电网扩容继续慢于数据中心建设，燃气轮机、天然气内燃机、柴发、SOFC和HRSG需求会从备用逻辑升级为主电源逻辑。",
@@ -3520,6 +3547,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立消费电子产业链基准逻辑",
           "impact": "以AI端侧渗透、折叠屏iPhone预期、AI眼镜放量、以旧换新补贴和单机价值量提升为主线，追踪消费电子从总量修复转向结构升级。",
@@ -3530,6 +3558,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "终端升级",
           "signal": "将AI手机/AIPC、折叠屏iPhone和AI眼镜作为首要观察线",
           "impact": "消费电子需求的核心变量从出货量切换到单机价值量，存储、散热、电池、FPC、光学、声学和结构件需要联动追踪。",
@@ -3747,6 +3776,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立创新药产业链基准框架",
           "impact": "以“上游CXO/试剂耗材 → 中游创新药企 → 下游商业化/BD出海/支付”为主线归档，后续动态围绕BD出海、CXO订单、盈利拐点、技术平台和支付环境更新。",
@@ -3757,6 +3787,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "BD出海",
           "signal": "待核验：2026年Q1中国创新药BD出海交易额突破600亿美元",
           "impact": "若全年延续，将推动中国创新药从研发投入期进入全球价值重估和商业兑现期，恒瑞、信达、荣昌、科伦等具备出海能力的药企优先受益。",
@@ -3976,6 +4007,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立商业航天产业链基准框架",
           "impact": "以“上游卫星/火箭研发制造 → 中游发射运营与地面设备 → 下游卫星应用与服务”为主线归档，后续动态围绕星座组网、可复用火箭、SpaceX IPO、ETF资金和核心零部件订单更新。",
@@ -3986,6 +4018,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "星座组网",
           "signal": "待核验：千帆星座第十批组网卫星成功发射，在轨卫星数量增至164颗",
           "impact": "若组网节奏持续推进，将直接拉动卫星总装、星载载荷、T/R组件、激光通信、电源系统和地面终端需求。",
@@ -3996,6 +4029,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "资本催化",
           "signal": "待核验：SpaceX拟6月12日登陆纳斯达克，目标估值1.77万亿美元",
           "impact": "若IPO落地，可能重塑全球商业航天估值体系，但也需警惕利好兑现后的板块资金退潮。",
@@ -4224,6 +4258,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立储能产业链基准框架",
           "impact": "以“上游材料 → 中游电芯/PCS/BMS → 下游系统集成与应用”为主线归档，后续动态围绕AI数据中心配储、全球装机、材料涨价、PCS订单和系统价格压力更新。",
@@ -4234,6 +4269,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "AI数据中心配储",
           "signal": "待核验：AI数据中心配储刚需持续释放，算电协同成为储能板块核心催化",
           "impact": "若AIDC储能订单持续落地，储能需求将从新能源消纳扩展到算力基础设施刚需，直接利好PCS、系统集成和数据中心电源相关企业。",
@@ -4244,6 +4280,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "全球装机",
           "signal": "待核验：2026年全球储能新增装机预测约438GWh或459GWh",
           "impact": "若装机预测兑现，储能电芯、PCS、系统集成及材料端均有望维持高景气，但系统价格下行仍会压缩集成商利润。",
@@ -4462,6 +4499,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-04",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立脑机接口产业链基准逻辑",
           "impact": "形成“上游电极/芯片/材料 → 中游系统集成与设备 → 下游医疗康复/消费/工业应用”的跟踪框架。",
@@ -4472,6 +4510,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "临床验证",
           "signal": "国内全植入式脑机接口多中心临床试验成为核心催化",
           "impact": "若入组、临床安全性和有效性顺利，将推动侵入式脑机接口从实验室进入规范化医疗器械通道。",
@@ -4482,6 +4521,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-04",
+          "type": "产业事件",
           "segment": "商业化",
           "signal": "强脑科技非侵入式康复产品和融资进展进入观察池",
           "impact": "非侵入式路线安全性更高、推广更快，是短期收入兑现更清晰的方向。",
@@ -4690,6 +4730,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-06",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立玻璃基板产业链基准逻辑",
           "impact": "形成“特种玻璃材料与设备 → TGV成孔/金属化/RDL精密加工 → 先进封装/CPO/AI应用”的跟踪框架。",
@@ -4700,6 +4741,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-06",
+          "type": "产业事件",
           "segment": "商业化",
           "signal": "海外巨头玻璃基板量产与中试进度进入核心观察窗口",
           "impact": "英特尔、三星和台积电的产线与客户采用节奏，将决定玻璃基板从技术验证走向标准化量产的速度。",
@@ -4710,6 +4752,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-06",
+          "type": "产业事件",
           "segment": "国内协同",
           "signal": "京东方A与康宁合作、国内TGV企业送样成为国产链验证主线",
           "impact": "若材料、加工、封测和CPO客户形成协同验证，国内玻璃基板产业有望从概念映射进入订单兑现阶段。",
@@ -4940,6 +4983,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-06",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "建立物理AI四层产业链基准框架",
           "impact": "形成“算力与仿真 → 世界模型与中间件 → 感知执行硬件 → 本体与真实场景”的研究路径。",
@@ -4950,6 +4994,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-06",
+          "type": "数据变化",
           "segment": "世界模型",
           "signal": "世界模型、视觉语言行动模型与机器人开发平台成为物理AI核心观察点",
           "impact": "若模型能够降低现实数据采集成本并提高任务泛化能力，将加快机器人和智能驾驶的商业化。",
@@ -4960,6 +5005,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-06",
+          "type": "数据变化",
           "segment": "商业化",
           "signal": "真实场景部署和零部件订单进入产业兑现验证窗口",
           "impact": "工厂部署量、连续运行时间、任务成功率和客户复购将成为区分产品能力与概念映射的关键指标。",
@@ -5220,6 +5266,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
       "updates": [
         {
           "date": "2026-06-12",
+          "type": "数据变化",
           "segment": "全产业链",
           "signal": "重建半导体材料产业链正式基准框架",
           "impact": "形成“基础原料与设备 → 晶圆制造七大材料 → 封装材料 → 晶圆厂与封测厂”的研究和动态追踪路径。",
@@ -5230,6 +5277,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-12",
+          "type": "数据变化",
           "segment": "晶圆制造材料",
           "signal": "光刻胶、电子特气、CMP和光掩模版成为高壁垒国产替代主线",
           "impact": "这些环节国产化率低、验证周期长，客户认证与批量收入比概念映射更能验证产业兑现。",
@@ -5240,6 +5288,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
         },
         {
           "date": "2026-06-12",
+          "type": "数据变化",
           "segment": "封装材料",
           "signal": "AI与先进封装推动FC-BGA基板、引线框架和塑封料价值量提升",
           "impact": "封装材料市场增速高于晶圆制造材料，国内企业从传统封装向高端载板和先进封装材料升级。",

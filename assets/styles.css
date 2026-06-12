@@ -626,6 +626,15 @@ main {
   padding: 4px 9px;
 }
 
+.update-type {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 4px;
+  color: #a5f3fc;
+  font-weight: 800;
+  padding: 4px 8px;
+}
+
 .timeline-item h3 {
   font-size: 20px;
   line-height: 1.35;

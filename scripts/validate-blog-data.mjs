@@ -140,6 +140,9 @@ async function validateUpdateFile(chain, label) {
     source.updates.forEach((item, index) => {
       const itemLabel = `${label}.updateFile.updates[${index}]`;
       requireString(item.date, `${itemLabel}.date`);
+      if (item.type && !["产业事件", "机构逻辑", "公司公告", "数据变化"].includes(item.type)) {
+        fail(`${itemLabel}.type must be 产业事件, 机构逻辑, 公司公告, or 数据变化`);
+      }
       requireString(item.segment, `${itemLabel}.segment`);
       requireString(item.signal, `${itemLabel}.signal`);
       requireString(item.impact, `${itemLabel}.impact`);

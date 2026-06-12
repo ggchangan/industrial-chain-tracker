@@ -394,9 +394,14 @@ function extractCompanies(text) {
 function normalizeUpdate(input) {
   const sourceUrl = String(input.sourceUrl || "").trim();
   if (!/^https?:\/\//i.test(sourceUrl)) throw validationError("来源链接必须以 http:// 或 https:// 开头");
+  const type = required(input.type, "请选择动态类型");
+  if (!["产业事件", "机构逻辑", "公司公告", "数据变化"].includes(type)) {
+    throw validationError("动态类型无效");
+  }
 
   const update = {
     date: String(input.date || new Date().toISOString().slice(0, 10)).trim(),
+    type,
     segment: required(input.segment, "请输入产业链环节"),
     signal: required(input.signal, "请输入动态摘要"),
     impact: required(input.impact, "请输入影响判断"),

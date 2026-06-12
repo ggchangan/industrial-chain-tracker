@@ -141,6 +141,7 @@ test("authenticated maintainer can update an existing article and append an upda
     headers: { "Content-Type": "application/json", Cookie: cookie },
     body: JSON.stringify({
       date: "2026-06-12",
+      type: "产业事件",
       segment: "全产业链",
       signal: "维护后台追加测试动态",
       impact: "验证动态追踪持久化。",
@@ -155,6 +156,7 @@ test("authenticated maintainer can update an existing article and append an upda
   const chainPayload = await fetch(`${baseUrl}/api/v1/chains/pcb?article=html`)
     .then((response) => response.json());
   assert.equal(chainPayload.chain.updates[0].sourceUrl, "https://example.com/article");
+  assert.equal(chainPayload.chain.updates[0].type, "产业事件");
   assert.match(chainPayload.article.html, /维护测试章节/);
   assert.match(chainPayload.chain.article, /^\/managed\/raw\//);
 
