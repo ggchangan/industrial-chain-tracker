@@ -27,6 +27,7 @@ for (const chain of library.chains) {
 
   chain.updates = source.updates.map((item) => ({
     date: item.date,
+    type: normalizeUpdateType(item),
     segment: item.segment,
     signal: item.signal,
     impact: item.impact,
@@ -57,3 +58,15 @@ function normalizeSourceUrl(url) {
   return url;
 }
 
+function normalizeUpdateType(item) {
+  const allowed = new Set(["产业事件", "机构逻辑", "公司公告", "数据变化"]);
+  if (allowed.has(item.type)) return item.type;
+  if (item.source?.type === "short-video" || /机构|研报|调研|观点|解读/.test(item.source?.title || "")) {
+    return "机构逻辑";
+  }
+  if (item.source?.type === "announcement" || /公告|年报|季报|业绩说明会/.test(item.source?.title || "")) {
+    return "公司公告";
+  }
+  if (item.source?.type === "internal" || item.confidence === "基准框架") return "数据变化";
+  return "产业事件";
+}

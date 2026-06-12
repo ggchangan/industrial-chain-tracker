@@ -1,216 +1,216 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1840 1240">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1040">
   <defs>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M40 0H0V40" fill="none" stroke="#1e293b" stroke-width="0.7"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.6"/>
     </pattern>
-    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#22d3ee"/>
-      <stop offset="0.55" stop-color="#34d399"/>
-      <stop offset="1" stop-color="#fbbf24"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#020617" flood-opacity="0.55"/>
-    </filter>
-    <marker id="arrow" markerWidth="12" markerHeight="9" refX="11" refY="4.5" orient="auto">
-      <polygon points="0 0,12 4.5,0 9" fill="#22d3ee"/>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#22d3ee"/>
     </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#34d399"/>
+    </marker>
+    <filter id="glow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <style>
-      text{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;letter-spacing:0}
-      .title{font-size:50px;font-weight:800;fill:#f8fafc}
-      .subtitle{font-size:22px;fill:#94a3b8}
-      .num{font-size:16px;font-weight:800;fill:#0f172a}
-      .stage{font-size:27px;font-weight:800;fill:#f8fafc}
-      .role{font-size:16px;fill:#94a3b8}
-      .card-title{font-size:20px;font-weight:750;fill:#f8fafc}
-      .company{font-size:16px;fill:#dbeafe}
-      .detail{font-size:14px;fill:#94a3b8}
-      .footer-title{font-size:20px;font-weight:750;fill:#f8fafc}
-      .footer{font-size:16px;fill:#cbd5e1}
-      .tiny{font-size:14px;fill:#64748b}
+      text { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; letter-spacing: 0; }
+      .title { fill: #f8fafc; font-size: 32px; font-weight: 800; }
+      .subtitle { fill: #94a3b8; font-size: 15px; font-weight: 500; }
+      .region-title { font-size: 18px; font-weight: 800; }
+      .region-sub { fill: #94a3b8; font-size: 12px; font-weight: 500; }
+      .node-title { fill: #f8fafc; font-size: 15px; font-weight: 800; }
+      .node-sub { fill: #cbd5e1; font-size: 11px; font-weight: 500; }
+      .company { fill: #e2e8f0; font-size: 11px; font-weight: 600; }
+      .tiny { fill: #94a3b8; font-size: 10px; font-weight: 500; }
+      .arrow-label { fill: #bae6fd; font-size: 11px; font-weight: 700; }
+      .note-title { fill: #f8fafc; font-size: 14px; font-weight: 800; }
+      .note { fill: #cbd5e1; font-size: 11px; font-weight: 500; }
+      .pill-text { fill: #f8fafc; font-size: 12px; font-weight: 800; }
+      .stroke-cyan { stroke: #22d3ee; }
+      .stroke-green { stroke: #34d399; }
+      .stroke-amber { stroke: #fbbf24; }
+      .stroke-blue { stroke: #60a5fa; }
+      .stroke-rose { stroke: #fb7185; }
     </style>
   </defs>
-  <rect width="1840" height="1240" fill="#0f172a"/>
-  <rect width="1840" height="1240" fill="url(#grid)"/>
-  <rect x="54" y="46" width="124" height="6" rx="3" fill="url(#line)"/>
-  <text x="54" y="108" class="title">PCB产业链全景与价值传导图</text>
-  <text x="56" y="148" class="subtitle">AI服务器需求 → 高频高速材料紧缺 → 覆铜板升级与涨价 → 多路线PCB扩产</text>
 
-  <g stroke="#22d3ee" stroke-width="4" fill="none" marker-end="url(#arrow)" opacity="0.72">
-    <path d="M444 574H482"/>
-    <path d="M878 574H916"/>
-    <path d="M1312 574H1350"/>
+  <rect width="1600" height="1040" fill="#0f172a"/>
+  <rect width="1600" height="1040" fill="url(#grid)"/>
+  <circle cx="780" cy="430" r="310" fill="#0e7490" opacity="0.09"/>
+  <circle cx="1300" cy="310" r="250" fill="#f59e0b" opacity="0.07"/>
+
+  <text x="60" y="62" class="title">PCB产业链全景与价值传导图</text>
+  <text x="60" y="92" class="subtitle">AI服务器推动高层数、高频高速和高阶HDI升级，沿“材料与设备 → 覆铜板CCL → PCB制造 → 终端应用”传导</text>
+
+  <!-- Region boundaries -->
+  <rect x="50" y="135" width="430" height="585" rx="18" fill="rgba(8,51,68,0.18)" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="80" y="172" class="region-title" fill="#67e8f9">上游：高频高速材料与设备</text>
+  <text x="80" y="197" class="region-sub">决定信号损耗、可靠性、材料等级与扩产效率</text>
+
+  <rect x="585" y="135" width="360" height="585" rx="18" fill="rgba(120,53,15,0.18)" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="615" y="172" class="region-title" fill="#fcd34d">中游：覆铜板 CCL</text>
+  <text x="615" y="197" class="region-sub">承上启下，占PCB成本约30%</text>
+
+  <rect x="1050" y="135" width="500" height="585" rx="18" fill="rgba(6,78,59,0.18)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="9 6"/>
+  <text x="1080" y="172" class="region-title" fill="#86efac">下游：PCB制造与终端应用</text>
+  <text x="1080" y="197" class="region-sub">AI服务器、通信设备、消费电子、汽车电子</text>
+
+  <!-- Upstream nodes -->
+  <g>
+    <rect x="80" y="230" width="170" height="105" rx="10" fill="#0f172a"/>
+    <rect x="80" y="230" width="170" height="105" rx="10" fill="rgba(8,51,68,0.42)" stroke="#22d3ee" stroke-width="1.7"/>
+    <text x="165" y="262" class="node-title" text-anchor="middle">电子布与石英布</text>
+    <text x="165" y="287" class="node-sub" text-anchor="middle">Low-Dk / Low-CTE / M9</text>
+    <text x="165" y="313" class="company" text-anchor="middle">中国巨石 · 宏和 · 菲利华</text>
+  </g>
+  <g>
+    <rect x="280" y="230" width="170" height="105" rx="10" fill="#0f172a"/>
+    <rect x="280" y="230" width="170" height="105" rx="10" fill="rgba(120,53,15,0.35)" stroke="#f59e0b" stroke-width="1.7"/>
+    <text x="365" y="262" class="node-title" text-anchor="middle">高端铜箔</text>
+    <text x="365" y="287" class="node-sub" text-anchor="middle">RTF / HVLP / 载体铜箔</text>
+    <text x="365" y="313" class="company" text-anchor="middle">铜冠 · 嘉元 · 德福</text>
+  </g>
+  <g>
+    <rect x="80" y="370" width="170" height="105" rx="10" fill="#0f172a"/>
+    <rect x="80" y="370" width="170" height="105" rx="10" fill="rgba(6,78,59,0.38)" stroke="#34d399" stroke-width="1.7"/>
+    <text x="165" y="402" class="node-title" text-anchor="middle">PPO/PPE与特种树脂</text>
+    <text x="165" y="427" class="node-sub" text-anchor="middle">PPO / BMI / PTFE</text>
+    <text x="165" y="453" class="company" text-anchor="middle">圣泉 · 东材 · 呈和</text>
+  </g>
+  <g>
+    <rect x="280" y="370" width="170" height="105" rx="10" fill="#0f172a"/>
+    <rect x="280" y="370" width="170" height="105" rx="10" fill="rgba(59,130,246,0.32)" stroke="#60a5fa" stroke-width="1.7"/>
+    <text x="365" y="402" class="node-title" text-anchor="middle">设备与电子化学品</text>
+    <text x="365" y="427" class="node-sub" text-anchor="middle">钻孔 / 直写光刻 / 湿制程</text>
+    <text x="365" y="453" class="company" text-anchor="middle">大族 · 芯碁 · 光华 · 新宙邦</text>
   </g>
 
-  <g transform="translate(54 190)" filter="url(#shadow)">
-    <rect width="390" height="794" rx="16" fill="#0f172a"/>
-    <rect width="390" height="794" rx="16" fill="rgba(8,51,68,0.38)" stroke="#22d3ee" stroke-width="2"/>
-    <circle cx="42" cy="42" r="19" fill="#22d3ee"/>
-    <text x="42" y="48" class="num" text-anchor="middle">01</text>
-    <text x="72" y="49" class="stage">高频高速材料</text>
-    <text x="28" y="82" class="role">决定信号损耗、可靠性和CCL材料等级</text>
-    <g transform="translate(24 112)">
-      <rect width="342" height="126" rx="8" fill="#0f172a"/>
-      <rect width="342" height="126" rx="8" fill="rgba(8,51,68,0.48)" stroke="#22d3ee"/>
-      <text x="18" y="32" class="card-title">电子布与石英布</text>
-      <text x="18" y="62" class="company">中国巨石｜宏和｜中材｜菲利华</text>
-      <text x="18" y="92" class="detail">Low-Dk / Low-CTE / 极薄布</text>
-      <text x="18" y="112" class="detail">M9级石英电子布</text>
-    </g>
-    <g transform="translate(24 256)">
-      <rect width="342" height="126" rx="8" fill="#0f172a"/>
-      <rect width="342" height="126" rx="8" fill="rgba(120,53,15,0.32)" stroke="#fbbf24"/>
-      <text x="18" y="32" class="card-title">高端铜箔</text>
-      <text x="18" y="62" class="company">铜冠铜箔｜嘉元科技｜德福科技</text>
-      <text x="18" y="92" class="detail">RTF / HVLP / 载体铜箔</text>
-      <text x="18" y="112" class="detail">AI服务器高端产品满产验证</text>
-    </g>
-    <g transform="translate(24 400)">
-      <rect width="342" height="142" rx="8" fill="#0f172a"/>
-      <rect width="342" height="142" rx="8" fill="rgba(76,29,149,0.38)" stroke="#a78bfa"/>
-      <text x="18" y="32" class="card-title">PPO/PPE与特种树脂</text>
-      <text x="18" y="62" class="company">圣泉｜东材｜呈和｜沃特</text>
-      <text x="18" y="92" class="detail">PPO / 碳氢树脂 / BMI / PTFE</text>
-      <text x="18" y="114" class="detail">M6-M10低损耗材料升级</text>
-    </g>
-    <g transform="translate(24 560)">
-      <rect width="342" height="112" rx="8" fill="#0f172a"/>
-      <rect width="342" height="112" rx="8" fill="rgba(6,78,59,0.4)" stroke="#34d399"/>
-      <text x="18" y="32" class="card-title">环氧树脂</text>
-      <text x="18" y="62" class="company">宏昌电子</text>
-      <text x="18" y="90" class="detail">传统CCL黏合体系 / 成本传导</text>
-    </g>
-    <g transform="translate(24 690)">
-      <rect width="342" height="68" rx="8" fill="#0f172a"/>
-      <rect width="342" height="68" rx="8" fill="rgba(136,19,55,0.3)" stroke="#fb7185"/>
-      <text x="18" y="29" class="card-title">三大紧缺主线</text>
-      <text x="18" y="52" class="detail">电子布｜HVLP铜箔｜PPO/PPE树脂</text>
-    </g>
+  <g>
+    <rect x="80" y="520" width="370" height="150" rx="12" fill="#0f172a"/>
+    <rect x="80" y="520" width="370" height="150" rx="12" fill="rgba(30,41,59,0.55)" stroke="#64748b" stroke-width="1.5"/>
+    <text x="105" y="553" class="note-title">上游核心变量</text>
+    <text x="105" y="582" class="note">• 电子布、HVLP铜箔、PPO/PPE形成供给瓶颈</text>
+    <text x="105" y="610" class="note">• 原料价格与认证向CCL等级和定价传导</text>
+    <text x="105" y="638" class="note">• PCB扩产反向拉动钻孔、光刻与湿制程设备</text>
   </g>
 
-  <g transform="translate(488 190)" filter="url(#shadow)">
-    <rect width="390" height="794" rx="16" fill="#0f172a"/>
-    <rect width="390" height="794" rx="16" fill="rgba(59,130,246,0.25)" stroke="#60a5fa" stroke-width="2"/>
-    <circle cx="42" cy="42" r="19" fill="#60a5fa"/>
-    <text x="42" y="48" class="num" text-anchor="middle">02</text>
-    <text x="72" y="49" class="stage">制造支撑</text>
-    <text x="28" y="82" class="role">扩产与工艺升级拉动化学品和专用设备</text>
-    <g transform="translate(24 132)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(6,78,59,0.42)" stroke="#34d399"/>
-      <text x="18" y="34" class="card-title">湿制程与电子化学品</text>
-      <text x="18" y="68" class="company">光华科技｜新宙邦</text>
-      <text x="18" y="100" class="detail">沉铜 / 电镀 / 蚀刻液 / 高纯化学品</text>
-    </g>
-    <g transform="translate(24 290)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(8,51,68,0.48)" stroke="#22d3ee"/>
-      <text x="18" y="34" class="card-title">钻孔与成型设备</text>
-      <text x="18" y="68" class="company">大族激光｜大族数控</text>
-      <text x="18" y="100" class="detail">激光/机械钻孔、压合、成型、检测</text>
-    </g>
-    <g transform="translate(24 448)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(76,29,149,0.38)" stroke="#a78bfa"/>
-      <text x="18" y="34" class="card-title">直写光刻</text>
-      <text x="18" y="68" class="company">芯碁微装</text>
-      <text x="18" y="100" class="detail">高阶HDI / 先进封装曝光工艺</text>
-    </g>
-    <g transform="translate(24 606)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(120,53,15,0.32)" stroke="#fbbf24"/>
-      <text x="18" y="34" class="card-title">IC载板激光设备</text>
-      <text x="18" y="68" class="company">华工科技</text>
-      <text x="18" y="100" class="detail">高端激光打孔 / 载板差异化装备</text>
-    </g>
+  <!-- CCL center -->
+  <g filter="url(#glow)">
+    <rect x="635" y="250" width="260" height="170" rx="16" fill="#0f172a"/>
+    <rect x="635" y="250" width="260" height="170" rx="16" fill="rgba(120,53,15,0.38)" stroke="#fbbf24" stroke-width="2.2"/>
+    <text x="765" y="292" class="node-title" font-size="18" text-anchor="middle">覆铜板 CCL</text>
+    <text x="765" y="322" class="node-sub" text-anchor="middle">电子布 + 树脂 + 铜箔</text>
+    <text x="765" y="350" class="node-sub" text-anchor="middle">热压形成PCB核心基材</text>
+    <text x="765" y="384" class="company" text-anchor="middle">建滔 · 生益 · 金安国纪</text>
+  </g>
+  <g>
+    <rect x="635" y="460" width="260" height="88" rx="10" fill="#0f172a"/>
+    <rect x="635" y="460" width="260" height="88" rx="10" fill="rgba(76,29,149,0.32)" stroke="#a78bfa" stroke-width="1.7"/>
+    <text x="765" y="493" class="node-title" text-anchor="middle">材料代际与认证</text>
+    <text x="765" y="520" class="node-sub" text-anchor="middle">FR-4 → M7/M8/M9/M10 · 2-3年</text>
+  </g>
+  <g>
+    <rect x="635" y="585" width="260" height="85" rx="10" fill="#0f172a"/>
+    <rect x="635" y="585" width="260" height="85" rx="10" fill="rgba(136,19,55,0.32)" stroke="#fb7185" stroke-width="1.7"/>
+    <text x="765" y="618" class="node-title" text-anchor="middle">价格与盈利传导</text>
+    <text x="765" y="645" class="node-sub" text-anchor="middle">原料涨价 → CCL调价 → PCB议价</text>
   </g>
 
-  <g transform="translate(922 190)" filter="url(#shadow)">
-    <rect width="390" height="794" rx="16" fill="#0f172a"/>
-    <rect width="390" height="794" rx="16" fill="rgba(120,53,15,0.25)" stroke="#fbbf24" stroke-width="2"/>
-    <circle cx="42" cy="42" r="19" fill="#fbbf24"/>
-    <text x="42" y="48" class="num" text-anchor="middle">03</text>
-    <text x="72" y="49" class="stage">覆铜板 CCL</text>
-    <text x="28" y="82" class="role">材料价值转化与产业链定价枢纽</text>
-    <g transform="translate(24 132)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(120,53,15,0.35)" stroke="#fbbf24"/>
-      <text x="18" y="34" class="card-title">全球与A股龙头</text>
-      <text x="18" y="68" class="company">建滔积层板｜生益科技</text>
-      <text x="18" y="100" class="detail">规模 / 成本 / 客户 / 高端认证</text>
-    </g>
-    <g transform="translate(24 290)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(6,78,59,0.42)" stroke="#34d399"/>
-      <text x="18" y="34" class="card-title">高弹性扩产</text>
-      <text x="18" y="68" class="company">金安国纪｜南亚新材｜华正新材</text>
-      <text x="18" y="100" class="detail">产能爬坡 / 产品结构 / 利润弹性</text>
-    </g>
-    <g transform="translate(24 448)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(76,29,149,0.38)" stroke="#a78bfa"/>
-      <text x="18" y="34" class="card-title">材料代际</text>
-      <text x="18" y="68" class="company">FR-4 → M7/M8/M9/M10</text>
-      <text x="18" y="100" class="detail">Ultra-low loss / 认证周期2-3年</text>
-    </g>
-    <g transform="translate(24 606)">
-      <rect width="342" height="132" rx="8" fill="#0f172a"/>
-      <rect width="342" height="132" rx="8" fill="rgba(136,19,55,0.3)" stroke="#fb7185"/>
-      <text x="18" y="34" class="card-title">价格传导</text>
-      <text x="18" y="68" class="company">树脂 + 电子布 + 铜箔</text>
-      <text x="18" y="100" class="detail">成本上涨 → CCL提价 → PCB传导</text>
-    </g>
+  <!-- Downstream nodes -->
+  <g>
+    <rect x="1085" y="230" width="190" height="115" rx="10" fill="#0f172a"/>
+    <rect x="1085" y="230" width="190" height="115" rx="10" fill="rgba(6,78,59,0.42)" stroke="#34d399" stroke-width="1.7"/>
+    <text x="1180" y="263" class="node-title" text-anchor="middle">综合与服务器PCB</text>
+    <text x="1180" y="289" class="node-sub" text-anchor="middle">高层数 / 高频高速 / HDI</text>
+    <text x="1180" y="317" class="company" text-anchor="middle">鹏鼎 · 胜宏 · 沪电 · 深南</text>
+  </g>
+  <g>
+    <rect x="1310" y="230" width="205" height="115" rx="10" fill="#0f172a"/>
+    <rect x="1310" y="230" width="205" height="115" rx="10" fill="rgba(59,130,246,0.34)" stroke="#60a5fa" stroke-width="1.7"/>
+    <text x="1412" y="263" class="node-title" text-anchor="middle">差异化路线与载板</text>
+    <text x="1412" y="289" class="node-sub" text-anchor="middle">FPC / 内埋器件 / FC-BGA</text>
+    <text x="1412" y="317" class="company" text-anchor="middle">东山 · 中富 · 兴森 · 广合</text>
   </g>
 
-  <g transform="translate(1356 190)" filter="url(#shadow)">
-    <rect width="430" height="794" rx="16" fill="#0f172a"/>
-    <rect width="430" height="794" rx="16" fill="rgba(6,78,59,0.28)" stroke="#34d399" stroke-width="2"/>
-    <circle cx="42" cy="42" r="19" fill="#34d399"/>
-    <text x="42" y="48" class="num" text-anchor="middle">04</text>
-    <text x="72" y="49" class="stage">PCB与终端</text>
-    <text x="28" y="82" class="role">多技术路线共同兑现AI算力基础设施需求</text>
-    <g transform="translate(24 108)">
-      <rect width="382" height="112" rx="8" fill="#0f172a"/>
-      <rect width="382" height="112" rx="8" fill="rgba(8,51,68,0.48)" stroke="#22d3ee"/>
-      <text x="18" y="31" class="card-title">综合PCB龙头</text>
-      <text x="18" y="59" class="company">鹏鼎｜胜宏｜沪电｜深南</text>
-      <text x="18" y="88" class="detail">高层数 / 高频高速 / 高阶HDI</text>
+  <g>
+    <rect x="1085" y="395" width="430" height="150" rx="12" fill="#0f172a"/>
+    <rect x="1085" y="395" width="430" height="150" rx="12" fill="rgba(8,51,68,0.34)" stroke="#22d3ee" stroke-width="1.7"/>
+    <text x="1300" y="430" class="node-title" text-anchor="middle">终端应用</text>
+    <g>
+      <rect x="1115" y="462" width="115" height="42" rx="21" fill="rgba(34,211,238,0.18)" stroke="#22d3ee"/>
+      <text x="1172" y="489" class="pill-text" text-anchor="middle">AI服务器</text>
+      <rect x="1248" y="462" width="115" height="42" rx="21" fill="rgba(52,211,153,0.18)" stroke="#34d399"/>
+      <text x="1305" y="489" class="pill-text" text-anchor="middle">1.6T光模块</text>
+      <rect x="1381" y="462" width="105" height="42" rx="21" fill="rgba(96,165,250,0.18)" stroke="#60a5fa"/>
+      <text x="1433" y="489" class="pill-text" text-anchor="middle">交换机/汽车</text>
     </g>
-    <g transform="translate(24 238)">
-      <rect width="382" height="112" rx="8" fill="#0f172a"/>
-      <rect width="382" height="112" rx="8" fill="rgba(6,78,59,0.42)" stroke="#34d399"/>
-      <text x="18" y="31" class="card-title">算力服务器PCB</text>
-      <text x="18" y="59" class="company">广合科技</text>
-      <text x="18" y="88" class="detail">UBB / OAM / GPU主板 / 高速交换板</text>
-    </g>
-    <g transform="translate(24 368)">
-      <rect width="382" height="112" rx="8" fill="#0f172a"/>
-      <rect width="382" height="112" rx="8" fill="rgba(59,130,246,0.3)" stroke="#60a5fa"/>
-      <text x="18" y="31" class="card-title">差异化PCB路线</text>
-      <text x="18" y="59" class="company">中富电路｜东山精密</text>
-      <text x="18" y="88" class="detail">内埋器件 / 电源管理 / FPC / 光模块</text>
-    </g>
-    <g transform="translate(24 498)">
-      <rect width="382" height="112" rx="8" fill="#0f172a"/>
-      <rect width="382" height="112" rx="8" fill="rgba(76,29,149,0.38)" stroke="#a78bfa"/>
-      <text x="18" y="31" class="card-title">IC载板 / 封装基板</text>
-      <text x="18" y="59" class="company">兴森科技｜深南电路</text>
-      <text x="18" y="88" class="detail">CSP / FC-BGA / 端侧AI芯片封装</text>
-    </g>
-    <g transform="translate(24 628)">
-      <rect width="382" height="112" rx="8" fill="#0f172a"/>
-      <rect width="382" height="112" rx="8" fill="rgba(120,53,15,0.32)" stroke="#fbbf24"/>
-      <text x="18" y="31" class="card-title">终端应用</text>
-      <text x="18" y="59" class="company">AI服务器｜1.6T光模块｜交换机</text>
-      <text x="18" y="88" class="detail">汽车电子 / 消费电子 / AI终端</text>
-    </g>
+    <text x="1300" y="526" class="tiny" text-anchor="middle">AI服务器是本轮高端PCB价值量提升的核心增量</text>
   </g>
 
-  <g transform="translate(54 1022)">
-    <rect width="1732" height="142" rx="14" fill="#0f172a"/>
-    <rect width="1732" height="142" rx="14" fill="rgba(30,41,59,0.62)" stroke="#475569"/>
-    <text x="28" y="38" class="footer-title">研究主线</text>
-    <text x="28" y="74" class="footer">① AI服务器推动材料等级升级　② 电子布、HVLP铜箔、PPO/PPE形成供给瓶颈　③ CCL涨价与认证体现定价权</text>
-    <text x="28" y="108" class="footer">动态追踪：原料价格与产能｜M9/M10认证｜PCB厂资本开支｜服务器订单｜毛利率、现金流与存货</text>
+  <g>
+    <rect x="1085" y="590" width="430" height="80" rx="12" fill="#0f172a"/>
+    <rect x="1085" y="590" width="430" height="80" rx="12" fill="rgba(120,53,15,0.26)" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1115" y="624" class="note-title">下游核心变量</text>
+    <text x="1115" y="651" class="note">订单、产品结构、毛利率与资本开支共同验证传导</text>
   </g>
-  <text x="56" y="1208" class="tiny">产业链研究库 · PCB · 2026.06.12</text>
+
+  <!-- Main arrows -->
+  <path d="M250 282 C365 282 520 286 626 302" fill="none" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+  <path d="M450 282 C520 282 565 290 626 312" fill="none" stroke="#fbbf24" stroke-width="3" marker-end="url(#arrow-amber)"/>
+  <path d="M250 423 C370 420 500 388 626 348" fill="none" stroke="#34d399" stroke-width="3" marker-end="url(#arrow-green)"/>
+  <path d="M450 423 C520 426 570 396 626 366" fill="none" stroke="#60a5fa" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+  <text x="515" y="263" class="arrow-label" text-anchor="middle">原材料供给</text>
+
+  <path d="M895 335 C970 332 1015 314 1076 295" fill="none" stroke="#fbbf24" stroke-width="4" marker-end="url(#arrow-amber)"/>
+  <text x="990" y="306" class="arrow-label" text-anchor="middle">蚀刻成板</text>
+
+  <path d="M1275 288 L1301 288" fill="none" stroke="#34d399" stroke-width="4" marker-end="url(#arrow-green)"/>
+  <path d="M1412 345 C1412 365 1380 380 1345 392" fill="none" stroke="#22d3ee" stroke-width="3" marker-end="url(#arrow-cyan)"/>
+
+  <!-- Pull-demand arrow -->
+  <path d="M1445 555 C1320 760 1030 805 795 706 C575 613 394 670 258 700" fill="none" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="10 8" marker-end="url(#arrow-amber)"/>
+  <text x="1010" y="780" fill="#fcd34d" font-size="13" font-weight="800" text-anchor="middle">需求反向拉动：AI服务器 → 材料升级与紧缺 → CCL调价 → PCB扩产</text>
+
+  <!-- Bottom logic blocks -->
+  <rect x="50" y="770" width="1500" height="210" rx="18" fill="rgba(15,23,42,0.82)" stroke="#334155" stroke-width="1.5"/>
+  <text x="80" y="813" class="region-title" fill="#e2e8f0">行业核心逻辑</text>
+
+  <g>
+    <rect x="90" y="845" width="330" height="98" rx="12" fill="#0f172a"/>
+    <rect x="90" y="845" width="330" height="98" rx="12" fill="rgba(8,51,68,0.42)" stroke="#22d3ee" stroke-width="1.6"/>
+    <text x="115" y="880" class="note-title">1. AI算力拉动升级</text>
+    <text x="115" y="909" class="note">服务器平台推动更高层数与更高速率</text>
+    <text x="115" y="932" class="note">高阶HDI、服务器板与载板路线并行</text>
+  </g>
+
+  <g>
+    <rect x="470" y="845" width="330" height="98" rx="12" fill="#0f172a"/>
+    <rect x="470" y="845" width="330" height="98" rx="12" fill="rgba(120,53,15,0.34)" stroke="#fbbf24" stroke-width="1.6"/>
+    <text x="495" y="880" class="note-title">2. 三类材料瓶颈</text>
+    <text x="495" y="909" class="note">电子布、HVLP铜箔、PPO/PPE共同约束</text>
+    <text x="495" y="932" class="note">供需与认证共同决定CCL成本和交期</text>
+  </g>
+
+  <g>
+    <rect x="850" y="845" width="330" height="98" rx="12" fill="#0f172a"/>
+    <rect x="850" y="845" width="330" height="98" rx="12" fill="rgba(6,78,59,0.38)" stroke="#34d399" stroke-width="1.6"/>
+    <text x="875" y="880" class="note-title">3. CCL定价与认证</text>
+    <text x="875" y="909" class="note">调价体现供需，M9/M10认证构成壁垒</text>
+    <text x="875" y="932" class="note">继续验证价格、产品结构与盈利质量</text>
+  </g>
+
+  <g>
+    <rect x="1230" y="845" width="280" height="98" rx="12" fill="#0f172a"/>
+    <rect x="1230" y="845" width="280" height="98" rx="12" fill="rgba(76,29,149,0.34)" stroke="#a78bfa" stroke-width="1.6"/>
+    <text x="1255" y="880" class="note-title">4. 扩产正反馈</text>
+    <text x="1255" y="909" class="note">PCB资本开支拉动设备与电子化学品</text>
+    <text x="1255" y="932" class="note">订单、现金流和产能爬坡决定兑现质量</text>
+  </g>
 </svg>

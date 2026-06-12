@@ -64,6 +64,7 @@ export function searchLibrary(library, query, limit = 30) {
     chain.updates.forEach((item) => {
       addResult(results, normalized, chain, "动态", item.signal, [
         item.date,
+        item.type,
         item.segment,
         item.impact,
         item.confidence,

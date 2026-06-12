@@ -274,6 +274,7 @@ function createSearchIndex() {
         title: item.signal,
         body: compactText([
           item.date,
+          item.type,
           item.segment,
           item.impact,
           item.confidence,
@@ -1076,8 +1077,18 @@ function renderChain(chain) {
 function renderDiagram(chain) {
   const link = document.querySelector("#diagramLink");
   const image = document.querySelector("#diagramImage");
-  link.href = chain.diagram;
-  image.src = chain.diagram;
+  const vectorDiagram = chain.diagramSvg && chain.diagramSvg !== chain.diagram ? chain.diagramSvg : "";
+  const displayDiagram = vectorDiagram || chain.diagram;
+
+  link.href = displayDiagram;
+  image.onerror = vectorDiagram
+    ? () => {
+        image.onerror = null;
+        image.src = chain.diagram;
+        link.href = chain.diagram;
+      }
+    : null;
+  image.src = displayDiagram;
   image.alt = `${chain.title}全景与价值传导图`;
 }
 
@@ -1125,7 +1136,11 @@ function renderTimeline(chain) {
   chain.updates.forEach((item, index) => {
     const card = el("article", "timeline-item");
     card.dataset.searchTarget = searchTargetKey(chain.id, "update", index);
-    card.append(el("div", "timeline-meta", `<span>${item.date}</span><span class="tag">${item.segment}</span><span>${item.confidence}</span>`));
+    card.append(el(
+      "div",
+      "timeline-meta",
+      `<span>${escapeHtml(item.date)}</span><span class="update-type">${escapeHtml(item.type || "产业事件")}</span><span class="tag">${escapeHtml(item.segment)}</span><span>${escapeHtml(item.confidence)}</span>`
+    ));
     card.append(el("h3", "", item.signal));
     card.append(el("p", "", item.impact));
     card.append(el("p", "", item.notes));
