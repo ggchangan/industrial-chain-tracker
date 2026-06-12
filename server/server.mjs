@@ -3,6 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAuth } from "./auth.mjs";
+import { createContentStore } from "./content-store.mjs";
 import { loadArticle, loadLibrary, searchLibrary } from "./library.mjs";
 import { renderMarkdown } from "./markdown.mjs";
 
@@ -11,7 +12,12 @@ const defaultRoot = path.resolve(serverDir, "..");
 
 export async function createAppServer(options = {}) {
   const rootDir = path.resolve(options.rootDir || defaultRoot);
-  const library = await loadLibrary(rootDir);
+  const baseLibrary = await loadLibrary(rootDir);
+  const contentStore = await createContentStore({
+    baseLibrary,
+    rootDir,
+    dataDir: options.dataDir || process.env.DATA_DIR || path.join(rootDir, ".runtime-data")
+  });
   const auth = createAuth({
     password: options.adminPassword ?? process.env.ADMIN_PASSWORD,
     secret: options.sessionSecret ?? process.env.ADMIN_SESSION_SECRET,
@@ -31,7 +37,7 @@ export async function createAppServer(options = {}) {
       }
 
       if (url.pathname.startsWith("/api/v1/")) {
-        await handleApi({ request, response, url, library, rootDir, auth });
+        await handleApi({ request, response, url, contentStore, rootDir, auth });
         return;
       }
 
@@ -42,17 +48,21 @@ export async function createAppServer(options = {}) {
         }
       }
 
-      await serveStatic(rootDir, url.pathname, response);
+      await serveStatic(rootDir, contentStore.dataDir, url.pathname, response);
     } catch (error) {
       console.error(error);
-      sendJson(response, 500, { error: "internal_error", message: "服务暂时不可用" });
+      sendJson(response, error.statusCode || 500, {
+        error: error.code || "internal_error",
+        message: error.statusCode ? error.message : "服务暂时不可用"
+      });
     }
   });
 }
 
 async function handleApi(context) {
-  const { request, response, url, library, rootDir, auth } = context;
+  const { request, response, url, contentStore, rootDir, auth } = context;
   const pathname = url.pathname;
+  const library = contentStore.getLibrary();
 
   if (request.method === "GET" && pathname === "/api/v1/health") {
     sendJson(response, 200, {
@@ -93,7 +103,7 @@ async function handleApi(context) {
       return;
     }
     const articleMode = url.searchParams.get("article");
-    const markdown = articleMode ? await loadArticle(rootDir, chain) : undefined;
+    const markdown = articleMode ? await loadArticle(rootDir, chain, contentStore.dataDir) : undefined;
     const article = articleMode === "html" ? renderMarkdown(markdown) : markdown;
     sendJson(response, 200, { chain, ...(article === undefined ? {} : { article }) }, { cache: "public, max-age=60" });
     return;
@@ -145,10 +155,66 @@ async function handleApi(context) {
     return;
   }
 
+  if (pathname.startsWith("/api/v1/admin/") && !auth.isAuthenticated(request)) {
+    sendJson(response, 401, { error: "authentication_required", message: "请先登录维护台" });
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/v1/admin/chains") {
+    sendJson(response, 200, {
+      chains: library.chains.map((chain) => ({
+        id: chain.id,
+        title: chain.title,
+        shortTitle: chain.shortTitle,
+        updates: chain.updates?.length || 0,
+        managed: contentStore.isManagedChain(chain.id)
+      }))
+    });
+    return;
+  }
+
+  const managedChainMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)$/);
+  if (request.method === "GET" && managedChainMatch) {
+    sendJson(response, 200, await contentStore.getEditableChain(managedChainMatch[1]));
+    return;
+  }
+
+  if (request.method === "PUT" && managedChainMatch) {
+    const body = await readJsonBody(request, 2 * 1024 * 1024);
+    const chain = await contentStore.updateArticle(managedChainMatch[1], body);
+    sendJson(response, 200, { chain });
+    return;
+  }
+
+  if (request.method === "DELETE" && managedChainMatch) {
+    await contentStore.deleteManagedChain(managedChainMatch[1]);
+    sendJson(response, 200, { deleted: true });
+    return;
+  }
+
+  const updateMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/updates$/);
+  if (request.method === "POST" && updateMatch) {
+    const body = await readJsonBody(request, 128 * 1024);
+    const update = await contentStore.addUpdate(updateMatch[1], body);
+    sendJson(response, 201, { update });
+    return;
+  }
+
   sendJson(response, 404, { error: "not_found" });
 }
 
-async function serveStatic(rootDir, pathname, response) {
+async function serveStatic(rootDir, dataDir, pathname, response) {
+  if (pathname.startsWith("/managed/")) {
+    const managedPath = path.resolve(dataDir, `.${pathname.slice("/managed".length)}`);
+    const dataPrefix = `${path.resolve(dataDir)}${path.sep}`;
+    if (!managedPath.startsWith(dataPrefix)) {
+      response.writeHead(403).end("Forbidden");
+      return;
+    }
+    await serveFile(managedPath, response);
+    return;
+  }
+
   const requested = pathname === "/" ? "/index.html" : pathname;
   const decoded = decodeURIComponent(requested);
   const blockedPrefixes = ["/.env", "/.git", "/server/", "/test/", "/deploy/"];
@@ -164,6 +230,10 @@ async function serveStatic(rootDir, pathname, response) {
     return;
   }
 
+  await serveFile(filePath, response);
+}
+
+async function serveFile(filePath, response) {
   try {
     const fileStat = await stat(filePath);
     if (!fileStat.isFile()) throw new Error("Not a file");
@@ -178,12 +248,17 @@ async function serveStatic(rootDir, pathname, response) {
   }
 }
 
-async function readJsonBody(request) {
+async function readJsonBody(request, maxSize = 32 * 1024) {
   const chunks = [];
   let size = 0;
   for await (const chunk of request) {
     size += chunk.length;
-    if (size > 32 * 1024) throw new Error("Request body too large");
+    if (size > maxSize) {
+      const error = new Error("请求内容过大");
+      error.statusCode = 413;
+      error.code = "payload_too_large";
+      throw error;
+    }
     chunks.push(chunk);
   }
 

@@ -1,15 +1,27 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { createAppServer } from "../server/server.mjs";
 
 const rootDir = new URL("..", import.meta.url).pathname;
 let server;
 let baseUrl;
+let dataDir;
 
 test.before(async () => {
+  dataDir = await mkdtemp(path.join(os.tmpdir(), "chain-tracker-test-"));
+  await writeFile(path.join(dataDir, "managed-content.json"), JSON.stringify({
+    managedChains: [{ id: "semiconductor-material-industry-chain" }],
+    articleOverrides: {},
+    updatesByChain: {},
+    updatedAt: ""
+  }));
   server = await createAppServer({
     rootDir,
+    dataDir,
     adminPassword: "correct-horse-battery",
     sessionSecret: "test-session-secret-that-is-long-enough-123456"
   });
@@ -18,7 +30,10 @@ test.before(async () => {
   baseUrl = `http://127.0.0.1:${server.address().port}`;
 });
 
-test.after(() => server.close());
+test.after(async () => {
+  server.close();
+  await rm(dataDir, { recursive: true, force: true });
+});
 
 test("health and library APIs expose synchronized content", async () => {
   const health = await fetch(`${baseUrl}/api/v1/health`).then((response) => response.json());
@@ -28,6 +43,8 @@ test("health and library APIs expose synchronized content", async () => {
   const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
   assert.equal(library.chains.length, health.chains);
   assert.ok(library.chains.some((chain) => chain.id === "physical-ai"));
+  assert.ok(library.chains.some((chain) => chain.id === "semiconductor-material"));
+  assert.ok(!library.chains.some((chain) => chain.id === "semiconductor-material-industry-chain"));
 });
 
 test("chain API can include Markdown article content", async () => {
@@ -86,3 +103,72 @@ test("runtime secrets and server source are never served as static files", async
   assert.equal(envResponse.status, 404);
   assert.equal(sourceResponse.status, 404);
 });
+
+test("admin APIs require authentication", async () => {
+  const response = await fetch(`${baseUrl}/api/v1/admin/chains`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: "未授权产业链" })
+  });
+  assert.equal(response.status, 401);
+});
+
+test("authenticated maintainer can update an existing article and append an update", async () => {
+  const cookie = await login();
+  const createResponse = await fetch(`${baseUrl}/api/v1/admin/chains`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({ title: "不应由维护台直接创建" })
+  });
+  assert.equal(createResponse.status, 404);
+
+  const currentPayload = await fetch(`${baseUrl}/api/v1/admin/chains/pcb`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.match(currentPayload.markdown, /PCB产业链/);
+
+  const markdown = `${currentPayload.markdown.trim()}\n\n## 维护测试章节\n\n验证后台原文覆盖能够持久化。\n`;
+  const articleResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({ markdown })
+  });
+  assert.equal(articleResponse.status, 200);
+  assert.equal((await articleResponse.json()).chain.id, "pcb");
+
+  const updateResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb/updates`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({
+      date: "2026-06-12",
+      segment: "全产业链",
+      signal: "维护后台追加测试动态",
+      impact: "验证动态追踪持久化。",
+      confidence: "待核验",
+      sourceTitle: "产业进展文章",
+      sourceUrl: "https://example.com/article",
+      notes: "仅用于自动测试。"
+    })
+  });
+  assert.equal(updateResponse.status, 201);
+
+  const chainPayload = await fetch(`${baseUrl}/api/v1/chains/pcb?article=html`)
+    .then((response) => response.json());
+  assert.equal(chainPayload.chain.updates[0].sourceUrl, "https://example.com/article");
+  assert.match(chainPayload.article.html, /维护测试章节/);
+  assert.match(chainPayload.chain.article, /^\/managed\/raw\//);
+
+  const persisted = JSON.parse(await readFile(path.join(dataDir, "managed-content.json"), "utf8"));
+  assert.match(persisted.articleOverrides.pcb, /^\/managed\/raw\//);
+  assert.equal(persisted.updatesByChain.pcb[0].signal, "维护后台追加测试动态");
+});
+
+async function login() {
+  const response = await fetch(`${baseUrl}/api/v1/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: "correct-horse-battery" })
+  });
+  assert.equal(response.status, 200);
+  return response.headers.get("set-cookie").split(";")[0];
+}

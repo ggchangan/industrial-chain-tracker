@@ -1,0 +1,78 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#1e293b" stroke-width="0.7"/>
+    </pattern>
+    <radialGradient id="wafer" cx="38%" cy="32%" r="74%">
+      <stop offset="0" stop-color="#dbeafe"/>
+      <stop offset=".2" stop-color="#67e8f9"/>
+      <stop offset=".48" stop-color="#3b82f6"/>
+      <stop offset=".73" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#111827"/>
+    </radialGradient>
+    <linearGradient id="trace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset=".55" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#020617" flood-opacity=".75"/>
+    </filter>
+    <clipPath id="waferClip">
+      <circle cx="1240" cy="435" r="278"/>
+    </clipPath>
+    <style>
+      text { font-family: "Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#0b1120"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <text x="82" y="96" fill="#22d3ee" font-size="19" font-weight="700">SEMICONDUCTOR MATERIALS</text>
+  <text x="82" y="184" fill="#f8fafc" font-size="66" font-weight="800">半导体材料产业链</text>
+  <text x="82" y="240" fill="#cbd5e1" font-size="25">从晶圆地基到先进封装</text>
+  <text x="82" y="294" fill="#94a3b8" font-size="16">硅片 · 光刻胶 · 电子特气 · CMP · 靶材 · 光掩模版 · 封装材料</text>
+
+  <g filter="url(#shadow)">
+    <circle cx="1240" cy="435" r="292" fill="#07111d" stroke="#22d3ee" stroke-width="2"/>
+    <circle cx="1240" cy="435" r="278" fill="url(#wafer)"/>
+    <g clip-path="url(#waferClip)" opacity=".86">
+      <g stroke="#dbeafe" stroke-width="1">
+        <path d="M930 215H1550M930 270H1550M930 325H1550M930 380H1550M930 435H1550M930 490H1550M930 545H1550M930 600H1550M930 655H1550"/>
+        <path d="M965 145V725M1020 145V725M1075 145V725M1130 145V725M1185 145V725M1240 145V725M1295 145V725M1350 145V725M1405 145V725M1460 145V725M1515 145V725"/>
+      </g>
+      <g fill="none" stroke="url(#trace)" stroke-width="5">
+        <path d="M965 325H1130V435H1350V545H1515"/>
+        <path d="M1020 600V490H1185V270H1405"/>
+        <path d="M1075 215V380H1295V655"/>
+      </g>
+      <g fill="#f8fafc" stroke="#0b1120" stroke-width="4">
+        <circle cx="1130" cy="435" r="10"/>
+        <circle cx="1350" cy="545" r="10"/>
+        <circle cx="1185" cy="270" r="10"/>
+        <circle cx="1295" cy="380" r="10"/>
+      </g>
+    </g>
+    <path d="M1090 690 Q1240 760 1390 690" fill="#0b1120"/>
+  </g>
+
+  <g transform="translate(82 388)">
+    <rect width="700" height="88" rx="7" fill="rgba(8,51,68,.5)" stroke="#22d3ee"/>
+    <text x="30" y="35" fill="#a5f3fc" font-size="17" font-weight="700">晶圆制造材料</text>
+    <text x="30" y="65" fill="#e2e8f0" font-size="15">七大核心赛道贯穿光刻、沉积、刻蚀、清洗与平坦化</text>
+  </g>
+  <g transform="translate(82 506)">
+    <rect width="700" height="88" rx="7" fill="rgba(6,78,59,.5)" stroke="#34d399"/>
+    <text x="30" y="35" fill="#a7f3d0" font-size="17" font-weight="700">国产替代</text>
+    <text x="30" y="65" fill="#e2e8f0" font-size="15">从客户验证走向批量供货、份额提升与盈利兑现</text>
+  </g>
+  <g transform="translate(82 624)">
+    <rect width="700" height="88" rx="7" fill="rgba(120,53,15,.35)" stroke="#fbbf24"/>
+    <text x="30" y="35" fill="#fde68a" font-size="17" font-weight="700">先进封装</text>
+    <text x="30" y="65" fill="#e2e8f0" font-size="15">AI芯片与HBM提升FC-BGA、塑封料和互连材料价值</text>
+  </g>
+
+  <line x1="82" y1="790" x2="1518" y2="790" stroke="#334155"/>
+  <text x="82" y="832" fill="#64748b" font-size="13">INDUSTRIAL CHAIN TRACKER · 2026</text>
+</svg>

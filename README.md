@@ -42,6 +42,10 @@ npm start
 | `GET /api/v1/search?q=关键词` | 跨产业链搜索 |
 | `POST /api/v1/admin/login` | 维护者登录 |
 | `POST /api/v1/admin/logout` | 退出登录 |
+| `GET /api/v1/admin/chains` | 获取维护台产业链列表 |
+| `GET /api/v1/admin/chains/{id}` | 读取已建档产业链的 Markdown 原稿 |
+| `PUT /api/v1/admin/chains/{id}` | 更新已建档产业链的 Markdown 原稿 |
+| `POST /api/v1/admin/chains/{id}/updates` | 给已有产业链追加动态追踪 |
 
 网页启动时优先读取 `/api/v1/library`，API 不可用时回退到 `assets/data.js`，因此本地纯静态预览仍可使用。
 
@@ -56,7 +60,10 @@ ADMIN_PASSWORD=至少10位的随机密码
 ADMIN_SESSION_SECRET=至少32位的随机会话密钥
 ```
 
-不要把真实 `.env` 提交到 Git。当前维护台用于查看和下载内容资源，内容修改仍通过 Git 工作流完成。
+不要把真实 `.env` 提交到 Git。新产业链首次建档仍通过完整制作流程完成，包括结构化
+数据、封面、产业链图谱和公开页检查。维护台只负责更新已有产业链的 Markdown 原文，
+以及追加动态追踪。维护内容写入 `DATA_DIR`；生产 Compose 使用命名卷
+`industrial-chain-tracker-data`，重新发布容器不会覆盖这些内容。
 
 ## 微信小程序与 App
 
@@ -88,7 +95,7 @@ npm run build:mp-weixin
 - 博客样式：`assets/styles.css`
 - 博客脚本：`assets/app.js`
 
-直接打开 `index.html`，即可在页面里切换 PCB、MLCC、光刻机、光刻胶、机器人、智能驾驶、半导体、半导体设备、存储、光模块、AI算力基础设施、电力基础设施、AI能源供给侧、消费电子、创新药、商业航天、储能和脑机接口。
+直接打开 `index.html`，即可在页面里切换 PCB、MLCC、光刻机、光刻胶、机器人、智能驾驶、半导体、半导体设备、半导体材料、存储、光模块、AI算力基础设施、电力基础设施、AI能源供给侧、消费电子、创新药、商业航天、储能和脑机接口等产业链。
 
 ## 当前已建档产业链
 

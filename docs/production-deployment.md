@@ -24,6 +24,12 @@ bash deploy/release.sh
 该命令会自动拉取最新 `main`、构建镜像、推送 CCR、更新容器并进行健康检查。
 镜像同时保留 Git 短提交号标签和 `latest`，便于确认版本和回滚。
 
+后台更新的 Markdown 和动态追踪保存在 Docker 命名卷
+`industrial-chain-tracker-data`，重新发布镜像不会覆盖这些内容。
+新产业链首次建档通过代码仓库中的完整制作流程发布，由维护者与 Codex 一起完成原文、
+结构化数据、正式封面、产业链图谱和公开页验证。维护台不提供一键新建，只用于更新已有
+产业链原文和追加动态追踪，避免低质量自动内容直接进入公开页。
+
 ## 1. 首次准备服务器
 
 ```bash
@@ -135,3 +141,19 @@ bash deploy/deploy.sh <上一个Git短提交号>
 ```
 
 不要依赖 `latest` 回滚，因为它会随每次发布移动。
+
+## 6. 备份后台内容
+
+导出持久化卷：
+
+```bash
+mkdir -p /home/ubuntu/backups
+docker run --rm \
+  -v industrial-chain-tracker-data:/data:ro \
+  -v /home/ubuntu/backups:/backup \
+  alpine:3.22 \
+  tar -czf /backup/industrial-chain-data-$(date +%F-%H%M).tar.gz -C /data .
+```
+
+该备份包含后台更新的 Markdown 和追加的动态数据。建议在大量内容
+更新后执行一次，并将备份同步到服务器之外的位置。

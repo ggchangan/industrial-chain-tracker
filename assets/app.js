@@ -1,5 +1,15 @@
 const library = window.INDUSTRY_CHAIN_LIBRARY;
-let currentId = new URLSearchParams(window.location.search).get("chain") || library.chains[0].id;
+const chainAliases = {
+  "semiconductor-material-industry-chain": "semiconductor-material"
+};
+const requestedChainId = new URLSearchParams(window.location.search).get("chain");
+let currentId = chainAliases[requestedChainId] || requestedChainId || library.chains[0].id;
+
+if (requestedChainId && requestedChainId !== currentId) {
+  const canonicalUrl = new URL(window.location.href);
+  canonicalUrl.searchParams.set("chain", currentId);
+  window.history.replaceState({}, "", canonicalUrl);
+}
 
 const chainColors = {
   upstream: "var(--cyan)",
