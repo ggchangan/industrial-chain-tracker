@@ -1076,8 +1076,18 @@ function renderChain(chain) {
 function renderDiagram(chain) {
   const link = document.querySelector("#diagramLink");
   const image = document.querySelector("#diagramImage");
-  link.href = chain.diagram;
-  image.src = chain.diagram;
+  const vectorDiagram = chain.diagramSvg && chain.diagramSvg !== chain.diagram ? chain.diagramSvg : "";
+  const displayDiagram = vectorDiagram || chain.diagram;
+
+  link.href = displayDiagram;
+  image.onerror = vectorDiagram
+    ? () => {
+        image.onerror = null;
+        image.src = chain.diagram;
+        link.href = chain.diagram;
+      }
+    : null;
+  image.src = displayDiagram;
   image.alt = `${chain.title}全景与价值传导图`;
 }
 
