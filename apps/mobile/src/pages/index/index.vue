@@ -33,7 +33,7 @@
           v-for="item in results"
           :key="`${item.chainId}-${item.type}-${item.title}`"
           class="result"
-          @click="openChain(item.chainId, query)"
+          @click="openSearchResult(item)"
         >
           <text class="result-meta">{{ item.type }} · {{ item.chainTitle }}</text>
           <text class="result-title">{{ item.title }}</text>
@@ -122,9 +122,13 @@ export default {
       this.query = "";
       this.results = [];
     },
-    openChain(id, query = "") {
+    openSearchResult(item) {
+      this.openChain(item.chainId, this.query, item.title);
+    },
+    openChain(id, query = "", targetTitle = "") {
       const suffix = query ? `&q=${encodeURIComponent(query)}` : "";
-      uni.navigateTo({ url: `/pages/detail/detail?id=${id}${suffix}` });
+      const target = targetTitle ? `&target=${encodeURIComponent(targetTitle)}` : "";
+      uni.navigateTo({ url: `/pages/detail/detail?id=${id}${suffix}${target}` });
     }
   }
 };
