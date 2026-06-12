@@ -74,8 +74,48 @@
       </view>
 
       <view class="section article-section">
-        <text class="section-label">原文阅读</text>
-        <rich-text class="article" :nodes="articleHtml" />
+        <view id="article-reader" class="reader-head">
+          <view>
+            <text class="section-label">原文阅读</text>
+            <text v-if="currentHeading" class="current-heading">{{ currentHeading }}</text>
+          </view>
+          <button class="toc-open" @click="openToc">目录</button>
+        </view>
+        <view
+          v-for="(block, index) in articleBlocks"
+          :id="block.anchorId"
+          :key="block.anchorId"
+          class="article-block"
+          :class="{ 'search-hit': index === searchTargetIndex }"
+        >
+          <rich-text class="article" :nodes="block.html" />
+        </view>
+      </view>
+
+      <button v-if="readerToc.length" class="reader-fab" @click="openToc">目录</button>
+
+      <view v-if="tocVisible" class="toc-layer" @click="closeToc">
+        <view class="toc-sheet" @click.stop>
+          <view class="toc-head">
+            <view>
+              <text class="toc-title">文章目录</text>
+              <text class="toc-progress">{{ readingProgress }}% 已读</text>
+            </view>
+            <button class="toc-close" @click="closeToc">关闭</button>
+          </view>
+          <scroll-view class="toc-list" scroll-y :scroll-into-view="activeTocAnchor">
+            <button
+              v-for="item in readerToc"
+              :id="`toc-${item.anchorId}`"
+              :key="item.anchorId"
+              class="toc-item"
+              :class="[`level-${item.level}`, { active: item.blockIndex === activeBlockIndex }]"
+              @click="jumpToBlock(item.blockIndex)"
+            >
+              {{ item.title }}
+            </button>
+          </scroll-view>
+        </view>
       </view>
     </template>
   </view>
@@ -83,20 +123,46 @@
 
 <script>
 import { assetUrl, getChain } from "../../utils/api";
+import { buildArticleBlocks, buildReaderToc, findArticleTarget } from "../../utils/article.mjs";
 
 export default {
   data() {
     return {
-      articleHtml: "",
+      activeBlockIndex: 0,
+      articleBlocks: [],
+      blockOffsets: [],
       chain: null,
       error: "",
+      lastScrollTop: 0,
       loading: true,
-      query: ""
+      query: "",
+      readerEnd: 0,
+      readingProgress: 0,
+      restoreTimer: null,
+      saveTimer: null,
+      searchTargetIndex: -1,
+      targetTitle: "",
+      tocVisible: false,
+      viewportHeight: 0
     };
   },
   onLoad(options) {
     this.query = decodeURIComponent(options.q || "");
+    this.targetTitle = decodeURIComponent(options.target || "");
+    this.viewportHeight = uni.getSystemInfoSync().windowHeight || 0;
     this.loadChain(options.id);
+  },
+  onPageScroll(event) {
+    if (!this.articleBlocks.length) return;
+    this.updateReadingPosition(event.scrollTop);
+  },
+  onHide() {
+    this.saveReadingPosition();
+  },
+  onUnload() {
+    clearTimeout(this.restoreTimer);
+    clearTimeout(this.saveTimer);
+    this.saveReadingPosition();
   },
   onShareAppMessage() {
     return {
@@ -110,8 +176,22 @@ export default {
       try {
         const payload = await getChain(id);
         this.chain = payload.chain;
-        this.articleHtml = decorateArticleHtml(payload.article.html);
+        this.articleBlocks = buildArticleBlocks(payload.article.html, payload.article.toc).map((block) => ({
+          ...block,
+          html: decorateArticleHtml(block.html)
+        }));
+        this.searchTargetIndex = findArticleTarget(
+          this.articleBlocks,
+          this.query,
+          this.targetTitle
+        );
         uni.setNavigationBarTitle({ title: this.chain.shortTitle || this.chain.title });
+        this.$nextTick(() => {
+          this.restoreTimer = setTimeout(
+            () => this.measureBlocks(() => this.restoreReadingPosition()),
+            160
+          );
+        });
       } catch (error) {
         this.error = error.message || "内容加载失败";
       } finally {
@@ -121,6 +201,100 @@ export default {
     previewDiagram() {
       const url = assetUrl(this.chain.diagram);
       uni.previewImage({ current: url, urls: [url] });
+    },
+    openToc() {
+      this.tocVisible = true;
+    },
+    closeToc() {
+      this.tocVisible = false;
+    },
+    jumpToBlock(index, highlight = false) {
+      const block = this.articleBlocks[index];
+      if (!block) return;
+      this.tocVisible = false;
+      if (highlight) this.searchTargetIndex = index;
+      uni.pageScrollTo({
+        selector: `#${block.anchorId}`,
+        duration: 280,
+        success: () => {
+          this.activeBlockIndex = index;
+          this.saveReadingPosition(this.blockOffsets[index]);
+        }
+      });
+    },
+    measureBlocks(done) {
+      uni.createSelectorQuery()
+        .in(this)
+        .selectAll(".article-block")
+        .boundingClientRect((rects) => {
+          const currentScroll = this.lastScrollTop || 0;
+          this.blockOffsets = (rects || []).map((rect) => rect.top + currentScroll);
+          const lastRect = rects?.[rects.length - 1];
+          this.readerEnd = lastRect ? lastRect.bottom + currentScroll : 0;
+          if (typeof done === "function") done();
+        })
+        .exec();
+    },
+    restoreReadingPosition() {
+      if (this.searchTargetIndex >= 0) {
+        this.jumpToBlock(this.searchTargetIndex, true);
+        return;
+      }
+      const saved = uni.getStorageSync(this.storageKey);
+      const savedIndex = this.articleBlocks.findIndex(
+        (block) => block.headingId && block.headingId === saved?.headingId
+      );
+      if (savedIndex >= 0 && savedIndex !== Number(saved?.blockIndex || 0)) {
+        this.jumpToBlock(savedIndex);
+        return;
+      }
+      const scrollTop = Number(saved?.scrollTop || 0);
+      if (scrollTop > 0) {
+        uni.pageScrollTo({ scrollTop, duration: 0 });
+        this.activeBlockIndex = Number(saved.blockIndex || 0);
+      }
+    },
+    updateReadingPosition(scrollTop) {
+      this.lastScrollTop = scrollTop;
+      if (!this.blockOffsets.length) return;
+      const marker = scrollTop + 120;
+      let nextIndex = 0;
+      this.blockOffsets.forEach((offset, index) => {
+        if (offset <= marker) nextIndex = index;
+      });
+      this.activeBlockIndex = nextIndex;
+      const first = this.blockOffsets[0] || 0;
+      const last = Math.max(this.readerEnd - this.viewportHeight, first + 1);
+      this.readingProgress = Math.max(
+        0,
+        Math.min(100, Math.round(((scrollTop - first) / Math.max(last - first, 1)) * 100))
+      );
+      clearTimeout(this.saveTimer);
+      this.saveTimer = setTimeout(() => this.saveReadingPosition(scrollTop), 350);
+    },
+    saveReadingPosition(scrollTop = this.lastScrollTop || 0) {
+      if (!this.chain?.id || scrollTop <= 0) return;
+      uni.setStorageSync(this.storageKey, {
+        blockIndex: this.activeBlockIndex,
+        headingId: this.articleBlocks[this.activeBlockIndex]?.headingId || "",
+        scrollTop,
+        updatedAt: Date.now()
+      });
+    }
+  },
+  computed: {
+    activeTocAnchor() {
+      const active = this.readerToc.find((item) => item.blockIndex === this.activeBlockIndex);
+      return active ? `toc-${active.anchorId}` : "";
+    },
+    currentHeading() {
+      return this.articleBlocks[this.activeBlockIndex]?.title || "";
+    },
+    readerToc() {
+      return buildReaderToc(this.articleBlocks);
+    },
+    storageKey() {
+      return `reader-progress:${this.chain?.id || "unknown"}`;
     }
   }
 };
@@ -301,9 +475,139 @@ function decorateArticleHtml(html) {
   overflow: hidden;
 }
 
+.reader-head,
+.toc-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.current-heading {
+  color: #94a3b8;
+  display: block;
+  font-size: 23rpx;
+  line-height: 1.5;
+  margin-top: 8rpx;
+  max-width: 520rpx;
+}
+
+.toc-open,
+.toc-close {
+  background: transparent;
+  border: 1rpx solid #334155;
+  color: #67e8f9;
+  font-size: 23rpx;
+  line-height: 1;
+  margin: 0;
+  padding: 18rpx 22rpx;
+}
+
+.toc-open::after,
+.toc-close::after,
+.toc-item::after,
+.reader-fab::after {
+  border: 0;
+}
+
+.article-block {
+  border-left: 4rpx solid transparent;
+  padding-left: 14rpx;
+  transition: background-color 180ms ease;
+}
+
+.article-block.search-hit {
+  background: #2b2413;
+  border-left-color: #fbbf24;
+  margin-top: 18rpx;
+  padding-bottom: 12rpx;
+  padding-right: 12rpx;
+}
+
 .article {
   display: block;
   margin-top: 12rpx;
   overflow-wrap: anywhere;
+}
+
+.reader-fab {
+  background: #0e7490;
+  bottom: 38rpx;
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.38);
+  color: #ecfeff;
+  font-size: 24rpx;
+  line-height: 1;
+  margin: 0;
+  padding: 22rpx 24rpx;
+  position: fixed;
+  right: 28rpx;
+  z-index: 20;
+}
+
+.toc-layer {
+  background: rgba(2, 6, 23, 0.7);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 40;
+}
+
+.toc-sheet {
+  background: #111827;
+  border-top: 1rpx solid #334155;
+  bottom: 0;
+  left: 0;
+  max-height: 78vh;
+  padding: 30rpx 28rpx calc(24rpx + env(safe-area-inset-bottom));
+  position: absolute;
+  right: 0;
+}
+
+.toc-title {
+  color: #f8fafc;
+  display: block;
+  font-size: 34rpx;
+  font-weight: 750;
+}
+
+.toc-progress {
+  color: #34d399;
+  display: block;
+  font-size: 22rpx;
+  margin-top: 6rpx;
+}
+
+.toc-list {
+  height: 62vh;
+  margin-top: 22rpx;
+}
+
+.toc-item {
+  background: transparent;
+  border-left: 3rpx solid #334155;
+  color: #94a3b8;
+  display: block;
+  font-size: 25rpx;
+  line-height: 1.5;
+  margin: 0;
+  padding: 18rpx 18rpx;
+  text-align: left;
+  width: 100%;
+}
+
+.toc-item.level-2 {
+  padding-left: 28rpx;
+}
+
+.toc-item.level-3 {
+  font-size: 23rpx;
+  padding-left: 48rpx;
+}
+
+.toc-item.active {
+  background: #102132;
+  border-left-color: #22d3ee;
+  color: #f8fafc;
 }
 </style>
