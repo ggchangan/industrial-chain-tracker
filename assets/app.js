@@ -2,8 +2,11 @@ const library = window.INDUSTRY_CHAIN_LIBRARY;
 const chainAliases = {
   "semiconductor-material-industry-chain": "semiconductor-material"
 };
-const requestedChainId = new URLSearchParams(window.location.search).get("chain");
+const initialParams = new URLSearchParams(window.location.search);
+const requestedChainId = initialParams.get("chain");
+let requestedReading = normalizeReadingSource(initialParams.get("reading"));
 let currentId = chainAliases[requestedChainId] || requestedChainId || library.chains[0].id;
+document.body.classList.toggle("standalone-reading", Boolean(requestedReading));
 
 if (requestedChainId && requestedChainId !== currentId) {
   const canonicalUrl = new URL(window.location.href);
@@ -70,6 +73,23 @@ function normalize(value) {
 
 function compactText(values) {
   return values.flat(Infinity).filter(Boolean).join(" ");
+}
+
+function normalizeReadingSource(value) {
+  const source = String(value || "").replace(/^\.?\//, "");
+  if (!/^content\/research\/[A-Za-z0-9_./-]+\.md$/.test(source) || source.includes("..")) return "";
+  return `./${source}`;
+}
+
+function buildReadingUrl(sourceUrl) {
+  const source = normalizeReadingSource(sourceUrl);
+  if (!source) return sourceUrl;
+
+  const url = new URL("./index.html", window.location.href);
+  url.searchParams.set("chain", currentId);
+  url.searchParams.set("reading", source.slice(2));
+  url.hash = "article";
+  return url.toString();
 }
 
 function searchTargetKey(chainId, type, index) {
@@ -246,6 +266,26 @@ function createSearchIndex() {
       });
     });
 
+    (chain.logicTracks || []).forEach((track) => {
+      (track.coreInsights || []).forEach((insight) => {
+        entries.push({
+          ...base,
+          target: searchTargetKey(chain.id, "logic-card", `${track.id}-${insight.id}`),
+          type: "逻辑卡",
+          title: insight.title,
+          body: compactText([
+            track.title,
+            insight.kicker,
+            insight.summary,
+            insight.conclusion,
+            insight.points?.map((point) => [point.label, point.description]),
+            insight.metrics?.map((metric) => [metric.label, metric.value, metric.description]),
+            insight.attachments?.map((attachment) => attachment.label)
+          ])
+        });
+      });
+    });
+
     (chain.trackingProfile?.metrics || []).forEach((item, index) => {
       entries.push({
         ...base,
@@ -297,8 +337,10 @@ function activeChain() {
 
 function setChain(id) {
   currentId = id;
+  requestedReading = "";
   const url = new URL(window.location.href);
   url.searchParams.set("chain", id);
+  url.searchParams.delete("reading");
   url.hash = "";
   window.history.replaceState({}, "", url);
   render();
@@ -798,6 +840,23 @@ function renderArticleMeta(meta, chain) {
   `;
 }
 
+function injectArticleIllustrations(view, illustrations) {
+  illustrations.forEach((illustration) => {
+    const heading = [...view.querySelectorAll(".article-heading")]
+      .find((item) => item.textContent.trim() === illustration.afterHeading);
+    if (!heading) return;
+
+    const figure = el("figure", "article-illustration");
+    figure.innerHTML = `
+      <a href="${escapeHtml(illustration.src)}" target="_blank" rel="noopener noreferrer">
+        <img src="${escapeHtml(illustration.src)}" alt="${escapeHtml(illustration.alt)}" loading="lazy">
+      </a>
+      <figcaption>${escapeHtml(illustration.caption)}</figcaption>
+    `;
+    heading.insertAdjacentElement("afterend", figure);
+  });
+}
+
 function scrollToArticleHash() {
   if (!window.location.hash) return;
 
@@ -852,6 +911,7 @@ function consumePendingArticleTarget(chainId) {
 
 function openCompanyPanel(company) {
   const appearances = companyIndex.get(company) || [];
+  const logicCards = companyLogicCards(company);
   const panel = document.querySelector("#companyPanel");
 
   panel.innerHTML = `
@@ -874,6 +934,18 @@ function openCompanyPanel(company) {
           )
           .join("")}
       </div>
+      ${logicCards.length ? `
+        <div class="company-logic-cards">
+          <span>关联逻辑</span>
+          ${logicCards.map((item) => `
+            <button type="button" data-logic-chain="${escapeHtml(item.chainId)}" data-logic-target="${escapeHtml(item.target)}">
+              <small>${escapeHtml(item.trackTitle)}</small>
+              <strong>${escapeHtml(item.title)}</strong>
+              <p>${escapeHtml(item.summary)}</p>
+            </button>
+          `).join("")}
+        </div>
+      ` : ""}
     </section>
   `;
   panel.hidden = false;
@@ -888,6 +960,32 @@ function openCompanyPanel(company) {
       openCompanyArticleTarget(button.dataset.chain, button.dataset.target, company);
     });
   });
+
+  panel.querySelectorAll(".company-logic-cards button").forEach((button) => {
+    button.addEventListener("click", () => {
+      closeCompanyPanel();
+      setChain(button.dataset.logicChain);
+      window.requestAnimationFrame(() => {
+        flashAndScroll(document.getElementById(button.dataset.logicTarget), "center");
+      });
+    });
+  });
+}
+
+function companyLogicCards(company) {
+  return library.chains.flatMap((chain) =>
+    (chain.logicTracks || []).flatMap((track) =>
+      (track.coreInsights || [])
+        .filter((insight) => insight.attachments?.some((attachment) => attachment.type === "company" && attachment.label === company))
+        .map((insight) => ({
+          chainId: chain.id,
+          trackTitle: track.title,
+          title: insight.title,
+          summary: insight.summary,
+          target: `logic-card-${track.id}-${insight.id}`
+        }))
+    )
+  );
 }
 
 function openTopicPanel(topic) {
@@ -956,11 +1054,24 @@ async function renderArticle(chain) {
   toc.innerHTML = "";
 
   try {
-    const markdown = await loadTextResource(chain.article);
+    const articleSource = requestedReading || chain.article;
+    const markdown = await loadTextResource(articleSource);
     if (requestId !== articleRequestId) return;
 
     const rendered = renderMarkdownArticle(markdown);
+    if (!rendered.meta.title) {
+      rendered.meta.title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || chain.title;
+    }
+    if (requestedReading) document.title = rendered.meta.title;
+    document.querySelector("#articleSectionTitle").textContent = requestedReading ? "研究文章阅读" : "原文阅读";
+    document.querySelector("#articleSectionDescription").textContent = requestedReading
+      ? "复用产业链原文阅读能力，保留文章层级、目录、锚点与当前位置高亮。"
+      : "以正式文章方式呈现完整研究内容，适合系统阅读、查找公司段落和回看关键判断。";
     view.innerHTML = `${renderArticleMeta(rendered.meta, chain)}${rendered.html}`;
+    const activeResearch = requestedReading
+      ? chain.updates.find((item) => normalizeReadingSource(item.sourceUrl) === requestedReading)
+      : null;
+    injectArticleIllustrations(view, activeResearch?.sourceIllustrations || []);
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
     scrollToArticleHash();
@@ -1133,22 +1244,255 @@ function renderTimeline(chain) {
   const root = document.querySelector("#timeline");
   root.innerHTML = "";
 
-  chain.updates.forEach((item, index) => {
+  (chain.logicTracks || []).forEach((track) => {
+    const logicTrack = el("section", "logic-track");
+    logicTrack.id = `logic-track-${track.id}`;
+    logicTrack.append(el("span", "logic-track-label", "逻辑追踪"));
+    logicTrack.append(el("h3", "", track.title));
+    logicTrack.append(el("p", "", track.summary));
+    if (track.coreInsights?.length) {
+      logicTrack.append(renderCoreInsights(track.id, track.coreInsights));
+    }
+    if (track.propagation?.nodes?.length) {
+      logicTrack.append(renderPropagationPath(track.propagation));
+    }
+    root.append(logicTrack);
+  });
+
+  chain.updates
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => b.item.date.localeCompare(a.item.date) || b.index - a.index)
+    .forEach(({ item, index }) => {
     const card = el("article", "timeline-item");
     card.dataset.searchTarget = searchTargetKey(chain.id, "update", index);
     card.append(el(
       "div",
       "timeline-meta",
-      `<span>${escapeHtml(item.date)}</span><span class="update-type">${escapeHtml(item.type || "产业事件")}</span><span class="tag">${escapeHtml(item.segment)}</span><span>${escapeHtml(item.confidence)}</span>`
+      `<span>${escapeHtml(item.date)}</span><span class="update-type">${escapeHtml(item.type || "产业事件")}</span><span class="update-source-kind">${escapeHtml(item.sourceKind || "资料")} · ${escapeHtml(item.sourcePlatform || "公开来源")}</span><span class="tag">${escapeHtml(item.segment)}</span><span>${escapeHtml(item.confidence)}</span>`
     ));
     card.append(el("h3", "", item.signal));
     card.append(el("p", "", item.impact));
+    if (item.propagation?.nodes?.length) {
+      card.append(renderPropagationPath(item.propagation));
+    }
+    if (item.logicTrack) {
+      const relation = el("aside", "timeline-logic-relation");
+      relation.append(el("span", "", `关联逻辑 · ${item.logicTrack.role}`));
+      relation.append(el("strong", "", logicTrackTitle(chain, item.logicTrack.id)));
+      relation.append(el("p", "", item.logicTrack.contribution));
+      const logicLink = el("a", "", "查看逻辑追踪");
+      logicLink.href = `#logic-track-${item.logicTrack.id}`;
+      relation.append(logicLink);
+      card.append(relation);
+    }
     card.append(el("p", "", item.notes));
-    const source = el("a", "source", item.sourceTitle);
-    source.href = item.sourceUrl;
-    card.append(source);
+    const actions = el("div", "timeline-actions");
+    const source = el("a", "source", sourceActionLabel(item));
+    source.href = item.sourceKind === "文章" ? buildReadingUrl(item.sourceUrl) : item.sourceUrl;
+    source.title = item.sourceTitle;
+    source.target = "_blank";
+    source.rel = "noopener noreferrer";
+    actions.append(source);
+    card.append(actions);
     root.append(card);
   });
+}
+
+function renderCoreInsights(trackId, insights) {
+  const section = el("section", "logic-insights");
+  const header = el("div", "logic-insights-head");
+  header.append(el("span", "", "本次资料提炼"));
+  header.append(el("strong", "", "先理解核心逻辑，再观察它如何变化"));
+  section.append(header);
+
+  const grid = el("div", "logic-insights-grid");
+  insights.forEach((insight, index) => {
+    const card = el("article", `logic-insight display-${insight.display || "text"}`);
+    card.id = `logic-card-${trackId}-${insight.id || index}`;
+    card.dataset.searchTarget = searchTargetKey(currentId, "logic-card", `${trackId}-${insight.id || index}`);
+    card.append(el("span", "logic-insight-index", String(index + 1).padStart(2, "0")));
+    card.append(el("div", "logic-insight-kicker", insight.kicker));
+    card.append(el("h4", "", insight.title));
+    card.append(el("p", "logic-insight-summary", insight.summary));
+
+    if (insight.points?.length) {
+      const points = el("div", "logic-insight-points");
+      insight.points.forEach((point) => {
+        const item = el("div", "logic-insight-point");
+        item.append(el("strong", "", point.label));
+        item.append(el("span", "", point.description));
+        points.append(item);
+      });
+      card.append(points);
+    }
+
+    if (insight.metrics?.length) {
+      const metrics = el("div", "logic-insight-metrics");
+      insight.metrics.forEach((metric) => {
+        const row = el("div", "logic-insight-metric");
+        row.innerHTML = `
+          <div><strong>${escapeHtml(metric.label)}</strong><span>${escapeHtml(metric.value)}</span></div>
+          <div class="logic-metric-track"><i style="width:${Math.max(4, Math.min(100, Number(metric.scale) || 0))}%"></i></div>
+          <small>${escapeHtml(metric.description)}</small>
+        `;
+        metrics.append(row);
+      });
+      card.append(metrics);
+    }
+
+    if (insight.formula?.length) {
+      const formula = el("div", "logic-insight-formula");
+      insight.formula.forEach((part, partIndex) => {
+        formula.append(el("strong", "", part));
+        if (partIndex < insight.formula.length - 1) formula.append(el("span", "", "×"));
+      });
+      card.append(formula);
+    }
+
+    if (insight.comparison?.length) {
+      const comparison = el("div", "logic-insight-comparison");
+      insight.comparison.forEach((company) => {
+        const column = el("div", "logic-company");
+        column.append(el("strong", "", company.name));
+        column.append(el("span", "", company.position));
+        column.append(el("p", "", company.reason));
+        comparison.append(column);
+      });
+      card.append(comparison);
+    }
+
+    if (insight.table?.columns?.length && insight.table?.rows?.length) {
+      const tableWrap = el("div", "logic-insight-table-wrap");
+      const table = el("table", "logic-insight-table");
+      table.innerHTML = `
+        <thead><tr>${insight.table.columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${insight.table.rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}
+        </tbody>
+      `;
+      tableWrap.append(table);
+      card.append(tableWrap);
+    }
+
+    if (insight.conclusion) {
+      card.append(el("p", "logic-insight-conclusion", insight.conclusion));
+    }
+
+    if (insight.attachments?.length || insight.sources?.length) {
+      const footer = el("div", "logic-insight-footer");
+      insight.attachments?.forEach((attachment) => {
+        const chip = el("button", "logic-attachment", attachment.label);
+        chip.type = "button";
+        if (attachment.type === "company") {
+          chip.addEventListener("click", () => openCompanyPanel(attachment.label));
+        } else if (attachment.target) {
+          chip.addEventListener("click", () => scrollToSearchTarget(attachment.target));
+        } else {
+          chip.disabled = true;
+        }
+        footer.append(chip);
+      });
+      insight.sources?.forEach((source) => {
+        const link = el("a", "logic-source", source.label);
+        link.href = source.type === "article" ? buildReadingUrl(source.url) : source.url;
+        link.title = source.title || source.label;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        footer.append(link);
+      });
+      card.append(footer);
+    }
+    grid.append(card);
+  });
+  section.append(grid);
+  return section;
+}
+
+function logicTrackTitle(chain, id) {
+  return chain.logicTracks?.find((track) => track.id === id)?.title || "关联逻辑";
+}
+
+function sourceActionLabel(item) {
+  if (item.sourceKind === "短视频") {
+    const platform = item.sourcePlatform === "Douyin" ? "抖音" : item.sourcePlatform || "";
+    return `打开${platform}视频`;
+  }
+  if (item.sourceKind === "文章") return "阅读全文";
+  return item.sourceTitle;
+}
+
+function renderPropagationPath(propagation) {
+  const section = el("section", "propagation");
+  const header = el("div", "propagation-head");
+  header.append(el("strong", "", escapeHtml(propagation.title)));
+  header.append(el("p", "", escapeHtml(propagation.summary)));
+  section.append(header);
+
+  const path = el("div", "propagation-path");
+  propagation.nodes.forEach((node, index) => {
+    const step = el("button", `propagation-node state-${propagationStateClass(node.state)}`);
+    step.type = "button";
+    step.disabled = !node.target;
+    step.innerHTML = `
+      <span class="propagation-state">${escapeHtml(node.state)}</span>
+      <strong>${escapeHtml(node.label)}</strong>
+      <small>${escapeHtml(node.description)}</small>
+    `;
+    if (node.target) {
+      step.title = "查看产业链对应位置";
+      step.addEventListener("click", () => scrollToSearchTarget(node.target));
+    }
+    path.append(step);
+    if (index < propagation.nodes.length - 1) {
+      path.append(el("span", "propagation-arrow", "→"));
+    }
+  });
+  section.append(path);
+
+  if (propagation.changeSignals?.length) {
+    const signals = el("div", "propagation-signals");
+    signals.append(el("strong", "propagation-subtitle", "逻辑终结与反转条件"));
+    const grid = el("div", "propagation-signal-grid");
+    propagation.changeSignals.forEach((signal) => {
+      const card = el(signal.target ? "button" : "article", "propagation-signal");
+      if (signal.target) {
+        card.type = "button";
+        card.title = "查看产业链对应位置";
+        card.addEventListener("click", () => scrollToSearchTarget(signal.target));
+      }
+      card.innerHTML = `
+        <span>${escapeHtml(signal.state)}</span>
+        <strong>${escapeHtml(signal.label)}</strong>
+        <p>${escapeHtml(signal.description)}</p>
+        <small>跟踪：${escapeHtml(signal.metric)}</small>
+      `;
+      grid.append(card);
+    });
+    signals.append(grid);
+    section.append(signals);
+  }
+
+  if (propagation.verificationNotes?.length) {
+    const boundary = el("details", "propagation-boundary");
+    boundary.append(el("summary", "", "核验边界"));
+    boundary.append(el(
+      "ul",
+      "",
+      propagation.verificationNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")
+    ));
+    section.append(boundary);
+  }
+
+  return section;
+}
+
+function propagationStateClass(state) {
+  return {
+    "来源观点": "source",
+    "逻辑推演": "inference",
+    "待验证": "pending",
+    "已验证": "verified"
+  }[state] || "pending";
 }
 
 function renderWatchlist(chain) {

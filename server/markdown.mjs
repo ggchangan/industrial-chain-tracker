@@ -14,6 +14,12 @@ export function renderMarkdown(markdown) {
       continue;
     }
 
+    if (/^\s*---+\s*$/.test(line)) {
+      html.push("<hr>");
+      index += 1;
+      continue;
+    }
+
     const heading = line.match(/^(#{1,4})\s+(.+)$/);
     if (heading) {
       const level = heading[1].length;
@@ -78,6 +84,7 @@ export function renderMarkdown(markdown) {
       index < lines.length &&
       lines[index].trim() &&
       !/^(#{1,4})\s+/.test(lines[index]) &&
+      !/^\s*---+\s*$/.test(lines[index]) &&
       !lines[index].trim().startsWith(">") &&
       !(index + 1 < lines.length && lines[index].includes("|") && isTableDivider(lines[index + 1])) &&
       !/^\s*[-*]\s+/.test(lines[index]) &&
@@ -122,6 +129,7 @@ function parseFrontmatter(source) {
 function renderInline(value) {
   return escapeHtml(value)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => `<img src="${safeHref(src)}" alt="${alt}" loading="lazy">`)
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${safeHref(href)}">${text}</a>`)
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 }

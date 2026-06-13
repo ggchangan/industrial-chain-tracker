@@ -134,6 +134,8 @@ async function validateUpdateFile(chain, label) {
     });
   }
 
+  validateLogicTracks(source, label);
+
   if (!Array.isArray(source.updates)) {
     fail(`${label}.updateFile.updates must be an array`);
   } else {
@@ -150,6 +152,25 @@ async function validateUpdateFile(chain, label) {
       requireString(item.notes, `${itemLabel}.notes`);
       requireString(item.source?.title, `${itemLabel}.source.title`);
       requireString(item.source?.url, `${itemLabel}.source.url`);
+      if (item.source?.illustrations) {
+        if (!Array.isArray(item.source.illustrations)) {
+          fail(`${itemLabel}.source.illustrations must be an array`);
+        } else {
+          item.source.illustrations.forEach((illustration, illustrationIndex) => {
+            const illustrationLabel = `${itemLabel}.source.illustrations[${illustrationIndex}]`;
+            requireString(illustration.src, `${illustrationLabel}.src`);
+            requireString(illustration.alt, `${illustrationLabel}.alt`);
+            requireString(illustration.caption, `${illustrationLabel}.caption`);
+            requireString(illustration.afterHeading, `${illustrationLabel}.afterHeading`);
+          });
+        }
+      }
+      if (item.logicTrack) {
+        requireString(item.logicTrack.id, `${itemLabel}.logicTrack.id`);
+        requireString(item.logicTrack.role, `${itemLabel}.logicTrack.role`);
+        requireString(item.logicTrack.contribution, `${itemLabel}.logicTrack.contribution`);
+      }
+      validatePropagation(item.propagation, itemLabel);
     });
   }
 
@@ -159,6 +180,103 @@ async function validateUpdateFile(chain, label) {
 
   if (Array.isArray(chain.updates) && Array.isArray(source.updates) && chain.updates.length !== source.updates.length) {
     fail(`${label}.updates length differs from ${chain.updateFile}`);
+  }
+}
+
+function validateLogicTracks(source, label) {
+  if (!source.logicTracks) return;
+  if (!Array.isArray(source.logicTracks)) {
+    fail(`${label}.updateFile.logicTracks must be an array`);
+    return;
+  }
+  source.logicTracks.forEach((track, index) => {
+    const trackLabel = `${label}.updateFile.logicTracks[${index}]`;
+    requireString(track.id, `${trackLabel}.id`);
+    requireString(track.title, `${trackLabel}.title`);
+    requireString(track.summary, `${trackLabel}.summary`);
+    if (track.coreInsights) {
+      if (!Array.isArray(track.coreInsights)) {
+        fail(`${trackLabel}.coreInsights must be an array`);
+      } else {
+        track.coreInsights.forEach((insight, insightIndex) => {
+          const insightLabel = `${trackLabel}.coreInsights[${insightIndex}]`;
+          requireString(insight.kicker, `${insightLabel}.kicker`);
+          requireString(insight.title, `${insightLabel}.title`);
+          requireString(insight.summary, `${insightLabel}.summary`);
+          requireString(insight.display, `${insightLabel}.display`);
+          if (insight.conclusion) requireString(insight.conclusion, `${insightLabel}.conclusion`);
+          if (insight.attachments) {
+            if (!Array.isArray(insight.attachments)) {
+              fail(`${insightLabel}.attachments must be an array`);
+            } else {
+              insight.attachments.forEach((attachment, attachmentIndex) => {
+                const attachmentLabel = `${insightLabel}.attachments[${attachmentIndex}]`;
+                requireString(attachment.type, `${attachmentLabel}.type`);
+                requireString(attachment.label, `${attachmentLabel}.label`);
+              });
+            }
+          }
+          if (insight.sources) {
+            if (!Array.isArray(insight.sources)) {
+              fail(`${insightLabel}.sources must be an array`);
+            } else {
+              insight.sources.forEach((sourceItem, sourceIndex) => {
+                const sourceLabel = `${insightLabel}.sources[${sourceIndex}]`;
+                requireString(sourceItem.label, `${sourceLabel}.label`);
+                requireString(sourceItem.url, `${sourceLabel}.url`);
+              });
+            }
+          }
+        });
+      }
+    }
+    validatePropagation(track.propagation, trackLabel);
+  });
+}
+
+function validatePropagation(propagation, itemLabel) {
+  if (!propagation) return;
+  requireString(propagation.title, `${itemLabel}.propagation.title`);
+  requireString(propagation.summary, `${itemLabel}.propagation.summary`);
+
+  if (!Array.isArray(propagation.nodes) || propagation.nodes.length < 2) {
+    fail(`${itemLabel}.propagation.nodes must contain at least two nodes`);
+    return;
+  }
+
+  propagation.nodes.forEach((node, index) => {
+    const nodeLabel = `${itemLabel}.propagation.nodes[${index}]`;
+    requireString(node.label, `${nodeLabel}.label`);
+    requireString(node.description, `${nodeLabel}.description`);
+    if (!["来源观点", "逻辑推演", "待验证", "已验证"].includes(node.state)) {
+      fail(`${nodeLabel}.state is invalid`);
+    }
+    if (node.target) {
+      requireString(node.target.type, `${nodeLabel}.target.type`);
+      requireString(node.target.index, `${nodeLabel}.target.index`);
+    }
+  });
+
+  if (propagation.changeSignals) {
+    if (!Array.isArray(propagation.changeSignals)) {
+      fail(`${itemLabel}.propagation.changeSignals must be an array`);
+    } else {
+      propagation.changeSignals.forEach((signal, index) => {
+        const signalLabel = `${itemLabel}.propagation.changeSignals[${index}]`;
+        requireString(signal.label, `${signalLabel}.label`);
+        requireString(signal.description, `${signalLabel}.description`);
+        requireString(signal.metric, `${signalLabel}.metric`);
+        requireString(signal.state, `${signalLabel}.state`);
+        if (signal.target) {
+          requireString(signal.target.type, `${signalLabel}.target.type`);
+          requireString(signal.target.index, `${signalLabel}.target.index`);
+        }
+      });
+    }
+  }
+
+  if (propagation.verificationNotes) {
+    requireStringArray(propagation.verificationNotes, `${itemLabel}.propagation.verificationNotes`);
   }
 }
 

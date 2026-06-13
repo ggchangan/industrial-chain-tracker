@@ -1,7 +1,7 @@
 window.INDUSTRY_CHAIN_LIBRARY = {
   "meta": {
     "title": "产业链研究库",
-    "updated": "2026-06-12",
+    "updated": "2026-06-13",
     "description": "统一沉淀产业链骨架、公众号配图、动态追踪和资料文件。"
   },
   "chains": [
@@ -281,6 +281,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "PCB产业链深度解析：从上游材料到下游制造全梳理",
           "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "本次为结构性升级；原稿中的新闻、价格、认证和财务数据仍需随公告和公开报道持续核验。"
         },
         {
@@ -292,6 +295,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "重点观察",
           "sourceTitle": "PCB产业链深度解析：从上游材料到下游制造全梳理",
           "sourceUrl": "./content/raw/pcb-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "重点跟踪圣泉集团、东材科技、呈和科技及银禧科技的产能、客户认证和满产状态。"
         },
         {
@@ -303,6 +309,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "机构调研日记：电子布机构最新观点梳理",
           "sourceUrl": "https://v.douyin.com/wl4Ub_vsx0U/",
+          "sourceKind": "短视频",
+          "sourcePlatform": "Douyin",
+          "sourceIllustrations": [],
           "notes": "后续补充原始调研纪要、报价口径、涨价品类和公司公告验证。"
         },
         {
@@ -314,7 +323,284 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "机构深度解读：主动超额提价，CCL行业盈利模式变化",
           "sourceUrl": "https://v.douyin.com/n5ig7pXQXBc/",
-          "notes": "传导路径：电子布/铜箔/树脂供需与成本 → CCL提价 → PCB成本与议价 → AI服务器等下游订单验证。后续补充各轮调价时间、产品等级、适用客户、龙头调价函及公司公告；“累计涨幅超过40%”目前仅记录为视频来源观点。"
+          "sourceKind": "短视频",
+          "sourcePlatform": "Douyin",
+          "sourceIllustrations": [],
+          "notes": "当前仅保存视频标题、链接与用户提供的摘要信息；尚未取得完整字幕或口播文本，因此不从该视频提取逻辑卡。"
+        },
+        {
+          "date": "2026-06-13",
+          "type": "机构逻辑",
+          "segment": "覆铜板 CCL",
+          "signal": "研究文章系统拆解CCL价格传导、体量占比与逻辑变化条件",
+          "impact": "文章从成本权重、产业链议价、供给瓶颈、需求结构和利润兑现等角度扩展CCL涨价逻辑，并提出供给释放、AI需求降速、传导受阻和技术路线变化四类反向验证信号。",
+          "confidence": "研究稿",
+          "sourceTitle": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+          "sourceUrl": "./content/research/pcb-ccl-pricing-cycle/original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "研究文章",
+          "sourceIllustrations": [
+            {
+              "src": "./cover-image/pcb-industry-chain/pcb-industry-chain-ccl-cover.png",
+              "alt": "PCB产业链深度研究封面",
+              "caption": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "afterHeading": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？"
+            },
+            {
+              "src": "./diagram/pcb-industry-chain/pcb-industry-chain-value-proportion.png",
+              "alt": "PCB产业链价值量占比与利润体量图",
+              "caption": "以100元PCB为基准，观察CCL、铜箔、树脂和电子布的价值穿透，以及AI服务器对材料价值量的重构。",
+              "afterHeading": "2.5 体量占比：透视上游材料在PCB中的真实“重量”"
+            }
+          ],
+          "logicTrack": {
+            "id": "ccl-price-transmission",
+            "role": "深度研究",
+            "contribution": "补充涨价幅度与利润弹性的区别、CCL成本穿透、产业链体量占比，以及逻辑可能失效的监测条件。"
+          },
+          "notes": "文章全文独立保留并可单独阅读。文中的价格、利润、目标价、概率和市场预测等数据尚未逐项核验，阅读时需结合原始公告与公开资料判断。"
+        }
+      ],
+      "logicTracks": [
+        {
+          "id": "ccl-price-transmission",
+          "title": "CCL价格传导机制",
+          "summary": "这条逻辑不只是“原料涨价带动CCL涨价”，而是要理解CCL为何拥有超额定价权、利润为何向中游集中、哪些公司弹性更大，以及什么条件会让逻辑终结。",
+          "coreInsights": [
+            {
+              "kicker": "定价权来源",
+              "title": "CCL的超涨能力来自三重挤压",
+              "summary": "CCL并非只把电子布、铜箔和树脂的成本被动转嫁给PCB，而是在供给主动收缩、原料被动卡位和终端需求仍有韧性的共同作用下，获得超过成本涨幅的定价空间。",
+              "display": "points",
+              "points": [
+                {
+                  "label": "主动收缩",
+                  "description": "产线转向高频高速AI用CCL，普通CCL有效供给被主动压缩。"
+                },
+                {
+                  "label": "被动卡位",
+                  "description": "电子布、铜箔、树脂同时紧缺，缺少任一材料都可能形成无效产能。"
+                },
+                {
+                  "label": "需求韧性",
+                  "description": "AI需求扩张，同时汽车、消费电子等传统需求并未消失。"
+                }
+              ],
+              "conclusion": "三重挤压使CCL从“成本传导者”升级为“产业链定价枢纽”。",
+              "id": "triple-squeeze",
+              "attachments": [
+                {
+                  "type": "chain",
+                  "label": "PCB产业链",
+                  "target": "pcb:chain:0"
+                },
+                {
+                  "type": "segment",
+                  "label": "覆铜板 CCL",
+                  "target": "pcb:chain-item:2-0"
+                }
+              ],
+              "sources": [
+                {
+                  "label": "阅读全文",
+                  "type": "article",
+                  "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
+                }
+              ]
+            },
+            {
+              "kicker": "价值量分布",
+              "title": "CCL是PCB最大的单项材料，利润更容易在中游聚集",
+              "summary": "文章给出的区间口径显示，CCL约占PCB成本的27%-40%；继续向上游穿透后，铜箔、树脂和电子布各自只占PCB最终价值的一部分。上游材料涨价传到PCB时被总价值量摊薄，而CCL可以在整张基材上重新定价。",
+              "display": "metrics",
+              "metrics": [
+                {
+                  "label": "CCL整体",
+                  "value": "约27%-40%",
+                  "scale": 100,
+                  "description": "PCB直接材料中的最大单项"
+                },
+                {
+                  "label": "其中：铜箔",
+                  "value": "约10.5%-16.8%",
+                  "scale": 42,
+                  "description": "按CCL占比和铜箔成本权重穿透"
+                },
+                {
+                  "label": "其中：树脂",
+                  "value": "约7.0%-10.4%",
+                  "scale": 26,
+                  "description": "高频高速树脂的结构性价值更高"
+                },
+                {
+                  "label": "其中：电子布",
+                  "value": "约4.9%-7.6%",
+                  "scale": 19,
+                  "description": "虽是供给瓶颈，但终端价值占比较小"
+                }
+              ],
+              "conclusion": "图中比例用于表达文章的区间关系，不代表统一行业口径；不同板型、层数和材料等级会显著改变占比。",
+              "id": "value-share",
+              "attachments": [
+                {
+                  "type": "segment",
+                  "label": "覆铜板 CCL",
+                  "target": "pcb:chain-item:2-0"
+                },
+                {
+                  "type": "segment",
+                  "label": "PCB制造",
+                  "target": "pcb:chain:3"
+                }
+              ],
+              "sources": [
+                {
+                  "label": "阅读全文",
+                  "type": "article",
+                  "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
+                }
+              ]
+            },
+            {
+              "kicker": "成本穿透",
+              "title": "上游涨价传到PCB后存在“钝感空间”",
+              "summary": "以文章中的简化示例理解：三大原料约占CCL成本80%，若CCL在PCB价值量中按20%估算，则三大原料只穿透到PCB最终价值量约16%。这解释了为何下游高价值应用可能承受明显的材料涨幅。",
+              "display": "formula",
+              "formula": [
+                "原料占CCL约80%",
+                "CCL占PCB示例约20%",
+                "穿透后约16%"
+              ],
+              "conclusion": "关键不是上游涨了多少，而是涨价在终端总成本中占多少，以及PCB厂和终端客户是否愿意接受。文章其他章节采用27%-40%的CCL占比区间，因此16%仅作为机制示例。",
+              "id": "cost-pass-through",
+              "attachments": [
+                {
+                  "type": "segment",
+                  "label": "覆铜板 CCL",
+                  "target": "pcb:chain-item:2-3"
+                },
+                {
+                  "type": "topic",
+                  "label": "AI服务器",
+                  "target": "pcb:chain-item:3-1"
+                }
+              ],
+              "sources": [
+                {
+                  "label": "阅读全文",
+                  "type": "article",
+                  "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
+                }
+              ]
+            },
+            {
+              "kicker": "公司弹性",
+              "title": "国际复材为何可能比中国巨石更有股价弹性",
+              "summary": "资本市场通常交易变化率和预期差，而不是只比较企业绝对质量。国际复材的电子布业务纯度和亏损反转预期更高，中国巨石则胜在规模、成本和经营稳定性。",
+              "display": "table",
+              "table": {
+                "columns": [
+                  "比较维度",
+                  "国际复材",
+                  "中国巨石"
+                ],
+                "rows": [
+                  [
+                    "业务暴露",
+                    "电子布相关弹性更集中",
+                    "综合玻纤龙头，业务更分散"
+                  ],
+                  [
+                    "业绩基数",
+                    "低基数、扭亏带来更大变化率",
+                    "盈利基础稳定，预期相对充分"
+                  ],
+                  [
+                    "市场定价",
+                    "偏预期差与高弹性",
+                    "偏龙头确定性与成本优势"
+                  ]
+                ]
+              },
+              "conclusion": "“弹性更大”不等于“公司更好”，它意味着向上和向下的波动都可能更大。",
+              "id": "company-elasticity",
+              "attachments": [
+                {
+                  "type": "company",
+                  "label": "国际复材",
+                  "target": ""
+                },
+                {
+                  "type": "company",
+                  "label": "中国巨石",
+                  "target": ""
+                },
+                {
+                  "type": "segment",
+                  "label": "电子布",
+                  "target": "pcb:chain-item:0-0"
+                }
+              ],
+              "sources": [
+                {
+                  "label": "阅读全文",
+                  "type": "article",
+                  "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
+                }
+              ]
+            },
+            {
+              "kicker": "反向推演",
+              "title": "CCL逻辑不是永久成立，四类信号可能终结行情",
+              "summary": "逻辑终结不应等到价格下跌后才确认，而要提前观察供给、需求、传导和技术路线是否松动。",
+              "display": "points",
+              "points": [
+                {
+                  "label": "供给释放",
+                  "description": "织布机和新增产能交付，普涨转为结构性涨价。"
+                },
+                {
+                  "label": "AI需求降速",
+                  "description": "云厂商资本开支与服务器订单连续下修。"
+                },
+                {
+                  "label": "传导链断裂",
+                  "description": "PCB厂无法转嫁成本，毛利率和现金流开始承压。"
+                },
+                {
+                  "label": "技术路线改变",
+                  "description": "CPO等架构降低部分高速PCB或材料的价值量。"
+                }
+              ],
+              "conclusion": "真正需要持续追踪的，是这些反向信号是否从单点噪声演变为连续趋势。",
+              "id": "logic-reversal",
+              "attachments": [
+                {
+                  "type": "chain",
+                  "label": "PCB产业链",
+                  "target": "pcb:chain:0"
+                },
+                {
+                  "type": "tracking",
+                  "label": "盈利兑现质量",
+                  "target": "pcb:tracking:4"
+                }
+              ],
+              "sources": [
+                {
+                  "label": "阅读全文",
+                  "type": "article",
+                  "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
+                }
+              ]
+            }
+          ],
+          "propagation": null
         }
       ]
     },
@@ -528,9 +814,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "MLCC产业链深度解析原始稿",
           "sourceUrl": "./content/raw/mlcc-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "lithography",
@@ -762,6 +1052,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "光刻机产业链深度解析原始稿",
           "sourceUrl": "./content/raw/lithography-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -773,9 +1066,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "2026年6月4日板块热点回顾",
           "sourceUrl": "./content/raw/lithography-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "user-provided",
+          "sourceIllustrations": [],
           "notes": "需后续核验中船特气、华特气体、新莱应材、芯碁微装等涨幅及资金流数据。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "photoresist",
@@ -998,6 +1295,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "光刻胶产业链深度解析原始稿",
           "sourceUrl": "./content/raw/photoresist-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -1009,9 +1309,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "2026年6月近期板块行情",
           "sourceUrl": "./content/raw/photoresist-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "user-provided",
+          "sourceIllustrations": [],
           "notes": "需后续核验鼎龙股份、南大光电、华特气体等资金流与涨幅数据。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "robotics",
@@ -1243,9 +1547,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "机器人产业链深度解析原始稿",
           "sourceUrl": "./content/raw/robotics-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "intelligent-driving",
@@ -1459,6 +1767,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "智能驾驶产业链深度解析原始稿",
           "sourceUrl": "./content/raw/intelligent-driving-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -1470,9 +1781,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的智能驾驶产业链文章",
           "sourceUrl": "./content/raw/intelligent-driving-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "后续需要核验上线范围、定价、法规状态、车型适配和供应链订单兑现情况。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "semiconductor",
@@ -1703,6 +2018,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "半导体产业链全景解析原始稿",
           "sourceUrl": "./content/raw/semiconductor-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。后续重点跟踪WSTS预测、存储涨价、国产设备导入、先进封装订单和材料认证进展。"
         },
         {
@@ -1714,9 +2032,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的半导体产业链文章",
           "sourceUrl": "./content/raw/semiconductor-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "需要后续补充WSTS原始报告、预测口径、按产品类别拆分和同比基数验证。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "semiconductor-equipment",
@@ -2015,6 +2337,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "半导体设备产业链深度解析",
           "sourceUrl": "./content/raw/semiconductor-equipment-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "本次属于结构性升级；原稿中的最新财务和市场数据仍需结合公告与定期报告持续核验。"
         },
         {
@@ -2026,6 +2351,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "重点观察",
           "sourceTitle": "半导体设备产业链深度解析",
           "sourceUrl": "./content/raw/semiconductor-equipment-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "重点关注富创精密、先锋精科、恒运昌、新莱应材、晶升股份、茂莱光学和福晶科技。"
         },
         {
@@ -2037,9 +2365,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "半导体设备产业链深度解析",
           "sourceUrl": "./content/raw/semiconductor-equipment-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议用公司公告、季报、机构调研和设备招标信息逐项核验。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "storage",
@@ -2270,6 +2602,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "存储产业链深度解析原始稿",
           "sourceUrl": "./content/raw/storage-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2281,9 +2616,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "存储产业链深度解析原始稿",
           "sourceUrl": "./content/raw/storage-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续结合现货价、合约价、公司季报和机构调研持续更新。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "optical-module",
@@ -2514,6 +2853,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "光模块产业链深度解析原始稿",
           "sourceUrl": "./content/raw/optical-module-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2525,9 +2867,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "光模块产业链深度解析原始稿",
           "sourceUrl": "./content/raw/optical-module-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续用英伟达、云厂CAPEX、LightCounting、公司公告和调研纪要持续核验。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "ai-compute-infrastructure",
@@ -2775,6 +3121,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "AI算力基础设施产业链深度解析原始稿",
           "sourceUrl": "./content/raw/ai-compute-infrastructure-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -2786,9 +3135,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "AI算力基础设施产业链深度解析原始稿",
           "sourceUrl": "./content/raw/ai-compute-infrastructure-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续用云厂财报CAPEX、运营商招标、数据中心上架率和公司订单口径持续核验。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "power-infrastructure",
@@ -3036,6 +3389,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "电力基础设施产业链深度解析原始稿",
           "sourceUrl": "./content/raw/power-infrastructure-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3047,9 +3403,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "电力基础设施产业链深度解析原始稿",
           "sourceUrl": "./content/raw/power-infrastructure-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续用国网/南网招标、AIDC供电订单、出口数据和公司季报持续更新。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "ai-energy-supply",
@@ -3297,6 +3657,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "AI算力基础设施能源供给侧产业链深度解析原始稿",
           "sourceUrl": "./content/raw/ai-energy-supply-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3308,9 +3671,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "AI算力基础设施能源供给侧产业链深度解析原始稿",
           "sourceUrl": "./content/raw/ai-energy-supply-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续跟踪云厂能源项目、燃机订单、发动机交期、SOFC批量订单和公司出海产能。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "consumer-electronics",
@@ -3554,6 +3921,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "消费电子产业链深度解析原始稿",
           "sourceUrl": "./content/raw/consumer-electronics-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3565,9 +3935,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "消费电子产业链深度解析原始稿",
           "sourceUrl": "./content/raw/consumer-electronics-industry-chain-original.md",
+          "sourceKind": "文章",
+          "sourcePlatform": "用户原稿",
+          "sourceIllustrations": [],
           "notes": "建议后续结合IDC/Counterpoint、品牌发布会、618数据、公司季报和供应链调研更新。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "innovative-drug",
@@ -3783,6 +4157,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "创新药产业链深度解析原始稿",
           "sourceUrl": "./content/raw/innovative-drug-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -3794,9 +4171,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的创新药产业链文章",
           "sourceUrl": "./content/raw/innovative-drug-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "后续需核验交易总额统计口径、首付款比例、是否包含未披露条款以及里程碑兑现概率。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "commercial-space",
@@ -4014,6 +4395,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "商业航天产业链深度解析原始稿",
           "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -4025,6 +4409,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的商业航天产业链文章",
           "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "后续需要核验发射时间、卫星数量、承制单位、订单确认节奏和收入确认口径。"
         },
         {
@@ -4036,9 +4423,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的商业航天产业链文章",
           "sourceUrl": "./content/raw/commercial-space-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "后续重点跟踪IPO真实文件、融资额、估值口径、上市进度以及A股SpaceX供应链订单兑现。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "energy-storage",
@@ -4265,6 +4656,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "储能产业链深度解析原始稿",
           "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未做逐项外部核验。"
         },
         {
@@ -4276,6 +4670,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的储能产业链文章",
           "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "后续重点核验AIDC项目实际配储比例、订单客户、并网方式、收益模型和收入确认节奏。"
         },
         {
@@ -4287,9 +4684,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "用户提供的储能产业链文章",
           "sourceUrl": "./content/raw/energy-storage-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "",
+          "sourceIllustrations": [],
           "notes": "需补充国金证券、BNEF等原始预测口径，区分功率GW与容量GWh，以及国内/海外/户储/大储结构。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "brain-computer-interface",
@@ -4506,6 +4907,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
           "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，尚未逐项外部核验。"
         },
         {
@@ -4517,6 +4921,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
           "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地",
+          "sourceIllustrations": [],
           "notes": "后续重点补充临床试验登记、入组进度、适应症和主要终点。"
         },
         {
@@ -4528,9 +4935,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "脑机接口产业链深度解析原始稿",
           "sourceUrl": "./content/raw/brain-computer-interface-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地",
+          "sourceIllustrations": [],
           "notes": "后续跟踪港股IPO、仿生手/仿生腿出货、上游模组供应关系。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "glass-substrate",
@@ -4737,6 +5148,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "玻璃基板产业链深度解析原始稿",
           "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地资料",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，行业数据和商业化时间点仍需持续外部核验。"
         },
         {
@@ -4748,6 +5162,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "玻璃基板产业链深度解析原始稿",
           "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地资料",
+          "sourceIllustrations": [],
           "notes": "后续补充公司公告、工厂建设进度、量产时间、产能和客户采用口径。"
         },
         {
@@ -4759,9 +5176,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "玻璃基板产业链深度解析原始稿",
           "sourceUrl": "./content/raw/glass-substrate-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "本地资料",
+          "sourceIllustrations": [],
           "notes": "重点跟踪试验线良率、客户概念认证、小批量供货和实际收入贡献。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "physical-ai",
@@ -4990,6 +5411,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "物理AI产业链深度解析原始稿",
           "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "初始版本来自用户提供文章，涉及2026年事件、财务数据和合作关系的内容仍需逐项外部核验。"
         },
         {
@@ -5001,6 +5425,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "物理AI产业链深度解析原始稿",
           "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "后续以英伟达、华为和相关开发者平台的官方发布核验版本、能力和合作伙伴。"
         },
         {
@@ -5012,9 +5439,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "物理AI产业链深度解析原始稿",
           "sourceUrl": "./content/raw/physical-ai-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "重点跟踪本体厂公告、供应商定点、订单、产能利用率和机器人业务收入。"
         }
-      ]
+      ],
+      "logicTracks": []
     },
     {
       "id": "semiconductor-material",
@@ -5273,6 +5704,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "基准框架",
           "sourceTitle": "半导体材料产业链深度解析完整终版",
           "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "本版以用户提供的完整终稿为基础，财务数据、市场规模与客户关系仍应结合公告和权威行业资料持续核验。"
         },
         {
@@ -5284,6 +5718,9 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "半导体材料产业链深度解析完整终版",
           "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "后续重点记录客户认证、量产节点、收入占比、毛利率和经营现金流。"
         },
         {
@@ -5295,9 +5732,13 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "confidence": "待核验",
           "sourceTitle": "半导体材料产业链深度解析完整终版",
           "sourceUrl": "./content/raw/semiconductor-material-industry-chain-original.md",
+          "sourceKind": "资料",
+          "sourcePlatform": "Codex",
+          "sourceIllustrations": [],
           "notes": "重点跟踪FC-BGA批量进度、产能利用率、良率和先进封装客户订单。"
         }
-      ]
+      ],
+      "logicTracks": []
     }
   ]
 };

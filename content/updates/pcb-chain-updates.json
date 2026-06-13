@@ -2,46 +2,155 @@
   "meta": {
     "title": "PCB产业链逻辑追踪",
     "created": "2026-06-04",
-    "updated": "2026-06-12",
+    "updated": "2026-06-13",
     "sourceArticle": "../raw/pcb-industry-chain-original.md",
     "schema": "date, segment, signal, impact, confidence, source, notes"
   },
   "watchlist": [
     {
       "segment": "电子布与石英布",
-      "keywords": ["电子布涨价", "Low-Dk", "Low-CTE", "石英电子布", "M9", "织布机"],
-      "companies": ["中国巨石", "宏和科技", "中材科技", "国际复材", "菲利华"],
-      "whatToTrack": ["月度报价与提价轮次", "低介电/低膨胀认证", "石英布批量进度", "新增产能点火与交期"]
+      "keywords": [
+        "电子布涨价",
+        "Low-Dk",
+        "Low-CTE",
+        "石英电子布",
+        "M9",
+        "织布机"
+      ],
+      "companies": [
+        "中国巨石",
+        "宏和科技",
+        "中材科技",
+        "国际复材",
+        "菲利华"
+      ],
+      "whatToTrack": [
+        "月度报价与提价轮次",
+        "低介电/低膨胀认证",
+        "石英布批量进度",
+        "新增产能点火与交期"
+      ]
     },
     {
       "segment": "高端铜箔",
-      "keywords": ["HVLP", "RTF", "载体铜箔", "AI服务器铜箔", "产能利用率"],
-      "companies": ["铜冠铜箔", "嘉元科技", "德福科技"],
-      "whatToTrack": ["HVLP代际与认证", "高端产品满产率", "加工费与价格", "扩产资本开支"]
+      "keywords": [
+        "HVLP",
+        "RTF",
+        "载体铜箔",
+        "AI服务器铜箔",
+        "产能利用率"
+      ],
+      "companies": [
+        "铜冠铜箔",
+        "嘉元科技",
+        "德福科技"
+      ],
+      "whatToTrack": [
+        "HVLP代际与认证",
+        "高端产品满产率",
+        "加工费与价格",
+        "扩产资本开支"
+      ]
     },
     {
       "segment": "PPO/PPE与特种树脂",
-      "keywords": ["PPO", "PPE", "低介电树脂", "PTFE", "碳氢树脂", "M6-M10"],
-      "companies": ["圣泉集团", "东材科技", "呈和科技", "沃特股份", "银禧科技"],
-      "whatToTrack": ["全球供给恢复", "PPO树脂价格与供需缺口", "新增产能投产", "头部CCL客户认证"]
+      "keywords": [
+        "PPO",
+        "PPE",
+        "低介电树脂",
+        "PTFE",
+        "碳氢树脂",
+        "M6-M10"
+      ],
+      "companies": [
+        "圣泉集团",
+        "东材科技",
+        "呈和科技",
+        "沃特股份",
+        "银禧科技"
+      ],
+      "whatToTrack": [
+        "全球供给恢复",
+        "PPO树脂价格与供需缺口",
+        "新增产能投产",
+        "头部CCL客户认证"
+      ]
     },
     {
       "segment": "化学品与PCB设备",
-      "keywords": ["湿制程", "铜蚀刻液", "激光钻孔", "机械钻孔", "直写光刻", "IC载板设备"],
-      "companies": ["光华科技", "新宙邦", "大族激光", "大族数控", "芯碁微装", "华工科技"],
-      "whatToTrack": ["PCB厂资本开支", "AI服务器设备认证", "订单与交付", "经营现金流"]
+      "keywords": [
+        "湿制程",
+        "铜蚀刻液",
+        "激光钻孔",
+        "机械钻孔",
+        "直写光刻",
+        "IC载板设备"
+      ],
+      "companies": [
+        "光华科技",
+        "新宙邦",
+        "大族激光",
+        "大族数控",
+        "芯碁微装",
+        "华工科技"
+      ],
+      "whatToTrack": [
+        "PCB厂资本开支",
+        "AI服务器设备认证",
+        "订单与交付",
+        "经营现金流"
+      ]
     },
     {
       "segment": "覆铜板 CCL",
-      "keywords": ["M7", "M8", "M9", "M10", "FR-4涨价", "PP半固化片"],
-      "companies": ["建滔积层板", "生益科技", "金安国纪", "南亚新材", "华正新材"],
-      "whatToTrack": ["龙头调价函", "高端材料认证", "海外客户导入", "产品结构与毛利率"]
+      "keywords": [
+        "M7",
+        "M8",
+        "M9",
+        "M10",
+        "FR-4涨价",
+        "PP半固化片"
+      ],
+      "companies": [
+        "建滔积层板",
+        "生益科技",
+        "金安国纪",
+        "南亚新材",
+        "华正新材"
+      ],
+      "whatToTrack": [
+        "龙头调价函",
+        "高端材料认证",
+        "海外客户导入",
+        "产品结构与毛利率"
+      ]
     },
     {
       "segment": "PCB制造",
-      "keywords": ["AI服务器PCB", "高阶HDI", "FPC", "IC载板", "内埋器件", "资本开支"],
-      "companies": ["鹏鼎控股", "胜宏科技", "沪电股份", "深南电路", "广合科技", "中富电路", "东山精密", "兴森科技"],
-      "whatToTrack": ["AI服务器订单", "高端扩产节奏", "产品结构与毛利率", "客户与平台认证"]
+      "keywords": [
+        "AI服务器PCB",
+        "高阶HDI",
+        "FPC",
+        "IC载板",
+        "内埋器件",
+        "资本开支"
+      ],
+      "companies": [
+        "鹏鼎控股",
+        "胜宏科技",
+        "沪电股份",
+        "深南电路",
+        "广合科技",
+        "中富电路",
+        "东山精密",
+        "兴森科技"
+      ],
+      "whatToTrack": [
+        "AI服务器订单",
+        "高端扩产节奏",
+        "产品结构与毛利率",
+        "客户与平台认证"
+      ]
     }
   ],
   "updates": [
@@ -101,7 +210,307 @@
         "title": "机构深度解读：主动超额提价，CCL行业盈利模式变化",
         "url": "https://v.douyin.com/n5ig7pXQXBc/"
       },
-      "notes": "传导路径：电子布/铜箔/树脂供需与成本 → CCL提价 → PCB成本与议价 → AI服务器等下游订单验证。后续补充各轮调价时间、产品等级、适用客户、龙头调价函及公司公告；“累计涨幅超过40%”目前仅记录为视频来源观点。"
+      "notes": "当前仅保存视频标题、链接与用户提供的摘要信息；尚未取得完整字幕或口播文本，因此不从该视频提取逻辑卡。"
+    },
+    {
+      "date": "2026-06-13",
+      "type": "机构逻辑",
+      "segment": "覆铜板 CCL",
+      "signal": "研究文章系统拆解CCL价格传导、体量占比与逻辑变化条件",
+      "impact": "文章从成本权重、产业链议价、供给瓶颈、需求结构和利润兑现等角度扩展CCL涨价逻辑，并提出供给释放、AI需求降速、传导受阻和技术路线变化四类反向验证信号。",
+      "confidence": "研究稿",
+      "source": {
+        "type": "article",
+        "platform": "研究文章",
+        "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+        "url": "../research/pcb-ccl-pricing-cycle/original.md",
+        "illustrations": [
+          {
+            "src": "./cover-image/pcb-industry-chain/pcb-industry-chain-ccl-cover.png",
+            "alt": "PCB产业链深度研究封面",
+            "caption": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+            "afterHeading": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？"
+          },
+          {
+            "src": "./diagram/pcb-industry-chain/pcb-industry-chain-value-proportion.png",
+            "alt": "PCB产业链价值量占比与利润体量图",
+            "caption": "以100元PCB为基准，观察CCL、铜箔、树脂和电子布的价值穿透，以及AI服务器对材料价值量的重构。",
+            "afterHeading": "2.5 体量占比：透视上游材料在PCB中的真实“重量”"
+          }
+        ]
+      },
+      "logicTrack": {
+        "id": "ccl-price-transmission",
+        "role": "深度研究",
+        "contribution": "补充涨价幅度与利润弹性的区别、CCL成本穿透、产业链体量占比，以及逻辑可能失效的监测条件。"
+      },
+      "notes": "文章全文独立保留并可单独阅读。文中的价格、利润、目标价、概率和市场预测等数据尚未逐项核验，阅读时需结合原始公告与公开资料判断。"
+    }
+  ],
+  "logicTracks": [
+    {
+      "id": "ccl-price-transmission",
+      "title": "CCL价格传导机制",
+      "summary": "这条逻辑不只是“原料涨价带动CCL涨价”，而是要理解CCL为何拥有超额定价权、利润为何向中游集中、哪些公司弹性更大，以及什么条件会让逻辑终结。",
+      "coreInsights": [
+        {
+          "kicker": "定价权来源",
+          "title": "CCL的超涨能力来自三重挤压",
+          "summary": "CCL并非只把电子布、铜箔和树脂的成本被动转嫁给PCB，而是在供给主动收缩、原料被动卡位和终端需求仍有韧性的共同作用下，获得超过成本涨幅的定价空间。",
+          "display": "points",
+          "points": [
+            {
+              "label": "主动收缩",
+              "description": "产线转向高频高速AI用CCL，普通CCL有效供给被主动压缩。"
+            },
+            {
+              "label": "被动卡位",
+              "description": "电子布、铜箔、树脂同时紧缺，缺少任一材料都可能形成无效产能。"
+            },
+            {
+              "label": "需求韧性",
+              "description": "AI需求扩张，同时汽车、消费电子等传统需求并未消失。"
+            }
+          ],
+          "conclusion": "三重挤压使CCL从“成本传导者”升级为“产业链定价枢纽”。",
+          "id": "triple-squeeze",
+          "attachments": [
+            {
+              "type": "chain",
+              "label": "PCB产业链",
+              "target": {
+                "type": "chain",
+                "index": "0"
+              }
+            },
+            {
+              "type": "segment",
+              "label": "覆铜板 CCL",
+              "target": {
+                "type": "chain-item",
+                "index": "2-0"
+              }
+            }
+          ],
+          "sources": [
+            {
+              "label": "阅读全文",
+              "type": "article",
+              "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "url": "../research/pcb-ccl-pricing-cycle/original.md"
+            }
+          ]
+        },
+        {
+          "kicker": "价值量分布",
+          "title": "CCL是PCB最大的单项材料，利润更容易在中游聚集",
+          "summary": "文章给出的区间口径显示，CCL约占PCB成本的27%-40%；继续向上游穿透后，铜箔、树脂和电子布各自只占PCB最终价值的一部分。上游材料涨价传到PCB时被总价值量摊薄，而CCL可以在整张基材上重新定价。",
+          "display": "metrics",
+          "metrics": [
+            {
+              "label": "CCL整体",
+              "value": "约27%-40%",
+              "scale": 100,
+              "description": "PCB直接材料中的最大单项"
+            },
+            {
+              "label": "其中：铜箔",
+              "value": "约10.5%-16.8%",
+              "scale": 42,
+              "description": "按CCL占比和铜箔成本权重穿透"
+            },
+            {
+              "label": "其中：树脂",
+              "value": "约7.0%-10.4%",
+              "scale": 26,
+              "description": "高频高速树脂的结构性价值更高"
+            },
+            {
+              "label": "其中：电子布",
+              "value": "约4.9%-7.6%",
+              "scale": 19,
+              "description": "虽是供给瓶颈，但终端价值占比较小"
+            }
+          ],
+          "conclusion": "图中比例用于表达文章的区间关系，不代表统一行业口径；不同板型、层数和材料等级会显著改变占比。",
+          "id": "value-share",
+          "attachments": [
+            {
+              "type": "segment",
+              "label": "覆铜板 CCL",
+              "target": {
+                "type": "chain-item",
+                "index": "2-0"
+              }
+            },
+            {
+              "type": "segment",
+              "label": "PCB制造",
+              "target": {
+                "type": "chain",
+                "index": "3"
+              }
+            }
+          ],
+          "sources": [
+            {
+              "label": "阅读全文",
+              "type": "article",
+              "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "url": "../research/pcb-ccl-pricing-cycle/original.md"
+            }
+          ]
+        },
+        {
+          "kicker": "成本穿透",
+          "title": "上游涨价传到PCB后存在“钝感空间”",
+          "summary": "以文章中的简化示例理解：三大原料约占CCL成本80%，若CCL在PCB价值量中按20%估算，则三大原料只穿透到PCB最终价值量约16%。这解释了为何下游高价值应用可能承受明显的材料涨幅。",
+          "display": "formula",
+          "formula": [
+            "原料占CCL约80%",
+            "CCL占PCB示例约20%",
+            "穿透后约16%"
+          ],
+          "conclusion": "关键不是上游涨了多少，而是涨价在终端总成本中占多少，以及PCB厂和终端客户是否愿意接受。文章其他章节采用27%-40%的CCL占比区间，因此16%仅作为机制示例。",
+          "id": "cost-pass-through",
+          "attachments": [
+            {
+              "type": "segment",
+              "label": "覆铜板 CCL",
+              "target": {
+                "type": "chain-item",
+                "index": "2-3"
+              }
+            },
+            {
+              "type": "topic",
+              "label": "AI服务器",
+              "target": {
+                "type": "chain-item",
+                "index": "3-1"
+              }
+            }
+          ],
+          "sources": [
+            {
+              "label": "阅读全文",
+              "type": "article",
+              "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "url": "../research/pcb-ccl-pricing-cycle/original.md"
+            }
+          ]
+        },
+        {
+          "kicker": "公司弹性",
+          "title": "国际复材为何可能比中国巨石更有股价弹性",
+          "summary": "资本市场通常交易变化率和预期差，而不是只比较企业绝对质量。国际复材的电子布业务纯度和亏损反转预期更高，中国巨石则胜在规模、成本和经营稳定性。",
+          "display": "table",
+          "table": {
+            "columns": [
+              "比较维度",
+              "国际复材",
+              "中国巨石"
+            ],
+            "rows": [
+              [
+                "业务暴露",
+                "电子布相关弹性更集中",
+                "综合玻纤龙头，业务更分散"
+              ],
+              [
+                "业绩基数",
+                "低基数、扭亏带来更大变化率",
+                "盈利基础稳定，预期相对充分"
+              ],
+              [
+                "市场定价",
+                "偏预期差与高弹性",
+                "偏龙头确定性与成本优势"
+              ]
+            ]
+          },
+          "conclusion": "“弹性更大”不等于“公司更好”，它意味着向上和向下的波动都可能更大。",
+          "id": "company-elasticity",
+          "attachments": [
+            {
+              "type": "company",
+              "label": "国际复材"
+            },
+            {
+              "type": "company",
+              "label": "中国巨石"
+            },
+            {
+              "type": "segment",
+              "label": "电子布",
+              "target": {
+                "type": "chain-item",
+                "index": "0-0"
+              }
+            }
+          ],
+          "sources": [
+            {
+              "label": "阅读全文",
+              "type": "article",
+              "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "url": "../research/pcb-ccl-pricing-cycle/original.md"
+            }
+          ]
+        },
+        {
+          "kicker": "反向推演",
+          "title": "CCL逻辑不是永久成立，四类信号可能终结行情",
+          "summary": "逻辑终结不应等到价格下跌后才确认，而要提前观察供给、需求、传导和技术路线是否松动。",
+          "display": "points",
+          "points": [
+            {
+              "label": "供给释放",
+              "description": "织布机和新增产能交付，普涨转为结构性涨价。"
+            },
+            {
+              "label": "AI需求降速",
+              "description": "云厂商资本开支与服务器订单连续下修。"
+            },
+            {
+              "label": "传导链断裂",
+              "description": "PCB厂无法转嫁成本，毛利率和现金流开始承压。"
+            },
+            {
+              "label": "技术路线改变",
+              "description": "CPO等架构降低部分高速PCB或材料的价值量。"
+            }
+          ],
+          "conclusion": "真正需要持续追踪的，是这些反向信号是否从单点噪声演变为连续趋势。",
+          "id": "logic-reversal",
+          "attachments": [
+            {
+              "type": "chain",
+              "label": "PCB产业链",
+              "target": {
+                "type": "chain",
+                "index": "0"
+              }
+            },
+            {
+              "type": "tracking",
+              "label": "盈利兑现质量",
+              "target": {
+                "type": "tracking",
+                "index": "4"
+              }
+            }
+          ],
+          "sources": [
+            {
+              "label": "阅读全文",
+              "type": "article",
+              "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+              "url": "../research/pcb-ccl-pricing-cycle/original.md"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

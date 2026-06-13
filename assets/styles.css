@@ -645,10 +645,536 @@ main {
   margin-bottom: 10px;
 }
 
+.propagation {
+  background: rgba(8, 18, 32, 0.62);
+  border: 1px solid var(--line);
+  margin: 18px 0;
+  padding: 16px;
+}
+
+.propagation-head strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.propagation-head p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.propagation-path {
+  align-items: stretch;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr) auto minmax(120px, 1fr) auto minmax(120px, 1fr) auto minmax(120px, 1fr);
+  margin-top: 14px;
+}
+
+.propagation-node {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  min-height: 126px;
+  padding: 12px;
+  text-align: left;
+}
+
+.propagation-node:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.propagation-node:disabled {
+  cursor: default;
+}
+
+.propagation-node strong,
+.propagation-node small {
+  display: block;
+}
+
+.propagation-node strong {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 10px 0 7px;
+}
+
+.propagation-node small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.propagation-state {
+  border: 1px solid currentColor;
+  color: #cbd5e1;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 6px;
+}
+
+.state-source {
+  border-color: #fbbf24;
+}
+
+.state-source .propagation-state {
+  color: #fde68a;
+}
+
+.state-inference {
+  border-color: #60a5fa;
+}
+
+.state-inference .propagation-state {
+  color: #bfdbfe;
+}
+
+.state-pending {
+  border-color: #64748b;
+}
+
+.state-pending .propagation-state {
+  color: #cbd5e1;
+}
+
+.state-verified {
+  border-color: #34d399;
+}
+
+.state-verified .propagation-state {
+  color: #a7f3d0;
+}
+
+.propagation-arrow {
+  align-self: center;
+  color: var(--cyan);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.propagation-signals {
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.propagation-subtitle {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.propagation-signal-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.propagation-signal {
+  background: rgba(15, 23, 42, 0.56);
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  color: var(--text);
+  font: inherit;
+  min-height: 154px;
+  padding: 12px;
+  text-align: left;
+}
+
+button.propagation-signal {
+  cursor: pointer;
+}
+
+button.propagation-signal:hover {
+  border-color: var(--amber);
+  transform: translateY(-2px);
+}
+
+.propagation-signal span,
+.propagation-signal strong,
+.propagation-signal small {
+  display: block;
+}
+
+.propagation-signal span {
+  color: #fde68a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.propagation-signal strong {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 8px 0;
+}
+
+.propagation-signal p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+
+.propagation-signal small {
+  color: #cbd5e1;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.propagation-boundary {
+  background: rgba(2, 6, 23, 0.4);
+  border-left: 2px solid #64748b;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 12px;
+  padding: 10px 12px;
+}
+
+.propagation-boundary summary {
+  color: #cbd5e1;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.propagation-boundary ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.propagation-boundary li + li {
+  margin-top: 5px;
+}
+
 .source {
   color: var(--cyan);
   font-size: 13px;
   font-weight: 800;
+}
+
+.logic-track {
+  background: rgba(15, 23, 42, 0.76);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  margin-bottom: 24px;
+  padding: 18px;
+  scroll-margin-top: 20px;
+}
+
+.logic-track-label {
+  color: var(--cyan);
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.logic-track > h3 {
+  margin-bottom: 8px;
+}
+
+.logic-track > p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.logic-insights {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.logic-insights-head span,
+.logic-insights-head strong {
+  display: block;
+}
+
+.logic-insights-head span {
+  color: #fde68a;
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.logic-insights-head strong {
+  font-size: 15px;
+}
+
+.logic-insights-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.logic-insight {
+  background: rgba(8, 18, 32, 0.72);
+  border: 1px solid var(--line);
+  min-width: 0;
+  padding: 18px;
+  position: relative;
+}
+
+.logic-insight:nth-child(1),
+.logic-insight:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+.logic-insight-index {
+  color: rgba(34, 211, 238, 0.35);
+  font-size: 30px;
+  font-weight: 900;
+  position: absolute;
+  right: 14px;
+  top: 10px;
+}
+
+.logic-insight-kicker {
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+
+.logic-insight h4 {
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 0 38px 8px 0;
+}
+
+.logic-insight-summary {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.logic-insight-points {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.logic-insight:nth-child(5) .logic-insight-points {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.logic-insight-point {
+  border-left: 2px solid var(--amber);
+  background: rgba(15, 23, 42, 0.72);
+  padding: 11px 12px;
+}
+
+.logic-insight-point strong,
+.logic-insight-point span {
+  display: block;
+}
+
+.logic-insight-point strong {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.logic-insight-point span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.logic-insight-metrics {
+  display: grid;
+  gap: 11px;
+  margin-top: 15px;
+}
+
+.logic-insight-metric > div:first-child {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logic-insight-metric strong,
+.logic-insight-metric span {
+  font-size: 11px;
+}
+
+.logic-insight-metric span {
+  color: #fde68a;
+  font-weight: 800;
+}
+
+.logic-metric-track {
+  background: rgba(148, 163, 184, 0.16);
+  height: 8px;
+  margin: 5px 0;
+  overflow: hidden;
+}
+
+.logic-metric-track i {
+  background: linear-gradient(90deg, var(--cyan), #60a5fa);
+  display: block;
+  height: 100%;
+}
+
+.logic-insight-metric small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.logic-insight-formula {
+  align-items: stretch;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  margin-top: 16px;
+}
+
+.logic-insight-formula strong {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  display: flex;
+  font-size: 11px;
+  justify-content: center;
+  min-height: 64px;
+  padding: 10px;
+  text-align: center;
+}
+
+.logic-insight-formula span {
+  align-self: center;
+  color: var(--cyan);
+  font-weight: 900;
+}
+
+.logic-insight-table-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+}
+
+.logic-insight-table {
+  border-collapse: collapse;
+  font-size: 11px;
+  width: 100%;
+}
+
+.logic-insight-table th,
+.logic-insight-table td {
+  border: 1px solid var(--line);
+  line-height: 1.55;
+  padding: 9px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.logic-insight-table th {
+  background: rgba(34, 211, 238, 0.08);
+  color: #a5f3fc;
+}
+
+.logic-insight-conclusion {
+  border-top: 1px solid var(--line);
+  color: #dbeafe;
+  font-size: 11px;
+  line-height: 1.65;
+  margin: 14px 0 0;
+  padding-top: 11px;
+}
+
+.logic-insight-footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.logic-attachment,
+.logic-source {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: #cbd5e1;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 6px 8px;
+  text-decoration: none;
+}
+
+.logic-attachment:hover {
+  border-color: var(--cyan);
+  color: #a5f3fc;
+}
+
+.logic-source {
+  border-color: rgba(251, 191, 36, 0.38);
+  color: #fde68a;
+  margin-left: auto;
+}
+
+.logic-source + .logic-source {
+  margin-left: 0;
+}
+
+.logic-source:hover {
+  border-color: var(--amber);
+  color: #fff7cc;
+}
+
+.update-source-kind {
+  border: 1px solid rgba(167, 139, 250, 0.38);
+  color: #ddd6fe;
+  font-weight: 800;
+  padding: 4px 8px;
+}
+
+.timeline-logic-relation {
+  background: rgba(34, 211, 238, 0.06);
+  border-left: 3px solid var(--cyan);
+  margin: 16px 0;
+  padding: 14px 16px;
+}
+
+.timeline-logic-relation span,
+.timeline-logic-relation strong {
+  display: block;
+}
+
+.timeline-logic-relation span {
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.timeline-logic-relation strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.timeline-logic-relation p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 8px 0 10px;
+}
+
+.timeline-logic-relation a {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.timeline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .panel {
@@ -811,6 +1337,15 @@ main {
 .article-view a {
   color: var(--cyan);
   font-weight: 800;
+}
+
+.article-view img {
+  background: #0f172a;
+  border: 1px solid var(--line);
+  display: block;
+  height: auto;
+  margin: 26px auto;
+  max-width: 100%;
 }
 
 .article-list {
@@ -1090,6 +1625,55 @@ main {
   margin: 0;
 }
 
+.company-logic-cards {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+}
+
+.company-logic-cards > span {
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.company-logic-cards button {
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  padding: 13px;
+  text-align: left;
+}
+
+.company-logic-cards button:hover {
+  border-color: var(--cyan);
+}
+
+.company-logic-cards small,
+.company-logic-cards strong {
+  display: block;
+}
+
+.company-logic-cards small {
+  color: #a5f3fc;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.company-logic-cards strong {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.company-logic-cards p {
+  font-size: 11px;
+  margin: 0;
+}
+
 .maintain-tools {
   align-items: end;
   display: grid;
@@ -1364,6 +1948,50 @@ footer a {
   font-weight: 800;
 }
 
+.standalone-reading .site-header,
+.standalone-reading main > section:not(#article),
+.standalone-reading footer,
+.standalone-reading #companyPanel {
+  display: none;
+}
+
+.standalone-reading main {
+  min-height: 100vh;
+}
+
+.standalone-reading #article {
+  padding-top: 42px;
+}
+
+.standalone-reading #article .section-head {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1180px;
+}
+
+.article-illustration {
+  margin: 22px 0 32px;
+}
+
+.article-illustration a {
+  border: 1px solid var(--line);
+  display: block;
+  overflow: hidden;
+}
+
+.article-illustration img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.article-illustration figcaption {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
 .nav-button {
   appearance: none;
   background: transparent;
@@ -1495,6 +2123,37 @@ footer a {
     overflow: auto;
   }
 
+  .propagation-path {
+    grid-template-columns: 1fr;
+  }
+
+  .propagation-node {
+    min-height: 0;
+  }
+
+  .propagation-arrow {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+
+  .propagation-signal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .logic-insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logic-insight,
+  .logic-insight:nth-child(1),
+  .logic-insight:nth-child(5) {
+    grid-column: auto;
+  }
+
+  .logic-insight:nth-child(5) .logic-insight-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .chain-card {
     min-height: auto;
   }
@@ -1507,6 +2166,24 @@ footer a {
 
   .admin-form-panel {
     padding: 18px;
+  }
+
+  .propagation-signal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logic-insight-points,
+  .logic-insight:nth-child(5) .logic-insight-points {
+    grid-template-columns: 1fr;
+  }
+
+  .logic-insight-formula {
+    grid-template-columns: 1fr;
+  }
+
+  .logic-insight-formula span {
+    justify-self: center;
+    transform: rotate(90deg);
   }
 
   .site-header {
