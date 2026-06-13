@@ -25,6 +25,26 @@ for (const chain of library.chains) {
     companies: item.companies.join("、")
   }));
 
+  chain.logicTracks = (source.logicTracks || []).map((track) => ({
+    id: track.id,
+    title: track.title,
+    summary: track.summary,
+    coreInsights: (track.coreInsights || []).map((insight) => ({
+      ...insight,
+      attachments: (insight.attachments || []).map((attachment) => ({
+        ...attachment,
+        target: attachment.target
+          ? `${chain.id}:${attachment.target.type}:${attachment.target.index}`
+          : ""
+      })),
+      sources: (insight.sources || []).map((sourceItem) => ({
+        ...sourceItem,
+        url: normalizeSourceUrl(sourceItem.url)
+      }))
+    })),
+    propagation: normalizePropagation(chain.id, track.propagation)
+  }));
+
   chain.updates = source.updates.map((item) => ({
     date: item.date,
     type: normalizeUpdateType(item),
@@ -34,11 +54,20 @@ for (const chain of library.chains) {
     confidence: item.confidence,
     sourceTitle: item.source.title,
     sourceUrl: normalizeSourceUrl(item.source.url),
+    sourceKind: normalizeSourceKind(item.source),
+    sourcePlatform: item.source.platform || "",
+    ...(item.logicTrack ? { logicTrack: item.logicTrack } : {}),
+    ...(item.propagation ? { propagation: normalizePropagation(chain.id, item.propagation) } : {}),
     notes: item.notes
   }));
 }
 
-library.meta.updated = new Date().toISOString().slice(0, 10);
+library.meta.updated = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Shanghai",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).format(new Date());
 
 await writeFile(
   dataPath,
@@ -55,6 +84,9 @@ function normalizeSourceUrl(url) {
   if (url.startsWith("../content/")) {
     return url.replace("../content/", "./content/");
   }
+  if (url.startsWith("../research/")) {
+    return url.replace("../research/", "./content/research/");
+  }
   return url;
 }
 
@@ -69,4 +101,34 @@ function normalizeUpdateType(item) {
   }
   if (item.source?.type === "internal" || item.confidence === "基准框架") return "数据变化";
   return "产业事件";
+}
+
+function normalizeSourceKind(source) {
+  if (source?.type === "short-video") return "短视频";
+  if (source?.type === "article") return "文章";
+  if (source?.type === "announcement") return "公告";
+  return "资料";
+}
+
+function normalizePropagation(chainId, propagation) {
+  if (!propagation?.nodes?.length) return null;
+
+  return {
+    title: propagation.title,
+    summary: propagation.summary,
+    nodes: propagation.nodes.map((node) => ({
+      label: node.label,
+      description: node.description,
+      state: node.state,
+      target: node.target ? `${chainId}:${node.target.type}:${node.target.index}` : ""
+    })),
+    changeSignals: (propagation.changeSignals || []).map((signal) => ({
+      label: signal.label,
+      description: signal.description,
+      metric: signal.metric,
+      state: signal.state,
+      target: signal.target ? `${chainId}:${signal.target.type}:${signal.target.index}` : ""
+    })),
+    verificationNotes: propagation.verificationNotes || []
+  };
 }
