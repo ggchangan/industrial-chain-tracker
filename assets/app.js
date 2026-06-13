@@ -2,7 +2,9 @@ const library = window.INDUSTRY_CHAIN_LIBRARY;
 const chainAliases = {
   "semiconductor-material-industry-chain": "semiconductor-material"
 };
-const requestedChainId = new URLSearchParams(window.location.search).get("chain");
+const initialParams = new URLSearchParams(window.location.search);
+const requestedChainId = initialParams.get("chain");
+let requestedReading = normalizeReadingSource(initialParams.get("reading"));
 let currentId = chainAliases[requestedChainId] || requestedChainId || library.chains[0].id;
 
 if (requestedChainId && requestedChainId !== currentId) {
@@ -70,6 +72,23 @@ function normalize(value) {
 
 function compactText(values) {
   return values.flat(Infinity).filter(Boolean).join(" ");
+}
+
+function normalizeReadingSource(value) {
+  const source = String(value || "").replace(/^\.?\//, "");
+  if (!/^content\/research\/[A-Za-z0-9_./-]+\.md$/.test(source) || source.includes("..")) return "";
+  return `./${source}`;
+}
+
+function buildReadingUrl(sourceUrl) {
+  const source = normalizeReadingSource(sourceUrl);
+  if (!source) return sourceUrl;
+
+  const url = new URL("./index.html", window.location.href);
+  url.searchParams.set("chain", currentId);
+  url.searchParams.set("reading", source.slice(2));
+  url.hash = "article";
+  return url.toString();
 }
 
 function searchTargetKey(chainId, type, index) {
@@ -317,8 +336,10 @@ function activeChain() {
 
 function setChain(id) {
   currentId = id;
+  requestedReading = "";
   const url = new URL(window.location.href);
   url.searchParams.set("chain", id);
+  url.searchParams.delete("reading");
   url.hash = "";
   window.history.replaceState({}, "", url);
   render();
@@ -1015,10 +1036,18 @@ async function renderArticle(chain) {
   toc.innerHTML = "";
 
   try {
-    const markdown = await loadTextResource(chain.article);
+    const articleSource = requestedReading || chain.article;
+    const markdown = await loadTextResource(articleSource);
     if (requestId !== articleRequestId) return;
 
     const rendered = renderMarkdownArticle(markdown);
+    if (!rendered.meta.title) {
+      rendered.meta.title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || chain.title;
+    }
+    document.querySelector("#articleSectionTitle").textContent = requestedReading ? "研究文章阅读" : "原文阅读";
+    document.querySelector("#articleSectionDescription").textContent = requestedReading
+      ? "复用产业链原文阅读能力，保留文章层级、目录、锚点与当前位置高亮。"
+      : "以正式文章方式呈现完整研究内容，适合系统阅读、查找公司段落和回看关键判断。";
     view.innerHTML = `${renderArticleMeta(rendered.meta, chain)}${rendered.html}`;
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
@@ -1236,8 +1265,10 @@ function renderTimeline(chain) {
     card.append(el("p", "", item.notes));
     const actions = el("div", "timeline-actions");
     const source = el("a", "source", sourceActionLabel(item));
-    source.href = item.sourceUrl;
+    source.href = item.sourceKind === "文章" ? buildReadingUrl(item.sourceUrl) : item.sourceUrl;
     source.title = item.sourceTitle;
+    source.target = "_blank";
+    source.rel = "noopener noreferrer";
     actions.append(source);
     card.append(actions);
     root.append(card);
@@ -1340,8 +1371,10 @@ function renderCoreInsights(trackId, insights) {
       });
       insight.sources?.forEach((source) => {
         const link = el("a", "logic-source", source.label);
-        link.href = source.url;
+        link.href = source.type === "article" ? buildReadingUrl(source.url) : source.url;
         link.title = source.title || source.label;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
         footer.append(link);
       });
       card.append(footer);

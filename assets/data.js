@@ -337,7 +337,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "impact": "文章从成本权重、产业链议价、供给瓶颈、需求结构和利润兑现等角度扩展CCL涨价逻辑，并提出供给释放、AI需求降速、传导受阻和技术路线变化四类反向验证信号。",
           "confidence": "研究稿",
           "sourceTitle": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-          "sourceUrl": "./content/research/pcb-ccl-pricing-cycle/original-preview.html",
+          "sourceUrl": "./content/research/pcb-ccl-pricing-cycle/original.md",
           "sourceKind": "文章",
           "sourcePlatform": "研究文章",
           "logicTrack": {
@@ -398,7 +398,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
                   "label": "阅读全文",
                   "type": "article",
                   "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-                  "url": "./content/research/pcb-ccl-pricing-cycle/original-preview.html"
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
                 }
               ]
             },
@@ -452,7 +452,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
                   "label": "阅读全文",
                   "type": "article",
                   "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-                  "url": "./content/research/pcb-ccl-pricing-cycle/original-preview.html"
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
                 }
               ]
             },
@@ -485,7 +485,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
                   "label": "阅读全文",
                   "type": "article",
                   "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-                  "url": "./content/research/pcb-ccl-pricing-cycle/original-preview.html"
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
                 }
               ]
             },
@@ -542,7 +542,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
                   "label": "阅读全文",
                   "type": "article",
                   "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-                  "url": "./content/research/pcb-ccl-pricing-cycle/original-preview.html"
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
                 }
               ]
             },
@@ -588,7 +588,7 @@ window.INDUSTRY_CHAIN_LIBRARY = {
                   "label": "阅读全文",
                   "type": "article",
                   "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-                  "url": "./content/research/pcb-ccl-pricing-cycle/original-preview.html"
+                  "url": "./content/research/pcb-ccl-pricing-cycle/original.md"
                 }
               ]
             }
