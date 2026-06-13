@@ -156,6 +156,58 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     return structuredClone(source);
   }
 
+  async function listLogicCards(chainId) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const baseChain = baseLibrary.chains.find((item) => item.id === chainId);
+    const editable = buildEditableLogicCards(
+      baseChain,
+      state.logicCardsByChain?.[chainId] || []
+    );
+    const managedSources = structuredClone(state.sourcesByChain?.[chainId] || []);
+    const editableUpdates = mergeUpdates(
+      structuredClone(state.updatesByChain?.[chainId] || []),
+      structuredClone(baseChain?.updates || [])
+    );
+    const derivedSources = sourcesFromUpdates(editableUpdates, baseChain?.article);
+    applySourceOverrides(
+      { updates: [], logicTracks: [{ coreInsights: editable.cards }] },
+      managedSources,
+      derivedSources
+    );
+    return editable;
+  }
+
+  async function saveLogicCard(chainId, cardId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const existing = (await listLogicCards(chainId)).cards.find((card) => card.id === cardId);
+    const card = normalizeLogicCard({ ...existing, ...input, id: cardId || input.id });
+
+    state.logicCardsByChain ||= {};
+    state.logicCardsByChain[chainId] ||= [];
+    const index = state.logicCardsByChain[chainId].findIndex((item) => item.id === card.id);
+    if (index >= 0) state.logicCardsByChain[chainId][index] = card;
+    else state.logicCardsByChain[chainId].push(card);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(card);
+  }
+
+  async function deleteLogicCard(chainId, cardId) {
+    if (!library.chains.some((item) => item.id === chainId)) throw notFoundError("产业链不存在");
+    state.logicCardsByChain ||= {};
+    state.logicCardsByChain[chainId] ||= [];
+    const existing = (await listLogicCards(chainId)).cards.find((card) => card.id === cardId);
+    if (!existing) throw notFoundError("逻辑卡不存在");
+    const disabled = normalizeLogicCard({ ...existing, status: "deleted" });
+    const index = state.logicCardsByChain[chainId].findIndex((item) => item.id === cardId);
+    if (index >= 0) state.logicCardsByChain[chainId][index] = disabled;
+    else state.logicCardsByChain[chainId].push(disabled);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+  }
+
   async function getEditableChain(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -189,6 +241,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     delete state.updatesByChain[chainId];
     const sources = state.sourcesByChain?.[chainId] || [];
     if (state.sourcesByChain) delete state.sourcesByChain[chainId];
+    if (state.logicCardsByChain) delete state.logicCardsByChain[chainId];
     await Promise.all([
       removeManagedFile(resolvedDataDir, chain.article),
       removeManagedFile(resolvedDataDir, chain.cover),
@@ -212,10 +265,13 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     }),
     getEditableChain,
     getEditableSource,
+    listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
     updateSource,
     updateUpdate,
+    saveLogicCard,
+    deleteLogicCard,
     dataDir: resolvedDataDir,
     getLibrary: () => library
   };
@@ -262,6 +318,10 @@ function mergeLibrary(baseLibrary, state) {
     const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
     const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
     chain.sources = mergeSources(managedSources, derivedSources);
+    applyLogicCardOverrides(
+      chain,
+      structuredClone(state.logicCardsByChain?.[chain.id] || [])
+    );
     applySourceOverrides(chain, managedSources, derivedSources);
   }
 
@@ -285,10 +345,13 @@ function migrateDeprecatedChains(baseLibrary, state) {
   const hadUpdates = Boolean(state.updatesByChain["semiconductor-material-industry-chain"]);
   const hadOverride = Boolean(state.articleOverrides["semiconductor-material-industry-chain"]);
   const hadSources = Boolean(state.sourcesByChain?.["semiconductor-material-industry-chain"]);
+  const hadLogicCards = Boolean(state.logicCardsByChain?.["semiconductor-material-industry-chain"]);
   delete state.updatesByChain["semiconductor-material-industry-chain"];
   delete state.articleOverrides["semiconductor-material-industry-chain"];
   if (state.sourcesByChain) delete state.sourcesByChain["semiconductor-material-industry-chain"];
-  return previousLength !== state.managedChains.length || hadUpdates || hadOverride || hadSources;
+  if (state.logicCardsByChain) delete state.logicCardsByChain["semiconductor-material-industry-chain"];
+  return previousLength !== state.managedChains.length ||
+    hadUpdates || hadOverride || hadSources || hadLogicCards;
 }
 
 async function readState(dataDir) {
@@ -299,11 +362,19 @@ async function readState(dataDir) {
       articleOverrides: state.articleOverrides && typeof state.articleOverrides === "object" ? state.articleOverrides : {},
       updatesByChain: state.updatesByChain && typeof state.updatesByChain === "object" ? state.updatesByChain : {},
       sourcesByChain: state.sourcesByChain && typeof state.sourcesByChain === "object" ? state.sourcesByChain : {},
+      logicCardsByChain: state.logicCardsByChain && typeof state.logicCardsByChain === "object" ? state.logicCardsByChain : {},
       updatedAt: state.updatedAt || ""
     };
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    return { managedChains: [], articleOverrides: {}, updatesByChain: {}, sourcesByChain: {}, updatedAt: "" };
+    return {
+      managedChains: [],
+      articleOverrides: {},
+      updatesByChain: {},
+      sourcesByChain: {},
+      logicCardsByChain: {},
+      updatedAt: ""
+    };
   }
 }
 
@@ -722,6 +793,159 @@ function applySourceOverrides(chain, managedSources, derivedSources) {
       });
     }
   }
+}
+
+function applyLogicCardOverrides(chain, managedCards) {
+  const overrides = new Map(managedCards.map((card) => [card.id, card]));
+  const tracks = new Map((chain.logicTracks || []).map((track) => [track.id, {
+    ...track,
+    coreInsights: (track.coreInsights || []).map((insight, index) => ({
+      ...insight,
+      id: insight.id || `card-${track.id}-${index + 1}`,
+      trackId: track.id,
+      trackTitle: track.title,
+      trackSummary: track.summary,
+      status: "published",
+      order: index + 1
+    }))
+  }]));
+
+  for (const track of tracks.values()) {
+    track.coreInsights = track.coreInsights
+      .map((card) => overrides.get(card.id) || card)
+      .filter((card) => card.status !== "deleted" && card.status !== "draft");
+  }
+
+  for (const card of managedCards) {
+    if (card.status !== "published") continue;
+    const track = tracks.get(card.trackId) || {
+      id: card.trackId,
+      title: card.trackTitle,
+      summary: card.trackSummary,
+      coreInsights: []
+    };
+    if (!tracks.has(card.trackId)) tracks.set(card.trackId, track);
+    if (!track.coreInsights.some((item) => item.id === card.id)) track.coreInsights.push(card);
+    track.title = card.trackTitle || track.title;
+    track.summary = card.trackSummary || track.summary;
+  }
+
+  for (const track of tracks.values()) {
+    track.coreInsights.sort((left, right) =>
+      Number(left.order || 0) - Number(right.order || 0) ||
+      String(left.title).localeCompare(String(right.title), "zh-CN")
+    );
+  }
+  chain.logicTracks = [...tracks.values()].filter((track) => track.coreInsights.length);
+}
+
+function buildEditableLogicCards(baseChain, managedCards) {
+  const cards = [];
+  for (const track of baseChain?.logicTracks || []) {
+    (track.coreInsights || []).forEach((insight, index) => {
+      cards.push(normalizeLogicCard({
+        ...insight,
+        id: insight.id || `card-${track.id}-${index + 1}`,
+        trackId: track.id,
+        trackTitle: track.title,
+        trackSummary: track.summary,
+        status: "published",
+        order: index + 1
+      }));
+    });
+  }
+  const byId = new Map(cards.map((card) => [card.id, card]));
+  managedCards.forEach((card) => byId.set(card.id, normalizeLogicCard(card)));
+  return {
+    tracks: [...new Map([...byId.values()].map((card) => [
+      card.trackId,
+      { id: card.trackId, title: card.trackTitle, summary: card.trackSummary }
+    ])).values()],
+    cards: [...byId.values()]
+      .filter((card) => card.status !== "deleted")
+      .sort((left, right) =>
+        left.trackId.localeCompare(right.trackId) ||
+        Number(left.order) - Number(right.order)
+      )
+  };
+}
+
+function normalizeLogicCard(input) {
+  const display = ["points", "metrics", "formula", "comparison", "table", "text"]
+    .includes(input.display) ? input.display : "text";
+  const content = normalizeLogicContent(display, input.content || input);
+  const trackTitle = required(input.trackTitle, "请输入逻辑组标题");
+  const title = required(input.title, "请输入逻辑卡标题");
+  return {
+    id: String(input.id || `logic-${crypto.randomUUID().slice(0, 12)}`),
+    trackId: normalizeId(input.trackId || trackTitle) || `track-${crypto.randomUUID().slice(0, 8)}`,
+    trackTitle,
+    trackSummary: String(input.trackSummary || "").trim(),
+    sourceId: String(input.sourceId || "").trim(),
+    kicker: String(input.kicker || "核心逻辑").trim(),
+    title,
+    summary: required(input.summary, "请输入逻辑卡摘要"),
+    conclusion: String(input.conclusion || "").trim(),
+    display,
+    ...content,
+    attachments: normalizeLogicAttachments(input.attachments),
+    sources: normalizeLogicSources(input.sources),
+    articleAnchor: String(input.articleAnchor || "").trim(),
+    status: ["draft", "published", "deleted"].includes(input.status) ? input.status : "draft",
+    order: Math.max(1, Number.parseInt(input.order || "1", 10) || 1),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function normalizeLogicContent(display, input) {
+  if (display === "points") {
+    return { points: normalizeObjectRows(input.points, ["label", "description"]) };
+  }
+  if (display === "metrics") {
+    return {
+      metrics: normalizeObjectRows(input.metrics, ["label", "value", "description"])
+        .map((item) => ({ ...item, scale: Math.max(0, Math.min(100, Number(item.scale) || 0)) }))
+    };
+  }
+  if (display === "formula") {
+    return { formula: (Array.isArray(input.formula) ? input.formula : []).map(String).filter(Boolean) };
+  }
+  if (display === "comparison") {
+    return { comparison: normalizeObjectRows(input.comparison, ["name", "position", "reason"]) };
+  }
+  if (display === "table") {
+    return {
+      table: {
+        columns: (input.table?.columns || []).map(String),
+        rows: (input.table?.rows || []).map((row) => row.map(String))
+      }
+    };
+  }
+  return {};
+}
+
+function normalizeObjectRows(value, keys) {
+  return (Array.isArray(value) ? value : []).map((item) =>
+    Object.fromEntries([...keys, "scale"].filter((key) => key in item).map((key) => [key, String(item[key] ?? "")]))
+  );
+}
+
+function normalizeLogicAttachments(value) {
+  return (Array.isArray(value) ? value : []).slice(0, 12).map((item) => ({
+    type: ["company", "segment", "topic", "chain", "tracking"].includes(item.type) ? item.type : "topic",
+    label: String(item.label || "").trim(),
+    ...(item.target ? { target: item.target } : {})
+  })).filter((item) => item.label);
+}
+
+function normalizeLogicSources(value) {
+  return (Array.isArray(value) ? value : []).slice(0, 6).map((item) => ({
+    label: String(item.label || "阅读全文").trim(),
+    type: String(item.type || "article").trim(),
+    title: String(item.title || "").trim(),
+    url: String(item.url || "").trim(),
+    anchor: String(item.anchor || "").trim()
+  })).filter((item) => item.url);
 }
 
 function sourceTypeFromUpdate(item) {

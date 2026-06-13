@@ -18,6 +18,7 @@ test.before(async () => {
     articleOverrides: {},
     updatesByChain: {},
     sourcesByChain: {},
+    logicCardsByChain: {},
     updatedAt: ""
   }));
   server = await createAppServer({
@@ -228,6 +229,94 @@ test("authenticated maintainer can update an existing article and append an upda
     /^# PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？/
   );
 
+  const logicCardsResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb/logic-cards`, {
+    headers: { Cookie: cookie }
+  });
+  assert.equal(logicCardsResponse.status, 200);
+  const editableLogicCards = await logicCardsResponse.json();
+  assert.equal(editableLogicCards.cards.length, 5);
+  const existingLogicCard = editableLogicCards.cards.find((card) => card.id === "triple-squeeze");
+  const existingLogicUpdate = await fetch(
+    `${baseUrl}/api/v1/admin/chains/pcb/logic-cards/${existingLogicCard.id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({
+        ...existingLogicCard,
+        content: { points: existingLogicCard.points },
+        summary: `${existingLogicCard.summary}（维护测试）`
+      })
+    }
+  );
+  assert.equal(existingLogicUpdate.status, 200);
+  const updatedExistingLogic = (await existingLogicUpdate.json()).card;
+  assert.equal(updatedExistingLogic.sources[0].url, updatedCclSource.markdownUrl);
+  assert.deepEqual(updatedExistingLogic.attachments, existingLogicCard.attachments);
+
+  const draftLogicResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb/logic-cards`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({
+      trackId: "ccl-price-transmission",
+      trackTitle: "CCL价格传导机制",
+      trackSummary: "验证资料提炼、草稿隔离与公开发布。",
+      sourceId: cclSource.id,
+      kicker: "测试逻辑",
+      title: "草稿逻辑卡不会提前公开",
+      summary: "维护端可以先保存和修订逻辑卡，再决定何时发布。",
+      display: "points",
+      content: {
+        points: [
+          { label: "草稿", description: "只在维护端可见。" },
+          { label: "发布", description: "发布后进入公开逻辑组。" }
+        ]
+      },
+      attachments: [
+        { type: "segment", label: "覆铜板 CCL", target: "pcb:chain:2" },
+        { type: "company", label: "生益科技" }
+      ],
+      sources: [{
+        label: "阅读全文",
+        type: "article",
+        title: cclSource.title,
+        url: updatedCclSource.markdownUrl,
+        anchor: "CCL的超涨能力来自三重挤压"
+      }],
+      articleAnchor: "CCL的超涨能力来自三重挤压",
+      order: 6,
+      status: "draft"
+    })
+  });
+  assert.equal(draftLogicResponse.status, 201);
+  const draftLogicCard = (await draftLogicResponse.json()).card;
+
+  const draftPublicChain = await fetch(`${baseUrl}/api/v1/chains/pcb`)
+    .then((response) => response.json());
+  assert.ok(!draftPublicChain.chain.logicTracks
+    .flatMap((track) => track.coreInsights || [])
+    .some((card) => card.id === draftLogicCard.id));
+
+  const publishLogicResponse = await fetch(
+    `${baseUrl}/api/v1/admin/chains/pcb/logic-cards/${draftLogicCard.id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ status: "published", order: 1 })
+    }
+  );
+  assert.equal(publishLogicResponse.status, 200);
+
+  const publishedChain = await fetch(`${baseUrl}/api/v1/chains/pcb`)
+    .then((response) => response.json());
+  const publishedTrack = publishedChain.chain.logicTracks
+    .find((track) => track.id === "ccl-price-transmission");
+  const publishedLogicCard = publishedTrack.coreInsights
+    .find((card) => card.id === draftLogicCard.id);
+  assert.equal(publishedTrack.coreInsights[0].id, draftLogicCard.id);
+  assert.equal(publishedLogicCard.attachments[0].target, "pcb:chain:2");
+  assert.equal(publishedLogicCard.sources[0].url, updatedCclSource.markdownUrl);
+  assert.equal(publishedLogicCard.sources[0].anchor, "CCL的超涨能力来自三重挤压");
+
   const updateId = chainPayload.chain.updates.find(
     (item) => item.sourceUrl === "https://example.com/article"
   ).id;
@@ -275,6 +364,9 @@ test("authenticated maintainer can update an existing article and append an upda
   assert.match(persisted.articleOverrides.pcb, /^\/managed\/raw\//);
   assert.equal(persisted.updatesByChain.pcb[0].signal, "维护后台修订测试动态");
   assert.ok(persisted.sourcesByChain.pcb.some((source) => source.title === "CCL价格传导测试资料"));
+  assert.ok(persisted.logicCardsByChain.pcb.some((card) =>
+    card.id === draftLogicCard.id && card.status === "published"
+  ));
   const persistedMarkdown = await readFile(
     path.join(
       dataDir,

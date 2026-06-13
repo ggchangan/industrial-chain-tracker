@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=admin-content-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=logic-card-console-2" />
   </head>
   <body class="maintainer-page">
     <header class="site-header compact-header">
@@ -12,6 +12,7 @@
         <a href="./index.html">公开阅读页</a>
         <a href="#archive">资料档案</a>
         <a href="#add-source">新增资料</a>
+        <a href="#logic-cards">逻辑卡</a>
         <a href="#edit-article">更新原文</a>
         <a href="#add-update">添加动态</a>
         <button id="adminLogout" class="nav-button" type="button">退出登录</button>
@@ -39,6 +40,112 @@
           </label>
           <div class="archive-summary" id="archiveSummary"></div>
           <div class="archive-list" id="archiveList"></div>
+        </section>
+
+        <section id="logic-cards" class="logic-card-console">
+          <div class="section-head compact">
+            <p class="eyebrow">Logic Cards</p>
+            <h2 id="logicCardFormTitle">新增逻辑卡</h2>
+            <p>从一份资料中提炼可复用结论，关联产业链、公司与原文；草稿不会出现在公开页。</p>
+          </div>
+          <form id="logicCardForm" class="admin-form logic-card-form">
+            <input name="cardId" type="hidden" />
+            <div class="admin-field-row">
+              <label>
+                <span>归属产业链</span>
+                <select id="logicCardChainId" name="chainId" required></select>
+              </label>
+              <label>
+                <span>来源资料</span>
+                <select id="logicCardSourceId" name="sourceId">
+                  <option value="">不关联具体资料</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="admin-field-row">
+              <label>
+                <span>逻辑组 ID</span>
+                <input name="trackId" type="text" placeholder="例如：ccl-price-transmission" required />
+              </label>
+              <label>
+                <span>逻辑组标题</span>
+                <input name="trackTitle" type="text" placeholder="例如：CCL价格传导机制" required />
+              </label>
+            </div>
+            <label>
+              <span>逻辑组说明</span>
+              <textarea name="trackSummary" rows="2" placeholder="这一组逻辑卡共同解释什么问题"></textarea>
+            </label>
+
+            <div class="admin-field-row">
+              <label>
+                <span>卡片眉题</span>
+                <input name="kicker" type="text" placeholder="例如：定价权来源" />
+              </label>
+              <label>
+                <span>展示方式</span>
+                <select id="logicCardDisplay" name="display">
+                  <option value="points">要点卡</option>
+                  <option value="metrics">指标条</option>
+                  <option value="formula">公式链</option>
+                  <option value="comparison">公司对比</option>
+                  <option value="table">表格</option>
+                  <option value="text">纯结论</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>卡片标题</span>
+              <input name="title" type="text" required />
+            </label>
+            <label>
+              <span>核心阐述</span>
+              <textarea name="summary" rows="4" required></textarea>
+            </label>
+            <label>
+              <span>结构化内容</span>
+              <textarea id="logicCardContent" name="content" class="admin-json-editor logic-content-editor" rows="12" spellcheck="false"></textarea>
+              <small id="logicCardContentHint"></small>
+            </label>
+            <label>
+              <span>结论提示</span>
+              <textarea name="conclusion" rows="3" placeholder="卡片底部的判断边界或观察结论"></textarea>
+            </label>
+
+            <div class="admin-field-row">
+              <label>
+                <span>关联公司</span>
+                <input name="companies" type="text" placeholder="国际复材、中国巨石" />
+              </label>
+              <label>
+                <span>关联环节 / 主题</span>
+                <input name="segments" type="text" placeholder="覆铜板 CCL、AI服务器" />
+              </label>
+            </div>
+            <label>
+              <span>原文锚点</span>
+              <input name="articleAnchor" type="text" placeholder="例如：2.6 体量占比：一张100元PCB的钱去哪儿了？" />
+            </label>
+
+            <div class="admin-field-row logic-publish-row">
+              <label>
+                <span>排序</span>
+                <input name="order" type="number" min="1" value="1" required />
+              </label>
+              <label>
+                <span>状态</span>
+                <select name="status">
+                  <option value="draft">草稿</option>
+                  <option value="published">已发布</option>
+                </select>
+              </label>
+            </div>
+            <div class="admin-form-actions">
+              <button class="button primary admin-submit" type="submit">保存逻辑卡</button>
+              <button id="cancelLogicCardEdit" class="button secondary" type="button" hidden>取消编辑</button>
+            </div>
+          </form>
         </section>
 
         <div class="admin-form-grid">
@@ -289,6 +396,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js"></script>
+    <script src="./assets/maintain.js?v=logic-card-console-1"></script>
   </body>
 </html>
