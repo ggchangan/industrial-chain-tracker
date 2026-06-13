@@ -200,11 +200,40 @@ async function handleApi(context) {
     return;
   }
 
+  const editableUpdateMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/updates\/([a-z0-9-]+)$/
+  );
+  if (request.method === "PUT" && editableUpdateMatch) {
+    const body = await readJsonBody(request, 128 * 1024);
+    const update = await contentStore.updateUpdate(editableUpdateMatch[1], editableUpdateMatch[2], body);
+    sendJson(response, 200, { update });
+    return;
+  }
+
   const sourceMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/sources$/);
   if (request.method === "POST" && sourceMatch) {
     const body = await readJsonBody(request, 2 * 1024 * 1024);
     const source = await contentStore.addSource(sourceMatch[1], body);
     sendJson(response, 201, { source });
+    return;
+  }
+
+  const editableSourceMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/sources\/([a-z0-9-]+)$/
+  );
+  if (request.method === "GET" && editableSourceMatch) {
+    sendJson(
+      response,
+      200,
+      await contentStore.getEditableSource(editableSourceMatch[1], editableSourceMatch[2])
+    );
+    return;
+  }
+
+  if (request.method === "PUT" && editableSourceMatch) {
+    const body = await readJsonBody(request, 12 * 1024 * 1024);
+    const source = await contentStore.updateSource(editableSourceMatch[1], editableSourceMatch[2], body);
+    sendJson(response, 200, { source });
     return;
   }
 

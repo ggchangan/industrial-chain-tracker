@@ -1074,7 +1074,13 @@ async function renderArticle(chain) {
     const activeResearch = requestedReading
       ? chain.updates.find((item) => normalizeReadingSource(item.sourceUrl) === requestedReading)
       : null;
-    injectArticleIllustrations(view, activeResearch?.sourceIllustrations || []);
+    const activeSource = requestedReading
+      ? (chain.sources || []).find((item) => normalizeReadingSource(item.markdownUrl) === requestedReading)
+      : null;
+    injectArticleIllustrations(
+      view,
+      activeSource?.illustrations || activeResearch?.sourceIllustrations || []
+    );
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
     scrollToArticleHash();

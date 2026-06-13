@@ -1,4 +1,9 @@
-const state = { library: null, loadedChainId: "", archiveChainId: "" };
+const state = {
+  library: null,
+  loadedChainId: "",
+  archiveChainId: "",
+  sourceAssets: []
+};
 const notice = document.querySelector("#adminNotice");
 const articleForm = document.querySelector("#editArticleForm");
 const updateForm = document.querySelector("#addUpdateForm");
@@ -15,6 +20,10 @@ const fileInput = document.querySelector("#chainMarkdownFile");
 const markdownInput = document.querySelector("#articleMarkdown");
 const sourceFileInput = document.querySelector("#sourceMarkdownFile");
 const sourceMarkdownInput = document.querySelector("#sourceMarkdown");
+const sourceIllustrationFiles = document.querySelector("#sourceIllustrationFiles");
+const sourceIllustrationList = document.querySelector("#sourceIllustrationList");
+const cancelSourceEdit = document.querySelector("#cancelSourceEdit");
+const cancelUpdateEdit = document.querySelector("#cancelUpdateEdit");
 
 initialize();
 
@@ -23,6 +32,7 @@ async function initialize() {
   sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
   fileInput.addEventListener("change", readMarkdownFile);
   sourceFileInput.addEventListener("change", readSourceMarkdownFile);
+  sourceIllustrationFiles.addEventListener("change", readSourceIllustrations);
   articleSelect.addEventListener("change", () => loadArticle(articleSelect.value));
   archiveSelect.addEventListener("change", () => {
     state.archiveChainId = archiveSelect.value;
@@ -32,8 +42,11 @@ async function initialize() {
   articleForm.addEventListener("submit", saveArticle);
   sourceForm.addEventListener("submit", addSource);
   updateForm.addEventListener("submit", addUpdate);
+  cancelSourceEdit.addEventListener("click", resetSourceForm);
+  cancelUpdateEdit.addEventListener("click", resetUpdateForm);
   search.addEventListener("input", () => renderCards(search.value));
   document.querySelector("#adminLogout").addEventListener("click", logout);
+  renderSourceIllustrations();
   await refreshLibrary();
   if (articleSelect.value) await loadArticle(articleSelect.value);
 }
@@ -106,9 +119,33 @@ function renderArchive() {
       <div class="archive-item-actions">
         ${source.markdownUrl ? `<a href="${escapeHtml(sourceReaderUrl(chain.id, source.markdownUrl))}" target="_blank">阅读原文</a>` : ""}
         ${source.originalUrl ? `<a href="${escapeHtml(source.originalUrl)}" target="_blank" rel="noopener noreferrer">原始链接</a>` : ""}
+        <button type="button" data-edit-source="${escapeHtml(source.id)}">编辑资料包</button>
       </div>
     </article>
-  `).join("");
+  `).join("") + `
+    <div class="archive-subhead">
+      <strong>动态追踪记录</strong>
+      <span>动态是资料产生的时间线结论，也可以单独修订。</span>
+    </div>
+    ${(chain.updates || []).map((update) => `
+      <article class="archive-item update-record">
+        <div class="archive-item-head">
+          <span>${escapeHtml(update.type || "产业事件")}</span>
+          <small>${escapeHtml(update.confidence || "")}</small>
+        </div>
+        <h3>${escapeHtml(update.signal)}</h3>
+        <p>${escapeHtml(update.impact)}</p>
+        <div class="archive-item-meta">
+          <span>${escapeHtml(update.date)}</span>
+          <span>${escapeHtml(update.segment)}</span>
+          <span>${escapeHtml(update.sourceTitle || "")}</span>
+        </div>
+        <div class="archive-item-actions">
+          <button type="button" data-edit-update="${escapeHtml(update.id)}">编辑动态</button>
+        </div>
+      </article>
+    `).join("")}
+  `;
 
   archiveList.querySelectorAll("[data-archive-edit]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -116,6 +153,12 @@ function renderArchive() {
       document.querySelector("#edit-article").scrollIntoView({ behavior: "smooth", block: "start" });
       await loadArticle(button.dataset.archiveEdit);
     });
+  });
+  archiveList.querySelectorAll("[data-edit-source]").forEach((button) => {
+    button.addEventListener("click", () => editSource(chain.id, button.dataset.editSource));
+  });
+  archiveList.querySelectorAll("[data-edit-update]").forEach((button) => {
+    button.addEventListener("click", () => editUpdate(chain.id, button.dataset.editUpdate));
   });
 }
 
@@ -172,6 +215,79 @@ async function readSourceMarkdownFile() {
   setNotice(`${file.name} 已载入资料原文。`, "success");
 }
 
+async function readSourceIllustrations() {
+  const files = [...sourceIllustrationFiles.files];
+  if (!files.length) return;
+  if (state.sourceAssets.length + files.length > 12) {
+    sourceIllustrationFiles.value = "";
+    setNotice("每份资料最多保存 12 张配图。", "error");
+    return;
+  }
+  for (const file of files) {
+    if (file.size > 8 * 1024 * 1024) {
+      setNotice(`${file.name} 超过 8MB，未加入资料包。`, "error");
+      continue;
+    }
+    state.sourceAssets.push({
+      key: crypto.randomUUID(),
+      src: "",
+      preview: await fileToDataUrl(file),
+      alt: file.name.replace(/\.[^.]+$/, ""),
+      caption: "",
+      afterHeading: "",
+      upload: {
+        name: file.name,
+        type: file.type,
+        data: await fileToDataUrl(file)
+      }
+    });
+  }
+  sourceIllustrationFiles.value = "";
+  renderSourceIllustrations();
+}
+
+function renderSourceIllustrations() {
+  if (!state.sourceAssets.length) {
+    sourceIllustrationList.innerHTML = `<p class="source-assets-empty">尚未添加配图。</p>`;
+    return;
+  }
+  sourceIllustrationList.innerHTML = state.sourceAssets.map((item) => `
+    <article class="source-illustration-item" data-source-asset="${escapeHtml(item.key)}">
+      <img src="${escapeHtml(item.preview || item.src)}" alt="${escapeHtml(item.alt)}" />
+      <div>
+        <label>
+          <span>图片说明</span>
+          <input data-asset-field="caption" value="${escapeHtml(item.caption)}" placeholder="图片下方显示的说明" />
+        </label>
+        <label>
+          <span>插入位置</span>
+          <input data-asset-field="afterHeading" value="${escapeHtml(item.afterHeading)}" placeholder="填写文章中的完整标题；留空则放在开头" />
+        </label>
+        <label>
+          <span>替代文字</span>
+          <input data-asset-field="alt" value="${escapeHtml(item.alt)}" placeholder="无障碍与加载失败时显示" />
+        </label>
+      </div>
+      <button type="button" data-remove-asset="${escapeHtml(item.key)}">移除</button>
+    </article>
+  `).join("");
+
+  sourceIllustrationList.querySelectorAll("[data-asset-field]").forEach((input) => {
+    input.addEventListener("input", () => {
+      const item = state.sourceAssets.find(
+        (asset) => asset.key === input.closest("[data-source-asset]").dataset.sourceAsset
+      );
+      if (item) item[input.dataset.assetField] = input.value;
+    });
+  });
+  sourceIllustrationList.querySelectorAll("[data-remove-asset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.sourceAssets = state.sourceAssets.filter((item) => item.key !== button.dataset.removeAsset);
+      renderSourceIllustrations();
+    });
+  });
+}
+
 async function addSource(event) {
   event.preventDefault();
   const button = sourceForm.querySelector("button[type='submit']");
@@ -179,16 +295,20 @@ async function addSource(event) {
   try {
     const payload = Object.fromEntries(new FormData(sourceForm).entries());
     const chainId = payload.chainId;
+    const sourceId = payload.sourceId;
     delete payload.chainId;
-    await apiRequest(`./api/v1/admin/chains/${encodeURIComponent(chainId)}/sources`, {
-      method: "POST",
+    delete payload.sourceId;
+    payload.illustrations = state.sourceAssets.map(({ key, preview, ...item }) => item);
+    await apiRequest(
+      sourceId
+        ? `./api/v1/admin/chains/${encodeURIComponent(chainId)}/sources/${encodeURIComponent(sourceId)}`
+        : `./api/v1/admin/chains/${encodeURIComponent(chainId)}/sources`,
+      {
+      method: sourceId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
-    setNotice("资料已保存到产业链档案。", "success");
-    sourceForm.reset();
-    sourceSelect.value = chainId;
-    sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
-    sourceFileInput.value = "";
+    setNotice(sourceId ? "资料包已更新。" : "资料已保存到产业链档案。", "success");
+    resetSourceForm(chainId);
     state.archiveChainId = chainId;
     await refreshLibrary(chainId);
     archiveSelect.value = chainId;
@@ -198,6 +318,56 @@ async function addSource(event) {
   } finally {
     setBusy(button, false, "保存资料归档");
   }
+}
+
+async function editSource(chainId, sourceId) {
+  try {
+    const payload = await apiRequest(
+      `./api/v1/admin/chains/${encodeURIComponent(chainId)}/sources/${encodeURIComponent(sourceId)}`
+    );
+    const source = payload.source;
+    sourceSelect.value = chainId;
+    sourceForm.elements.sourceId.value = source.id;
+    [
+      "type", "date", "title", "platform", "author", "originalUrl",
+      "summary", "segment", "status"
+    ].forEach((name) => {
+      if (sourceForm.elements[name]) sourceForm.elements[name].value = source[name] || "";
+    });
+    sourceForm.elements.companies.value = (source.companies || []).join("、");
+    sourceForm.elements.tags.value = (source.tags || []).join("、");
+    sourceMarkdownInput.value = payload.markdown || "";
+    state.sourceAssets = (source.illustrations || []).map((item) => ({
+      ...item,
+      key: crypto.randomUUID(),
+      preview: item.src
+    }));
+    renderSourceIllustrations();
+    document.querySelector("#sourceFormTitle").textContent = "编辑资料包";
+    document.querySelector("#sourceFormDescription").textContent =
+      "原文、配图、来源信息和归档状态会作为一个整体保存。";
+    sourceForm.querySelector("button[type='submit']").textContent = "保存资料修改";
+    cancelSourceEdit.hidden = false;
+    document.querySelector("#add-source").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+function resetSourceForm(chainId = sourceSelect.value) {
+  sourceForm.reset();
+  renderChainOptions(sourceSelect, chainId);
+  sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  sourceFileInput.value = "";
+  sourceIllustrationFiles.value = "";
+  sourceMarkdownInput.value = "";
+  state.sourceAssets = [];
+  renderSourceIllustrations();
+  document.querySelector("#sourceFormTitle").textContent = "新增资料归档";
+  document.querySelector("#sourceFormDescription").textContent =
+    "先保存完整来源和原文，再决定是否提炼逻辑卡或发布为动态追踪。";
+  sourceForm.querySelector("button[type='submit']").textContent = "保存资料归档";
+  cancelSourceEdit.hidden = true;
 }
 
 async function saveArticle(event) {
@@ -226,22 +396,54 @@ async function addUpdate(event) {
   try {
     const payload = Object.fromEntries(new FormData(updateForm).entries());
     const chainId = payload.chainId;
+    const updateId = payload.updateId;
     delete payload.chainId;
-    await apiRequest(`./api/v1/admin/chains/${encodeURIComponent(chainId)}/updates`, {
-      method: "POST",
+    delete payload.updateId;
+    await apiRequest(
+      updateId
+        ? `./api/v1/admin/chains/${encodeURIComponent(chainId)}/updates/${encodeURIComponent(updateId)}`
+        : `./api/v1/admin/chains/${encodeURIComponent(chainId)}/updates`,
+      {
+      method: updateId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
     const chainTitle = state.library.chains.find((chain) => chain.id === chainId)?.title || chainId;
-    setNotice(`${chainTitle}的动态已保存并发布。`, "success");
-    updateForm.reset();
-    updateSelect.value = chainId;
-    updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
+    setNotice(`${chainTitle}的动态已${updateId ? "更新" : "保存并发布"}。`, "success");
+    resetUpdateForm(chainId);
     await refreshLibrary();
   } catch (error) {
     setNotice(error.message, "error");
   } finally {
     setBusy(button, false, "保存动态追踪");
   }
+}
+
+function editUpdate(chainId, updateId) {
+  const chain = state.library.chains.find((item) => item.id === chainId);
+  const update = chain?.updates?.find((item) => item.id === updateId);
+  if (!update) {
+    setNotice("未找到这条动态。", "error");
+    return;
+  }
+  updateSelect.value = chainId;
+  updateForm.elements.updateId.value = update.id;
+  [
+    "date", "type", "segment", "signal", "impact", "confidence",
+    "sourceTitle", "sourceUrl", "notes"
+  ].forEach((name) => {
+    updateForm.elements[name].value = update[name] || "";
+  });
+  updateForm.querySelector("button[type='submit']").textContent = "保存动态修改";
+  cancelUpdateEdit.hidden = false;
+  document.querySelector("#add-update").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function resetUpdateForm(chainId = updateSelect.value) {
+  updateForm.reset();
+  renderChainOptions(updateSelect, chainId);
+  updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  updateForm.querySelector("button[type='submit']").textContent = "保存动态追踪";
+  cancelUpdateEdit.hidden = true;
 }
 
 function renderCards(query = "") {
@@ -335,6 +537,7 @@ async function logout() {
 async function apiRequest(url, options = {}) {
   const response = await fetch(url, {
     credentials: "same-origin",
+    cache: "no-store",
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
     ...options
   });
@@ -361,6 +564,15 @@ function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(reader.result));
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsDataURL(file);
+  });
 }
 
 function escapeHtml(value) {

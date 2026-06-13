@@ -45,11 +45,12 @@
           <article id="add-source" class="admin-form-panel">
             <div class="section-head compact">
               <p class="eyebrow">New Source</p>
-              <h2>新增资料归档</h2>
-              <p>先保存完整来源和原文，再决定是否提炼逻辑卡或发布为动态追踪。</p>
+              <h2 id="sourceFormTitle">新增资料归档</h2>
+              <p id="sourceFormDescription">先保存完整来源和原文，再决定是否提炼逻辑卡或发布为动态追踪。</p>
             </div>
 
             <form id="addSourceForm" class="admin-form">
+              <input name="sourceId" type="hidden" />
               <label>
                 <span>归属产业链</span>
                 <select id="sourceChainId" name="chainId" required></select>
@@ -122,6 +123,19 @@
                 <textarea id="sourceMarkdown" name="markdown" class="admin-json-editor source-editor" rows="16" spellcheck="false" placeholder="研究文章粘贴完整 Markdown；视频可在完成转写后补充"></textarea>
               </label>
 
+              <div class="source-assets-editor">
+                <div>
+                  <strong>资料配图</strong>
+                  <p>封面、图表和正文插图与文章一起保存；可指定插入到哪个标题之后。</p>
+                </div>
+                <div id="sourceIllustrationList" class="source-illustration-list"></div>
+                <label>
+                  <span>添加配图</span>
+                  <input id="sourceIllustrationFiles" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple />
+                  <small>单张不超过 8MB，最多保存 12 张。</small>
+                </label>
+              </div>
+
               <div class="admin-field-row">
                 <label>
                   <span>标签</span>
@@ -137,7 +151,10 @@
                 </label>
               </div>
 
-              <button class="button primary admin-submit" type="submit">保存资料归档</button>
+              <div class="admin-form-actions">
+                <button class="button primary admin-submit" type="submit">保存资料归档</button>
+                <button id="cancelSourceEdit" class="button secondary" type="button" hidden>取消编辑</button>
+              </div>
             </form>
           </article>
 
@@ -178,6 +195,7 @@
             </div>
 
             <form id="addUpdateForm" class="admin-form">
+              <input name="updateId" type="hidden" />
               <label>
                 <span>选择产业链</span>
                 <select id="updateChainId" name="chainId" required></select>
@@ -234,7 +252,7 @@
 
               <label>
                 <span>来源链接</span>
-                <input name="sourceUrl" type="url" placeholder="https://..." required />
+                <input name="sourceUrl" type="text" placeholder="https://... 或已归档原文路径" required />
               </label>
 
               <label>
@@ -242,7 +260,10 @@
                 <textarea name="notes" rows="3" placeholder="记录待验证口径、关键问题或下一步观察点"></textarea>
               </label>
 
-              <button class="button primary admin-submit" type="submit">保存动态追踪</button>
+              <div class="admin-form-actions">
+                <button class="button primary admin-submit" type="submit">保存动态追踪</button>
+                <button id="cancelUpdateEdit" class="button secondary" type="button" hidden>取消编辑</button>
+              </div>
             </form>
           </article>
         </div>

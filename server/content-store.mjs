@@ -70,6 +70,22 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     return structuredClone(update);
   }
 
+  async function updateUpdate(chainId, updateId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const current = (chain.updates || []).find((item) => item.id === updateId);
+    if (!current) throw notFoundError("动态追踪不存在");
+
+    const update = normalizeUpdate({ ...input, id: updateId });
+    state.updatesByChain[chainId] ||= [];
+    const index = state.updatesByChain[chainId].findIndex((item) => item.id === updateId);
+    if (index >= 0) state.updatesByChain[chainId][index] = update;
+    else state.updatesByChain[chainId].unshift(update);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(update);
+  }
+
   async function addSource(chainId, input) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -81,10 +97,60 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
       source.markdownUrl = managedUrl(sourceRelativePath);
       delete source.markdown;
     }
+    source.illustrations = await persistSourceIllustrations(resolvedDataDir, chainId, source.id, source.illustrations);
 
     state.sourcesByChain ||= {};
     state.sourcesByChain[chainId] ||= [];
     state.sourcesByChain[chainId].unshift(source);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(source);
+  }
+
+  async function getEditableSource(chainId, sourceId) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const source = (chain.sources || []).find((item) => item.id === sourceId);
+    if (!source) throw notFoundError("资料不存在");
+    const markdown = source.markdownUrl
+      ? await readContentFile(resolvedRootDir, resolvedDataDir, source.markdownUrl)
+      : "";
+    return { source: structuredClone(source), markdown };
+  }
+
+  async function updateSource(chainId, sourceId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const current = (chain.sources || []).find((item) => item.id === sourceId);
+    if (!current) throw notFoundError("资料不存在");
+
+    const source = normalizeSource({
+      ...current,
+      ...input,
+      id: sourceId,
+      createdAt: current.createdAt
+    });
+    if (source.markdown) {
+      const sourceRelativePath = path.join("sources", chainId, `${source.id}.md`);
+      await writeManagedFile(resolvedDataDir, sourceRelativePath, source.markdown);
+      source.markdownUrl = managedUrl(sourceRelativePath);
+      delete source.markdown;
+    } else {
+      source.markdownUrl = current.markdownUrl || "";
+    }
+    source.illustrations = await persistSourceIllustrations(
+      resolvedDataDir,
+      chainId,
+      source.id,
+      source.illustrations
+    );
+    delete source.derivedFromUpdate;
+
+    state.sourcesByChain ||= {};
+    state.sourcesByChain[chainId] ||= [];
+    const index = state.sourcesByChain[chainId].findIndex((item) => item.id === sourceId);
+    if (index >= 0) state.sourcesByChain[chainId][index] = source;
+    else state.sourcesByChain[chainId].unshift(source);
     await saveState(resolvedDataDir, state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(source);
@@ -145,21 +211,28 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
       articleTitle: normalizeArticleInput(input).title
     }),
     getEditableChain,
+    getEditableSource,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
+    updateSource,
+    updateUpdate,
     dataDir: resolvedDataDir,
     getLibrary: () => library
   };
 }
 
 async function readChainArticle(rootDir, dataDir, articleUrl) {
-  if (String(articleUrl || "").startsWith("/managed/")) {
-    const relativePath = String(articleUrl).replace(/^\/managed\//, "");
+  return readContentFile(rootDir, dataDir, articleUrl);
+}
+
+async function readContentFile(rootDir, dataDir, fileUrl) {
+  if (String(fileUrl || "").startsWith("/managed/")) {
+    const relativePath = String(fileUrl).replace(/^\/managed\//, "");
     const target = path.resolve(dataDir, relativePath);
     assertInside(dataDir, target);
     return readFile(target, "utf8");
   }
-  const relativePath = String(articleUrl || "").replace(/^\.\//, "");
+  const relativePath = String(fileUrl || "").replace(/^\.\//, "");
   const target = path.resolve(rootDir, relativePath);
   assertInside(rootDir, target);
   return readFile(target, "utf8");
@@ -185,11 +258,11 @@ function mergeLibrary(baseLibrary, state) {
 
   for (const chain of library.chains) {
     const managedUpdates = structuredClone(state.updatesByChain?.[chain.id] || []);
-    if (managedUpdates.length) chain.updates = [...managedUpdates, ...(chain.updates || [])];
-    chain.sources = mergeSources(
-      structuredClone(state.sourcesByChain?.[chain.id] || []),
-      sourcesFromUpdates(chain.updates || [], chain.article)
-    );
+    chain.updates = mergeUpdates(managedUpdates, chain.updates || []);
+    const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
+    const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
+    chain.sources = mergeSources(managedSources, derivedSources);
+    applySourceOverrides(chain, managedSources, derivedSources);
   }
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
@@ -425,13 +498,23 @@ function extractCompanies(text) {
 
 function normalizeUpdate(input) {
   const sourceUrl = String(input.sourceUrl || "").trim();
-  if (!/^https?:\/\//i.test(sourceUrl)) throw validationError("来源链接必须以 http:// 或 https:// 开头");
+  const validSourceUrl =
+    /^https?:\/\//i.test(sourceUrl) ||
+    /^\.\/content\/[A-Za-z0-9_./-]+$/i.test(sourceUrl) ||
+    /^\/managed\/[A-Za-z0-9_./-]+$/i.test(sourceUrl);
+  if (!validSourceUrl) throw validationError("来源链接应为网页地址或已归档的本地原文");
   const type = required(input.type, "请选择动态类型");
   if (!["产业事件", "机构逻辑", "公司公告", "数据变化"].includes(type)) {
     throw validationError("动态类型无效");
   }
 
   const update = {
+    id: String(input.id || createStableId("update", [
+      input.date,
+      input.sourceUrl,
+      input.sourceTitle,
+      input.signal
+    ])).trim(),
     date: String(input.date || new Date().toISOString().slice(0, 10)).trim(),
     type,
     segment: required(input.segment, "请输入产业链环节"),
@@ -473,7 +556,7 @@ function normalizeSource(input) {
   }
 
   return {
-    id: `${formatCompactDate(input.date || formatChinaDate(new Date()))}-${normalizeId(title).slice(0, 40) || "source"}-${crypto.randomUUID().slice(0, 8)}`,
+    id: String(input.id || `${formatCompactDate(input.date || formatChinaDate(new Date()))}-${normalizeId(title).slice(0, 40) || "source"}-${crypto.randomUUID().slice(0, 8)}`),
     date: normalizeDate(input.date || formatChinaDate(new Date())),
     type,
     platform: String(input.platform || "").trim(),
@@ -485,8 +568,9 @@ function normalizeSource(input) {
     companies: splitList(input.companies),
     tags: splitList(input.tags),
     status: ["draft", "published", "archived"].includes(input.status) ? input.status : "draft",
+    illustrations: normalizeIllustrations(input.illustrations),
     markdown: markdown ? `${markdown}\n` : "",
-    createdAt: new Date().toISOString()
+    createdAt: input.createdAt || new Date().toISOString()
   };
 }
 
@@ -498,7 +582,7 @@ function sourcesFromUpdates(updates, baseArticleUrl) {
       return normalizeSourceReference(item.sourceUrl) !== normalizedBaseArticle;
     })
     .map((item, index) => ({
-      id: `update-${item.date}-${index}`,
+      id: createStableId("source", [item.date, item.sourceUrl, item.sourceTitle]),
       date: item.date,
       type: sourceTypeFromUpdate(item),
       platform: item.sourcePlatform || "",
@@ -509,9 +593,32 @@ function sourcesFromUpdates(updates, baseArticleUrl) {
       segment: item.segment || "",
       companies: [],
       tags: [],
+      illustrations: normalizeIllustrations(item.sourceIllustrations),
       status: "published",
       derivedFromUpdate: true
     }));
+}
+
+function mergeUpdates(managedUpdates, baseUpdates) {
+  const normalizeExistingUpdate = (item) => ({
+    ...item,
+    id: item.id || createStableId("update", [
+      item.date,
+      item.sourceUrl,
+      item.sourceTitle,
+      item.signal
+    ])
+  });
+  const normalizedManaged = managedUpdates.map(normalizeExistingUpdate);
+  const normalizedBase = baseUpdates.map(normalizeExistingUpdate);
+  const seen = new Set();
+  return [...normalizedManaged, ...normalizedBase]
+    .filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    })
+    .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")));
 }
 
 function normalizeSourceReference(value) {
@@ -522,11 +629,52 @@ function normalizeSourceReference(value) {
     .split(/[?#]/, 1)[0];
 }
 
+function createStableId(prefix, values) {
+  const digest = crypto
+    .createHash("sha1")
+    .update(values.map((value) => String(value || "").trim()).join("|"))
+    .digest("hex")
+    .slice(0, 12);
+  return `${prefix}-${digest}`;
+}
+
+function normalizeIllustrations(value) {
+  const illustrations = Array.isArray(value) ? value : [];
+  return illustrations.slice(0, 12).map((item) => ({
+    src: String(item.src || "").trim(),
+    alt: String(item.alt || "").trim(),
+    caption: String(item.caption || "").trim(),
+    afterHeading: String(item.afterHeading || "").trim(),
+    ...(item.upload && typeof item.upload === "object" ? { upload: item.upload } : {})
+  })).filter((item) => item.src || item.upload);
+}
+
+async function persistSourceIllustrations(dataDir, chainId, sourceId, illustrations) {
+  const persisted = [];
+  for (let index = 0; index < (illustrations || []).length; index += 1) {
+    const illustration = illustrations[index];
+    if (!illustration.upload) {
+      persisted.push(illustration);
+      continue;
+    }
+    const asset = normalizeAsset(illustration.upload, "资料配图");
+    const relativePath = path.join("sources", chainId, sourceId, `image-${index + 1}${asset.extension}`);
+    await writeManagedBinary(dataDir, relativePath, asset.contents);
+    persisted.push({
+      src: managedUrl(relativePath),
+      alt: illustration.alt,
+      caption: illustration.caption,
+      afterHeading: illustration.afterHeading
+    });
+  }
+  return persisted;
+}
+
 function mergeSources(managedSources, derivedSources) {
   const seen = new Set();
   return [...managedSources, ...derivedSources]
     .filter((source) => {
-      const key = normalizeSourceReference(source.originalUrl || source.markdownUrl) ||
+      const key = source.id || normalizeSourceReference(source.originalUrl || source.markdownUrl) ||
         `${source.date}:${source.title}`;
       if (seen.has(key)) return false;
       seen.add(key);
@@ -536,6 +684,36 @@ function mergeSources(managedSources, derivedSources) {
       String(right.date || "").localeCompare(String(left.date || "")) ||
       String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
     );
+}
+
+function applySourceOverrides(chain, managedSources, derivedSources) {
+  const replacements = new Map();
+  for (const managed of managedSources) {
+    const derived = derivedSources.find((source) => source.id === managed.id);
+    if (!derived || !managed.markdownUrl) continue;
+    const previousUrl = derived.markdownUrl || derived.originalUrl;
+    if (previousUrl) replacements.set(normalizeSourceReference(previousUrl), managed);
+  }
+  if (!replacements.size) return;
+
+  chain.updates = (chain.updates || []).map((update) => {
+    const replacement = replacements.get(normalizeSourceReference(update.sourceUrl));
+    if (!replacement) return update;
+    return {
+      ...update,
+      sourceUrl: replacement.markdownUrl,
+      sourceIllustrations: replacement.illustrations || update.sourceIllustrations || []
+    };
+  });
+
+  for (const track of chain.logicTracks || []) {
+    for (const insight of track.coreInsights || []) {
+      insight.sources = (insight.sources || []).map((source) => {
+        const replacement = replacements.get(normalizeSourceReference(source.url));
+        return replacement ? { ...source, url: replacement.markdownUrl } : source;
+      });
+    }
+  }
 }
 
 function sourceTypeFromUpdate(item) {
