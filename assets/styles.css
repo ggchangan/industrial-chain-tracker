@@ -2127,6 +2127,37 @@ button.propagation-signal:hover {
   border-left: 3px solid var(--cyan);
 }
 
+.logic-card-console {
+  margin-top: 28px;
+  padding: clamp(20px, 3vw, 34px);
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.logic-card-form {
+  max-width: none;
+}
+
+.logic-content-editor {
+  min-height: 220px;
+}
+
+.logic-publish-row {
+  grid-template-columns: minmax(120px, 0.4fr) minmax(180px, 0.6fr);
+}
+
+.archive-item.logic-card-record {
+  border-left: 3px solid var(--amber);
+}
+
+.archive-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+}
+
 .maintenance-card-meta {
   display: flex;
   align-items: center;
@@ -2431,6 +2462,14 @@ footer a {
   .nav {
     justify-content: flex-start;
     overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  .nav a,
+  .nav-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .hero {

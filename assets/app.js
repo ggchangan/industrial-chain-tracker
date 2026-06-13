@@ -5,6 +5,7 @@ const chainAliases = {
 const initialParams = new URLSearchParams(window.location.search);
 const requestedChainId = initialParams.get("chain");
 let requestedReading = normalizeReadingSource(initialParams.get("reading"));
+let requestedReadingAnchor = initialParams.get("readingAnchor") || "";
 let currentId = chainAliases[requestedChainId] || requestedChainId || library.chains[0].id;
 document.body.classList.toggle("standalone-reading", Boolean(requestedReading));
 
@@ -84,13 +85,14 @@ function normalizeReadingSource(value) {
   return source.startsWith("managed/") ? `/${source}` : `./${source}`;
 }
 
-function buildReadingUrl(sourceUrl) {
+function buildReadingUrl(sourceUrl, anchor = "") {
   const source = normalizeReadingSource(sourceUrl);
   if (!source) return sourceUrl;
 
   const url = new URL("./index.html", window.location.href);
   url.searchParams.set("chain", currentId);
   url.searchParams.set("reading", source.replace(/^\.?\//, ""));
+  if (anchor) url.searchParams.set("readingAnchor", anchor);
   url.hash = "article";
   return url.toString();
 }
@@ -341,9 +343,11 @@ function activeChain() {
 function setChain(id) {
   currentId = id;
   requestedReading = "";
+  requestedReadingAnchor = "";
   const url = new URL(window.location.href);
   url.searchParams.set("chain", id);
   url.searchParams.delete("reading");
+  url.searchParams.delete("readingAnchor");
   url.hash = "";
   window.history.replaceState({}, "", url);
   render();
@@ -896,6 +900,18 @@ function scrollToArticleHash() {
   }
 }
 
+function scrollToReadingAnchor() {
+  if (!requestedReadingAnchor) return;
+  const target = findArticleHeading(requestedReadingAnchor) ||
+    findArticleMention(requestedReadingAnchor);
+  if (!target) return;
+  window.setTimeout(() => {
+    target.scrollIntoView({ block: "start" });
+    target.classList.add("search-target-flash");
+    window.setTimeout(() => target.classList.remove("search-target-flash"), 6000);
+  }, 80);
+}
+
 function findArticleHeading(keyword) {
   const normalizedKeyword = normalize(keyword);
   const headings = [...document.querySelectorAll("#articleView .article-heading")];
@@ -1109,7 +1125,8 @@ async function renderArticle(chain) {
     );
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
-    scrollToArticleHash();
+    if (requestedReadingAnchor) scrollToReadingAnchor();
+    else scrollToArticleHash();
     consumePendingArticleTarget(chain.id);
   } catch (error) {
     view.innerHTML = `
@@ -1429,7 +1446,9 @@ function renderCoreInsights(trackId, insights) {
       });
       insight.sources?.forEach((source) => {
         const link = el("a", "logic-source", source.label);
-        link.href = source.type === "article" ? buildReadingUrl(source.url) : source.url;
+        link.href = source.type === "article"
+          ? buildReadingUrl(source.url, source.anchor)
+          : source.url;
         link.title = source.title || source.label;
         link.target = "_blank";
         link.rel = "noopener noreferrer";

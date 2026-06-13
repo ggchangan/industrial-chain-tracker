@@ -237,6 +237,41 @@ async function handleApi(context) {
     return;
   }
 
+  const logicCardsMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/logic-cards$/
+  );
+  if (request.method === "GET" && logicCardsMatch) {
+    sendJson(response, 200, await contentStore.listLogicCards(logicCardsMatch[1]));
+    return;
+  }
+
+  if (request.method === "POST" && logicCardsMatch) {
+    const body = await readJsonBody(request, 512 * 1024);
+    const card = await contentStore.saveLogicCard(logicCardsMatch[1], "", body);
+    sendJson(response, 201, { card });
+    return;
+  }
+
+  const editableLogicCardMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/logic-cards\/([a-z0-9-]+)$/
+  );
+  if (request.method === "PUT" && editableLogicCardMatch) {
+    const body = await readJsonBody(request, 512 * 1024);
+    const card = await contentStore.saveLogicCard(
+      editableLogicCardMatch[1],
+      editableLogicCardMatch[2],
+      body
+    );
+    sendJson(response, 200, { card });
+    return;
+  }
+
+  if (request.method === "DELETE" && editableLogicCardMatch) {
+    await contentStore.deleteLogicCard(editableLogicCardMatch[1], editableLogicCardMatch[2]);
+    sendJson(response, 200, { deleted: true });
+    return;
+  }
+
   sendJson(response, 404, { error: "not_found" });
 }
 
