@@ -1948,6 +1948,27 @@ footer a {
   font-weight: 800;
 }
 
+.standalone-reading .site-header,
+.standalone-reading main > section:not(#article),
+.standalone-reading footer,
+.standalone-reading #companyPanel {
+  display: none;
+}
+
+.standalone-reading main {
+  min-height: 100vh;
+}
+
+.standalone-reading #article {
+  padding-top: 42px;
+}
+
+.standalone-reading #article .section-head {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1180px;
+}
+
 .nav-button {
   appearance: none;
   background: transparent;

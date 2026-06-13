@@ -6,6 +6,7 @@ const initialParams = new URLSearchParams(window.location.search);
 const requestedChainId = initialParams.get("chain");
 let requestedReading = normalizeReadingSource(initialParams.get("reading"));
 let currentId = chainAliases[requestedChainId] || requestedChainId || library.chains[0].id;
+document.body.classList.toggle("standalone-reading", Boolean(requestedReading));
 
 if (requestedChainId && requestedChainId !== currentId) {
   const canonicalUrl = new URL(window.location.href);
@@ -1044,6 +1045,7 @@ async function renderArticle(chain) {
     if (!rendered.meta.title) {
       rendered.meta.title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || chain.title;
     }
+    if (requestedReading) document.title = rendered.meta.title;
     document.querySelector("#articleSectionTitle").textContent = requestedReading ? "研究文章阅读" : "原文阅读";
     document.querySelector("#articleSectionDescription").textContent = requestedReading
       ? "复用产业链原文阅读能力，保留文章层级、目录、锚点与当前位置高亮。"
