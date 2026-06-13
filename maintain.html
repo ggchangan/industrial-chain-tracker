@@ -10,9 +10,10 @@
     <header class="site-header compact-header">
       <nav class="nav">
         <a href="./index.html">公开阅读页</a>
+        <a href="#archive">资料档案</a>
+        <a href="#add-source">新增资料</a>
         <a href="#edit-article">更新原文</a>
         <a href="#add-update">添加动态</a>
-        <a href="#resources">内容资源</a>
         <button id="adminLogout" class="nav-button" type="button">退出登录</button>
       </nav>
       <section class="hero">
@@ -26,7 +27,120 @@
       <section class="section admin-workspace">
         <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
 
+        <section id="archive" class="archive-workspace">
+          <div class="section-head compact">
+            <p class="eyebrow">Chain Archive</p>
+            <h2>产业链资料档案</h2>
+            <p>产业链基准原文负责骨架；研究文章、视频、公众号、微博、公告和研报作为独立资料长期归档。</p>
+          </div>
+          <label class="archive-chain-picker">
+            <span>当前产业链</span>
+            <select id="archiveChainId"></select>
+          </label>
+          <div class="archive-summary" id="archiveSummary"></div>
+          <div class="archive-list" id="archiveList"></div>
+        </section>
+
         <div class="admin-form-grid">
+          <article id="add-source" class="admin-form-panel">
+            <div class="section-head compact">
+              <p class="eyebrow">New Source</p>
+              <h2>新增资料归档</h2>
+              <p>先保存完整来源和原文，再决定是否提炼逻辑卡或发布为动态追踪。</p>
+            </div>
+
+            <form id="addSourceForm" class="admin-form">
+              <label>
+                <span>归属产业链</span>
+                <select id="sourceChainId" name="chainId" required></select>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>资料类型</span>
+                  <select name="type" required>
+                    <option value="research-article">研究文章</option>
+                    <option value="short-video">短视频</option>
+                    <option value="wechat">微信公众号</option>
+                    <option value="weibo">微博</option>
+                    <option value="announcement">公司公告</option>
+                    <option value="report">研报</option>
+                    <option value="news">新闻</option>
+                    <option value="other">其他资料</option>
+                  </select>
+                </label>
+                <label>
+                  <span>日期</span>
+                  <input name="date" type="date" required />
+                </label>
+              </div>
+
+              <label>
+                <span>资料标题</span>
+                <input name="title" type="text" placeholder="文章、视频或公告的完整标题" required />
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>来源平台</span>
+                  <input name="platform" type="text" placeholder="抖音 / 微信公众号 / 自有研究" />
+                </label>
+                <label>
+                  <span>作者或机构</span>
+                  <input name="author" type="text" placeholder="可选" />
+                </label>
+              </div>
+
+              <label>
+                <span>原始链接</span>
+                <input name="originalUrl" type="url" placeholder="https://...；自有文章可以留空" />
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>关联环节</span>
+                  <input name="segment" type="text" placeholder="例如：覆铜板 CCL" />
+                </label>
+                <label>
+                  <span>关联公司</span>
+                  <input name="companies" type="text" placeholder="国际复材、中国巨石" />
+                </label>
+              </div>
+
+              <label>
+                <span>资料摘要</span>
+                <textarea name="summary" rows="3" placeholder="这份资料主要讲了什么"></textarea>
+              </label>
+
+              <label>
+                <span>上传原文 Markdown（可选）</span>
+                <input id="sourceMarkdownFile" type="file" accept=".md,text/markdown,text/plain" />
+              </label>
+
+              <label>
+                <span>保存的原文</span>
+                <textarea id="sourceMarkdown" name="markdown" class="admin-json-editor source-editor" rows="16" spellcheck="false" placeholder="研究文章粘贴完整 Markdown；视频可在完成转写后补充"></textarea>
+              </label>
+
+              <div class="admin-field-row">
+                <label>
+                  <span>标签</span>
+                  <input name="tags" type="text" placeholder="价格传导、价值量、AI服务器" />
+                </label>
+                <label>
+                  <span>状态</span>
+                  <select name="status">
+                    <option value="draft">待整理</option>
+                    <option value="published">已发布</option>
+                    <option value="archived">仅归档</option>
+                  </select>
+                </label>
+              </div>
+
+              <button class="button primary admin-submit" type="submit">保存资料归档</button>
+            </form>
+          </article>
+
           <article id="edit-article" class="admin-form-panel">
             <div class="section-head compact">
               <p class="eyebrow">Article</p>
@@ -137,8 +251,8 @@
       <section id="resources" class="section">
         <div class="section-head">
           <p class="eyebrow">Library</p>
-          <h2>已建档内容</h2>
-          <p>查看公开效果和资源文件。原文更新与动态追踪保存在独立持久化卷中，不会因重新部署而丢失。</p>
+          <h2>产业链总览</h2>
+          <p>快速查看每条产业链的原文、资料、逻辑卡和动态数量。</p>
         </div>
         <div class="maintain-tools">
           <label for="maintainSearch">筛选产业链</label>

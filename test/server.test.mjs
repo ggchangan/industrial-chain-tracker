@@ -17,6 +17,7 @@ test.before(async () => {
     managedChains: [{ id: "semiconductor-material-industry-chain" }],
     articleOverrides: {},
     updatesByChain: {},
+    sourcesByChain: {},
     updatedAt: ""
   }));
   server = await createAppServer({
@@ -45,6 +46,10 @@ test("health and library APIs expose synchronized content", async () => {
   assert.ok(library.chains.some((chain) => chain.id === "physical-ai"));
   assert.ok(library.chains.some((chain) => chain.id === "semiconductor-material"));
   assert.ok(!library.chains.some((chain) => chain.id === "semiconductor-material-industry-chain"));
+  const pcb = library.chains.find((chain) => chain.id === "pcb");
+  assert.ok(!pcb.sources.some((source) =>
+    source.markdownUrl === pcb.article || source.originalUrl === pcb.article
+  ));
 });
 
 test("chain API can include Markdown article content", async () => {
@@ -153,16 +158,46 @@ test("authenticated maintainer can update an existing article and append an upda
   });
   assert.equal(updateResponse.status, 201);
 
+  const sourceMarkdown = "# CCL价格传导测试资料\n\n这是一份保存到产业链资料档案的完整 Markdown 原文，用于验证独立资料不会覆盖产业链基准原文。";
+  const sourceResponse = await fetch(`${baseUrl}/api/v1/admin/chains/pcb/sources`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({
+      date: "2026-06-13",
+      type: "research-article",
+      platform: "自有研究",
+      title: "CCL价格传导测试资料",
+      originalUrl: "",
+      summary: "验证资料归档与原文持久化。",
+      segment: "覆铜板 CCL",
+      companies: "生益科技、国际复材",
+      tags: "价格传导、CCL",
+      status: "draft",
+      markdown: sourceMarkdown
+    })
+  });
+  assert.equal(sourceResponse.status, 201);
+  const savedSource = (await sourceResponse.json()).source;
+  assert.match(savedSource.markdownUrl, /^\/managed\/sources\/pcb\//);
+
   const chainPayload = await fetch(`${baseUrl}/api/v1/chains/pcb?article=html`)
     .then((response) => response.json());
   assert.equal(chainPayload.chain.updates[0].sourceUrl, "https://example.com/article");
   assert.equal(chainPayload.chain.updates[0].type, "产业事件");
   assert.match(chainPayload.article.html, /维护测试章节/);
   assert.match(chainPayload.chain.article, /^\/managed\/raw\//);
+  assert.ok(chainPayload.chain.sources.some((source) => source.title === "CCL价格传导测试资料"));
+  assert.ok(chainPayload.chain.sources.some((source) => source.originalUrl === "https://example.com/article"));
 
   const persisted = JSON.parse(await readFile(path.join(dataDir, "managed-content.json"), "utf8"));
   assert.match(persisted.articleOverrides.pcb, /^\/managed\/raw\//);
   assert.equal(persisted.updatesByChain.pcb[0].signal, "维护后台追加测试动态");
+  assert.equal(persisted.sourcesByChain.pcb[0].title, "CCL价格传导测试资料");
+  const persistedMarkdown = await readFile(
+    path.join(dataDir, persisted.sourcesByChain.pcb[0].markdownUrl.replace(/^\/managed\//, "")),
+    "utf8"
+  );
+  assert.match(persistedMarkdown, /不会覆盖产业链基准原文/);
 });
 
 async function login() {

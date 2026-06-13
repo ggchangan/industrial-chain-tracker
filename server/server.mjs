@@ -200,6 +200,14 @@ async function handleApi(context) {
     return;
   }
 
+  const sourceMatch = pathname.match(/^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/sources$/);
+  if (request.method === "POST" && sourceMatch) {
+    const body = await readJsonBody(request, 2 * 1024 * 1024);
+    const source = await contentStore.addSource(sourceMatch[1], body);
+    sendJson(response, 201, { source });
+    return;
+  }
+
   sendJson(response, 404, { error: "not_found" });
 }
 

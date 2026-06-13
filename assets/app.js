@@ -77,8 +77,11 @@ function compactText(values) {
 
 function normalizeReadingSource(value) {
   const source = String(value || "").replace(/^\.?\//, "");
-  if (!/^content\/research\/[A-Za-z0-9_./-]+\.md$/.test(source) || source.includes("..")) return "";
-  return `./${source}`;
+  const allowed =
+    /^content\/research\/[A-Za-z0-9_./-]+\.md$/.test(source) ||
+    /^managed\/sources\/[A-Za-z0-9_./-]+\.md$/.test(source);
+  if (!allowed || source.includes("..")) return "";
+  return source.startsWith("managed/") ? `/${source}` : `./${source}`;
 }
 
 function buildReadingUrl(sourceUrl) {
@@ -87,7 +90,7 @@ function buildReadingUrl(sourceUrl) {
 
   const url = new URL("./index.html", window.location.href);
   url.searchParams.set("chain", currentId);
-  url.searchParams.set("reading", source.slice(2));
+  url.searchParams.set("reading", source.replace(/^\.?\//, ""));
   url.hash = "article";
   return url.toString();
 }

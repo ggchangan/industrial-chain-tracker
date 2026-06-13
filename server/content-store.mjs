@@ -1,4 +1,5 @@
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import crypto from "node:crypto";
 import path from "node:path";
 
 const STATE_FILE = "managed-content.json";
@@ -69,6 +70,26 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     return structuredClone(update);
   }
 
+  async function addSource(chainId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+
+    const source = normalizeSource(input);
+    if (source.markdown) {
+      const sourceRelativePath = path.join("sources", chainId, `${source.id}.md`);
+      await writeManagedFile(resolvedDataDir, sourceRelativePath, source.markdown);
+      source.markdownUrl = managedUrl(sourceRelativePath);
+      delete source.markdown;
+    }
+
+    state.sourcesByChain ||= {};
+    state.sourcesByChain[chainId] ||= [];
+    state.sourcesByChain[chainId].unshift(source);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(source);
+  }
+
   async function getEditableChain(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -100,16 +121,20 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     if (index < 0) throw notFoundError("该产业链不是通过后台创建的，无法删除");
     const [chain] = state.managedChains.splice(index, 1);
     delete state.updatesByChain[chainId];
+    const sources = state.sourcesByChain?.[chainId] || [];
+    if (state.sourcesByChain) delete state.sourcesByChain[chainId];
     await Promise.all([
       removeManagedFile(resolvedDataDir, chain.article),
       removeManagedFile(resolvedDataDir, chain.cover),
-      removeManagedFile(resolvedDataDir, chain.diagram)
+      removeManagedFile(resolvedDataDir, chain.diagram),
+      ...sources.map((source) => removeManagedFile(resolvedDataDir, source.markdownUrl))
     ]);
     await saveState(resolvedDataDir, state);
     library = mergeLibrary(baseLibrary, state);
   }
 
   return {
+    addSource,
     addUpdate,
     createChain,
     deleteManagedChain,
@@ -161,6 +186,10 @@ function mergeLibrary(baseLibrary, state) {
   for (const chain of library.chains) {
     const managedUpdates = structuredClone(state.updatesByChain?.[chain.id] || []);
     if (managedUpdates.length) chain.updates = [...managedUpdates, ...(chain.updates || [])];
+    chain.sources = mergeSources(
+      structuredClone(state.sourcesByChain?.[chain.id] || []),
+      sourcesFromUpdates(chain.updates || [], chain.article)
+    );
   }
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
@@ -182,9 +211,11 @@ function migrateDeprecatedChains(baseLibrary, state) {
   state.managedChains = state.managedChains.filter((chain) => chain.id !== "semiconductor-material-industry-chain");
   const hadUpdates = Boolean(state.updatesByChain["semiconductor-material-industry-chain"]);
   const hadOverride = Boolean(state.articleOverrides["semiconductor-material-industry-chain"]);
+  const hadSources = Boolean(state.sourcesByChain?.["semiconductor-material-industry-chain"]);
   delete state.updatesByChain["semiconductor-material-industry-chain"];
   delete state.articleOverrides["semiconductor-material-industry-chain"];
-  return previousLength !== state.managedChains.length || hadUpdates || hadOverride;
+  if (state.sourcesByChain) delete state.sourcesByChain["semiconductor-material-industry-chain"];
+  return previousLength !== state.managedChains.length || hadUpdates || hadOverride || hadSources;
 }
 
 async function readState(dataDir) {
@@ -194,11 +225,12 @@ async function readState(dataDir) {
       managedChains: Array.isArray(state.managedChains) ? state.managedChains : [],
       articleOverrides: state.articleOverrides && typeof state.articleOverrides === "object" ? state.articleOverrides : {},
       updatesByChain: state.updatesByChain && typeof state.updatesByChain === "object" ? state.updatesByChain : {},
+      sourcesByChain: state.sourcesByChain && typeof state.sourcesByChain === "object" ? state.sourcesByChain : {},
       updatedAt: state.updatedAt || ""
     };
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    return { managedChains: [], articleOverrides: {}, updatesByChain: {}, updatedAt: "" };
+    return { managedChains: [], articleOverrides: {}, updatesByChain: {}, sourcesByChain: {}, updatedAt: "" };
   }
 }
 
@@ -413,6 +445,121 @@ function normalizeUpdate(input) {
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(update.date)) throw validationError("日期格式应为 YYYY-MM-DD");
   return update;
+}
+
+function normalizeSource(input) {
+  const type = required(input.type, "请选择资料类型");
+  const allowedTypes = new Set([
+    "research-article",
+    "short-video",
+    "wechat",
+    "weibo",
+    "announcement",
+    "report",
+    "news",
+    "other"
+  ]);
+  if (!allowedTypes.has(type)) throw validationError("资料类型无效");
+
+  const title = required(input.title, "请输入资料标题");
+  const originalUrl = String(input.originalUrl || "").trim();
+  if (originalUrl && !/^https?:\/\//i.test(originalUrl)) {
+    throw validationError("原始链接必须以 http:// 或 https:// 开头");
+  }
+
+  const markdown = String(input.markdown || "").trim();
+  if (markdown && Buffer.byteLength(markdown, "utf8") > 2 * 1024 * 1024) {
+    throw validationError("资料原文不能超过 2MB");
+  }
+
+  return {
+    id: `${formatCompactDate(input.date || formatChinaDate(new Date()))}-${normalizeId(title).slice(0, 40) || "source"}-${crypto.randomUUID().slice(0, 8)}`,
+    date: normalizeDate(input.date || formatChinaDate(new Date())),
+    type,
+    platform: String(input.platform || "").trim(),
+    title,
+    author: String(input.author || "").trim(),
+    originalUrl,
+    summary: String(input.summary || "").trim(),
+    segment: String(input.segment || "").trim(),
+    companies: splitList(input.companies),
+    tags: splitList(input.tags),
+    status: ["draft", "published", "archived"].includes(input.status) ? input.status : "draft",
+    markdown: markdown ? `${markdown}\n` : "",
+    createdAt: new Date().toISOString()
+  };
+}
+
+function sourcesFromUpdates(updates, baseArticleUrl) {
+  const normalizedBaseArticle = normalizeSourceReference(baseArticleUrl);
+  return updates
+    .filter((item) => {
+      if (!item.sourceUrl && !item.sourceTitle) return false;
+      return normalizeSourceReference(item.sourceUrl) !== normalizedBaseArticle;
+    })
+    .map((item, index) => ({
+      id: `update-${item.date}-${index}`,
+      date: item.date,
+      type: sourceTypeFromUpdate(item),
+      platform: item.sourcePlatform || "",
+      title: item.sourceTitle || item.signal,
+      originalUrl: /^https?:\/\//i.test(item.sourceUrl || "") ? item.sourceUrl : "",
+      markdownUrl: /\.md(?:$|\?)/i.test(item.sourceUrl || "") ? item.sourceUrl : "",
+      summary: item.impact || item.signal,
+      segment: item.segment || "",
+      companies: [],
+      tags: [],
+      status: "published",
+      derivedFromUpdate: true
+    }));
+}
+
+function normalizeSourceReference(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^\.\//, "")
+    .replace(/^\/+/, "")
+    .split(/[?#]/, 1)[0];
+}
+
+function mergeSources(managedSources, derivedSources) {
+  const seen = new Set();
+  return [...managedSources, ...derivedSources]
+    .filter((source) => {
+      const key = normalizeSourceReference(source.originalUrl || source.markdownUrl) ||
+        `${source.date}:${source.title}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((left, right) =>
+      String(right.date || "").localeCompare(String(left.date || "")) ||
+      String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
+    );
+}
+
+function sourceTypeFromUpdate(item) {
+  if (item.sourceKind === "短视频") return "short-video";
+  if (item.sourceKind === "文章") return "research-article";
+  if (item.sourceKind === "公告") return "announcement";
+  return "other";
+}
+
+function splitList(value) {
+  return String(value || "")
+    .split(/[、,，\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeDate(value) {
+  const date = String(value || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw validationError("日期格式应为 YYYY-MM-DD");
+  return date;
+}
+
+function formatCompactDate(value) {
+  return normalizeDate(value).replaceAll("-", "");
 }
 
 function required(value, message) {
