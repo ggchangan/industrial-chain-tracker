@@ -56,6 +56,7 @@ for (const chain of library.chains) {
     sourceUrl: normalizeSourceUrl(item.source.url),
     sourceKind: normalizeSourceKind(item.source),
     sourcePlatform: item.source.platform || "",
+    sourceIllustrations: item.source.illustrations || [],
     ...(item.logicTrack ? { logicTrack: item.logicTrack } : {}),
     ...(item.propagation ? { propagation: normalizePropagation(chain.id, item.propagation) } : {}),
     notes: item.notes

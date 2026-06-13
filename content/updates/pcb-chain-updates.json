@@ -210,12 +210,7 @@
         "title": "机构深度解读：主动超额提价，CCL行业盈利模式变化",
         "url": "https://v.douyin.com/n5ig7pXQXBc/"
       },
-      "notes": "视频来源用于记录机构观点，不与后续文章合并；“累计涨幅超过40%”目前仅作为来源观点进入逻辑追踪。",
-      "logicTrack": {
-        "id": "ccl-price-transmission",
-        "role": "触发信号",
-        "contribution": "提供CCL年内多轮提价及累计涨幅的机构观点，触发对上游成本、CCL定价和下游传导的持续跟踪。"
-      }
+      "notes": "当前仅保存视频标题、链接与用户提供的摘要信息；尚未取得完整字幕或口播文本，因此不从该视频提取逻辑卡。"
     },
     {
       "date": "2026-06-13",
@@ -228,7 +223,21 @@
         "type": "article",
         "platform": "研究文章",
         "title": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
-        "url": "../research/pcb-ccl-pricing-cycle/original.md"
+        "url": "../research/pcb-ccl-pricing-cycle/original.md",
+        "illustrations": [
+          {
+            "src": "./cover-image/pcb-industry-chain/pcb-industry-chain-ccl-cover.png",
+            "alt": "PCB产业链深度研究封面",
+            "caption": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？",
+            "afterHeading": "PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？"
+          },
+          {
+            "src": "./diagram/pcb-industry-chain/pcb-industry-chain-value-proportion.png",
+            "alt": "PCB产业链价值量占比与利润体量图",
+            "caption": "以100元PCB为基准，观察CCL、铜箔、树脂和电子布的价值穿透，以及AI服务器对材料价值量的重构。",
+            "afterHeading": "2.5 体量占比：透视上游材料在PCB中的真实“重量”"
+          }
+        ]
       },
       "logicTrack": {
         "id": "ccl-price-transmission",
@@ -284,12 +293,6 @@
             }
           ],
           "sources": [
-            {
-              "label": "打开抖音视频",
-              "type": "short-video",
-              "title": "机构深度解读：主动超额提价，CCL行业盈利模式变化",
-              "url": "https://v.douyin.com/n5ig7pXQXBc/"
-            },
             {
               "label": "阅读全文",
               "type": "article",
@@ -507,93 +510,7 @@
             }
           ]
         }
-      ],
-      "propagation": {
-        "title": "价格与利润如何沿产业链传导",
-        "summary": "核心结论回答“为什么”，这条路径继续回答涨价如何从上游材料传到CCL、PCB需求和财务结果。",
-        "nodes": [
-          {
-            "label": "电子布 / 铜箔 / PPO供需",
-            "description": "上游材料成本与交期变化",
-            "state": "来源观点",
-            "target": {
-              "type": "chain",
-              "index": "0"
-            }
-          },
-          {
-            "label": "CCL提价",
-            "description": "视频与文章均提出涨价信号",
-            "state": "来源观点",
-            "target": {
-              "type": "chain-item",
-              "index": "2-3"
-            }
-          },
-          {
-            "label": "PCB成本与议价",
-            "description": "CCL涨幅在PCB总价值中被摊薄",
-            "state": "逻辑推演",
-            "target": {
-              "type": "chain-item",
-              "index": "3-0"
-            }
-          },
-          {
-            "label": "AI服务器订单",
-            "description": "高价值终端对材料涨价相对不敏感",
-            "state": "逻辑推演",
-            "target": {
-              "type": "tracking",
-              "index": "2"
-            }
-          },
-          {
-            "label": "盈利质量兑现",
-            "description": "毛利率、现金流与存货",
-            "state": "逻辑推演",
-            "target": {
-              "type": "tracking",
-              "index": "4"
-            }
-          }
-        ],
-        "changeSignals": [
-          {
-            "label": "上游供给释放",
-            "description": "电子布、铜箔与树脂扩产加快，紧缺品类由普涨转为结构性分化。",
-            "metric": "扩产进度、交期、库存、调价函",
-            "state": "持续观察"
-          },
-          {
-            "label": "AI需求降速",
-            "description": "云厂商资本开支或AI服务器订单连续走弱，材料升级需求低于预期。",
-            "metric": "资本开支指引、服务器订单、产品结构",
-            "state": "持续观察"
-          },
-          {
-            "label": "价格传导受阻",
-            "description": "PCB厂商无法向客户转嫁CCL成本，毛利率、现金流或库存质量承压。",
-            "metric": "PCB毛利率、应收、存货、客户接受度",
-            "state": "重点验证",
-            "target": {
-              "type": "chain-item",
-              "index": "3-0"
-            }
-          },
-          {
-            "label": "技术路线变化",
-            "description": "CPO等新架构改变部分高速互连需求，需要重新评估PCB与高端CCL价值量。",
-            "metric": "CPO商用进度、交换机架构、材料方案",
-            "state": "长期跟踪"
-          }
-        ],
-        "verificationNotes": [
-          "视频中的四轮涨价及累计涨幅目前仍属于来源观点，需要调价函或公司公告验证。",
-          "研究文章提供了价格传导、成本穿透和逻辑失效框架，其中具体价格、利润、产能和预测数据仍需逐项核验。",
-          "文章内同时出现约16%与约26%的材料占比口径，逻辑追踪暂不把任一数字标记为已验证。"
-        ]
-      }
+      ]
     }
   ]
 }

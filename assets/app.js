@@ -840,6 +840,23 @@ function renderArticleMeta(meta, chain) {
   `;
 }
 
+function injectArticleIllustrations(view, illustrations) {
+  illustrations.forEach((illustration) => {
+    const heading = [...view.querySelectorAll(".article-heading")]
+      .find((item) => item.textContent.trim() === illustration.afterHeading);
+    if (!heading) return;
+
+    const figure = el("figure", "article-illustration");
+    figure.innerHTML = `
+      <a href="${escapeHtml(illustration.src)}" target="_blank" rel="noopener noreferrer">
+        <img src="${escapeHtml(illustration.src)}" alt="${escapeHtml(illustration.alt)}" loading="lazy">
+      </a>
+      <figcaption>${escapeHtml(illustration.caption)}</figcaption>
+    `;
+    heading.insertAdjacentElement("afterend", figure);
+  });
+}
+
 function scrollToArticleHash() {
   if (!window.location.hash) return;
 
@@ -1051,6 +1068,10 @@ async function renderArticle(chain) {
       ? "复用产业链原文阅读能力，保留文章层级、目录、锚点与当前位置高亮。"
       : "以正式文章方式呈现完整研究内容，适合系统阅读、查找公司段落和回看关键判断。";
     view.innerHTML = `${renderArticleMeta(rendered.meta, chain)}${rendered.html}`;
+    const activeResearch = requestedReading
+      ? chain.updates.find((item) => normalizeReadingSource(item.sourceUrl) === requestedReading)
+      : null;
+    injectArticleIllustrations(view, activeResearch?.sourceIllustrations || []);
     renderArticleToc(rendered.toc);
     watchArticleHeadings();
     scrollToArticleHash();

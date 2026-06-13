@@ -152,6 +152,19 @@ async function validateUpdateFile(chain, label) {
       requireString(item.notes, `${itemLabel}.notes`);
       requireString(item.source?.title, `${itemLabel}.source.title`);
       requireString(item.source?.url, `${itemLabel}.source.url`);
+      if (item.source?.illustrations) {
+        if (!Array.isArray(item.source.illustrations)) {
+          fail(`${itemLabel}.source.illustrations must be an array`);
+        } else {
+          item.source.illustrations.forEach((illustration, illustrationIndex) => {
+            const illustrationLabel = `${itemLabel}.source.illustrations[${illustrationIndex}]`;
+            requireString(illustration.src, `${illustrationLabel}.src`);
+            requireString(illustration.alt, `${illustrationLabel}.alt`);
+            requireString(illustration.caption, `${illustrationLabel}.caption`);
+            requireString(illustration.afterHeading, `${illustrationLabel}.afterHeading`);
+          });
+        }
+      }
       if (item.logicTrack) {
         requireString(item.logicTrack.id, `${itemLabel}.logicTrack.id`);
         requireString(item.logicTrack.role, `${itemLabel}.logicTrack.role`);

@@ -1969,6 +1969,29 @@ footer a {
   max-width: 1180px;
 }
 
+.article-illustration {
+  margin: 22px 0 32px;
+}
+
+.article-illustration a {
+  border: 1px solid var(--line);
+  display: block;
+  overflow: hidden;
+}
+
+.article-illustration img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.article-illustration figcaption {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
 .nav-button {
   appearance: none;
   background: transparent;
