@@ -845,8 +845,8 @@ function renderArticleMeta(meta, chain) {
 
 function injectArticleIllustrations(view, illustrations) {
   illustrations.forEach((illustration) => {
-    const heading = [...view.querySelectorAll(".article-heading")]
-      .find((item) => item.textContent.trim() === illustration.afterHeading);
+    const headings = [...view.querySelectorAll(".article-heading")];
+    const heading = findIllustrationHeading(headings, illustration.afterHeading);
     if (!heading) return;
 
     const figure = el("figure", "article-illustration");
@@ -858,6 +858,32 @@ function injectArticleIllustrations(view, illustrations) {
     `;
     heading.insertAdjacentElement("afterend", figure);
   });
+}
+
+function findIllustrationHeading(headings, afterHeading) {
+  const target = String(afterHeading || "").trim();
+  if (!target) return headings.find((item) => item.tagName === "H1") || headings[0];
+
+  const exact = headings.find((item) => item.textContent.trim() === target);
+  if (exact) return exact;
+
+  const targetKey = illustrationHeadingKey(target);
+  if (!targetKey) return null;
+  return headings.find((item) => {
+    const headingKey = illustrationHeadingKey(item.textContent);
+    return Boolean(headingKey) && (
+      headingKey === targetKey ||
+      (targetKey.length >= 4 && (headingKey.includes(targetKey) || targetKey.includes(headingKey)))
+    );
+  }) || null;
+}
+
+function illustrationHeadingKey(value) {
+  return String(value || "")
+    .replace(/^\s*第?[一二三四五六七八九十百\d.、（）() -]+(?:章|节)?\s*/, "")
+    .split(/[：:——]/, 1)[0]
+    .replace(/[^\w\u4e00-\u9fa5]+/g, "")
+    .toLowerCase();
 }
 
 function scrollToArticleHash() {

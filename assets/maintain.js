@@ -22,6 +22,7 @@ const sourceFileInput = document.querySelector("#sourceMarkdownFile");
 const sourceMarkdownInput = document.querySelector("#sourceMarkdown");
 const sourceIllustrationFiles = document.querySelector("#sourceIllustrationFiles");
 const sourceIllustrationList = document.querySelector("#sourceIllustrationList");
+const sourceMarkdownAnalysis = document.querySelector("#sourceMarkdownAnalysis");
 const cancelSourceEdit = document.querySelector("#cancelSourceEdit");
 const cancelUpdateEdit = document.querySelector("#cancelUpdateEdit");
 
@@ -33,6 +34,8 @@ async function initialize() {
   fileInput.addEventListener("change", readMarkdownFile);
   sourceFileInput.addEventListener("change", readSourceMarkdownFile);
   sourceIllustrationFiles.addEventListener("change", readSourceIllustrations);
+  sourceMarkdownInput.addEventListener("input", renderSourceMarkdownAnalysis);
+  sourceForm.elements.title.addEventListener("input", renderSourceMarkdownAnalysis);
   articleSelect.addEventListener("change", () => loadArticle(articleSelect.value));
   archiveSelect.addEventListener("change", () => {
     state.archiveChainId = archiveSelect.value;
@@ -212,6 +215,7 @@ async function readSourceMarkdownFile() {
     sourceForm.elements.title.value =
       sourceMarkdownInput.value.match(/^#\s+(.+)$/m)?.[1]?.trim() || file.name.replace(/\.md$/i, "");
   }
+  renderSourceMarkdownAnalysis();
   setNotice(`${file.name} 已载入资料原文。`, "success");
 }
 
@@ -249,6 +253,7 @@ async function readSourceIllustrations() {
 function renderSourceIllustrations() {
   if (!state.sourceAssets.length) {
     sourceIllustrationList.innerHTML = `<p class="source-assets-empty">尚未添加配图。</p>`;
+    renderSourceMarkdownAnalysis();
     return;
   }
   sourceIllustrationList.innerHTML = state.sourceAssets.map((item) => `
@@ -286,6 +291,61 @@ function renderSourceIllustrations() {
       renderSourceIllustrations();
     });
   });
+  renderSourceMarkdownAnalysis();
+}
+
+function renderSourceMarkdownAnalysis() {
+  const markdown = sourceMarkdownInput.value.trim();
+  if (!markdown) {
+    sourceMarkdownAnalysis.textContent =
+      "粘贴或上传完整 Markdown 后，将在这里检查标题和配图位置。";
+    return;
+  }
+  const headings = [...markdown.matchAll(/^(#{1,4})\s+(.+)$/gm)]
+    .map((match) => ({ level: match[1].length, text: match[2].trim() }));
+  const hasTitle = headings.some((heading) => heading.level === 1);
+  const analyzedHeadings = hasTitle ? headings : [
+    { level: 1, text: sourceForm.elements.title.value.trim() || "资料标题" },
+    ...headings
+  ];
+  const titleMessage = hasTitle
+    ? "已识别一级标题"
+    : `缺少一级标题，保存时将自动补为“${sourceForm.elements.title.value.trim() || "资料标题"}”`;
+  const imageMessages = state.sourceAssets.map((asset) => {
+    const matched = findMarkdownHeading(analyzedHeadings, asset.afterHeading);
+    return matched
+      ? `“${asset.alt || "配图"}” → ${matched.text}`
+      : `“${asset.alt || "配图"}”暂未匹配章节`;
+  });
+  sourceMarkdownAnalysis.textContent = [
+    titleMessage,
+    `共 ${headings.length} 个标题`,
+    ...imageMessages
+  ].join("；");
+}
+
+function findMarkdownHeading(headings, afterHeading) {
+  const target = String(afterHeading || "").trim();
+  if (!target) return headings.find((heading) => heading.level === 1) || headings[0];
+  const exact = headings.find((heading) => heading.text === target);
+  if (exact) return exact;
+  const targetKey = markdownHeadingKey(target);
+  if (!targetKey) return null;
+  return headings.find((heading) => {
+    const key = markdownHeadingKey(heading.text);
+    return Boolean(key) && (
+      key === targetKey ||
+      (targetKey.length >= 4 && (key.includes(targetKey) || targetKey.includes(key)))
+    );
+  }) || null;
+}
+
+function markdownHeadingKey(value) {
+  return String(value || "")
+    .replace(/^\s*第?[一二三四五六七八九十百\d.、（）() -]+(?:章|节)?\s*/, "")
+    .split(/[：:——]/, 1)[0]
+    .replace(/[^\w\u4e00-\u9fa5]+/g, "")
+    .toLowerCase();
 }
 
 async function addSource(event) {
@@ -343,6 +403,7 @@ async function editSource(chainId, sourceId) {
       preview: item.src
     }));
     renderSourceIllustrations();
+    renderSourceMarkdownAnalysis();
     document.querySelector("#sourceFormTitle").textContent = "编辑资料包";
     document.querySelector("#sourceFormDescription").textContent =
       "原文、配图、来源信息和归档状态会作为一个整体保存。";
@@ -363,6 +424,7 @@ function resetSourceForm(chainId = sourceSelect.value) {
   sourceMarkdownInput.value = "";
   state.sourceAssets = [];
   renderSourceIllustrations();
+  renderSourceMarkdownAnalysis();
   document.querySelector("#sourceFormTitle").textContent = "新增资料归档";
   document.querySelector("#sourceFormDescription").textContent =
     "先保存完整来源和原文，再决定是否提炼逻辑卡或发布为动态追踪。";

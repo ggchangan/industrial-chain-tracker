@@ -209,7 +209,9 @@ test("authenticated maintainer can update an existing article and append an upda
       body: JSON.stringify({
         ...editableSource.source,
         summary: "后台已接管这份文章及其配图。",
-        markdown: `${editableSource.markdown.trim()}\n\n## 后台资料包测试\n\n文章与配图作为一个集合更新。\n`
+        markdown: `${editableSource.markdown
+          .replace(/^#\s+.+\r?\n+/, "")
+          .trim()}\n\n## 后台资料包测试\n\n文章与配图作为一个集合更新。\n`
       })
     }
   );
@@ -217,6 +219,14 @@ test("authenticated maintainer can update an existing article and append an upda
   const updatedCclSource = (await sourceUpdateResponse.json()).source;
   assert.match(updatedCclSource.markdownUrl, /^\/managed\/sources\/pcb\//);
   assert.equal(updatedCclSource.illustrations.length, 2);
+  const updatedCclMarkdown = await readFile(
+    path.join(dataDir, updatedCclSource.markdownUrl.replace(/^\/managed\//, "")),
+    "utf8"
+  );
+  assert.match(
+    updatedCclMarkdown,
+    /^# PCB产业链深度研究：为什么CCL是最大赢家，以及这套逻辑何时会变？/
+  );
 
   const updateId = chainPayload.chain.updates.find(
     (item) => item.sourceUrl === "https://example.com/article"

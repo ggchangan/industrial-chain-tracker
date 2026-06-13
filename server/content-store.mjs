@@ -345,6 +345,13 @@ function normalizeArticleInput(input) {
   return { markdown: `${markdown}\n`, title };
 }
 
+function ensureMarkdownTitle(markdown, title) {
+  if (/^#\s+.+$/m.test(markdown)) return markdown;
+  const frontmatter = markdown.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  if (!frontmatter) return `# ${title}\n\n${markdown}`;
+  return `${frontmatter[0]}# ${title}\n\n${markdown.slice(frontmatter[0].length)}`;
+}
+
 function buildChainDraft(input) {
   const sections = extractSections(input.markdown);
   const chainSections = buildChainSections(sections);
@@ -550,7 +557,8 @@ function normalizeSource(input) {
     throw validationError("原始链接必须以 http:// 或 https:// 开头");
   }
 
-  const markdown = String(input.markdown || "").trim();
+  const rawMarkdown = String(input.markdown || "").trim();
+  const markdown = rawMarkdown ? ensureMarkdownTitle(rawMarkdown, title) : "";
   if (markdown && Buffer.byteLength(markdown, "utf8") > 2 * 1024 * 1024) {
     throw validationError("资料原文不能超过 2MB");
   }
