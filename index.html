@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链研究库</title>
-    <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="stylesheet" href="./assets/styles.css?v=research-flow-1" />
   </head>
   <body>
     <header class="site-header">
@@ -12,8 +12,10 @@
         <a href="#chains">产业链库</a>
         <a href="#chain">产业链骨架</a>
         <a href="#map">产业链图谱</a>
-        <a href="#logic">核心逻辑</a>
         <a href="#updates">动态追踪</a>
+        <a href="#research">最新研究</a>
+        <a href="#logic">核心逻辑</a>
+        <a href="#verification">观察验证</a>
         <a href="#article">原文阅读</a>
       </nav>
       <section id="chains" class="hero">
@@ -58,37 +60,47 @@
         <div class="chain-grid" id="chainGrid"></div>
       </section>
 
+      <section id="updates" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Tracking</p>
+          <h2 id="trackingTitle">动态追踪</h2>
+          <p id="trackingSummary"></p>
+        </div>
+        <div class="tracking-grid" id="trackingGrid"></div>
+        <div class="section-head compact tracking-history-head">
+          <p class="eyebrow">Change Log</p>
+          <h3>变化记录</h3>
+          <p>按时间倒序保留产业事件、机构逻辑、公司公告与数据变化，并标明证据来源。</p>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+
+      <section id="research" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Latest Research</p>
+          <h2>最新研究</h2>
+          <p>最近新增的文章、视频、公告与研报集中在这里；带有逻辑提炼的资料会明确标出。</p>
+        </div>
+        <div class="research-feed" id="researchFeed"></div>
+      </section>
+
       <section id="logic" class="section">
         <div class="section-head">
           <p class="eyebrow">Logic</p>
           <h2>核心逻辑</h2>
-          <p>每次行业观点变化，都可以回到这些主线里判断：需求、价格、供给、技术或国产替代是否发生变化。</p>
+          <p>先掌握产业链长期有效的基准逻辑，再查看近期资料提炼出的价格传导、价值量和公司弹性判断。</p>
         </div>
         <div class="logic-grid" id="logicGrid"></div>
+        <div id="logicTracks"></div>
       </section>
 
-      <section id="tracking-profile" class="section">
+      <section id="verification" class="section">
         <div class="section-head">
-          <p class="eyebrow">Tracking</p>
-          <h2 id="trackingTitle">专属动态追踪</h2>
-          <p id="trackingSummary"></p>
+          <p class="eyebrow">Verification</p>
+          <h2>观察与验证</h2>
+          <p>这些指标用于验证当前逻辑是否继续成立、正在强化，还是已经出现反转迹象。</p>
         </div>
-        <div class="tracking-grid" id="trackingGrid"></div>
-      </section>
-
-      <section id="updates" class="section split">
-        <div>
-          <div class="section-head compact">
-            <p class="eyebrow">Updates</p>
-            <h2>动态追踪</h2>
-            <p>每条更新保留来源、信号、影响、置信度和待核验备注。</p>
-          </div>
-          <div class="timeline" id="timeline"></div>
-        </div>
-        <aside class="panel">
-          <h3>观察清单</h3>
-          <div id="watchlist"></div>
-        </aside>
+        <div class="verification-grid" id="watchlist"></div>
       </section>
 
       <section id="article" class="section article-section">
@@ -112,6 +124,6 @@
     <div id="companyPanel" hidden></div>
 
     <script src="./assets/data.js"></script>
-    <script type="module" src="./assets/bootstrap.js"></script>
+    <script type="module" src="./assets/bootstrap.js?v=research-flow-5"></script>
   </body>
 </html>
