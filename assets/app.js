@@ -900,6 +900,14 @@ function scrollToArticleHash() {
   }
 }
 
+function scrollToRenderedSectionHash() {
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  if (!["chain", "updates", "research", "logic", "verification", "article"].includes(id)) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  window.setTimeout(() => target.scrollIntoView({ block: "start" }), 80);
+}
+
 function scrollToReadingAnchor() {
   if (!requestedReadingAnchor) return;
   const target = findArticleHeading(requestedReadingAnchor) ||
@@ -1167,8 +1175,10 @@ function renderCurrent(chain) {
   quick.innerHTML = "";
   [
     ["产业链骨架", "#chain"],
-    ["核心逻辑", "#logic"],
     ["动态追踪", "#updates"],
+    ["最新研究", "#research"],
+    ["核心逻辑", "#logic"],
+    ["观察与验证", "#verification"],
     ["原文阅读", "#article"],
   ].forEach(([label, href]) => {
     const link = el("a", "button", label);
@@ -1253,11 +1263,16 @@ function renderDiagram(chain) {
     : null;
   image.src = displayDiagram;
   image.alt = `${chain.title}全景与价值传导图`;
+  if (window.location.hash) {
+    image.addEventListener("load", scrollToRenderedSectionHash, { once: true });
+  }
 }
 
 function renderLogic(chain) {
   const root = document.querySelector("#logicGrid");
+  const tracksRoot = document.querySelector("#logicTracks");
   root.innerHTML = "";
+  tracksRoot.innerHTML = "";
 
   chain.logic.forEach((item, index) => {
     const card = el("article", "logic-card");
@@ -1267,6 +1282,21 @@ function renderLogic(chain) {
     card.append(el("h3", "", `${index + 1}. ${item.title}`));
     card.append(el("p", "", item.body));
     root.append(card);
+  });
+
+  (chain.logicTracks || []).forEach((track) => {
+    const logicTrack = el("section", "logic-track");
+    logicTrack.id = `logic-track-${track.id}`;
+    logicTrack.append(el("span", "logic-track-label", "近期资料提炼"));
+    logicTrack.append(el("h3", "", track.title));
+    logicTrack.append(el("p", "", track.summary));
+    if (track.coreInsights?.length) {
+      logicTrack.append(renderCoreInsights(track.id, track.coreInsights));
+    }
+    if (track.propagation?.nodes?.length) {
+      logicTrack.append(renderPropagationPath(track.propagation));
+    }
+    tracksRoot.append(logicTrack);
   });
 }
 
@@ -1283,11 +1313,32 @@ function renderTrackingProfile(chain) {
   (profile?.metrics || []).forEach((item, index) => {
     const card = el("article", "tracking-card");
     card.dataset.searchTarget = searchTargetKey(chain.id, "tracking", index);
+    const evidence = findTrackingEvidence(chain, item);
     const colors = ["var(--cyan)", "var(--amber)", "var(--green)", "var(--blue)", "#a78bfa"];
     card.style.borderColor = colors[index % colors.length];
+    card.append(el(
+      "div",
+      "tracking-card-state",
+      evidence
+        ? `<span>${escapeHtml(evidence.item.type || "动态")}</span><time>${escapeHtml(evidence.item.date)}</time>`
+        : "<span>持续观察</span><time>暂无新证据</time>"
+    ));
     card.append(el("h3", "", item.name));
     card.append(el("p", "", item.why));
-    card.append(el("ul", "", item.signals.map((signal) => `<li>${signal}</li>`).join("")));
+    if (evidence) {
+      const latest = el("aside", "tracking-latest");
+      latest.append(el("strong", "", evidence.item.signal));
+      latest.append(el("p", "", evidence.item.impact));
+      const link = el("a", "", "查看这条变化");
+      link.href = `#${evidence.id}`;
+      latest.append(link);
+      card.append(latest);
+    }
+    card.append(el(
+      "div",
+      "tracking-signals",
+      item.signals.map((signal) => `<span>${escapeHtml(signal)}</span>`).join("")
+    ));
     root.append(card);
   });
 }
@@ -1296,26 +1347,12 @@ function renderTimeline(chain) {
   const root = document.querySelector("#timeline");
   root.innerHTML = "";
 
-  (chain.logicTracks || []).forEach((track) => {
-    const logicTrack = el("section", "logic-track");
-    logicTrack.id = `logic-track-${track.id}`;
-    logicTrack.append(el("span", "logic-track-label", "逻辑追踪"));
-    logicTrack.append(el("h3", "", track.title));
-    logicTrack.append(el("p", "", track.summary));
-    if (track.coreInsights?.length) {
-      logicTrack.append(renderCoreInsights(track.id, track.coreInsights));
-    }
-    if (track.propagation?.nodes?.length) {
-      logicTrack.append(renderPropagationPath(track.propagation));
-    }
-    root.append(logicTrack);
-  });
-
   chain.updates
     .map((item, index) => ({ item, index }))
     .sort((a, b) => b.item.date.localeCompare(a.item.date) || b.index - a.index)
     .forEach(({ item, index }) => {
     const card = el("article", "timeline-item");
+    card.id = `update-${chain.id}-${index}`;
     card.dataset.searchTarget = searchTargetKey(chain.id, "update", index);
     card.append(el(
       "div",
@@ -1332,7 +1369,7 @@ function renderTimeline(chain) {
       relation.append(el("span", "", `关联逻辑 · ${item.logicTrack.role}`));
       relation.append(el("strong", "", logicTrackTitle(chain, item.logicTrack.id)));
       relation.append(el("p", "", item.logicTrack.contribution));
-      const logicLink = el("a", "", "查看逻辑追踪");
+      const logicLink = el("a", "", "查看核心逻辑");
       logicLink.href = `#logic-track-${item.logicTrack.id}`;
       relation.append(logicLink);
       card.append(relation);
@@ -1348,6 +1385,132 @@ function renderTimeline(chain) {
     card.append(actions);
     root.append(card);
   });
+}
+
+function findTrackingEvidence(chain, metric) {
+  const terms = [
+    metric.name,
+    ...(metric.signals || [])
+  ].flatMap(trackingKeywords);
+  return chain.updates
+    .map((item, index) => ({
+      item,
+      index,
+      id: `update-${chain.id}-${index}`,
+      text: normalize(compactText([
+        item.type, item.segment, item.signal, item.impact, item.notes
+      ]))
+    }))
+    .filter((entry) => terms.some((term) => entry.text.includes(term)))
+    .sort((left, right) =>
+      right.item.date.localeCompare(left.item.date) || right.index - left.index
+    )[0] || null;
+}
+
+function trackingKeywords(value) {
+  const normalized = normalize(value);
+  const keywords = new Set([normalized]);
+  normalized
+    .split(/[、，,/+与和及\s-]+/)
+    .filter(Boolean)
+    .forEach((part) => keywords.add(part));
+  const latin = normalized.match(/[a-z]+\d*(?:\/[a-z]*\d+)*/g) || [];
+  latin.forEach((part) => keywords.add(part));
+  const chinese = normalized.match(/[\u4e00-\u9fa5]{2,}/g) || [];
+  chinese.forEach((part) => {
+    keywords.add(part);
+    if (part.length >= 4) keywords.add(part.slice(0, 2));
+  });
+  return [...keywords].filter((term) => term.length >= 2);
+}
+
+function renderResearch(chain) {
+  const root = document.querySelector("#researchFeed");
+  root.innerHTML = "";
+  const logicCards = (chain.logicTracks || []).flatMap((track) =>
+    (track.coreInsights || []).map((card) => ({ ...card, trackTitle: track.title }))
+  );
+
+  const sources = [...(chain.sources || [])].sort((left, right) =>
+    String(right.date || "").localeCompare(String(left.date || "")) ||
+    String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
+  );
+
+  if (!sources.length) {
+    root.append(el("p", "research-empty", "暂时没有独立研究资料。"));
+    return;
+  }
+
+  sources.forEach((source, index) => {
+    const relatedCards = logicCards.filter((card) =>
+      (card.sources || []).some((reference) =>
+        normalizeResearchUrl(reference.url) === normalizeResearchUrl(source.markdownUrl) ||
+        normalizeResearchUrl(reference.url) === normalizeResearchUrl(source.originalUrl) ||
+        reference.title === source.title
+      )
+    );
+    const card = el("article", "research-card");
+    if (index === 0) card.classList.add("latest");
+    card.innerHTML = `
+      <div class="research-card-meta">
+        <span>${escapeHtml(researchTypeLabel(source.type))}</span>
+        <time>${escapeHtml(source.date || "")}</time>
+        ${index === 0 ? "<strong>NEW</strong>" : ""}
+      </div>
+      <h3>${escapeHtml(source.title)}</h3>
+      <p>${escapeHtml(source.summary || "已归档，等待进一步整理。")}</p>
+      <div class="research-card-tags">
+        ${source.segment ? `<span>${escapeHtml(source.segment)}</span>` : ""}
+        ${(source.companies || []).slice(0, 3).map((company) => `<span>${escapeHtml(company)}</span>`).join("")}
+      </div>
+      <div class="research-card-result">
+        ${relatedCards.length
+          ? `<strong>提炼出 ${relatedCards.length} 张逻辑卡</strong><span>${escapeHtml([...new Set(relatedCards.map((item) => item.trackTitle))].join(" · "))}</span>`
+          : "<strong>资料已归档</strong><span>尚未提炼逻辑卡</span>"}
+      </div>
+    `;
+    const actions = el("div", "research-card-actions");
+    if (source.markdownUrl) {
+      const read = el("a", "", "阅读文章");
+      read.href = buildReadingUrl(source.markdownUrl);
+      read.target = "_blank";
+      read.rel = "noopener noreferrer";
+      actions.append(read);
+    }
+    if (source.originalUrl) {
+      const original = el("a", "", source.type === "short-video" ? "打开视频" : "查看原始来源");
+      original.href = source.originalUrl;
+      original.target = "_blank";
+      original.rel = "noopener noreferrer";
+      actions.append(original);
+    }
+    if (relatedCards.length) {
+      const logic = el("a", "", "查看提炼逻辑");
+      const track = (chain.logicTracks || []).find((item) =>
+        item.coreInsights?.some((insight) => relatedCards.some((card) => card.id === insight.id))
+      );
+      logic.href = track ? `#logic-track-${track.id}` : "#logic";
+      actions.append(logic);
+    }
+    card.append(actions);
+    root.append(card);
+  });
+}
+
+function normalizeResearchUrl(value) {
+  return String(value || "").trim().replace(/^\.?\//, "");
+}
+
+function researchTypeLabel(type) {
+  return {
+    "research-article": "研究文章",
+    "short-video": "短视频",
+    wechat: "公众号",
+    weibo: "微博",
+    announcement: "公司公告",
+    report: "研报",
+    news: "新闻"
+  }[type] || "研究资料";
 }
 
 function renderCoreInsights(trackId, insights) {
@@ -1557,8 +1720,13 @@ function renderWatchlist(chain) {
     const block = el("div", "watch-item");
     block.dataset.searchTarget = searchTargetKey(chain.id, "watch", index);
     block.append(el("strong", "", item.segment));
-    block.append(el("ul", "", item.signals.map((signal) => `<li>${signal}</li>`).join("")));
-    block.append(el("p", "", item.companies));
+    block.append(el("p", "watch-purpose", "用于验证相关供需、价格、订单或盈利逻辑是否继续成立。"));
+    block.append(el(
+      "div",
+      "watch-signals",
+      item.signals.map((signal) => `<span>${escapeHtml(signal)}</span>`).join("")
+    ));
+    block.append(el("p", "watch-companies", item.companies));
     root.append(block);
   });
 }
@@ -1570,11 +1738,13 @@ function render() {
   renderCurrent(chain);
   renderChain(chain);
   renderDiagram(chain);
-  renderLogic(chain);
   renderTrackingProfile(chain);
   renderTimeline(chain);
+  renderResearch(chain);
+  renderLogic(chain);
   renderWatchlist(chain);
   renderArticle(chain);
+  scrollToRenderedSectionHash();
 }
 
 function initSearch() {

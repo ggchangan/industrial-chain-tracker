@@ -561,8 +561,30 @@ main {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  min-height: 260px;
+  min-height: 300px;
   padding: 18px;
+}
+
+.tracking-card-state {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tracking-card-state span {
+  background: rgba(39, 217, 232, 0.09);
+  border: 1px solid rgba(39, 217, 232, 0.24);
+  color: #baf5ff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 7px;
+}
+
+.tracking-card-state time {
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .logic-card h3 {
@@ -586,12 +608,148 @@ main {
   margin-bottom: 14px;
 }
 
-.tracking-card ul {
+.tracking-latest {
+  border-left: 2px solid var(--cyan);
+  margin: 16px 0;
+  padding-left: 12px;
+}
+
+.tracking-latest strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.tracking-latest p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.tracking-latest a {
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.tracking-signals,
+.watch-signals,
+.research-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tracking-signals span,
+.watch-signals span,
+.research-card-tags span {
+  border: 1px solid var(--line);
   color: #cbd5e1;
-  font-size: 12px;
+  font-size: 11px;
+  padding: 4px 7px;
+}
+
+.tracking-history-head {
+  border-top: 1px solid var(--line);
+  margin-top: 34px;
+  padding-top: 28px;
+}
+
+.research-feed {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.research-card {
+  background: rgba(17, 26, 36, 0.58);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 20px;
+}
+
+.research-card.latest {
+  border-color: rgba(39, 217, 232, 0.48);
+}
+
+.research-card-meta {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 11px;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.research-card-meta span {
+  color: #baf5ff;
+  font-weight: 800;
+}
+
+.research-card-meta strong {
+  background: var(--cyan);
+  color: #071219;
+  font-size: 10px;
+  margin-left: auto;
+  padding: 3px 6px;
+}
+
+.research-card h3 {
+  font-size: 18px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.research-card > p {
+  color: var(--muted);
+  font-size: 13px;
   line-height: 1.7;
-  margin: 0;
-  padding-left: 18px;
+}
+
+.research-card-result {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.research-card-result strong {
+  color: #d8f7ff;
+  font-size: 13px;
+}
+
+.research-card-result span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.research-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.research-card-actions a {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 9px;
+}
+
+.research-card-actions a:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.research-empty {
+  color: var(--muted);
 }
 
 .split {
@@ -1188,8 +1346,10 @@ button.propagation-signal:hover {
 }
 
 .watch-item {
-  border-top: 1px solid var(--line);
-  padding: 16px 0;
+  background: rgba(17, 26, 36, 0.58);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
 }
 
 .watch-item strong {
@@ -1197,10 +1357,25 @@ button.propagation-signal:hover {
   margin-bottom: 8px;
 }
 
-.watch-item ul {
+.verification-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.watch-purpose {
   color: var(--muted);
-  margin: 0 0 10px;
-  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.watch-companies {
+  border-top: 1px solid var(--line);
+  color: #dbeafe;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  padding-top: 12px;
 }
 
 .article-layout {
@@ -2339,6 +2514,11 @@ footer a {
     grid-template-columns: 1fr;
   }
 
+  .research-feed,
+  .verification-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .chain-grid,
   .logic-grid,
   .tracking-grid,
@@ -2410,6 +2590,15 @@ footer a {
 }
 
 @media (max-width: 640px) {
+  .research-feed,
+  .verification-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .research-card {
+    min-height: 0;
+  }
+
   .admin-field-row {
     grid-template-columns: 1fr;
   }
