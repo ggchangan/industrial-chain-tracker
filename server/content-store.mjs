@@ -201,7 +201,11 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
   async function listLogicCards(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
-    const baseChain = baseLibrary.chains.find((item) => item.id === chainId);
+    const baseChain = structuredClone(baseLibrary.chains.find((item) => item.id === chainId));
+    appendResearchPackageLogicTracks(
+      baseChain,
+      structuredClone(state.researchPackagesByChain?.[chainId] || [])
+    );
     const editable = buildEditableLogicCards(
       baseChain,
       state.logicCardsByChain?.[chainId] || []
@@ -363,6 +367,10 @@ function mergeLibrary(baseLibrary, state) {
     const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
     const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
     chain.sources = mergeSources(managedSources, derivedSources);
+    appendResearchPackageLogicTracks(
+      chain,
+      structuredClone(state.researchPackagesByChain?.[chain.id] || [])
+    );
     applyLogicCardOverrides(
       chain,
       structuredClone(state.logicCardsByChain?.[chain.id] || [])
@@ -373,6 +381,73 @@ function mergeLibrary(baseLibrary, state) {
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
   return library;
+}
+
+function appendResearchPackageLogicTracks(chain, packages) {
+  if (!chain || !packages.length) return;
+  const latestByTopic = new Map();
+  for (const researchPackage of packages) {
+    if (!latestByTopic.has(researchPackage.topicId)) {
+      latestByTopic.set(researchPackage.topicId, researchPackage);
+    }
+  }
+  chain.logicTracks ||= [];
+  for (const researchPackage of latestByTopic.values()) {
+    const trackId = `research-${researchPackage.topicId}`;
+    const packageTrack = {
+      id: trackId,
+      title: researchPackage.topicTitle,
+      summary: researchPackage.logic?.summary || researchPackage.title,
+      coreInsights: (researchPackage.logic?.logics || []).map((item, index) => ({
+        id: `${researchPackage.topicId}-${item.key}`,
+        kicker: item.kind === "risk" ? "风险逻辑" : logicStatusLabel(item.status),
+        title: item.title,
+        summary: item.statement,
+        display: "points",
+        points: [
+          ...(item.evidence || []).slice(0, 3).map((evidence) => ({
+            label: "支撑证据",
+            description: evidence.summary
+          })),
+          ...(item.monitors || []).slice(0, 2).map((monitor) => ({
+            label: "持续监控",
+            description: `${monitor.name}：${monitor.strengthening_signal}`
+          }))
+        ],
+        conclusion: (item.invalidation || []).length
+          ? `失效条件：${item.invalidation.map((entry) => entry.condition).join("；")}`
+          : "",
+        attachments: (item.companies || []).map((company) => ({
+          type: "company",
+          label: company.name
+        })),
+        sources: [{
+          label: "阅读研究原文",
+          type: "article",
+          title: researchPackage.title,
+          url: researchPackage.articleUrl,
+          anchor: item.evidence?.[0]?.anchor || ""
+        }],
+        articleAnchor: item.evidence?.[0]?.anchor || "",
+        status: "published",
+        order: index + 1
+      }))
+    };
+    const existingIndex = chain.logicTracks.findIndex((track) => track.id === trackId);
+    if (existingIndex >= 0) chain.logicTracks[existingIndex] = packageTrack;
+    else chain.logicTracks.push(packageTrack);
+  }
+}
+
+function logicStatusLabel(status) {
+  return {
+    new: "新逻辑",
+    strengthening: "逻辑强化",
+    stable: "逻辑稳定",
+    weakening: "逻辑减弱",
+    challenged: "出现反证",
+    invalidated: "逻辑失效"
+  }[status] || "核心逻辑";
 }
 
 function formatChinaDate(value) {

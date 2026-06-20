@@ -206,6 +206,10 @@ test("maintainer can inspect and import a standard research package", async () =
   const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
   const chain = library.chains.find((item) => item.id === "optical-module");
   assert.ok(chain.researchPackages.some((item) => item.packageId === imported.packageId));
+  const mpoTrack = chain.logicTracks.find((item) => item.id === "research-mpo");
+  assert.equal(mpoTrack.title, "MPO产业链");
+  assert.equal(mpoTrack.coreInsights.length, 1);
+  assert.equal(mpoTrack.coreInsights[0].title, "MPO订单增长");
 });
 
 test("authenticated maintainer can update an existing article and append an update", async () => {

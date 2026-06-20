@@ -2104,6 +2104,30 @@ button.propagation-signal:hover {
   max-width: none;
 }
 
+.package-form .admin-field-row {
+  align-items: start;
+}
+
+.package-form label {
+  grid-template-rows: auto 54px auto;
+}
+
+.package-form select,
+.package-form input[type="file"] {
+  height: 54px;
+  min-height: 54px;
+}
+
+.package-form input[type="file"] {
+  display: flex;
+  align-items: center;
+}
+
+.package-form label:not(:has(small))::after {
+  content: "";
+  min-height: 1em;
+}
+
 .package-inspection {
   margin-top: 18px;
 }
