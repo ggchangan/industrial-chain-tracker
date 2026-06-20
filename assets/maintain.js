@@ -4,7 +4,9 @@ const state = {
   archiveChainId: "",
   sourceAssets: [],
   logicCards: [],
-  logicTracks: []
+  logicTracks: [],
+  packagePayload: null,
+  packageInspection: null
 };
 const notice = document.querySelector("#adminNotice");
 const articleForm = document.querySelector("#editArticleForm");
@@ -34,6 +36,12 @@ const logicCardDisplay = document.querySelector("#logicCardDisplay");
 const logicCardContent = document.querySelector("#logicCardContent");
 const logicCardContentHint = document.querySelector("#logicCardContentHint");
 const cancelLogicCardEdit = document.querySelector("#cancelLogicCardEdit");
+const packageForm = document.querySelector("#packageForm");
+const packageChainSelect = document.querySelector("#packageChainId");
+const packageFolder = document.querySelector("#packageFolder");
+const inspectPackageButton = document.querySelector("#inspectPackage");
+const importPackageButton = document.querySelector("#importPackage");
+const packageInspection = document.querySelector("#packageInspection");
 
 initialize();
 
@@ -68,6 +76,9 @@ async function initialize() {
   });
   logicCardDisplay.addEventListener("change", () => setLogicContentTemplate(true));
   cancelLogicCardEdit.addEventListener("click", resetLogicCardForm);
+  packageFolder.addEventListener("change", resetPackageInspection);
+  inspectPackageButton.addEventListener("click", inspectSelectedPackage);
+  packageForm.addEventListener("submit", importSelectedPackage);
   search.addEventListener("input", () => renderCards(search.value));
   document.querySelector("#adminLogout").addEventListener("click", logout);
   renderSourceIllustrations();
@@ -84,6 +95,7 @@ async function refreshLibrary(preferredChainId = "") {
     renderChainOptions(sourceSelect, sourceSelect.value);
     renderChainOptions(archiveSelect, state.archiveChainId || preferredChainId || archiveSelect.value);
     renderChainOptions(logicCardChainSelect, state.archiveChainId || preferredChainId || logicCardChainSelect.value);
+    renderChainOptions(packageChainSelect, preferredChainId || packageChainSelect.value);
     state.archiveChainId = archiveSelect.value;
     await loadLogicCards();
     renderLogicSourceOptions();
@@ -126,6 +138,7 @@ function renderArchive() {
 
   const sources = chain.sources || [];
   const logicCardCount = state.logicCards.filter((card) => card.status !== "deleted").length;
+  const researchPackages = chain.researchPackages || [];
   archiveSummary.innerHTML = `
     <article><span>基准原文</span><strong>1</strong><small>产业链骨架</small></article>
     <article><span>资料档案</span><strong>${sources.length}</strong><small>文章、视频及外部来源</small></article>
@@ -148,7 +161,32 @@ function renderArchive() {
     </article>
   `;
 
-  archiveList.innerHTML = baseline + sources.map((source) => `
+  archiveList.innerHTML = baseline + `
+    <div class="archive-subhead">
+      <strong>研究主题包</strong>
+      <span>完整 HTML、Markdown、逻辑与监控配置。</span>
+    </div>
+    ${researchPackages.length ? researchPackages.map((item) => `
+      <article class="archive-item research-package-record">
+        <div class="archive-item-head">
+          <span>${escapeHtml(item.topicTitle)}</span>
+          <small>${escapeHtml(item.status === "imported" ? "已入库" : item.status)}</small>
+        </div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.logic?.summary || "已保存研究原文和结构化逻辑。")}</p>
+        <div class="archive-item-meta">
+          <span>${item.logicCount || 0} 条逻辑</span>
+          <span>${item.monitorCount || 0} 个监控</span>
+          <span>${item.assetCount || 0} 个资源</span>
+        </div>
+        <div class="archive-item-actions">
+          <a href="${escapeHtml(item.articleUrl)}" target="_blank">阅读 HTML</a>
+          <a href="${escapeHtml(item.sourceUrl)}" target="_blank">查看 Markdown</a>
+          <a href="${escapeHtml(item.logicUrl)}" target="_blank">查看逻辑配置</a>
+        </div>
+      </article>
+    `).join("") : `<p class="archive-empty">还没有导入标准研究包。</p>`}
+  ` + sources.map((source) => `
     <article class="archive-item">
       <div class="archive-item-head">
         <span>${escapeHtml(sourceTypeLabel(source.type))}</span>
@@ -223,6 +261,117 @@ function renderArchive() {
   archiveList.querySelectorAll("[data-edit-update]").forEach((button) => {
     button.addEventListener("click", () => editUpdate(chain.id, button.dataset.editUpdate));
   });
+}
+
+function resetPackageInspection() {
+  state.packagePayload = null;
+  state.packageInspection = null;
+  importPackageButton.disabled = true;
+  const files = [...packageFolder.files];
+  packageInspection.innerHTML = files.length
+    ? `<p class="archive-empty">已选择 ${files.length} 个文件，点击“检测资料包”。</p>`
+    : `<p class="archive-empty">尚未选择资料包。</p>`;
+}
+
+async function inspectSelectedPackage() {
+  const files = [...packageFolder.files];
+  if (!files.length) {
+    setNotice("请先选择研究包文件夹。", "error");
+    return;
+  }
+  setBusy(inspectPackageButton, true, "正在检测…");
+  importPackageButton.disabled = true;
+  try {
+    state.packagePayload = { files: await Promise.all(files.map(serializePackageFile)) };
+    const chainId = packageChainSelect.value;
+    state.packageInspection = await apiRequest(
+      `./api/v1/admin/chains/${encodeURIComponent(chainId)}/research-packages/inspect`,
+      { method: "POST", body: JSON.stringify(state.packagePayload) }
+    );
+    renderPackageInspection();
+    importPackageButton.disabled = !state.packageInspection.valid;
+    setNotice(
+      state.packageInspection.valid ? "资料包检测通过，可以确认入库。" : "资料包存在阻断错误，请修正后重新检测。",
+      state.packageInspection.valid ? "success" : "error"
+    );
+  } catch (error) {
+    packageInspection.innerHTML = `<p class="archive-empty">${escapeHtml(error.message)}</p>`;
+    setNotice(error.message, "error");
+  } finally {
+    setBusy(inspectPackageButton, false, "检测资料包");
+  }
+}
+
+async function importSelectedPackage(event) {
+  event.preventDefault();
+  if (!state.packageInspection?.valid || !state.packagePayload) return;
+  setBusy(importPackageButton, true, "正在入库…");
+  try {
+    const chainId = packageChainSelect.value;
+    const result = await apiRequest(
+      `./api/v1/admin/chains/${encodeURIComponent(chainId)}/research-packages`,
+      { method: "POST", body: JSON.stringify(state.packagePayload) }
+    );
+    setNotice(`${result.researchPackage.topicTitle}已入库。`, "success");
+    state.archiveChainId = chainId;
+    await refreshLibrary(chainId);
+    archiveSelect.value = chainId;
+    packageFolder.value = "";
+    resetPackageInspection();
+    document.querySelector("#archive").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    setNotice(error.message, "error");
+  } finally {
+    setBusy(importPackageButton, false, "确认入库");
+    importPackageButton.disabled = !state.packageInspection?.valid;
+  }
+}
+
+function renderPackageInspection() {
+  const result = state.packageInspection;
+  const preview = result.preview || {};
+  packageInspection.innerHTML = `
+    <div class="package-preview ${result.valid ? "valid" : "invalid"}">
+      <div>
+        <span>${result.valid ? "检测通过" : "检测失败"}</span>
+        <h3>${escapeHtml(preview.title || "未识别标题")}</h3>
+        <p>${escapeHtml(preview.topicTitle || "未识别主题")} · ${escapeHtml(preview.topicId || "无主题 ID")}</p>
+      </div>
+      <dl>
+        <div><dt>逻辑</dt><dd>${preview.logicCount || 0}</dd></div>
+        <div><dt>监控</dt><dd>${preview.monitorCount || 0}</dd></div>
+        <div><dt>公司</dt><dd>${preview.companyCount || 0}</dd></div>
+        <div><dt>资源</dt><dd>${preview.assetCount || 0}</dd></div>
+      </dl>
+    </div>
+    ${renderInspectionIssues("阻断错误", result.errors, "error")}
+    ${renderInspectionIssues("提示", result.warnings, "warning")}
+  `;
+}
+
+function renderInspectionIssues(title, items, type) {
+  if (!items?.length) return "";
+  return `
+    <section class="inspection-issues ${type}">
+      <strong>${escapeHtml(title)}（${items.length}）</strong>
+      <ul>${items.map((item) => `
+        <li><span>${escapeHtml(item.message)}</span><small>${escapeHtml(item.location || "")}</small></li>
+      `).join("")}</ul>
+    </section>
+  `;
+}
+
+async function serializePackageFile(file) {
+  const relativePath = file.webkitRelativePath || file.name;
+  if (/^text\//.test(file.type) || /\.(?:html?|md|json|svg)$/i.test(file.name)) {
+    return { path: relativePath, type: file.type, encoding: "utf8", content: await file.text() };
+  }
+  return { path: relativePath, type: file.type, encoding: "base64", content: await fileToBase64(file) };
+}
+
+async function fileToBase64(file) {
+  const dataUrl = await fileToDataUrl(file);
+  return String(dataUrl).split(",", 2)[1] || "";
 }
 
 function renderLogicCardArchive() {
