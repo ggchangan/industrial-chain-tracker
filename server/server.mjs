@@ -53,7 +53,8 @@ export async function createAppServer(options = {}) {
       console.error(error);
       sendJson(response, error.statusCode || 500, {
         error: error.code || "internal_error",
-        message: error.statusCode ? error.message : "服务暂时不可用"
+        message: error.statusCode ? error.message : "服务暂时不可用",
+        ...(error.details ? { details: error.details } : {})
       });
     }
   });
@@ -215,6 +216,25 @@ async function handleApi(context) {
     const body = await readJsonBody(request, 2 * 1024 * 1024);
     const source = await contentStore.addSource(sourceMatch[1], body);
     sendJson(response, 201, { source });
+    return;
+  }
+
+  const packageInspectMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/research-packages\/inspect$/
+  );
+  if (request.method === "POST" && packageInspectMatch) {
+    const body = await readJsonBody(request, 24 * 1024 * 1024);
+    sendJson(response, 200, await contentStore.inspectPackage(packageInspectMatch[1], body));
+    return;
+  }
+
+  const packageImportMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/research-packages$/
+  );
+  if (request.method === "POST" && packageImportMatch) {
+    const body = await readJsonBody(request, 24 * 1024 * 1024);
+    const researchPackage = await contentStore.importPackage(packageImportMatch[1], body);
+    sendJson(response, 201, { researchPackage });
     return;
   }
 

@@ -1,6 +1,7 @@
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import crypto from "node:crypto";
 import path from "node:path";
+import { inspectResearchPackage } from "./research-package.mjs";
 
 const STATE_FILE = "managed-content.json";
 
@@ -156,10 +157,55 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     return structuredClone(source);
   }
 
+  async function inspectPackage(chainId, input) {
+    if (!library.chains.some((item) => item.id === chainId)) throw notFoundError("产业链不存在");
+    return publicInspection(inspectResearchPackage({ ...input, chainId }));
+  }
+
+  async function importPackage(chainId, input) {
+    if (!library.chains.some((item) => item.id === chainId)) throw notFoundError("产业链不存在");
+    const inspection = inspectResearchPackage({ ...input, chainId });
+    if (!inspection.valid) {
+      const error = validationError("资料包检测未通过，不能入库");
+      error.details = publicInspection(inspection);
+      throw error;
+    }
+    state.researchPackagesByChain ||= {};
+    state.researchPackagesByChain[chainId] ||= [];
+    if (state.researchPackagesByChain[chainId].some((item) => item.fileHash === inspection.preview.fileHash)) {
+      throw validationError("相同内容的资料包已经入库");
+    }
+    const root = path.join(
+      "research-packages",
+      chainId,
+      inspection.preview.topicId,
+      inspection.preview.packageId
+    );
+    for (const file of inspection.files) {
+      await writeManagedBinary(resolvedDataDir, path.join(root, file.path), file.contents);
+    }
+    const record = {
+      ...inspection.preview,
+      status: "imported",
+      articleUrl: managedUrl(path.join(root, "article.html")),
+      sourceUrl: managedUrl(path.join(root, "source-article.md")),
+      logicUrl: managedUrl(path.join(root, "logic.json")),
+      logic: inspection.logic
+    };
+    state.researchPackagesByChain[chainId].unshift(record);
+    await saveState(resolvedDataDir, state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(record);
+  }
+
   async function listLogicCards(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
-    const baseChain = baseLibrary.chains.find((item) => item.id === chainId);
+    const baseChain = structuredClone(baseLibrary.chains.find((item) => item.id === chainId));
+    appendResearchPackageLogicTracks(
+      baseChain,
+      structuredClone(state.researchPackagesByChain?.[chainId] || [])
+    );
     const editable = buildEditableLogicCards(
       baseChain,
       state.logicCardsByChain?.[chainId] || []
@@ -242,6 +288,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const sources = state.sourcesByChain?.[chainId] || [];
     if (state.sourcesByChain) delete state.sourcesByChain[chainId];
     if (state.logicCardsByChain) delete state.logicCardsByChain[chainId];
+    if (state.researchPackagesByChain) delete state.researchPackagesByChain[chainId];
     await Promise.all([
       removeManagedFile(resolvedDataDir, chain.article),
       removeManagedFile(resolvedDataDir, chain.cover),
@@ -265,6 +312,8 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     }),
     getEditableChain,
     getEditableSource,
+    importPackage,
+    inspectPackage,
     listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
@@ -304,7 +353,7 @@ async function removeManagedFile(dataDir, fileUrl) {
 
 function mergeLibrary(baseLibrary, state) {
   const library = structuredClone(baseLibrary);
-  for (const chain of library.chains) {
+    for (const chain of library.chains) {
     if (state.articleOverrides?.[chain.id]) {
       chain.article = state.articleOverrides[chain.id];
     }
@@ -318,15 +367,87 @@ function mergeLibrary(baseLibrary, state) {
     const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
     const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
     chain.sources = mergeSources(managedSources, derivedSources);
+    appendResearchPackageLogicTracks(
+      chain,
+      structuredClone(state.researchPackagesByChain?.[chain.id] || [])
+    );
     applyLogicCardOverrides(
       chain,
       structuredClone(state.logicCardsByChain?.[chain.id] || [])
     );
     applySourceOverrides(chain, managedSources, derivedSources);
+    chain.researchPackages = structuredClone(state.researchPackagesByChain?.[chain.id] || []);
   }
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
   return library;
+}
+
+function appendResearchPackageLogicTracks(chain, packages) {
+  if (!chain || !packages.length) return;
+  const latestByTopic = new Map();
+  for (const researchPackage of packages) {
+    if (!latestByTopic.has(researchPackage.topicId)) {
+      latestByTopic.set(researchPackage.topicId, researchPackage);
+    }
+  }
+  chain.logicTracks ||= [];
+  for (const researchPackage of latestByTopic.values()) {
+    const trackId = `research-${researchPackage.topicId}`;
+    const packageTrack = {
+      id: trackId,
+      title: researchPackage.topicTitle,
+      summary: researchPackage.logic?.summary || researchPackage.title,
+      coreInsights: (researchPackage.logic?.logics || []).map((item, index) => ({
+        id: `${researchPackage.topicId}-${item.key}`,
+        kicker: item.kind === "risk" ? "风险逻辑" : logicStatusLabel(item.status),
+        title: item.title,
+        summary: item.statement,
+        display: "points",
+        points: [
+          ...(item.evidence || []).slice(0, 3).map((evidence) => ({
+            label: "支撑证据",
+            description: evidence.summary
+          })),
+          ...(item.monitors || []).slice(0, 2).map((monitor) => ({
+            label: "持续监控",
+            description: `${monitor.name}：${monitor.strengthening_signal}`
+          }))
+        ],
+        conclusion: (item.invalidation || []).length
+          ? `失效条件：${item.invalidation.map((entry) => entry.condition).join("；")}`
+          : "",
+        attachments: (item.companies || []).map((company) => ({
+          type: "company",
+          label: company.name
+        })),
+        sources: [{
+          label: "阅读研究原文",
+          type: "article",
+          title: researchPackage.title,
+          url: researchPackage.articleUrl,
+          anchor: item.evidence?.[0]?.anchor || ""
+        }],
+        articleAnchor: item.evidence?.[0]?.anchor || "",
+        status: "published",
+        order: index + 1
+      }))
+    };
+    const existingIndex = chain.logicTracks.findIndex((track) => track.id === trackId);
+    if (existingIndex >= 0) chain.logicTracks[existingIndex] = packageTrack;
+    else chain.logicTracks.push(packageTrack);
+  }
+}
+
+function logicStatusLabel(status) {
+  return {
+    new: "新逻辑",
+    strengthening: "逻辑强化",
+    stable: "逻辑稳定",
+    weakening: "逻辑减弱",
+    challenged: "出现反证",
+    invalidated: "逻辑失效"
+  }[status] || "核心逻辑";
 }
 
 function formatChinaDate(value) {
@@ -346,12 +467,14 @@ function migrateDeprecatedChains(baseLibrary, state) {
   const hadOverride = Boolean(state.articleOverrides["semiconductor-material-industry-chain"]);
   const hadSources = Boolean(state.sourcesByChain?.["semiconductor-material-industry-chain"]);
   const hadLogicCards = Boolean(state.logicCardsByChain?.["semiconductor-material-industry-chain"]);
+  const hadResearchPackages = Boolean(state.researchPackagesByChain?.["semiconductor-material-industry-chain"]);
   delete state.updatesByChain["semiconductor-material-industry-chain"];
   delete state.articleOverrides["semiconductor-material-industry-chain"];
   if (state.sourcesByChain) delete state.sourcesByChain["semiconductor-material-industry-chain"];
   if (state.logicCardsByChain) delete state.logicCardsByChain["semiconductor-material-industry-chain"];
+  if (state.researchPackagesByChain) delete state.researchPackagesByChain["semiconductor-material-industry-chain"];
   return previousLength !== state.managedChains.length ||
-    hadUpdates || hadOverride || hadSources || hadLogicCards;
+    hadUpdates || hadOverride || hadSources || hadLogicCards || hadResearchPackages;
 }
 
 async function readState(dataDir) {
@@ -363,6 +486,7 @@ async function readState(dataDir) {
       updatesByChain: state.updatesByChain && typeof state.updatesByChain === "object" ? state.updatesByChain : {},
       sourcesByChain: state.sourcesByChain && typeof state.sourcesByChain === "object" ? state.sourcesByChain : {},
       logicCardsByChain: state.logicCardsByChain && typeof state.logicCardsByChain === "object" ? state.logicCardsByChain : {},
+      researchPackagesByChain: state.researchPackagesByChain && typeof state.researchPackagesByChain === "object" ? state.researchPackagesByChain : {},
       updatedAt: state.updatedAt || ""
     };
   } catch (error) {
@@ -373,9 +497,19 @@ async function readState(dataDir) {
       updatesByChain: {},
       sourcesByChain: {},
       logicCardsByChain: {},
+      researchPackagesByChain: {},
       updatedAt: ""
     };
   }
+}
+
+function publicInspection(inspection) {
+  return {
+    valid: inspection.valid,
+    errors: inspection.errors,
+    warnings: inspection.warnings,
+    preview: inspection.preview
+  };
 }
 
 async function saveState(dataDir, state) {

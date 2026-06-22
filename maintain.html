@@ -10,6 +10,7 @@
     <header class="site-header compact-header">
       <nav class="nav">
         <a href="./index.html">公开阅读页</a>
+        <a href="#package-inbox">研究收件箱</a>
         <a href="#archive">资料档案</a>
         <a href="#add-source">新增资料</a>
         <a href="#logic-cards">逻辑卡</a>
@@ -27,6 +28,34 @@
     <main>
       <section class="section admin-workspace">
         <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
+
+        <section id="package-inbox" class="package-inbox">
+          <div class="section-head compact">
+            <p class="eyebrow">Research Inbox</p>
+            <h2>导入标准研究包</h2>
+            <p>选择产业链并拖入文件夹。系统先检查目录、原文、图片、逻辑、证据锚点和监控规则；检测通过后才能入库。</p>
+          </div>
+          <form id="packageForm" class="admin-form package-form">
+            <div class="admin-field-row">
+              <label>
+                <span>导入到产业链</span>
+                <select id="packageChainId" name="chainId" required></select>
+              </label>
+              <label>
+                <span>研究包文件夹</span>
+                <input id="packageFolder" type="file" webkitdirectory directory multiple />
+                <small>应包含 article.html、source-article.md、logic.json 和 assets/。</small>
+              </label>
+            </div>
+            <div class="admin-form-actions">
+              <button id="inspectPackage" class="button secondary" type="button">检测资料包</button>
+              <button id="importPackage" class="button primary" type="submit" disabled>确认入库</button>
+            </div>
+          </form>
+          <div id="packageInspection" class="package-inspection">
+            <p class="archive-empty">尚未选择资料包。</p>
+          </div>
+        </section>
 
         <section id="archive" class="archive-workspace">
           <div class="section-head compact">
@@ -396,6 +425,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js?v=logic-card-console-1"></script>
+    <script src="./assets/maintain.js?v=research-package-import-1"></script>
   </body>
 </html>

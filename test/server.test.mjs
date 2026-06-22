@@ -119,6 +119,99 @@ test("admin APIs require authentication", async () => {
   assert.equal(response.status, 401);
 });
 
+test("maintainer can inspect and import a standard research package", async () => {
+  const cookie = await login();
+  const files = [
+    {
+      path: "mpo/article.html",
+      type: "text/html",
+      encoding: "utf8",
+      content: "<!doctype html><title>MPO产业链深度解析：测试导入</title><h1>MPO产业链</h1>"
+    },
+    {
+      path: "mpo/source-article.md",
+      type: "text/markdown",
+      encoding: "utf8",
+      content: "# MPO产业链深度解析：测试导入\n\n![图](assets/map.png)\n\n## 核心逻辑\n\nMPO订单增长。"
+    },
+    {
+      path: "mpo/logic.json",
+      type: "application/json",
+      encoding: "utf8",
+      content: JSON.stringify({
+        schema_version: "0.2",
+        summary: "MPO测试逻辑。",
+        logics: [{
+          key: "mpo-orders",
+          kind: "thesis",
+          title: "MPO订单增长",
+          statement: "订单验证需求。",
+          status: "strengthening",
+          companies: [{ name: "太辰光", ticker: "300570", exchange: "SZSE" }],
+          evidence: [{ summary: "订单增长。", anchor: "MPO订单增长" }],
+          monitors: [{
+            key: "order-growth",
+            name: "订单增长",
+            logic: "订单是需求验证。",
+            strengthening_signal: "订单增长。",
+            weakening_signal: "订单下降。",
+            data_sources: [{
+              type: "company-filing",
+              providers: ["太辰光"],
+              document: "季度报告",
+              frequency: "quarterly",
+              access: "exchange-announcement",
+              automation_target: "automatic",
+              execution_status: "planned"
+            }],
+            rules: [{ metric: "order_growth", operator: "greater_than", threshold: 0, effect: "strengthen" }]
+          }],
+          invalidation: [{ condition: "订单持续下降。", severity: "high" }]
+        }]
+      })
+    },
+    {
+      path: "mpo/assets/map.png",
+      type: "image/png",
+      encoding: "base64",
+      content: "cG5n"
+    }
+  ];
+
+  const inspectResponse = await fetch(
+    `${baseUrl}/api/v1/admin/chains/optical-module/research-packages/inspect`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ files })
+    }
+  );
+  assert.equal(inspectResponse.status, 200);
+  const inspection = await inspectResponse.json();
+  assert.equal(inspection.valid, true);
+  assert.equal(inspection.preview.topicId, "mpo");
+
+  const importResponse = await fetch(
+    `${baseUrl}/api/v1/admin/chains/optical-module/research-packages`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ files })
+    }
+  );
+  assert.equal(importResponse.status, 201);
+  const imported = (await importResponse.json()).researchPackage;
+  assert.match(imported.articleUrl, /^\/managed\/research-packages\/optical-module\/mpo\//);
+
+  const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
+  const chain = library.chains.find((item) => item.id === "optical-module");
+  assert.ok(chain.researchPackages.some((item) => item.packageId === imported.packageId));
+  const mpoTrack = chain.logicTracks.find((item) => item.id === "research-mpo");
+  assert.equal(mpoTrack.title, "MPO产业链");
+  assert.equal(mpoTrack.coreInsights.length, 1);
+  assert.equal(mpoTrack.coreInsights[0].title, "MPO订单增长");
+});
+
 test("authenticated maintainer can update an existing article and append an update", async () => {
   const cookie = await login();
   const createResponse = await fetch(`${baseUrl}/api/v1/admin/chains`, {
