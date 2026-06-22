@@ -2,7 +2,6 @@ import { readFile } from "node:fs/promises";
 import crypto from "node:crypto";
 import path from "node:path";
 import { inspectResearchPackage } from "./research-package.mjs";
-import { objectKeyFromUrl } from "./object-storage.mjs";
 
 export async function createContentStore({ baseLibrary, dataDir, rootDir, stateStore, objectStorage }) {
   const resolvedDataDir = path.resolve(dataDir);
@@ -325,6 +324,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     stateStoreDriver: stateStore.driver,
     objectStorageDriver: objectStorage.driver,
     close: () => stateStore.close(),
+    readObject: (key) => objectStorage.getObject(key),
     getLibrary: () => library
   };
 }
@@ -334,7 +334,7 @@ async function readChainArticle(rootDir, objectStorage, articleUrl) {
 }
 
 async function readContentFile(rootDir, objectStorage, fileUrl) {
-  const objectKey = objectKeyFromUrl(fileUrl);
+  const objectKey = objectStorage.keyFromUrl(fileUrl);
   if (objectKey) {
     return (await objectStorage.getObject(objectKey)).toString("utf8");
   }
@@ -345,7 +345,7 @@ async function readContentFile(rootDir, objectStorage, fileUrl) {
 }
 
 async function removeManagedFile(objectStorage, fileUrl) {
-  const objectKey = objectKeyFromUrl(fileUrl);
+  const objectKey = objectStorage.keyFromUrl(fileUrl);
   if (objectKey) await objectStorage.deleteObject(objectKey);
 }
 

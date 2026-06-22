@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.15.4",
     "mysql2": "^3.14.0"
   },
   "scripts": {
@@ -13,6 +14,7 @@
     "check": "node --check assets/app.js && node --check assets/bootstrap.js && node --check assets/admin-login.js && node --check assets/maintain.js && node --check server/server.mjs && node --check server/auth.mjs && node --check server/content-store.mjs && node --check server/state-store.mjs && node --check server/object-storage.mjs && node --check server/research-package.mjs && node --check server/library.mjs && node --check server/markdown.mjs && node --check scripts/sync-blog-data.mjs && node --check scripts/validate-blog-data.mjs",
     "sync": "node scripts/sync-blog-data.mjs",
     "migrate:mysql": "node scripts/migrate-state-to-mysql.mjs",
+    "migrate:cos": "node scripts/migrate-local-objects-to-cos.mjs",
     "test": "node --test",
     "validate": "node scripts/validate-blog-data.mjs"
   }

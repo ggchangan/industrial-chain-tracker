@@ -32,13 +32,41 @@ test("local object storage writes, reads and removes managed objects", async () 
   await rm(dataDir, { recursive: true, force: true });
 });
 
-test("COS driver fails clearly until its implementation is enabled", async () => {
+test("COS driver reads, writes and removes objects through the Tencent SDK contract", async () => {
+  const calls = [];
+  const client = {
+    putObject(params, callback) {
+      calls.push(["put", params]);
+      callback(null, { ETag: "test" });
+    },
+    getObject(params, callback) {
+      calls.push(["get", params]);
+      callback(null, { Body: Buffer.from("cos-data") });
+    },
+    deleteObject(params, callback) {
+      calls.push(["delete", params]);
+      callback(null, {});
+    }
+  };
   const storage = await createObjectStorage({
     driver: "cos",
     secretId: "id",
     secretKey: "secret",
     region: "ap-shanghai",
-    bucket: "bucket-123"
+    bucket: "bucket-123",
+    publicBaseUrl: "https://bucket-123.cos.ap-shanghai.myqcloud.com",
+    client
   });
-  await assert.rejects(() => storage.initialize(), /COS 驱动接口已预留/);
+  await storage.initialize();
+  assert.equal(
+    await storage.putObject("research/article.html", Buffer.from("data")),
+    "/managed/research/article.html"
+  );
+  assert.equal((await storage.getObject("research/article.html")).toString(), "cos-data");
+  await storage.deleteObject("research/article.html");
+  assert.deepEqual(calls.map(([name]) => name), ["put", "get", "delete"]);
+  assert.equal(
+    storage.keyFromUrl("https://bucket-123.cos.ap-shanghai.myqcloud.com/research/article.html"),
+    "research/article.html"
+  );
 });

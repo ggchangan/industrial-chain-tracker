@@ -30,34 +30,80 @@ function createLocalObjectStorage(dataDir) {
     },
     urlFor(key) {
       return `/managed/${normalizeKey(key)}`;
+    },
+    keyFromUrl(value) {
+      return objectKeyFromUrl(value);
     }
   };
 }
 
-function createCosObjectStorage(options) {
+async function createCosObjectStorage(options) {
   const config = {
     secretId: options.secretId || process.env.COS_SECRET_ID,
     secretKey: options.secretKey || process.env.COS_SECRET_KEY,
     region: options.region || process.env.COS_REGION,
     bucket: options.bucket || process.env.COS_BUCKET,
-    publicBaseUrl: options.publicBaseUrl || process.env.COS_PUBLIC_BASE_URL
+    publicBaseUrl: options.publicBaseUrl || process.env.COS_PUBLIC_BASE_URL,
+    internalBaseUrl: options.internalBaseUrl || process.env.COS_INTERNAL_BASE_URL,
+    useInternal: options.useInternal ?? process.env.COS_USE_INTERNAL === "true"
   };
+  let client = options.client;
+  if (!client) {
+    let Cos;
+    try {
+      const cosModule = await import("cos-nodejs-sdk-v5");
+      Cos = cosModule.default || cosModule;
+    } catch {
+      throw configurationError("缺少 cos-nodejs-sdk-v5 依赖，请先安装项目依赖");
+    }
+    client = new Cos({
+      SecretId: config.secretId,
+      SecretKey: config.secretKey,
+      ...(config.useInternal ? { Domain: "{Bucket}.cos-internal.{Region}.myqcloud.com" } : {})
+    });
+  }
   return {
     driver: "cos",
     async initialize() {
-      const missing = Object.entries(config)
-        .filter(([key, value]) => key !== "publicBaseUrl" && !value)
-        .map(([key]) => key);
+      const missing = ["secretId", "secretKey", "region", "bucket"]
+        .filter((key) => !config[key]);
       if (missing.length) throw configurationError(`COS 配置不完整：${missing.join(", ")}`);
-      throw configurationError("腾讯云 COS 驱动接口已预留，当前版本尚未启用；请暂用 OBJECT_STORAGE_DRIVER=local");
     },
-    async putObject() { throw configurationError("COS 驱动尚未启用"); },
-    async getObject() { throw configurationError("COS 驱动尚未启用"); },
-    async deleteObject() { throw configurationError("COS 驱动尚未启用"); },
+    async putObject(key, contents) {
+      await cosCall(client, "putObject", {
+        Bucket: config.bucket,
+        Region: config.region,
+        Key: normalizeKey(key),
+        Body: contents,
+        ContentLength: contents.length
+      });
+      return this.urlFor(key);
+    },
+    async getObject(key) {
+      const result = await cosCall(client, "getObject", {
+        Bucket: config.bucket,
+        Region: config.region,
+        Key: normalizeKey(key)
+      });
+      return Buffer.isBuffer(result.Body) ? result.Body : Buffer.from(result.Body || "");
+    },
+    async deleteObject(key) {
+      await cosCall(client, "deleteObject", {
+        Bucket: config.bucket,
+        Region: config.region,
+        Key: normalizeKey(key)
+      });
+    },
     urlFor(key) {
-      return config.publicBaseUrl
-        ? `${config.publicBaseUrl.replace(/\/$/, "")}/${normalizeKey(key)}`
-        : "";
+      return `/managed/${normalizeKey(key)}`;
+    },
+    keyFromUrl(value) {
+      return keyFromBaseUrl(value, [
+        config.publicBaseUrl,
+        config.internalBaseUrl,
+        `https://${config.bucket}.cos.${config.region}.myqcloud.com`,
+        `http://${config.bucket}.cos-internal.${config.region}.myqcloud.com`
+      ]);
     }
   };
 }
@@ -78,6 +124,23 @@ function normalizeKey(value) {
   const normalized = String(value || "").replaceAll("\\", "/").replace(/^\/+/, "");
   if (!normalized || normalized.includes("..")) throw new Error("对象路径无效");
   return normalized;
+}
+
+function keyFromBaseUrl(value, baseUrls) {
+  const source = String(value || "");
+  for (const baseUrl of baseUrls.filter(Boolean)) {
+    const normalizedBase = String(baseUrl).replace(/\/$/, "");
+    if (source.startsWith(`${normalizedBase}/`)) {
+      return normalizeKey(decodeURIComponent(source.slice(normalizedBase.length + 1)));
+    }
+  }
+  return "";
+}
+
+function cosCall(client, method, params) {
+  return new Promise((resolve, reject) => {
+    client[method](params, (error, data) => error ? reject(error) : resolve(data));
+  });
 }
 
 function configurationError(message) {

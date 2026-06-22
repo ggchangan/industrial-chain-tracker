@@ -9,7 +9,7 @@
 │   └── mysql：腾讯云服务器 MySQL
 └── Object Storage
     ├── local：服务器本地数据卷（当前可用）
-    └── cos：腾讯云 COS（接口已预留，尚未启用）
+    └── cos：腾讯云 COS
 ```
 
 第一阶段 MySQL 使用一张 JSON 状态表保存现有完整内容模型。这使已有更新、资料、
@@ -78,15 +78,31 @@ COS_BUCKET=
 COS_PUBLIC_BASE_URL=
 ```
 
-当前版本选择 `cos` 时会明确拒绝启动，避免误以为文件已经上传。后续 COS 实现复用：
+项目使用腾讯云官方 Node.js SDK 实现以下接口：
 
 - `putObject(key, contents)`
 - `getObject(key)`
 - `deleteObject(key)`
 - `urlFor(key)`
 
-建议 COS Bucket 默认私有，原始研究包不公开；正式文章和图片通过 CDN 或签名 URL
-发布。
+COS Bucket 可以保持私有。客户端继续访问项目的 `/managed/...` 地址，后端按当前驱动
+从本地数据卷或 COS 读取对象，因此网页、小程序和 App 不需要持有 COS 凭证。
+
+同地域腾讯云 CVM 可启用内网访问：
+
+```env
+COS_INTERNAL_BASE_URL=http://industry-1434110552.cos-internal.ap-chengdu.myqcloud.com
+COS_USE_INTERNAL=true
+```
+
+`COS_PUBLIC_BASE_URL` 用于识别既有 COS 链接，并为以后接入 CDN 预留。当前正式内容
+默认由后端代理读取。从本地数据卷迁移已有文件：
+
+```bash
+npm run migrate:cos
+```
+
+迁移脚本不会上传 `managed-content.json`，该文件应通过 MySQL 状态迁移单独处理。
 
 ## 回退
 

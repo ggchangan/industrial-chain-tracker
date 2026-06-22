@@ -62,7 +62,7 @@ export async function createAppServer(options = {}) {
         }
       }
 
-      await serveStatic(rootDir, contentStore.dataDir, url.pathname, response);
+      await serveStatic(rootDir, contentStore, url.pathname, response);
     } catch (error) {
       console.error(error);
       sendJson(response, error.statusCode || 500, {
@@ -315,15 +315,23 @@ async function handleApi(context) {
   sendJson(response, 404, { error: "not_found" });
 }
 
-async function serveStatic(rootDir, dataDir, pathname, response) {
+async function serveStatic(rootDir, contentStore, pathname, response) {
   if (pathname.startsWith("/managed/")) {
-    const managedPath = path.resolve(dataDir, `.${pathname.slice("/managed".length)}`);
-    const dataPrefix = `${path.resolve(dataDir)}${path.sep}`;
-    if (!managedPath.startsWith(dataPrefix)) {
+    const objectKey = decodeURIComponent(pathname.replace(/^\/managed\//, ""));
+    if (!objectKey || objectKey.includes("..")) {
       response.writeHead(403).end("Forbidden");
       return;
     }
-    await serveFile(managedPath, response);
+    try {
+      const contents = await contentStore.readObject(objectKey);
+      response.writeHead(200, {
+        "Content-Type": contentType(objectKey),
+        "Cache-Control": cacheControl(objectKey)
+      });
+      response.end(contents);
+    } catch {
+      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("Not found");
+    }
     return;
   }
 
