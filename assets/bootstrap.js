@@ -11,7 +11,7 @@ async function startApplication() {
     console.info("Using static library fallback:", error.message);
   }
 
-  await import("./app.js?v=research-flow-5");
+  await import("./app.js?v=research-activity-1");
 }
 
 startApplication();
