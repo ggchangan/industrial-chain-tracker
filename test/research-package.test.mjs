@@ -90,3 +90,19 @@ test("research package inspection blocks missing anchors and assets", () => {
   assert.ok(result.errors.some((item) => item.code === "missing_asset"));
   assert.ok(result.errors.some((item) => item.code === "anchor_not_found"));
 });
+
+test("research package inspection ignores nested operating-system metadata", () => {
+  const input = packageInput();
+  input.files.push(
+    { path: "mpo/.DS_Store", content: "metadata", encoding: "utf8" },
+    { path: "mpo/assets/._map.png", content: "metadata", encoding: "utf8" },
+    { path: "mpo/__MACOSX/assets/map.png", content: "metadata", encoding: "utf8" }
+  );
+  const result = inspectResearchPackage(input);
+  assert.equal(result.valid, true);
+  assert.ok(!result.files.some((file) =>
+    file.path.includes(".DS_Store") ||
+    file.path.includes("._map.png") ||
+    file.path.includes("__MACOSX")
+  ));
+});

@@ -214,6 +214,58 @@ test("maintainer can inspect and import a standard research package", async () =
   assert.equal(mpoTrack.coreInsights[0].title, "MPO订单增长");
 });
 
+test("research package import reports COS permission failures clearly", async () => {
+  const isolatedDataDir = await mkdtemp(path.join(os.tmpdir(), "chain-cos-error-test-"));
+  const failingStorage = {
+    driver: "cos",
+    async initialize() {},
+    async putObject() {
+      const error = new Error("Access Denied.");
+      error.code = "AccessDenied";
+      error.statusCode = 403;
+      throw error;
+    },
+    async getObject() { throw new Error("not found"); },
+    async deleteObject() {},
+    urlFor(key) { return `/managed/${key}`; },
+    keyFromUrl(value) { return String(value).replace(/^\/managed\//, ""); }
+  };
+  const isolatedServer = await createAppServer({
+    rootDir,
+    dataDir: isolatedDataDir,
+    objectStorage: failingStorage,
+    adminPassword: "correct-horse-battery",
+    sessionSecret: "test-session-secret-that-is-long-enough-123456"
+  });
+  isolatedServer.listen(0, "127.0.0.1");
+  await once(isolatedServer, "listening");
+  const isolatedUrl = `http://127.0.0.1:${isolatedServer.address().port}`;
+  try {
+    const authResponse = await fetch(`${isolatedUrl}/api/v1/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: "correct-horse-battery" })
+    });
+    const cookie = authResponse.headers.get("set-cookie").split(";")[0];
+    const files = validResearchPackageFiles();
+    const response = await fetch(
+      `${isolatedUrl}/api/v1/admin/chains/optical-module/research-packages`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ files })
+      }
+    );
+    assert.equal(response.status, 403);
+    const payload = await response.json();
+    assert.equal(payload.error, "object_storage_write_failed");
+    assert.match(payload.message, /COS 子账号/);
+  } finally {
+    isolatedServer.close();
+    await rm(isolatedDataDir, { recursive: true, force: true });
+  }
+});
+
 test("authenticated maintainer can update an existing article and append an update", async () => {
   const cookie = await login();
   const createResponse = await fetch(`${baseUrl}/api/v1/admin/chains`, {
@@ -483,4 +535,57 @@ async function login() {
   });
   assert.equal(response.status, 200);
   return response.headers.get("set-cookie").split(";")[0];
+}
+
+function validResearchPackageFiles() {
+  return [
+    {
+      path: "mpo/article.html",
+      type: "text/html",
+      encoding: "utf8",
+      content: "<!doctype html><title>MPO产业链深度解析：权限测试</title>"
+    },
+    {
+      path: "mpo/source-article.md",
+      type: "text/markdown",
+      encoding: "utf8",
+      content: "# MPO产业链深度解析：权限测试\n\n## 核心逻辑\n\nMPO订单增长。"
+    },
+    {
+      path: "mpo/logic.json",
+      type: "application/json",
+      encoding: "utf8",
+      content: JSON.stringify({
+        schema_version: "0.2",
+        summary: "MPO测试逻辑。",
+        logics: [{
+          key: "mpo-orders",
+          kind: "thesis",
+          title: "MPO订单增长",
+          statement: "订单验证需求。",
+          status: "strengthening",
+          companies: [],
+          evidence: [{ summary: "订单增长。", anchor: "MPO订单增长" }],
+          monitors: [{
+            key: "order-growth",
+            name: "订单增长",
+            logic: "订单验证需求。",
+            strengthening_signal: "订单增长。",
+            weakening_signal: "订单下降。",
+            data_sources: [{
+              type: "company-filing",
+              providers: ["太辰光"],
+              document: "季度报告",
+              frequency: "quarterly",
+              access: "exchange-announcement",
+              automation_target: "automatic",
+              execution_status: "planned"
+            }],
+            rules: [{ metric: "order_growth", operator: "greater_than", threshold: 0, effect: "strengthen" }]
+          }],
+          invalidation: [{ condition: "订单持续下降。", severity: "high" }]
+        }]
+      })
+    }
+  ];
 }

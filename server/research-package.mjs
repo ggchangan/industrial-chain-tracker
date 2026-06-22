@@ -119,11 +119,22 @@ function normalizeFiles(value) {
     if (!filePath || filePath.includes("..")) throw invalidPackage("资料包包含非法文件路径");
     const contents = Buffer.from(String(file.content || ""), file.encoding === "base64" ? "base64" : "utf8");
     return { path: filePath, type: String(file.type || ""), size: contents.length, contents };
-  }).filter((file) => file.path !== ".DS_Store");
+  }).filter((file) => !isIgnoredPackageFile(file.path));
 }
 
 function normalizePath(value) {
   return String(value || "").replaceAll("\\", "/").replace(/^\.?\//, "").replace(/^.*?\/(?=(?:article\.html|source-article\.md|logic\.json|assets\/))/, "");
+}
+
+function isIgnoredPackageFile(filePath) {
+  const segments = String(filePath || "").split("/");
+  const name = segments.at(-1) || "";
+  return (
+    name === ".DS_Store" ||
+    name === "Thumbs.db" ||
+    name.startsWith("._") ||
+    segments.includes("__MACOSX")
+  );
 }
 
 function text(file) { return file ? file.contents.toString("utf8") : ""; }

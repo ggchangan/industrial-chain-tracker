@@ -180,8 +180,19 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
       inspection.preview.topicId,
       inspection.preview.packageId
     );
-    for (const file of inspection.files) {
-      await writeManagedBinary(objectStorage, path.join(root, file.path), file.contents);
+    const uploadedKeys = [];
+    try {
+      for (const file of inspection.files) {
+        const objectKey = path.join(root, file.path);
+        await writeManagedBinary(objectStorage, objectKey, file.contents);
+        uploadedKeys.push(objectKey);
+      }
+    } catch (cause) {
+      await Promise.allSettled(uploadedKeys.map((key) => objectStorage.deleteObject(key)));
+      const error = new Error(storageErrorMessage(cause));
+      error.statusCode = cause.statusCode || 502;
+      error.code = "object_storage_write_failed";
+      throw error;
     }
     const record = {
       ...inspection.preview,
@@ -192,7 +203,14 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
       logic: inspection.logic
     };
     state.researchPackagesByChain[chainId].unshift(record);
-    await stateStore.save(state);
+    try {
+      await stateStore.save(state);
+    } catch (cause) {
+      state.researchPackagesByChain[chainId] = state.researchPackagesByChain[chainId]
+        .filter((item) => item.packageId !== record.packageId);
+      await Promise.allSettled(uploadedKeys.map((key) => objectStorage.deleteObject(key)));
+      throw cause;
+    }
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(record);
   }
@@ -327,6 +345,15 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     readObject: (key) => objectStorage.getObject(key),
     getLibrary: () => library
   };
+}
+
+function storageErrorMessage(error) {
+  if (error?.code === "AccessDenied" || error?.statusCode === 403) {
+    return "对象存储拒绝写入，请检查 COS 子账号对当前 Bucket 是否具有对象读写权限。";
+  }
+  if (error?.code === "NoSuchBucket") return "COS Bucket 不存在或地域配置不正确。";
+  if (error?.code === "InvalidAccessKeyId") return "COS 密钥无效，请检查服务器环境变量。";
+  return `对象存储写入失败：${error?.message || "未知错误"}`;
 }
 
 async function readChainArticle(rootDir, objectStorage, articleUrl) {
