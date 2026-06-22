@@ -387,25 +387,146 @@ function mergeLibrary(baseLibrary, state) {
   library.chains.push(...managedChains);
 
   for (const chain of library.chains) {
+    const researchPackages = structuredClone(state.researchPackagesByChain?.[chain.id] || []);
     const managedUpdates = structuredClone(state.updatesByChain?.[chain.id] || []);
-    chain.updates = mergeUpdates(managedUpdates, chain.updates || []);
+    const packageUpdates = updatesFromResearchPackages(researchPackages);
+    chain.updates = mergeUpdates(managedUpdates, [...packageUpdates, ...(chain.updates || [])]);
     const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
     const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
-    chain.sources = mergeSources(managedSources, derivedSources);
-    appendResearchPackageLogicTracks(
-      chain,
-      structuredClone(state.researchPackagesByChain?.[chain.id] || [])
-    );
+    const packageSources = sourcesFromResearchPackages(researchPackages);
+    chain.sources = mergeSources(managedSources, [...packageSources, ...derivedSources]);
+    appendResearchPackageLogicTracks(chain, researchPackages);
+    appendResearchPackageMonitors(chain, researchPackages);
     applyLogicCardOverrides(
       chain,
       structuredClone(state.logicCardsByChain?.[chain.id] || [])
     );
     applySourceOverrides(chain, managedSources, derivedSources);
-    chain.researchPackages = structuredClone(state.researchPackagesByChain?.[chain.id] || []);
+    chain.researchPackages = researchPackages;
   }
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
   return library;
+}
+
+function sourcesFromResearchPackages(packages) {
+  return packages.map((researchPackage) => ({
+    id: `research-package-${researchPackage.packageId}`,
+    date: researchPackage.importedAt?.slice(0, 10) || "",
+    createdAt: researchPackage.importedAt || "",
+    type: "research-article",
+    platform: "自有研究",
+    title: researchPackage.title,
+    author: "自有研究",
+    originalUrl: researchPackage.articleUrl,
+    markdownUrl: researchPackage.sourceUrl,
+    logicUrl: researchPackage.logicUrl,
+    summary: researchPackage.logic?.summary || researchPackage.title,
+    segment: researchPackage.topicTitle,
+    companies: uniqueCompanies(researchPackage.logic),
+    tags: [researchPackage.topicTitle, "逻辑跟踪"],
+    status: "published",
+    packageId: researchPackage.packageId,
+    topicId: researchPackage.topicId
+  }));
+}
+
+function updatesFromResearchPackages(packages) {
+  const ordered = packages
+    .map((researchPackage, index) => ({ researchPackage, index }))
+    .sort((left, right) =>
+      String(left.researchPackage.importedAt || "").localeCompare(String(right.researchPackage.importedAt || "")) ||
+      right.index - left.index
+    )
+    .map((entry) => entry.researchPackage);
+  const previousByTopic = new Map();
+  return ordered.map((researchPackage) => {
+    const previous = previousByTopic.get(researchPackage.topicId);
+    previousByTopic.set(researchPackage.topicId, researchPackage);
+    const changes = compareResearchLogic(previous?.logic, researchPackage.logic);
+    const isFirstVersion = !previous;
+    return {
+      id: `research-package-update-${researchPackage.packageId}`,
+      date: researchPackage.importedAt?.slice(0, 10) || "",
+      type: "机构逻辑",
+      segment: researchPackage.topicTitle,
+      signal: isFirstVersion
+        ? `新增研究主题：${researchPackage.topicTitle}`
+        : `${researchPackage.topicTitle}研究版本更新`,
+      impact: isFirstVersion
+        ? `提炼 ${researchPackage.logicCount} 条逻辑，关联 ${researchPackage.companyCount} 家公司，建立 ${researchPackage.monitorCount} 个监控指标。`
+        : logicChangeSummary(changes),
+      confidence: "资料包已校验",
+      sourceTitle: researchPackage.title,
+      sourceUrl: researchPackage.articleUrl,
+      sourceKind: "文章",
+      sourcePlatform: "自有研究",
+      notes: isFirstVersion
+        ? "研究主题已进入核心逻辑、研究归档和逻辑监控。"
+        : logicChangeNotes(changes),
+      logicTrack: {
+        id: `research-${researchPackage.topicId}`,
+        role: isFirstVersion ? "新增主题" : "版本更新",
+        contribution: isFirstVersion
+          ? `新增 ${researchPackage.logicCount} 条可跟踪逻辑。`
+          : logicChangeSummary(changes)
+      },
+      derivedFromPackage: true,
+      packageId: researchPackage.packageId
+    };
+  });
+}
+
+function appendResearchPackageMonitors(chain, packages) {
+  if (!chain || !packages.length) return;
+  const latestByTopic = new Map();
+  for (const researchPackage of packages) {
+    if (!latestByTopic.has(researchPackage.topicId)) {
+      latestByTopic.set(researchPackage.topicId, researchPackage);
+    }
+  }
+  chain.trackingProfile ||= {
+    title: `${chain.title}逻辑监控`,
+    summary: "持续验证核心逻辑是否强化、减弱或出现反证。",
+    metrics: []
+  };
+  chain.trackingProfile.title = `${chain.shortTitle || chain.title}逻辑监控`;
+  chain.trackingProfile.summary = "同时观察产业链基准指标与近期研究主题的强化、减弱和失效信号。";
+  const existing = new Set((chain.trackingProfile.metrics || []).map((item) => item.id || item.name));
+  for (const researchPackage of latestByTopic.values()) {
+    for (const logic of researchPackage.logic?.logics || []) {
+      for (const monitor of logic.monitors || []) {
+        const id = `research-${researchPackage.topicId}-${monitor.key}`;
+        if (existing.has(id)) continue;
+        existing.add(id);
+        chain.trackingProfile.metrics.push({
+          id,
+          name: monitor.name,
+          why: monitor.logic,
+          signals: [monitor.strengthening_signal, monitor.weakening_signal],
+          topicTitle: researchPackage.topicTitle,
+          logicTitle: logic.title,
+          executionStatus: monitor.data_sources?.some((source) => source.execution_status === "active")
+            ? "active"
+            : monitor.data_sources?.every((source) => source.execution_status === "retired")
+              ? "retired"
+              : "planned",
+          dataSources: (monitor.data_sources || []).map((source) => ({
+            providers: source.providers || [],
+            document: source.document,
+            frequency: source.frequency,
+            automationTarget: source.automation_target,
+            executionStatus: source.execution_status
+          })),
+          rules: monitor.rules || [],
+          invalidation: logic.invalidation || [],
+          sourceTitle: researchPackage.title,
+          sourceUrl: researchPackage.articleUrl,
+          updatedAt: researchPackage.importedAt
+        });
+      }
+    }
+  }
 }
 
 function appendResearchPackageLogicTracks(chain, packages) {
@@ -462,6 +583,39 @@ function appendResearchPackageLogicTracks(chain, packages) {
     if (existingIndex >= 0) chain.logicTracks[existingIndex] = packageTrack;
     else chain.logicTracks.push(packageTrack);
   }
+}
+
+function compareResearchLogic(previousLogic, currentLogic) {
+  const previous = new Map((previousLogic?.logics || []).map((item) => [item.key, item]));
+  const current = new Map((currentLogic?.logics || []).map((item) => [item.key, item]));
+  const added = [...current.keys()].filter((key) => !previous.has(key));
+  const removed = [...previous.keys()].filter((key) => !current.has(key));
+  const changed = [...current.keys()].filter((key) => {
+    const before = previous.get(key);
+    const after = current.get(key);
+    return before && (before.status !== after.status || before.statement !== after.statement);
+  });
+  return { added, removed, changed };
+}
+
+function logicChangeSummary(changes) {
+  const parts = [];
+  if (changes.added.length) parts.push(`新增 ${changes.added.length} 条逻辑`);
+  if (changes.changed.length) parts.push(`更新 ${changes.changed.length} 条逻辑`);
+  if (changes.removed.length) parts.push(`移除 ${changes.removed.length} 条逻辑`);
+  return parts.length ? `${parts.join("，")}。` : "研究内容已更新，核心逻辑结论暂未发生结构性变化。";
+}
+
+function logicChangeNotes(changes) {
+  const keys = [...changes.added, ...changes.changed, ...changes.removed];
+  return keys.length ? `发生变化的稳定 key：${keys.join("、")}` : "保留本版本资料，作为后续逻辑变化比较的基线。";
+}
+
+function uniqueCompanies(logic) {
+  return [...new Set((logic?.logics || [])
+    .flatMap((item) => item.companies || [])
+    .map((company) => company.name)
+    .filter(Boolean))];
 }
 
 function logicStatusLabel(status) {
@@ -772,6 +926,7 @@ function sourcesFromUpdates(updates, baseArticleUrl) {
   const normalizedBaseArticle = normalizeSourceReference(baseArticleUrl);
   return updates
     .filter((item) => {
+      if (item.derivedFromPackage) return false;
       if (!item.sourceUrl && !item.sourceTitle) return false;
       return normalizeSourceReference(item.sourceUrl) !== normalizedBaseArticle;
     })

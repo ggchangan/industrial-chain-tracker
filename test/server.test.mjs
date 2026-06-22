@@ -212,6 +212,50 @@ test("maintainer can inspect and import a standard research package", async () =
   assert.equal(mpoTrack.title, "MPO产业链");
   assert.equal(mpoTrack.coreInsights.length, 1);
   assert.equal(mpoTrack.coreInsights[0].title, "MPO订单增长");
+  const mpoSource = chain.sources.find((item) => item.packageId === imported.packageId);
+  assert.equal(mpoSource.title, "MPO产业链深度解析：测试导入");
+  assert.equal(mpoSource.status, "published");
+  assert.equal(mpoSource.markdownUrl, imported.sourceUrl);
+  assert.equal(mpoSource.originalUrl, imported.articleUrl);
+  const mpoUpdate = chain.updates.find((item) => item.packageId === imported.packageId);
+  assert.equal(mpoUpdate.signal, "新增研究主题：MPO产业链");
+  assert.match(mpoUpdate.impact, /提炼 1 条逻辑/);
+  assert.equal(mpoUpdate.logicTrack.id, "research-mpo");
+  const mpoMonitor = chain.trackingProfile.metrics.find((item) => item.id === "research-mpo-order-growth");
+  assert.equal(mpoMonitor.name, "订单增长");
+  assert.equal(mpoMonitor.topicTitle, "MPO产业链");
+  assert.equal(mpoMonitor.executionStatus, "planned");
+
+  const secondVersionFiles = structuredClone(files);
+  const secondLogicFile = secondVersionFiles.find((file) => file.path.endsWith("logic.json"));
+  const secondLogic = JSON.parse(secondLogicFile.content);
+  secondLogic.summary = "MPO测试逻辑第二版。";
+  secondLogic.logics[0].status = "challenged";
+  secondLogic.logics[0].statement = "订单仍增长，但需要验证持续性。";
+  secondLogicFile.content = JSON.stringify(secondLogic);
+  const secondImportResponse = await fetch(
+    `${baseUrl}/api/v1/admin/chains/optical-module/research-packages`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ files: secondVersionFiles })
+    }
+  );
+  assert.equal(secondImportResponse.status, 201);
+  const secondImported = (await secondImportResponse.json()).researchPackage;
+  const refreshedLibrary = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
+  const refreshedChain = refreshedLibrary.chains.find((item) => item.id === "optical-module");
+  const versionUpdate = refreshedChain.updates.find((item) => item.packageId === secondImported.packageId);
+  assert.equal(versionUpdate.signal, "MPO产业链研究版本更新");
+  assert.match(versionUpdate.impact, /更新 1 条逻辑/);
+  assert.equal(
+    refreshedChain.sources.filter((item) => item.topicId === "mpo").length,
+    2
+  );
+  assert.equal(
+    refreshedChain.logicTracks.find((item) => item.id === "research-mpo").coreInsights[0].kicker,
+    "出现反证"
+  );
 });
 
 test("research package import reports COS permission failures clearly", async () => {

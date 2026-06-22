@@ -30,6 +30,7 @@ let articleScrollCleanup;
 let pendingArticleTarget = null;
 let companyIndex = new Map();
 let topicIndex = new Map();
+const activeTrackingGroupByChain = new Map();
 
 const trackedTopics = [
   "AI服务器",
@@ -902,7 +903,9 @@ function scrollToArticleHash() {
 
 function scrollToRenderedSectionHash() {
   const id = decodeURIComponent(window.location.hash.slice(1));
-  if (!["chain", "updates", "research", "logic", "verification", "article"].includes(id)) return;
+  if (!["chain", "updates", "activity", "changes", "research", "logic", "verification", "article"].includes(id)) return;
+  if (id === "research") setActivityTab("research");
+  if (id === "changes") setActivityTab("changes");
   const target = document.getElementById(id);
   if (!target) return;
   window.setTimeout(() => target.scrollIntoView({ block: "start" }), 80);
@@ -1175,8 +1178,8 @@ function renderCurrent(chain) {
   quick.innerHTML = "";
   [
     ["产业链骨架", "#chain"],
-    ["动态追踪", "#updates"],
-    ["最新研究", "#research"],
+    ["逻辑监控", "#updates"],
+    ["研究动态", "#activity"],
     ["核心逻辑", "#logic"],
     ["观察与验证", "#verification"],
     ["原文阅读", "#article"],
@@ -1304,13 +1307,35 @@ function renderTrackingProfile(chain) {
   const profile = chain.trackingProfile;
   const title = document.querySelector("#trackingTitle");
   const summary = document.querySelector("#trackingSummary");
+  const filters = document.querySelector("#trackingFilters");
   const root = document.querySelector("#trackingGrid");
 
   title.textContent = profile?.title || `${chain.title}专属动态追踪`;
   summary.textContent = profile?.summary || "围绕这条产业链独有的供需、价格、认证和订单变量持续更新。";
+  const metrics = profile?.metrics || [];
+  const groups = [...new Set(metrics.map((item) => item.topicTitle || "产业链基准"))];
+  const preferredGroup = groups.find((group) => group !== "产业链基准") || groups[0];
+  const activeGroup = groups.includes(activeTrackingGroupByChain.get(chain.id))
+    ? activeTrackingGroupByChain.get(chain.id)
+    : preferredGroup;
+  activeTrackingGroupByChain.set(chain.id, activeGroup);
+  filters.innerHTML = "";
+  groups.forEach((group) => {
+    const count = metrics.filter((item) => (item.topicTitle || "产业链基准") === group).length;
+    const button = el("button", group === activeGroup ? "active" : "", `${escapeHtml(group)} <span>${count}</span>`);
+    button.type = "button";
+    button.addEventListener("click", () => {
+      activeTrackingGroupByChain.set(chain.id, group);
+      renderTrackingProfile(chain);
+    });
+    filters.append(button);
+  });
   root.innerHTML = "";
 
-  (profile?.metrics || []).forEach((item, index) => {
+  metrics
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => (item.topicTitle || "产业链基准") === activeGroup)
+    .forEach(({ item, index }) => {
     const card = el("article", "tracking-card");
     card.dataset.searchTarget = searchTargetKey(chain.id, "tracking", index);
     const evidence = findTrackingEvidence(chain, item);
@@ -1321,8 +1346,11 @@ function renderTrackingProfile(chain) {
       "tracking-card-state",
       evidence
         ? `<span>${escapeHtml(evidence.item.type || "动态")}</span><time>${escapeHtml(evidence.item.date)}</time>`
-        : "<span>持续观察</span><time>暂无新证据</time>"
+        : `<span>${escapeHtml(trackingStatusLabel(item.executionStatus))}</span><time>${escapeHtml(item.updatedAt?.slice(0, 10) || "暂无新证据")}</time>`
     ));
+    if (item.topicTitle) {
+      card.append(el("div", "tracking-card-topic", `${escapeHtml(item.topicTitle)} · ${escapeHtml(item.logicTitle || "")}`));
+    }
     card.append(el("h3", "", item.name));
     card.append(el("p", "", item.why));
     if (evidence) {
@@ -1333,6 +1361,12 @@ function renderTrackingProfile(chain) {
       link.href = `#${evidence.id}`;
       latest.append(link);
       card.append(latest);
+    } else if (item.dataSources?.length) {
+      const source = item.dataSources[0];
+      const latest = el("aside", "tracking-latest pending");
+      latest.append(el("strong", "", `等待 ${source.providers.join("、") || "指定来源"} 的${source.document || "数据"}`));
+      latest.append(el("p", "", `更新频率：${source.frequency || "待确定"}；当前尚未采集到验证结果。`));
+      card.append(latest);
     }
     card.append(el(
       "div",
@@ -1341,6 +1375,15 @@ function renderTrackingProfile(chain) {
     ));
     root.append(card);
   });
+}
+
+function trackingStatusLabel(status) {
+  return {
+    active: "监控中",
+    planned: "待接入",
+    paused: "已暂停",
+    retired: "已结束"
+  }[status] || "持续观察";
 }
 
 function renderTimeline(chain) {
@@ -1393,6 +1436,8 @@ function findTrackingEvidence(chain, metric) {
     ...(metric.signals || [])
   ].flatMap(trackingKeywords);
   return chain.updates
+    .filter((item) => !item.derivedFromPackage)
+    .filter((item) => !metric.topicTitle || item.segment === metric.topicTitle)
     .map((item, index) => ({
       item,
       index,
@@ -1494,6 +1539,25 @@ function renderResearch(chain) {
     }
     card.append(actions);
     root.append(card);
+  });
+}
+
+function setActivityTab(name) {
+  document.querySelectorAll("[data-activity-tab]").forEach((button) => {
+    const active = button.dataset.activityTab === name;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("[data-activity-panel]").forEach((panel) => {
+    const active = panel.dataset.activityPanel === name;
+    panel.classList.toggle("active", active);
+    panel.hidden = !active;
+  });
+}
+
+function initActivityTabs() {
+  document.querySelectorAll("[data-activity-tab]").forEach((button) => {
+    button.addEventListener("click", () => setActivityTab(button.dataset.activityTab));
   });
 }
 
@@ -1769,4 +1833,5 @@ function initSearch() {
 }
 
 initSearch();
+initActivityTabs();
 render();

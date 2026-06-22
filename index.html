@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链研究库</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=research-flow-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=research-activity-1" />
   </head>
   <body>
     <header class="site-header">
@@ -12,8 +12,8 @@
         <a href="#chains">产业链库</a>
         <a href="#chain">产业链骨架</a>
         <a href="#map">产业链图谱</a>
-        <a href="#updates">动态追踪</a>
-        <a href="#research">最新研究</a>
+        <a href="#updates">逻辑监控</a>
+        <a href="#activity">研究动态</a>
         <a href="#logic">核心逻辑</a>
         <a href="#verification">观察验证</a>
         <a href="#article">原文阅读</a>
@@ -63,25 +63,29 @@
       <section id="updates" class="section">
         <div class="section-head">
           <p class="eyebrow">Tracking</p>
-          <h2 id="trackingTitle">动态追踪</h2>
+          <h2 id="trackingTitle">逻辑监控</h2>
           <p id="trackingSummary"></p>
         </div>
+        <div class="tracking-filters" id="trackingFilters" aria-label="监控主题"></div>
         <div class="tracking-grid" id="trackingGrid"></div>
-        <div class="section-head compact tracking-history-head">
-          <p class="eyebrow">Change Log</p>
-          <h3>变化记录</h3>
-          <p>按时间倒序保留产业事件、机构逻辑、公司公告与数据变化，并标明证据来源。</p>
-        </div>
-        <div class="timeline" id="timeline"></div>
       </section>
 
-      <section id="research" class="section">
+      <section id="activity" class="section">
         <div class="section-head">
-          <p class="eyebrow">Latest Research</p>
-          <h2>最新研究</h2>
-          <p>最近新增的文章、视频、公告与研报集中在这里；带有逻辑提炼的资料会明确标出。</p>
+          <p class="eyebrow">Research Activity</p>
+          <h2>研究动态</h2>
+          <p>一边看逻辑发生了什么变化，一边回到对应的文章、视频、公告和研究原文核验证据。</p>
         </div>
-        <div class="research-feed" id="researchFeed"></div>
+        <div class="activity-tabs" role="tablist" aria-label="研究动态">
+          <button class="active" type="button" role="tab" aria-selected="true" data-activity-tab="changes">逻辑变化</button>
+          <button type="button" role="tab" aria-selected="false" data-activity-tab="research">资料归档</button>
+        </div>
+        <div id="changes" class="activity-panel active" data-activity-panel="changes">
+          <div class="timeline" id="timeline"></div>
+        </div>
+        <div id="research" class="activity-panel" data-activity-panel="research" hidden>
+          <div class="research-feed" id="researchFeed"></div>
+        </div>
       </section>
 
       <section id="logic" class="section">
@@ -124,6 +128,6 @@
     <div id="companyPanel" hidden></div>
 
     <script src="./assets/data.js"></script>
-    <script type="module" src="./assets/bootstrap.js?v=research-flow-5"></script>
+    <script type="module" src="./assets/bootstrap.js?v=research-activity-1"></script>
   </body>
 </html>
