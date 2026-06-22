@@ -1088,7 +1088,11 @@ async function apiRequest(url, options = {}) {
     window.location.replace(`./admin-login.html?next=${encodeURIComponent("/maintain.html")}`);
     throw new Error("登录状态已失效");
   }
-  if (!response.ok) throw new Error(payload.message || `请求失败（${response.status}）`);
+  if (!response.ok) {
+    const error = new Error(payload.message || `请求失败（${response.status}）`);
+    error.code = payload.error || "";
+    throw error;
+  }
   return payload;
 }
 
