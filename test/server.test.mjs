@@ -41,6 +41,8 @@ test("health and library APIs expose synchronized content", async () => {
   const health = await fetch(`${baseUrl}/api/v1/health`).then((response) => response.json());
   assert.equal(health.status, "ok");
   assert.ok(health.chains >= 20);
+  assert.equal(health.stateStore, "file");
+  assert.equal(health.objectStorage, "local");
 
   const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
   assert.equal(library.chains.length, health.chains);

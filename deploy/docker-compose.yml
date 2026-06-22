@@ -10,6 +10,8 @@ services:
       PORT: 4173
       HOST: 0.0.0.0
       DATA_DIR: /data
+      STATE_STORE_DRIVER: ${STATE_STORE_DRIVER:-file}
+      OBJECT_STORAGE_DRIVER: ${OBJECT_STORAGE_DRIVER:-local}
     ports:
       - "127.0.0.1:4173:4173"
     restart: unless-stopped

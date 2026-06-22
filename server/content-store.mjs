@@ -1,18 +1,17 @@
-import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import crypto from "node:crypto";
 import path from "node:path";
 import { inspectResearchPackage } from "./research-package.mjs";
 
-const STATE_FILE = "managed-content.json";
-
-export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
+export async function createContentStore({ baseLibrary, dataDir, rootDir, stateStore, objectStorage }) {
   const resolvedDataDir = path.resolve(dataDir);
   const resolvedRootDir = path.resolve(rootDir);
-  await mkdir(resolvedDataDir, { recursive: true });
+  await stateStore.initialize();
+  await objectStorage.initialize();
 
-  let state = await readState(resolvedDataDir);
+  let state = await stateStore.load();
   if (migrateDeprecatedChains(baseLibrary, state)) {
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
   }
   let library = mergeLibrary(baseLibrary, state);
 
@@ -37,24 +36,24 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const coverRelativePath = path.join("uploads", `${id}-industry-chain-cover${cover.extension}`);
 
     await Promise.all([
-      writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown),
-      writeManagedBinary(resolvedDataDir, diagramRelativePath, diagram.contents),
-      writeManagedBinary(resolvedDataDir, coverRelativePath, cover.contents)
+      writeManagedFile(objectStorage, articleRelativePath, article.markdown),
+      writeManagedBinary(objectStorage, diagramRelativePath, diagram.contents),
+      writeManagedBinary(objectStorage, coverRelativePath, cover.contents)
     ]);
 
     const chain = {
       ...generated,
-      article: managedUrl(articleRelativePath),
-      cover: managedUrl(coverRelativePath),
-      diagram: managedUrl(diagramRelativePath),
-      diagramSvg: managedUrl(diagramRelativePath),
+      article: objectStorage.urlFor(articleRelativePath),
+      cover: objectStorage.urlFor(coverRelativePath),
+      diagram: objectStorage.urlFor(diagramRelativePath),
+      diagramSvg: objectStorage.urlFor(diagramRelativePath),
       updateFile: "",
       watchlist: [],
       updates: []
     };
 
     state.managedChains.push(chain);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(library.chains.find((item) => item.id === id));
   }
@@ -66,7 +65,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const update = normalizeUpdate(input);
     state.updatesByChain[chainId] ||= [];
     state.updatesByChain[chainId].unshift(update);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(update);
   }
@@ -82,7 +81,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const index = state.updatesByChain[chainId].findIndex((item) => item.id === updateId);
     if (index >= 0) state.updatesByChain[chainId][index] = update;
     else state.updatesByChain[chainId].unshift(update);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(update);
   }
@@ -94,16 +93,16 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const source = normalizeSource(input);
     if (source.markdown) {
       const sourceRelativePath = path.join("sources", chainId, `${source.id}.md`);
-      await writeManagedFile(resolvedDataDir, sourceRelativePath, source.markdown);
-      source.markdownUrl = managedUrl(sourceRelativePath);
+      await writeManagedFile(objectStorage, sourceRelativePath, source.markdown);
+      source.markdownUrl = objectStorage.urlFor(sourceRelativePath);
       delete source.markdown;
     }
-    source.illustrations = await persistSourceIllustrations(resolvedDataDir, chainId, source.id, source.illustrations);
+    source.illustrations = await persistSourceIllustrations(objectStorage, chainId, source.id, source.illustrations);
 
     state.sourcesByChain ||= {};
     state.sourcesByChain[chainId] ||= [];
     state.sourcesByChain[chainId].unshift(source);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(source);
   }
@@ -114,7 +113,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const source = (chain.sources || []).find((item) => item.id === sourceId);
     if (!source) throw notFoundError("资料不存在");
     const markdown = source.markdownUrl
-      ? await readContentFile(resolvedRootDir, resolvedDataDir, source.markdownUrl)
+      ? await readContentFile(resolvedRootDir, objectStorage, source.markdownUrl)
       : "";
     return { source: structuredClone(source), markdown };
   }
@@ -133,14 +132,14 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     });
     if (source.markdown) {
       const sourceRelativePath = path.join("sources", chainId, `${source.id}.md`);
-      await writeManagedFile(resolvedDataDir, sourceRelativePath, source.markdown);
-      source.markdownUrl = managedUrl(sourceRelativePath);
+      await writeManagedFile(objectStorage, sourceRelativePath, source.markdown);
+      source.markdownUrl = objectStorage.urlFor(sourceRelativePath);
       delete source.markdown;
     } else {
       source.markdownUrl = current.markdownUrl || "";
     }
     source.illustrations = await persistSourceIllustrations(
-      resolvedDataDir,
+      objectStorage,
       chainId,
       source.id,
       source.illustrations
@@ -152,7 +151,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const index = state.sourcesByChain[chainId].findIndex((item) => item.id === sourceId);
     if (index >= 0) state.sourcesByChain[chainId][index] = source;
     else state.sourcesByChain[chainId].unshift(source);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(source);
   }
@@ -182,18 +181,18 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
       inspection.preview.packageId
     );
     for (const file of inspection.files) {
-      await writeManagedBinary(resolvedDataDir, path.join(root, file.path), file.contents);
+      await writeManagedBinary(objectStorage, path.join(root, file.path), file.contents);
     }
     const record = {
       ...inspection.preview,
       status: "imported",
-      articleUrl: managedUrl(path.join(root, "article.html")),
-      sourceUrl: managedUrl(path.join(root, "source-article.md")),
-      logicUrl: managedUrl(path.join(root, "logic.json")),
+      articleUrl: objectStorage.urlFor(path.join(root, "article.html")),
+      sourceUrl: objectStorage.urlFor(path.join(root, "source-article.md")),
+      logicUrl: objectStorage.urlFor(path.join(root, "logic.json")),
       logic: inspection.logic
     };
     state.researchPackagesByChain[chainId].unshift(record);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(record);
   }
@@ -235,7 +234,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const index = state.logicCardsByChain[chainId].findIndex((item) => item.id === card.id);
     if (index >= 0) state.logicCardsByChain[chainId][index] = card;
     else state.logicCardsByChain[chainId].push(card);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(card);
   }
@@ -250,14 +249,14 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     const index = state.logicCardsByChain[chainId].findIndex((item) => item.id === cardId);
     if (index >= 0) state.logicCardsByChain[chainId][index] = disabled;
     else state.logicCardsByChain[chainId].push(disabled);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
   }
 
   async function getEditableChain(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
-    const markdown = await readChainArticle(resolvedRootDir, resolvedDataDir, chain.article);
+    const markdown = await readChainArticle(resolvedRootDir, objectStorage, chain.article);
     return { chain: structuredClone(chain), markdown };
   }
 
@@ -266,8 +265,8 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     if (!chain) throw notFoundError("产业链不存在");
     const article = normalizeArticleInput(input);
     const articleRelativePath = path.join("raw", `${chainId}-industry-chain-original.md`);
-    const articleUrl = managedUrl(articleRelativePath);
-    await writeManagedFile(resolvedDataDir, articleRelativePath, article.markdown);
+    const articleUrl = objectStorage.urlFor(articleRelativePath);
+    await writeManagedFile(objectStorage, articleRelativePath, article.markdown);
 
     const managedIndex = state.managedChains.findIndex((item) => item.id === chainId);
     if (managedIndex >= 0) {
@@ -275,7 +274,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     } else {
       state.articleOverrides[chainId] = articleUrl;
     }
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
     return structuredClone(library.chains.find((item) => item.id === chainId));
   }
@@ -290,12 +289,12 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     if (state.logicCardsByChain) delete state.logicCardsByChain[chainId];
     if (state.researchPackagesByChain) delete state.researchPackagesByChain[chainId];
     await Promise.all([
-      removeManagedFile(resolvedDataDir, chain.article),
-      removeManagedFile(resolvedDataDir, chain.cover),
-      removeManagedFile(resolvedDataDir, chain.diagram),
-      ...sources.map((source) => removeManagedFile(resolvedDataDir, source.markdownUrl))
+      removeManagedFile(objectStorage, chain.article),
+      removeManagedFile(objectStorage, chain.cover),
+      removeManagedFile(objectStorage, chain.diagram),
+      ...sources.map((source) => removeManagedFile(objectStorage, source.markdownUrl))
     ]);
-    await saveState(resolvedDataDir, state);
+    await stateStore.save(state);
     library = mergeLibrary(baseLibrary, state);
   }
 
@@ -322,20 +321,22 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir }) {
     saveLogicCard,
     deleteLogicCard,
     dataDir: resolvedDataDir,
+    stateStoreDriver: stateStore.driver,
+    objectStorageDriver: objectStorage.driver,
+    close: () => stateStore.close(),
+    readObject: (key) => objectStorage.getObject(key),
     getLibrary: () => library
   };
 }
 
-async function readChainArticle(rootDir, dataDir, articleUrl) {
-  return readContentFile(rootDir, dataDir, articleUrl);
+async function readChainArticle(rootDir, objectStorage, articleUrl) {
+  return readContentFile(rootDir, objectStorage, articleUrl);
 }
 
-async function readContentFile(rootDir, dataDir, fileUrl) {
-  if (String(fileUrl || "").startsWith("/managed/")) {
-    const relativePath = String(fileUrl).replace(/^\/managed\//, "");
-    const target = path.resolve(dataDir, relativePath);
-    assertInside(dataDir, target);
-    return readFile(target, "utf8");
+async function readContentFile(rootDir, objectStorage, fileUrl) {
+  const objectKey = objectStorage.keyFromUrl(fileUrl);
+  if (objectKey) {
+    return (await objectStorage.getObject(objectKey)).toString("utf8");
   }
   const relativePath = String(fileUrl || "").replace(/^\.\//, "");
   const target = path.resolve(rootDir, relativePath);
@@ -343,12 +344,9 @@ async function readContentFile(rootDir, dataDir, fileUrl) {
   return readFile(target, "utf8");
 }
 
-async function removeManagedFile(dataDir, fileUrl) {
-  if (!String(fileUrl || "").startsWith("/managed/")) return;
-  const relativePath = fileUrl.replace(/^\/managed\//, "");
-  const target = path.resolve(dataDir, relativePath);
-  assertInside(dataDir, target);
-  await rm(target, { force: true });
+async function removeManagedFile(objectStorage, fileUrl) {
+  const objectKey = objectStorage.keyFromUrl(fileUrl);
+  if (objectKey) await objectStorage.deleteObject(objectKey);
 }
 
 function mergeLibrary(baseLibrary, state) {
@@ -477,32 +475,6 @@ function migrateDeprecatedChains(baseLibrary, state) {
     hadUpdates || hadOverride || hadSources || hadLogicCards || hadResearchPackages;
 }
 
-async function readState(dataDir) {
-  try {
-    const state = JSON.parse(await readFile(path.join(dataDir, STATE_FILE), "utf8"));
-    return {
-      managedChains: Array.isArray(state.managedChains) ? state.managedChains : [],
-      articleOverrides: state.articleOverrides && typeof state.articleOverrides === "object" ? state.articleOverrides : {},
-      updatesByChain: state.updatesByChain && typeof state.updatesByChain === "object" ? state.updatesByChain : {},
-      sourcesByChain: state.sourcesByChain && typeof state.sourcesByChain === "object" ? state.sourcesByChain : {},
-      logicCardsByChain: state.logicCardsByChain && typeof state.logicCardsByChain === "object" ? state.logicCardsByChain : {},
-      researchPackagesByChain: state.researchPackagesByChain && typeof state.researchPackagesByChain === "object" ? state.researchPackagesByChain : {},
-      updatedAt: state.updatedAt || ""
-    };
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-    return {
-      managedChains: [],
-      articleOverrides: {},
-      updatesByChain: {},
-      sourcesByChain: {},
-      logicCardsByChain: {},
-      researchPackagesByChain: {},
-      updatedAt: ""
-    };
-  }
-}
-
 function publicInspection(inspection) {
   return {
     valid: inspection.valid,
@@ -512,30 +484,12 @@ function publicInspection(inspection) {
   };
 }
 
-async function saveState(dataDir, state) {
-  state.updatedAt = new Date().toISOString();
-  const target = path.join(dataDir, STATE_FILE);
-  const temporary = `${target}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(state, null, 2)}\n`, "utf8");
-  await rename(temporary, target);
+async function writeManagedFile(objectStorage, relativePath, contents) {
+  await objectStorage.putObject(relativePath, Buffer.from(contents, "utf8"));
 }
 
-async function writeManagedFile(dataDir, relativePath, contents) {
-  const target = path.resolve(dataDir, relativePath);
-  assertInside(dataDir, target);
-  await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(target, contents, "utf8");
-}
-
-async function writeManagedBinary(dataDir, relativePath, contents) {
-  const target = path.resolve(dataDir, relativePath);
-  assertInside(dataDir, target);
-  await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(target, contents);
-}
-
-function managedUrl(relativePath) {
-  return `/managed/${relativePath.split(path.sep).join("/")}`;
+async function writeManagedBinary(objectStorage, relativePath, contents) {
+  await objectStorage.putObject(relativePath, contents);
 }
 
 function normalizeArticleInput(input) {
@@ -862,7 +816,7 @@ function normalizeIllustrations(value) {
   })).filter((item) => item.src || item.upload);
 }
 
-async function persistSourceIllustrations(dataDir, chainId, sourceId, illustrations) {
+async function persistSourceIllustrations(objectStorage, chainId, sourceId, illustrations) {
   const persisted = [];
   for (let index = 0; index < (illustrations || []).length; index += 1) {
     const illustration = illustrations[index];
@@ -872,9 +826,9 @@ async function persistSourceIllustrations(dataDir, chainId, sourceId, illustrati
     }
     const asset = normalizeAsset(illustration.upload, "资料配图");
     const relativePath = path.join("sources", chainId, sourceId, `image-${index + 1}${asset.extension}`);
-    await writeManagedBinary(dataDir, relativePath, asset.contents);
+    await writeManagedBinary(objectStorage, relativePath, asset.contents);
     persisted.push({
-      src: managedUrl(relativePath),
+      src: objectStorage.urlFor(relativePath),
       alt: illustration.alt,
       caption: illustration.caption,
       afterHeading: illustration.afterHeading
