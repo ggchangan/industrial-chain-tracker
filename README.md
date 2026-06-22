@@ -68,6 +68,9 @@ ADMIN_SESSION_SECRET=至少32位的随机会话密钥
 `docs/research-package-spec.md`。维护内容写入 `DATA_DIR`；生产 Compose 使用命名卷
 `industrial-chain-tracker-data`，重新发布容器不会覆盖这些内容。
 
+内容状态可切换为腾讯云 MySQL；研究文件当前使用本地数据卷，并预留腾讯云 COS 驱动
+接口。配置、迁移和回退说明见 `docs/storage-architecture.md`。
+
 ## 微信小程序与 App
 
 移动端源码位于 `apps/mobile/`，采用 uni-app Vue 3/Vite：

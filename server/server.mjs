@@ -6,6 +6,8 @@ import { createAuth } from "./auth.mjs";
 import { createContentStore } from "./content-store.mjs";
 import { loadArticle, loadLibrary, searchLibrary } from "./library.mjs";
 import { renderMarkdown } from "./markdown.mjs";
+import { createStateStore } from "./state-store.mjs";
+import { createObjectStorage } from "./object-storage.mjs";
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
 const defaultRoot = path.resolve(serverDir, "..");
@@ -13,10 +15,22 @@ const defaultRoot = path.resolve(serverDir, "..");
 export async function createAppServer(options = {}) {
   const rootDir = path.resolve(options.rootDir || defaultRoot);
   const baseLibrary = await loadLibrary(rootDir);
+  const dataDir = options.dataDir || process.env.DATA_DIR || path.join(rootDir, ".runtime-data");
+  const stateStore = options.stateStore || await createStateStore({
+    driver: options.stateStoreDriver,
+    databaseUrl: options.databaseUrl,
+    dataDir
+  });
+  const objectStorage = options.objectStorage || await createObjectStorage({
+    driver: options.objectStorageDriver,
+    dataDir
+  });
   const contentStore = await createContentStore({
     baseLibrary,
     rootDir,
-    dataDir: options.dataDir || process.env.DATA_DIR || path.join(rootDir, ".runtime-data")
+    dataDir,
+    stateStore,
+    objectStorage
   });
   const auth = createAuth({
     password: options.adminPassword ?? process.env.ADMIN_PASSWORD,
@@ -25,7 +39,7 @@ export async function createAppServer(options = {}) {
   });
   const corsOrigin = options.corsOrigin ?? process.env.CORS_ORIGIN ?? "";
 
-  return createHttpServer(async (request, response) => {
+  const server = createHttpServer(async (request, response) => {
     try {
       const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
       setSecurityHeaders(response);
@@ -58,6 +72,10 @@ export async function createAppServer(options = {}) {
       });
     }
   });
+  server.on("close", () => {
+    contentStore.close().catch((error) => console.error("Failed to close content store", error));
+  });
+  return server;
 }
 
 async function handleApi(context) {
@@ -70,7 +88,9 @@ async function handleApi(context) {
       status: "ok",
       chains: library.chains.length,
       updated: library.meta.updated,
-      adminConfigured: auth.isConfigured()
+      adminConfigured: auth.isConfigured(),
+      stateStore: contentStore.stateStoreDriver,
+      objectStorage: contentStore.objectStorageDriver
     });
     return;
   }

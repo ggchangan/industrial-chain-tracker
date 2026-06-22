@@ -2,13 +2,17 @@
   "name": "industrial-chain-tracker",
   "version": "0.1.0",
   "private": true,
+  "dependencies": {
+    "mysql2": "^3.14.0"
+  },
   "scripts": {
     "start": "node server/server.mjs",
     "dev": "ADMIN_PASSWORD=change-this-local-password ADMIN_SESSION_SECRET=local-development-session-secret-change-me PORT=4173 node server/server.mjs",
     "mobile:build:weixin": "npm --prefix apps/mobile run build:mp-weixin",
     "mobile:dev:weixin": "npm --prefix apps/mobile run dev:mp-weixin",
-    "check": "node --check assets/app.js && node --check assets/bootstrap.js && node --check assets/admin-login.js && node --check assets/maintain.js && node --check server/server.mjs && node --check server/auth.mjs && node --check server/content-store.mjs && node --check server/research-package.mjs && node --check server/library.mjs && node --check server/markdown.mjs && node --check scripts/sync-blog-data.mjs && node --check scripts/validate-blog-data.mjs",
+    "check": "node --check assets/app.js && node --check assets/bootstrap.js && node --check assets/admin-login.js && node --check assets/maintain.js && node --check server/server.mjs && node --check server/auth.mjs && node --check server/content-store.mjs && node --check server/state-store.mjs && node --check server/object-storage.mjs && node --check server/research-package.mjs && node --check server/library.mjs && node --check server/markdown.mjs && node --check scripts/sync-blog-data.mjs && node --check scripts/validate-blog-data.mjs",
     "sync": "node scripts/sync-blog-data.mjs",
+    "migrate:mysql": "node scripts/migrate-state-to-mysql.mjs",
     "test": "node --test",
     "validate": "node scripts/validate-blog-data.mjs"
   }

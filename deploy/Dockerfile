@@ -7,6 +7,9 @@ LABEL org.opencontainers.image.source="https://github.com/ggchangan/industrial-c
 
 RUN apk add --no-cache su-exec
 
+COPY package*.json ./
+RUN npm install --omit=dev
+
 COPY --chown=node:node . .
 RUN chmod +x /app/deploy/docker-entrypoint.sh
 
