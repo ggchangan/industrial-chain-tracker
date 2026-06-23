@@ -11,7 +11,7 @@ async function startApplication() {
     console.info("Using static library fallback:", error.message);
   }
 
-  await import("./app.js?v=monitor-verification-1");
+  await import("./app.js?v=stock-validation-1");
 }
 
 startApplication();
