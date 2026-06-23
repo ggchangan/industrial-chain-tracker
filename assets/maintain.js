@@ -6,7 +6,8 @@ const state = {
   logicCards: [],
   logicTracks: [],
   packagePayload: null,
-  packageInspection: null
+  packageInspection: null,
+  verificationChainId: ""
 };
 const notice = document.querySelector("#adminNotice");
 const articleForm = document.querySelector("#editArticleForm");
@@ -42,12 +43,18 @@ const packageFolder = document.querySelector("#packageFolder");
 const inspectPackageButton = document.querySelector("#inspectPackage");
 const importPackageButton = document.querySelector("#importPackage");
 const packageInspection = document.querySelector("#packageInspection");
+const verificationForm = document.querySelector("#monitorVerificationForm");
+const verificationChainSelect = document.querySelector("#verificationChainId");
+const verificationMonitorSelect = document.querySelector("#verificationMonitorId");
+const verificationMonitorPreview = document.querySelector("#verificationMonitorPreview");
+const verificationHistoryList = document.querySelector("#verificationHistoryList");
 
 initialize();
 
 async function initialize() {
   updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
   sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  verificationForm.elements.date.value = new Date().toISOString().slice(0, 10);
   fileInput.addEventListener("change", readMarkdownFile);
   sourceFileInput.addEventListener("change", readSourceMarkdownFile);
   sourceIllustrationFiles.addEventListener("change", readSourceIllustrations);
@@ -79,6 +86,12 @@ async function initialize() {
   packageFolder.addEventListener("change", resetPackageInspection);
   inspectPackageButton.addEventListener("click", inspectSelectedPackage);
   packageForm.addEventListener("submit", importSelectedPackage);
+  verificationChainSelect.addEventListener("change", () => {
+    state.verificationChainId = verificationChainSelect.value;
+    renderVerificationMonitors();
+  });
+  verificationMonitorSelect.addEventListener("change", renderVerificationMonitor);
+  verificationForm.addEventListener("submit", saveMonitorVerification);
   search.addEventListener("input", () => renderCards(search.value));
   document.querySelector("#adminLogout").addEventListener("click", logout);
   renderSourceIllustrations();
@@ -96,15 +109,115 @@ async function refreshLibrary(preferredChainId = "") {
     renderChainOptions(archiveSelect, state.archiveChainId || preferredChainId || archiveSelect.value);
     renderChainOptions(logicCardChainSelect, state.archiveChainId || preferredChainId || logicCardChainSelect.value);
     renderChainOptions(packageChainSelect, preferredChainId || packageChainSelect.value);
+    renderChainOptions(
+      verificationChainSelect,
+      state.verificationChainId || preferredChainId || verificationChainSelect.value
+    );
+    state.verificationChainId = verificationChainSelect.value;
     state.archiveChainId = archiveSelect.value;
     await loadLogicCards();
     renderLogicSourceOptions();
     renderArchive();
+    renderVerificationMonitors();
     renderCards(search.value);
     document.querySelector("#maintainUpdatedAt").textContent = `更新：${state.library.meta.updated}`;
   } catch (error) {
     setNotice(error.message, "error");
   }
+}
+
+function researchMonitors(chain) {
+  return (chain?.trackingProfile?.metrics || []).filter((item) => item.topicTitle && item.id);
+}
+
+function renderVerificationMonitors(preferredValue = verificationMonitorSelect.value) {
+  const chain = state.library?.chains.find((item) => item.id === verificationChainSelect.value);
+  const monitors = researchMonitors(chain);
+  verificationMonitorSelect.innerHTML = monitors.length
+    ? monitors.map((item) => `
+        <option value="${escapeHtml(item.id)}">${escapeHtml(item.topicTitle)} · ${escapeHtml(item.name)}</option>
+      `).join("")
+    : `<option value="">当前产业链没有研究监控项</option>`;
+  if (monitors.some((item) => item.id === preferredValue)) {
+    verificationMonitorSelect.value = preferredValue;
+  }
+  verificationForm.querySelector("button[type='submit']").disabled = !monitors.length;
+  renderVerificationMonitor();
+}
+
+function renderVerificationMonitor() {
+  const chain = state.library?.chains.find((item) => item.id === verificationChainSelect.value);
+  const monitor = researchMonitors(chain).find((item) => item.id === verificationMonitorSelect.value);
+  if (!monitor) {
+    verificationMonitorPreview.innerHTML = `<p class="archive-empty">导入包含 monitors 的研究包后，可在这里进行人工核验。</p>`;
+    verificationHistoryList.innerHTML = `<p class="archive-empty">暂无核验历史。</p>`;
+    return;
+  }
+  verificationMonitorPreview.innerHTML = `
+    <article>
+      <span>${escapeHtml(monitor.topicTitle)} · ${escapeHtml(monitor.logicTitle)}</span>
+      <h3>${escapeHtml(monitor.name)}</h3>
+      <p>${escapeHtml(monitor.why)}</p>
+      <div class="verification-signals">
+        <div><strong>强化信号</strong><span>${escapeHtml(monitor.signals?.[0] || "")}</span></div>
+        <div><strong>减弱信号</strong><span>${escapeHtml(monitor.signals?.[1] || "")}</span></div>
+      </div>
+    </article>
+  `;
+  const history = monitor.verificationHistory || [];
+  verificationHistoryList.innerHTML = history.length
+    ? history.map((item) => `
+      <article class="archive-item verification-record status-${escapeHtml(item.result)}">
+        <div class="archive-item-head">
+          <span>${escapeHtml(verificationResultLabel(item.result))}</span>
+          <small>${escapeHtml(item.date)}</small>
+        </div>
+        <h3>${escapeHtml(item.summary)}</h3>
+        <p>${escapeHtml(item.notes || "无补充备注")}</p>
+        <div class="archive-item-actions">
+          <a href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.sourceTitle)}</a>
+        </div>
+      </article>
+    `).join("")
+    : `<p class="archive-empty">尚未核验，公开页显示为“待接入”。</p>`;
+}
+
+async function saveMonitorVerification(event) {
+  event.preventDefault();
+  const button = verificationForm.querySelector("button[type='submit']");
+  const chainId = verificationChainSelect.value;
+  const monitorId = verificationMonitorSelect.value;
+  setBusy(button, true, "正在保存…");
+  try {
+    const payload = Object.fromEntries(new FormData(verificationForm).entries());
+    payload.monitorId = monitorId;
+    await apiRequest(
+      `./api/v1/admin/chains/${encodeURIComponent(chainId)}/monitor-verifications`,
+      { method: "POST", body: JSON.stringify(payload) }
+    );
+    setNotice("核验记录已保存，公开页监控状态和逻辑变化已更新。", "success");
+    const preservedMonitor = monitorId;
+    await refreshLibrary(chainId);
+    verificationChainSelect.value = chainId;
+    renderVerificationMonitors(preservedMonitor);
+    verificationForm.reset();
+    verificationForm.elements.date.value = new Date().toISOString().slice(0, 10);
+    verificationForm.elements.result.value = "strengthen";
+  } catch (error) {
+    setNotice(error.message, "error");
+  } finally {
+    setBusy(button, false, "保存核验记录");
+  }
+}
+
+function verificationResultLabel(result) {
+  return {
+    strengthen: "逻辑强化",
+    stable: "逻辑稳定",
+    weaken: "逻辑减弱",
+    challenge: "出现反证",
+    invalidate: "逻辑失效"
+  }[result] || "待判断";
 }
 
 async function loadLogicCards() {

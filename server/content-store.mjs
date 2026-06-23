@@ -215,6 +215,21 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     return structuredClone(record);
   }
 
+  async function addMonitorVerification(chainId, input) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    const monitor = (chain.trackingProfile?.metrics || [])
+      .find((item) => item.id === input.monitorId && item.topicTitle);
+    if (!monitor) throw notFoundError("研究监控项不存在");
+    const verification = normalizeMonitorVerification(input, monitor);
+    state.monitorVerificationsByChain ||= {};
+    state.monitorVerificationsByChain[chainId] ||= [];
+    state.monitorVerificationsByChain[chainId].unshift(verification);
+    await stateStore.save(state);
+    library = mergeLibrary(baseLibrary, state);
+    return structuredClone(verification);
+  }
+
   async function listLogicCards(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -306,6 +321,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     if (state.sourcesByChain) delete state.sourcesByChain[chainId];
     if (state.logicCardsByChain) delete state.logicCardsByChain[chainId];
     if (state.researchPackagesByChain) delete state.researchPackagesByChain[chainId];
+    if (state.monitorVerificationsByChain) delete state.monitorVerificationsByChain[chainId];
     await Promise.all([
       removeManagedFile(objectStorage, chain.article),
       removeManagedFile(objectStorage, chain.cover),
@@ -331,6 +347,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     getEditableSource,
     importPackage,
     inspectPackage,
+    addMonitorVerification,
     listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
@@ -388,9 +405,14 @@ function mergeLibrary(baseLibrary, state) {
 
   for (const chain of library.chains) {
     const researchPackages = structuredClone(state.researchPackagesByChain?.[chain.id] || []);
+    const monitorVerifications = structuredClone(state.monitorVerificationsByChain?.[chain.id] || []);
     const managedUpdates = structuredClone(state.updatesByChain?.[chain.id] || []);
     const packageUpdates = updatesFromResearchPackages(researchPackages);
-    chain.updates = mergeUpdates(managedUpdates, [...packageUpdates, ...(chain.updates || [])]);
+    const verificationUpdates = updatesFromMonitorVerifications(monitorVerifications);
+    chain.updates = mergeUpdates(
+      managedUpdates,
+      [...verificationUpdates, ...packageUpdates, ...(chain.updates || [])]
+    );
     const managedSources = structuredClone(state.sourcesByChain?.[chain.id] || []);
     const derivedSources = sourcesFromUpdates(chain.updates || [], chain.article);
     const packageSources = sourcesFromResearchPackages(researchPackages);
@@ -401,12 +423,37 @@ function mergeLibrary(baseLibrary, state) {
       chain,
       structuredClone(state.logicCardsByChain?.[chain.id] || [])
     );
+    applyMonitorVerifications(chain, monitorVerifications);
     applySourceOverrides(chain, managedSources, derivedSources);
     chain.researchPackages = researchPackages;
   }
 
   if (state.updatedAt) library.meta.updated = formatChinaDate(state.updatedAt);
   return library;
+}
+
+function updatesFromMonitorVerifications(verifications) {
+  return verifications.map((verification) => ({
+    id: `monitor-verification-update-${verification.id}`,
+    date: verification.date,
+    type: "数据变化",
+    segment: verification.topicTitle,
+    signal: `${verification.monitorName}：${verificationStatusLabel(verification.result)}`,
+    impact: verification.summary,
+    confidence: "已核验",
+    sourceTitle: verification.sourceTitle,
+    sourceUrl: verification.sourceUrl,
+    sourceKind: "文章",
+    sourcePlatform: "人工核验",
+    notes: verification.notes || "由维护者完成监控核验。",
+    logicTrack: {
+      id: `research-${verification.topicId}`,
+      role: verificationStatusLabel(verification.result),
+      contribution: verification.summary
+    },
+    derivedFromVerification: true,
+    verificationId: verification.id
+  }));
 }
 
 function sourcesFromResearchPackages(packages) {
@@ -522,11 +569,84 @@ function appendResearchPackageMonitors(chain, packages) {
           invalidation: logic.invalidation || [],
           sourceTitle: researchPackage.title,
           sourceUrl: researchPackage.articleUrl,
-          updatedAt: researchPackage.importedAt
+          updatedAt: researchPackage.importedAt,
+          logicKey: logic.key,
+          topicId: researchPackage.topicId
         });
       }
     }
   }
+}
+
+function applyMonitorVerifications(chain, verifications) {
+  const byMonitor = new Map();
+  for (const verification of verifications) {
+    const history = byMonitor.get(verification.monitorId) || [];
+    history.push(verification);
+    byMonitor.set(verification.monitorId, history);
+  }
+  for (const metric of chain.trackingProfile?.metrics || []) {
+    const history = (byMonitor.get(metric.id) || [])
+      .sort((left, right) =>
+        String(right.date).localeCompare(String(left.date)) ||
+        String(right.createdAt).localeCompare(String(left.createdAt))
+      );
+    if (!history.length) continue;
+    metric.verificationHistory = history;
+    metric.latestVerification = history[0];
+    metric.currentStatus = history[0].result;
+    metric.executionStatus = "active";
+    metric.updatedAt = history[0].date;
+  }
+
+  for (const track of chain.logicTracks || []) {
+    for (const insight of track.coreInsights || []) {
+      const related = verifications.filter((item) =>
+        item.topicId && track.id === `research-${item.topicId}` && item.logicKey === insight.id.replace(`${item.topicId}-`, "")
+      );
+      if (!related.length) continue;
+      const latestByMonitor = new Map();
+      related
+        .sort((left, right) =>
+          String(right.date).localeCompare(String(left.date)) ||
+          String(right.createdAt).localeCompare(String(left.createdAt))
+        )
+        .forEach((item) => {
+          if (!latestByMonitor.has(item.monitorId)) latestByMonitor.set(item.monitorId, item);
+        });
+      const aggregate = aggregateVerificationStatus([...latestByMonitor.values()].map((item) => item.result));
+      insight.verificationStatus = aggregate;
+      insight.kicker = verificationLogicLabel(aggregate);
+      insight.verificationHistory = related;
+    }
+  }
+}
+
+function aggregateVerificationStatus(results) {
+  for (const status of ["invalidate", "challenge", "weaken", "strengthen", "stable"]) {
+    if (results.includes(status)) return status;
+  }
+  return "";
+}
+
+function verificationLogicLabel(status) {
+  return {
+    strengthen: "核验强化",
+    stable: "核验稳定",
+    weaken: "核验减弱",
+    challenge: "核验反证",
+    invalidate: "核验失效"
+  }[status] || "待核验";
+}
+
+function verificationStatusLabel(status) {
+  return {
+    strengthen: "强化",
+    stable: "稳定",
+    weaken: "减弱",
+    challenge: "反证",
+    invalidate: "失效"
+  }[status] || "待判断";
 }
 
 function appendResearchPackageLogicTracks(chain, packages) {
@@ -618,6 +738,35 @@ function uniqueCompanies(logic) {
     .filter(Boolean))];
 }
 
+function normalizeMonitorVerification(input, monitor) {
+  const result = String(input.result || "").trim();
+  if (!["strengthen", "stable", "weaken", "challenge", "invalidate"].includes(result)) {
+    throw validationError("请选择有效的核验结果");
+  }
+  const date = String(input.date || new Date().toISOString().slice(0, 10)).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw validationError("日期格式应为 YYYY-MM-DD");
+  const sourceUrl = String(input.sourceUrl || "").trim();
+  if (!/^https?:\/\//i.test(sourceUrl) && !/^\/managed\/[A-Za-z0-9_./-]+$/i.test(sourceUrl)) {
+    throw validationError("来源链接应为网页地址或已归档原文");
+  }
+  return {
+    id: `verification-${crypto.randomUUID().slice(0, 12)}`,
+    monitorId: monitor.id,
+    monitorName: monitor.name,
+    topicId: monitor.topicId,
+    topicTitle: monitor.topicTitle,
+    logicKey: monitor.logicKey,
+    logicTitle: monitor.logicTitle,
+    date,
+    result,
+    summary: required(input.summary, "请输入核验事实与判断"),
+    sourceTitle: required(input.sourceTitle, "请输入来源标题"),
+    sourceUrl,
+    notes: String(input.notes || "").trim(),
+    createdAt: new Date().toISOString()
+  };
+}
+
 function logicStatusLabel(status) {
   return {
     new: "新逻辑",
@@ -647,13 +796,15 @@ function migrateDeprecatedChains(baseLibrary, state) {
   const hadSources = Boolean(state.sourcesByChain?.["semiconductor-material-industry-chain"]);
   const hadLogicCards = Boolean(state.logicCardsByChain?.["semiconductor-material-industry-chain"]);
   const hadResearchPackages = Boolean(state.researchPackagesByChain?.["semiconductor-material-industry-chain"]);
+  const hadMonitorVerifications = Boolean(state.monitorVerificationsByChain?.["semiconductor-material-industry-chain"]);
   delete state.updatesByChain["semiconductor-material-industry-chain"];
   delete state.articleOverrides["semiconductor-material-industry-chain"];
   if (state.sourcesByChain) delete state.sourcesByChain["semiconductor-material-industry-chain"];
   if (state.logicCardsByChain) delete state.logicCardsByChain["semiconductor-material-industry-chain"];
   if (state.researchPackagesByChain) delete state.researchPackagesByChain["semiconductor-material-industry-chain"];
+  if (state.monitorVerificationsByChain) delete state.monitorVerificationsByChain["semiconductor-material-industry-chain"];
   return previousLength !== state.managedChains.length ||
-    hadUpdates || hadOverride || hadSources || hadLogicCards || hadResearchPackages;
+    hadUpdates || hadOverride || hadSources || hadLogicCards || hadResearchPackages || hadMonitorVerifications;
 }
 
 function publicInspection(inspection) {
