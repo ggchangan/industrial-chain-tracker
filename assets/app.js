@@ -968,6 +968,7 @@ function consumePendingArticleTarget(chainId) {
 function openCompanyPanel(company) {
   const appearances = companyIndex.get(company) || [];
   const logicCards = companyLogicCards(company);
+  const security = companySecurity(company);
   const panel = document.querySelector("#companyPanel");
 
   panel.innerHTML = `
@@ -977,6 +978,28 @@ function openCompanyPanel(company) {
       <p class="eyebrow">Company</p>
       <h2>${escapeHtml(company)}</h2>
       <p>该公司在产业链研究库中出现 ${appearances.length} 次。</p>
+      ${security ? `
+        <section class="company-market-validation">
+          <div>
+            <span>Market Validation</span>
+            <strong>市场走势验证</strong>
+            <p>${escapeHtml(security.exchangeLabel)} · ${escapeHtml(security.ticker)}。股价走势用于观察市场何时交易这套逻辑，不代表产业逻辑已经得到证实。</p>
+          </div>
+          <a href="${escapeHtml(security.quoteUrl)}" target="_blank" rel="noopener noreferrer">打开新浪 K 线</a>
+          ${logicCards.length ? `
+            <div class="company-market-events">
+              <small>研究对照节点</small>
+              ${logicCards.map((item) => `
+                <button type="button" data-logic-chain="${escapeHtml(item.chainId)}" data-logic-target="${escapeHtml(item.target)}">
+                  <time>${escapeHtml(item.researchDate || "日期待补充")}</time>
+                  <span>${escapeHtml(item.trackTitle)}</span>
+                  <strong>${escapeHtml(item.title)}</strong>
+                </button>
+              `).join("")}
+            </div>
+          ` : ""}
+        </section>
+      ` : ""}
       <div class="company-appearances">
         ${appearances
           .map(
@@ -1026,6 +1049,16 @@ function openCompanyPanel(company) {
       });
     });
   });
+
+  panel.querySelectorAll(".company-market-events button").forEach((button) => {
+    button.addEventListener("click", () => {
+      closeCompanyPanel();
+      setChain(button.dataset.logicChain);
+      window.requestAnimationFrame(() => {
+        flashAndScroll(document.getElementById(button.dataset.logicTarget), "center");
+      });
+    });
+  });
 }
 
 function companyLogicCards(company) {
@@ -1038,10 +1071,41 @@ function companyLogicCards(company) {
           trackTitle: track.title,
           title: insight.title,
           summary: insight.summary,
+          researchDate: insight.researchDate || "",
           target: `logic-card-${track.id}-${insight.id}`
         }))
     )
   );
+}
+
+function companySecurity(company) {
+  for (const chain of library.chains) {
+    for (const track of chain.logicTracks || []) {
+      for (const insight of track.coreInsights || []) {
+        const attachment = insight.attachments?.find((item) =>
+          item.type === "company" && item.label === company && item.ticker && item.exchange
+        );
+        if (!attachment) continue;
+        const prefix = {
+          SSE: "sh",
+          SZSE: "sz",
+          BSE: "bj"
+        }[attachment.exchange];
+        if (!prefix) return null;
+        return {
+          ticker: attachment.ticker,
+          exchange: attachment.exchange,
+          exchangeLabel: {
+            SSE: "上海证券交易所",
+            SZSE: "深圳证券交易所",
+            BSE: "北京证券交易所"
+          }[attachment.exchange],
+          quoteUrl: `https://finance.sina.com.cn/realstock/company/${prefix}${attachment.ticker}/nc.shtml`
+        };
+      }
+    }
+  }
+  return null;
 }
 
 function openTopicPanel(topic) {

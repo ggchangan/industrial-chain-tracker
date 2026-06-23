@@ -1956,6 +1956,78 @@ button.propagation-signal:hover {
   margin: 0;
 }
 
+.company-market-validation {
+  background: linear-gradient(135deg, rgba(39, 217, 232, 0.1), rgba(15, 23, 42, 0.82));
+  border: 1px solid rgba(39, 217, 232, 0.32);
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 16px;
+}
+
+.company-market-validation > div > span,
+.company-market-events > small {
+  color: var(--cyan);
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.company-market-validation > div > strong {
+  display: block;
+  font-size: 17px;
+}
+
+.company-market-validation > div > p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 7px 0 0;
+}
+
+.company-market-validation > a {
+  border: 1px solid var(--cyan);
+  color: #c8f7ff;
+  font-size: 12px;
+  font-weight: 800;
+  justify-self: start;
+  padding: 8px 11px;
+}
+
+.company-market-events {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  padding-top: 13px;
+}
+
+.company-market-events button {
+  background: rgba(8, 18, 32, 0.65);
+  border: 1px solid var(--line);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  text-align: left;
+}
+
+.company-market-events button:hover {
+  border-color: var(--cyan);
+}
+
+.company-market-events time,
+.company-market-events span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.company-market-events strong {
+  font-size: 12px;
+}
+
 .maintain-tools {
   align-items: end;
   display: grid;

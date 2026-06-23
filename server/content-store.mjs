@@ -685,7 +685,9 @@ function appendResearchPackageLogicTracks(chain, packages) {
           : "",
         attachments: (item.companies || []).map((company) => ({
           type: "company",
-          label: company.name
+          label: company.name,
+          ticker: company.ticker,
+          exchange: company.exchange
         })),
         sources: [{
           label: "阅读研究原文",
@@ -695,6 +697,7 @@ function appendResearchPackageLogicTracks(chain, packages) {
           anchor: item.evidence?.[0]?.anchor || ""
         }],
         articleAnchor: item.evidence?.[0]?.anchor || "",
+        researchDate: researchPackage.importedAt?.slice(0, 10) || "",
         status: "published",
         order: index + 1
       }))
@@ -1355,7 +1358,9 @@ function normalizeLogicAttachments(value) {
   return (Array.isArray(value) ? value : []).slice(0, 12).map((item) => ({
     type: ["company", "segment", "topic", "chain", "tracking"].includes(item.type) ? item.type : "topic",
     label: String(item.label || "").trim(),
-    ...(item.target ? { target: item.target } : {})
+    ...(item.target ? { target: item.target } : {}),
+    ...(item.ticker ? { ticker: String(item.ticker).trim() } : {}),
+    ...(item.exchange ? { exchange: String(item.exchange).trim() } : {})
   })).filter((item) => item.label);
 }
 

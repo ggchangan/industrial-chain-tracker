@@ -212,6 +212,11 @@ test("maintainer can inspect and import a standard research package", async () =
   assert.equal(mpoTrack.title, "MPO产业链");
   assert.equal(mpoTrack.coreInsights.length, 1);
   assert.equal(mpoTrack.coreInsights[0].title, "MPO订单增长");
+  assert.deepEqual(
+    mpoTrack.coreInsights[0].attachments[0],
+    { type: "company", label: "太辰光", ticker: "300570", exchange: "SZSE" }
+  );
+  assert.match(mpoTrack.coreInsights[0].researchDate, /^\d{4}-\d{2}-\d{2}$/);
   const mpoSource = chain.sources.find((item) => item.packageId === imported.packageId);
   assert.equal(mpoSource.title, "MPO产业链深度解析：测试导入");
   assert.equal(mpoSource.status, "published");
