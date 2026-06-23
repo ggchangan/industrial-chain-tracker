@@ -31,6 +31,7 @@ let pendingArticleTarget = null;
 let companyIndex = new Map();
 let topicIndex = new Map();
 const activeTrackingGroupByChain = new Map();
+const activeStockCampFilterByChain = new Map();
 
 const trackedTopics = [
   "AI服务器",
@@ -903,7 +904,7 @@ function scrollToArticleHash() {
 
 function scrollToRenderedSectionHash() {
   const id = decodeURIComponent(window.location.hash.slice(1));
-  if (!["chain", "updates", "activity", "changes", "research", "logic", "verification", "article"].includes(id)) return;
+  if (!["chain", "updates", "activity", "changes", "research", "stocks", "logic", "verification", "article"].includes(id)) return;
   if (id === "research") setActivityTab("research");
   if (id === "changes") setActivityTab("changes");
   const target = document.getElementById(id);
@@ -985,7 +986,10 @@ function openCompanyPanel(company) {
             <strong>市场走势验证</strong>
             <p>${escapeHtml(security.exchangeLabel)} · ${escapeHtml(security.ticker)}。股价走势用于观察市场何时交易这套逻辑，不代表产业逻辑已经得到证实。</p>
           </div>
-          <a href="${escapeHtml(security.quoteUrl)}" target="_blank" rel="noopener noreferrer">打开新浪 K 线</a>
+          ${security.quoteUrl
+            ? `<a href="${escapeHtml(security.quoteUrl)}" target="_blank" rel="noopener noreferrer">打开新浪 K 线</a>`
+            : `<p class="company-market-pending">该交易市场的行情入口待接入。</p>`
+          }
           ${logicCards.length ? `
             <div class="company-market-events">
               <small>研究对照节点</small>
@@ -1079,6 +1083,9 @@ function companyLogicCards(company) {
 }
 
 function companySecurity(company) {
+  const mapped = library.companySecurities?.[company];
+  if (mapped?.ticker && mapped?.exchange) return normalizeSecurity(mapped);
+
   for (const chain of library.chains) {
     for (const track of chain.logicTracks || []) {
       for (const insight of track.coreInsights || []) {
@@ -1086,26 +1093,45 @@ function companySecurity(company) {
           item.type === "company" && item.label === company && item.ticker && item.exchange
         );
         if (!attachment) continue;
-        const prefix = {
-          SSE: "sh",
-          SZSE: "sz",
-          BSE: "bj"
-        }[attachment.exchange];
-        if (!prefix) return null;
-        return {
-          ticker: attachment.ticker,
-          exchange: attachment.exchange,
-          exchangeLabel: {
-            SSE: "上海证券交易所",
-            SZSE: "深圳证券交易所",
-            BSE: "北京证券交易所"
-          }[attachment.exchange],
-          quoteUrl: `https://finance.sina.com.cn/realstock/company/${prefix}${attachment.ticker}/nc.shtml`
-        };
+        return normalizeSecurity(attachment);
       }
     }
   }
   return null;
+}
+
+function normalizeSecurity(input) {
+  const exchange = String(input.exchange || "").trim().toUpperCase();
+  const ticker = String(input.ticker || "").trim();
+  if (!ticker || !exchange) return null;
+  return {
+    ticker,
+    exchange,
+    market: input.market || "CN",
+    exchangeLabel: exchangeLabel(exchange),
+    quoteUrl: buildQuoteUrl(exchange, ticker)
+  };
+}
+
+function exchangeLabel(exchange) {
+  return {
+    SSE: "上海证券交易所",
+    SZSE: "深圳证券交易所",
+    BSE: "北京证券交易所",
+    HKEX: "香港交易所",
+    NASDAQ: "纳斯达克",
+    NYSE: "纽约证券交易所"
+  }[exchange] || exchange;
+}
+
+function buildQuoteUrl(exchange, ticker) {
+  const prefix = {
+    SSE: "sh",
+    SZSE: "sz",
+    BSE: "bj"
+  }[exchange];
+  if (!prefix) return "";
+  return `https://finance.sina.com.cn/realstock/company/${prefix}${ticker}/nc.shtml`;
 }
 
 function openTopicPanel(topic) {
@@ -1244,6 +1270,7 @@ function renderCurrent(chain) {
     ["产业链骨架", "#chain"],
     ["逻辑监控", "#updates"],
     ["研究动态", "#activity"],
+    ["个股集中营", "#stocks"],
     ["核心逻辑", "#logic"],
     ["观察与验证", "#verification"],
     ["原文阅读", "#article"],
@@ -1364,6 +1391,246 @@ function renderLogic(chain) {
       logicTrack.append(renderPropagationPath(track.propagation));
     }
     tracksRoot.append(logicTrack);
+  });
+}
+
+function renderStockCamp(chain) {
+  const summary = document.querySelector("#stockCampSummary");
+  const filters = document.querySelector("#stockCampFilters");
+  const root = document.querySelector("#stockCampGrid");
+  const stocks = buildStockCamp(chain);
+  const mappedCount = stocks.filter((item) => item.security?.quoteUrl).length;
+  const logicCount = stocks.filter((item) => item.logicCards.length).length;
+  const latestResearchDate = stocks
+    .map((item) => item.latestResearchDate)
+    .filter(Boolean)
+    .sort((left, right) => right.localeCompare(left))[0] || "暂无";
+
+  summary.innerHTML = `
+    <article>
+      <span>股票池公司</span>
+      <strong>${stocks.length}</strong>
+      <p>来自产业链骨架、核心逻辑和研究包逻辑卡。</p>
+    </article>
+    <article>
+      <span>已有行情入口</span>
+      <strong>${mappedCount}</strong>
+      <p>已匹配 A 股证券代码，可打开外部 K 线。</p>
+    </article>
+    <article>
+      <span>关联研究逻辑</span>
+      <strong>${logicCount}</strong>
+      <p>可回到具体逻辑卡和研究日期进行对照。</p>
+    </article>
+    <article>
+      <span>最新研究日期</span>
+      <strong>${escapeHtml(latestResearchDate)}</strong>
+      <p>用于观察逻辑提出后的阶段走势。</p>
+    </article>
+  `;
+
+  const filterOptions = [
+    ["all", "全部"],
+    ["quoted", "已有行情"],
+    ["logic", "有关联逻辑"],
+    ["unmapped", "待补代码"]
+  ];
+  const activeFilter = filterOptions.some(([key]) => key === activeStockCampFilterByChain.get(chain.id))
+    ? activeStockCampFilterByChain.get(chain.id)
+    : "all";
+  activeStockCampFilterByChain.set(chain.id, activeFilter);
+  filters.innerHTML = "";
+  filterOptions.forEach(([key, label]) => {
+    const count = filterStockCamp(stocks, key).length;
+    const button = el("button", key === activeFilter ? "active" : "", `${escapeHtml(label)} <span>${count}</span>`);
+    button.type = "button";
+    button.addEventListener("click", () => {
+      activeStockCampFilterByChain.set(chain.id, key);
+      renderStockCamp(chain);
+    });
+    filters.append(button);
+  });
+
+  const visibleStocks = filterStockCamp(stocks, activeFilter);
+  root.innerHTML = visibleStocks.length ? "" : `
+    <div class="stock-camp-empty">
+      <strong>暂无匹配公司</strong>
+      <p>切换筛选条件，或先为产业链公司补充证券代码。</p>
+    </div>
+  `;
+
+  visibleStocks.forEach((stock) => {
+    const card = el("article", `stock-card${stock.security?.quoteUrl ? " has-quote" : ""}`);
+    card.dataset.searchTarget = searchTargetKey(chain.id, "stock", stock.name);
+    const quoteAction = stock.security?.quoteUrl
+      ? `<a href="${escapeHtml(stock.security.quoteUrl)}" target="_blank" rel="noopener noreferrer">打开新浪 K 线</a>`
+      : `<span class="stock-quote-pending">待补证券代码</span>`;
+    const logicPreview = stock.logicCards.slice(0, 2).map((item) => `
+      <button type="button" data-logic-chain="${escapeHtml(item.chainId)}" data-logic-target="${escapeHtml(item.target)}">
+        <time>${escapeHtml(item.researchDate || "日期待补充")}</time>
+        <span>${escapeHtml(item.title)}</span>
+      </button>
+    `).join("");
+    card.innerHTML = `
+      <div class="stock-card-head">
+        <button class="stock-company-name" type="button" data-company="${escapeHtml(stock.name)}">${escapeHtml(stock.name)}</button>
+        <span class="stock-security ${stock.security?.quoteUrl ? "mapped" : "pending"}">
+          ${stock.security ? `${escapeHtml(stock.security.exchangeLabel)} · ${escapeHtml(stock.security.ticker)}` : "代码待补"}
+        </span>
+      </div>
+      <p>${escapeHtml(stock.primarySegment || "产业链公司")} · ${escapeHtml(stock.primarySection || chain.shortTitle || chain.title)}</p>
+      <div class="stock-card-meta">
+        <span>${stock.appearances.length} 个环节</span>
+        <span>${stock.logicCards.length} 条逻辑</span>
+        <span>研究日期：${escapeHtml(stock.latestResearchDate || "暂无")}</span>
+      </div>
+      ${stock.logicCards.length ? `<div class="stock-logic-links">${logicPreview}</div>` : ""}
+      <div class="stock-card-actions">
+        <button type="button" data-company="${escapeHtml(stock.name)}">查看公司卡</button>
+        ${quoteAction}
+      </div>
+    `;
+    card.querySelectorAll("[data-company]").forEach((button) => {
+      button.addEventListener("click", () => openCompanyPanel(button.dataset.company));
+    });
+    card.querySelectorAll("[data-logic-target]").forEach((button) => {
+      button.addEventListener("click", () => {
+        setChain(button.dataset.logicChain);
+        window.requestAnimationFrame(() => {
+          flashAndScroll(document.getElementById(button.dataset.logicTarget), "center");
+        });
+      });
+    });
+    root.append(card);
+  });
+}
+
+function filterStockCamp(stocks, filter) {
+  if (filter === "quoted") return stocks.filter((item) => item.security?.quoteUrl);
+  if (filter === "logic") return stocks.filter((item) => item.logicCards.length);
+  if (filter === "unmapped") return stocks.filter((item) => !item.security?.quoteUrl);
+  return stocks;
+}
+
+function buildStockCamp(chain) {
+  const companies = new Map();
+  const ensureCompany = (name) => {
+    const cleaned = normalizeCompanyName(name);
+    if (!isStockCampCompany(cleaned)) return null;
+    if (!companies.has(cleaned)) {
+      companies.set(cleaned, {
+        name: cleaned,
+        appearances: [],
+        logicCards: []
+      });
+    }
+    return companies.get(cleaned);
+  };
+
+  chain.chain.forEach((section, sectionIndex) => {
+    const items = section.items || section.segments || [];
+    items.forEach((item, itemIndex) => {
+      splitCompanies(item.companies).forEach((name) => {
+        const company = ensureCompany(name);
+        if (!company) return;
+        company.appearances.push({
+          chainId: chain.id,
+          chainTitle: chain.title,
+          target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`),
+          section: section.title || section.name,
+          segment: item.name,
+          detail: item.detail || item.logic || ""
+        });
+      });
+    });
+  });
+
+  chain.logic.forEach((logic, logicIndex) => {
+    splitCompanies(logic.companies).forEach((name) => {
+      const company = ensureCompany(name);
+      if (!company) return;
+      company.appearances.push({
+        chainId: chain.id,
+        chainTitle: chain.title,
+        target: searchTargetKey(chain.id, "logic", logicIndex),
+        section: "核心逻辑",
+        segment: logic.title,
+        detail: logic.body || ""
+      });
+    });
+  });
+
+  (chain.logicTracks || []).forEach((track) => {
+    (track.coreInsights || []).forEach((insight) => {
+      const logicCompanies = (insight.attachments || [])
+        .filter((attachment) => attachment.type === "company")
+        .map((attachment) => attachment.label);
+      logicCompanies.forEach((name) => {
+        const company = ensureCompany(name);
+        if (!company) return;
+        company.logicCards.push({
+          chainId: chain.id,
+          trackTitle: track.title,
+          title: insight.title,
+          summary: insight.summary,
+          researchDate: insight.researchDate || "",
+          target: `logic-card-${track.id}-${insight.id}`
+        });
+      });
+    });
+  });
+
+  return [...companies.values()].map((company) => {
+    const uniqueAppearances = dedupeBy(company.appearances, (item) =>
+      `${item.chainId}:${item.target}:${item.segment}`
+    );
+    const uniqueLogicCards = dedupeBy(company.logicCards, (item) =>
+      `${item.chainId}:${item.target}`
+    );
+    const firstAppearance = uniqueAppearances[0] || {};
+    const latestResearchDate = uniqueLogicCards
+      .map((item) => item.researchDate)
+      .filter(Boolean)
+      .sort((left, right) => right.localeCompare(left))[0] || "";
+    return {
+      ...company,
+      appearances: uniqueAppearances,
+      logicCards: uniqueLogicCards,
+      security: companySecurity(company.name),
+      primarySection: firstAppearance.section || "",
+      primarySegment: firstAppearance.segment || "",
+      latestResearchDate
+    };
+  }).sort((left, right) =>
+    Number(Boolean(right.security?.quoteUrl)) - Number(Boolean(left.security?.quoteUrl)) ||
+    right.logicCards.length - left.logicCards.length ||
+    right.appearances.length - left.appearances.length ||
+    left.name.localeCompare(right.name, "zh-CN")
+  );
+}
+
+function normalizeCompanyName(value) {
+  return String(value || "")
+    .replace(/（.*?）|\(.*?\)/g, "")
+    .replace(/等$/, "")
+    .trim();
+}
+
+function isStockCampCompany(value) {
+  if (!value || value.length < 2) return false;
+  if (/^(待补充|相关公司|供应商|客户|产业链公司)$/.test(value)) return false;
+  if (/周期|长达|基础设施|本轮|生态|服务器|数据中心|训练|推理|行业应用|供应链/.test(value)) return false;
+  if (value.length > 12 && !/[A-Za-z]/.test(value)) return false;
+  return true;
+}
+
+function dedupeBy(items, keyFn) {
+  const seen = new Set();
+  return items.filter((item) => {
+    const key = keyFn(item);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
   });
 }
 
@@ -1904,6 +2171,7 @@ function render() {
   renderTrackingProfile(chain);
   renderTimeline(chain);
   renderResearch(chain);
+  renderStockCamp(chain);
   renderLogic(chain);
   renderWatchlist(chain);
   renderArticle(chain);
