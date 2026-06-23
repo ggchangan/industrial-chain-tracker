@@ -258,6 +258,16 @@ async function handleApi(context) {
     return;
   }
 
+  const monitorVerificationMatch = pathname.match(
+    /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/monitor-verifications$/
+  );
+  if (request.method === "POST" && monitorVerificationMatch) {
+    const body = await readJsonBody(request, 256 * 1024);
+    const verification = await contentStore.addMonitorVerification(monitorVerificationMatch[1], body);
+    sendJson(response, 201, { verification });
+    return;
+  }
+
   const editableSourceMatch = pathname.match(
     /^\/api\/v1\/admin\/chains\/([a-z0-9-]+)\/sources\/([a-z0-9-]+)$/
   );

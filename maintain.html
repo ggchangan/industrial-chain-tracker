@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=logic-card-console-2" />
+    <link rel="stylesheet" href="./assets/styles.css?v=monitor-verification-1" />
   </head>
   <body class="maintainer-page">
     <header class="site-header compact-header">
@@ -12,6 +12,7 @@
         <a href="./index.html">公开阅读页</a>
         <a href="#package-inbox">研究收件箱</a>
         <a href="#archive">资料档案</a>
+        <a href="#monitor-verifications">监控核验</a>
         <a href="#add-source">新增资料</a>
         <a href="#logic-cards">逻辑卡</a>
         <a href="#edit-article">更新原文</a>
@@ -69,6 +70,69 @@
           </label>
           <div class="archive-summary" id="archiveSummary"></div>
           <div class="archive-list" id="archiveList"></div>
+        </section>
+
+        <section id="monitor-verifications" class="monitor-verification-console">
+          <div class="section-head compact">
+            <p class="eyebrow">Monitor Verification</p>
+            <h2>人工核验监控项</h2>
+            <p>选择研究监控项，记录新证据和判断。保存后会更新公开页状态、核验历史，并生成一条逻辑变化记录。</p>
+          </div>
+          <div class="admin-field-row monitor-picker-row">
+            <label>
+              <span>产业链</span>
+              <select id="verificationChainId"></select>
+            </label>
+            <label>
+              <span>监控项</span>
+              <select id="verificationMonitorId"></select>
+            </label>
+          </div>
+          <div id="verificationMonitorPreview" class="verification-monitor-preview"></div>
+          <form id="monitorVerificationForm" class="admin-form monitor-verification-form">
+            <div class="admin-field-row">
+              <label>
+                <span>核验日期</span>
+                <input name="date" type="date" required />
+              </label>
+              <label>
+                <span>核验结果</span>
+                <select name="result" required>
+                  <option value="strengthen">逻辑强化</option>
+                  <option value="stable">逻辑稳定</option>
+                  <option value="weaken">逻辑减弱</option>
+                  <option value="challenge">出现反证</option>
+                  <option value="invalidate">逻辑失效</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>事实与判断</span>
+              <textarea name="summary" rows="4" placeholder="例如：中天科技获得15.18亿元MPO订单，达到亿级招标强化条件。" required></textarea>
+            </label>
+            <div class="admin-field-row">
+              <label>
+                <span>来源标题</span>
+                <input name="sourceTitle" type="text" placeholder="公告、财报或数据来源标题" required />
+              </label>
+              <label>
+                <span>来源链接</span>
+                <input name="sourceUrl" type="text" placeholder="https://... 或 /managed/..." required />
+              </label>
+            </div>
+            <label>
+              <span>备注</span>
+              <textarea name="notes" rows="2" placeholder="记录口径、边界或下一步需要继续观察的事项"></textarea>
+            </label>
+            <button class="button primary admin-submit" type="submit">保存核验记录</button>
+          </form>
+          <div class="verification-history">
+            <div class="archive-subhead">
+              <strong>核验历史</strong>
+              <span>按日期倒序保留，不覆盖此前判断。</span>
+            </div>
+            <div id="verificationHistoryList"></div>
+          </div>
         </section>
 
         <section id="logic-cards" class="logic-card-console">
@@ -425,6 +489,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js?v=research-package-import-1"></script>
+    <script src="./assets/maintain.js?v=monitor-verification-1"></script>
   </body>
 </html>

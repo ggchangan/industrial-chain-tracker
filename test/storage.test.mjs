@@ -12,10 +12,13 @@ test("file state store persists normalized content state", async () => {
   await store.initialize();
   const initial = await store.load();
   assert.deepEqual(initial.researchPackagesByChain, {});
+  assert.deepEqual(initial.monitorVerificationsByChain, {});
   initial.researchPackagesByChain.pcb = [{ packageId: "pcb-test" }];
+  initial.monitorVerificationsByChain.pcb = [{ id: "verification-test" }];
   await store.save(initial);
   const reloaded = await store.load();
   assert.equal(reloaded.researchPackagesByChain.pcb[0].packageId, "pcb-test");
+  assert.equal(reloaded.monitorVerificationsByChain.pcb[0].id, "verification-test");
   await rm(dataDir, { recursive: true, force: true });
 });
 

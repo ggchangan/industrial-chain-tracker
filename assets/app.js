@@ -1338,13 +1338,16 @@ function renderTrackingProfile(chain) {
     .forEach(({ item, index }) => {
     const card = el("article", "tracking-card");
     card.dataset.searchTarget = searchTargetKey(chain.id, "tracking", index);
+    const verification = item.latestVerification;
     const evidence = findTrackingEvidence(chain, item);
     const colors = ["var(--cyan)", "var(--amber)", "var(--green)", "var(--blue)", "#a78bfa"];
     card.style.borderColor = colors[index % colors.length];
     card.append(el(
       "div",
       "tracking-card-state",
-      evidence
+      verification
+        ? `<span>${escapeHtml(verificationResultLabel(verification.result))}</span><time>${escapeHtml(verification.date)}</time>`
+        : evidence
         ? `<span>${escapeHtml(evidence.item.type || "动态")}</span><time>${escapeHtml(evidence.item.date)}</time>`
         : `<span>${escapeHtml(trackingStatusLabel(item.executionStatus))}</span><time>${escapeHtml(item.updatedAt?.slice(0, 10) || "暂无新证据")}</time>`
     ));
@@ -1353,7 +1356,29 @@ function renderTrackingProfile(chain) {
     }
     card.append(el("h3", "", item.name));
     card.append(el("p", "", item.why));
-    if (evidence) {
+    if (verification) {
+      const latest = el("aside", `tracking-latest verification-${verification.result}`);
+      latest.append(el("strong", "", verification.summary));
+      latest.append(el("p", "", verification.notes || "该证据已由维护者核验并归档。"));
+      const link = el("a", "", verification.sourceTitle || "查看核验来源");
+      link.href = verification.sourceUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      latest.append(link);
+      card.append(latest);
+      if (item.verificationHistory?.length > 1) {
+        const history = el("details", "tracking-verification-history");
+        history.append(el("summary", "", `查看全部 ${item.verificationHistory.length} 次核验`));
+        history.append(el("ol", "", item.verificationHistory.map((record) => `
+          <li>
+            <time>${escapeHtml(record.date)}</time>
+            <strong>${escapeHtml(verificationResultLabel(record.result))}</strong>
+            <span>${escapeHtml(record.summary)}</span>
+          </li>
+        `).join("")));
+        card.append(history);
+      }
+    } else if (evidence) {
       const latest = el("aside", "tracking-latest");
       latest.append(el("strong", "", evidence.item.signal));
       latest.append(el("p", "", evidence.item.impact));
@@ -1375,6 +1400,16 @@ function renderTrackingProfile(chain) {
     ));
     root.append(card);
   });
+}
+
+function verificationResultLabel(result) {
+  return {
+    strengthen: "逻辑强化",
+    stable: "逻辑稳定",
+    weaken: "逻辑减弱",
+    challenge: "出现反证",
+    invalidate: "逻辑失效"
+  }[result] || "待判断";
 }
 
 function trackingStatusLabel(status) {

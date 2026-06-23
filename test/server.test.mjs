@@ -256,6 +256,43 @@ test("maintainer can inspect and import a standard research package", async () =
     refreshedChain.logicTracks.find((item) => item.id === "research-mpo").coreInsights[0].kicker,
     "出现反证"
   );
+
+  const verificationResponse = await fetch(
+    `${baseUrl}/api/v1/admin/chains/optical-module/monitor-verifications`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({
+        monitorId: "research-mpo-order-growth",
+        date: "2026-06-23",
+        result: "strengthen",
+        summary: "获得15.18亿元MPO订单，验证需求正在兑现。",
+        sourceTitle: "MPO订单公告",
+        sourceUrl: "https://example.com/mpo-order",
+        notes: "订单金额达到强化条件。"
+      })
+    }
+  );
+  assert.equal(verificationResponse.status, 201);
+  const verification = (await verificationResponse.json()).verification;
+  assert.equal(verification.logicKey, "mpo-orders");
+
+  const verifiedLibrary = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
+  const verifiedChain = verifiedLibrary.chains.find((item) => item.id === "optical-module");
+  const verifiedMonitor = verifiedChain.trackingProfile.metrics
+    .find((item) => item.id === "research-mpo-order-growth");
+  assert.equal(verifiedMonitor.currentStatus, "strengthen");
+  assert.equal(verifiedMonitor.executionStatus, "active");
+  assert.equal(verifiedMonitor.latestVerification.id, verification.id);
+  assert.equal(verifiedMonitor.verificationHistory.length, 1);
+  const verifiedLogic = verifiedChain.logicTracks
+    .find((item) => item.id === "research-mpo").coreInsights[0];
+  assert.equal(verifiedLogic.kicker, "核验强化");
+  assert.equal(verifiedLogic.verificationStatus, "strengthen");
+  const verificationUpdate = verifiedChain.updates
+    .find((item) => item.verificationId === verification.id);
+  assert.equal(verificationUpdate.signal, "订单增长：强化");
+  assert.equal(verificationUpdate.confidence, "已核验");
 });
 
 test("research package import reports COS permission failures clearly", async () => {
