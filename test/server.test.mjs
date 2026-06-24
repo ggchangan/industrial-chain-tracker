@@ -49,6 +49,8 @@ test("health and library APIs expose synchronized content", async () => {
   assert.ok(library.chains.some((chain) => chain.id === "physical-ai"));
   assert.ok(library.chains.some((chain) => chain.id === "semiconductor-material"));
   assert.ok(!library.chains.some((chain) => chain.id === "semiconductor-material-industry-chain"));
+  assert.equal(library.companySecurities["中际旭创"].ticker, "300308");
+  assert.equal(library.companySecurities["生益科技"].exchange, "SSE");
   const pcb = library.chains.find((chain) => chain.id === "pcb");
   assert.ok(!pcb.sources.some((source) =>
     source.markdownUrl === pcb.article || source.originalUrl === pcb.article

@@ -13,7 +13,28 @@ export async function loadLibrary(rootDir) {
     throw new Error("assets/data.js does not expose a valid industry chain library");
   }
 
-  return structuredClone(library);
+  const cloned = structuredClone(library);
+  cloned.companySecurities = await loadCompanySecurities(rootDir);
+  return cloned;
+}
+
+async function loadCompanySecurities(rootDir) {
+  try {
+    const source = await readFile(path.join(rootDir, "content", "company-securities.json"), "utf8");
+    const parsed = JSON.parse(source);
+    return Object.fromEntries(
+      Object.entries(parsed.securities || {})
+        .filter(([, value]) => value?.ticker && value?.exchange)
+        .map(([name, value]) => [name, {
+          ticker: String(value.ticker).trim(),
+          exchange: String(value.exchange).trim(),
+          market: String(value.market || "").trim() || "CN"
+        }])
+    );
+  } catch (error) {
+    if (error.code === "ENOENT") return {};
+    throw error;
+  }
 }
 
 export async function loadArticle(rootDir, chain, dataDir = "") {

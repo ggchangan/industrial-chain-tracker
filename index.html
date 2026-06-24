@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链研究库</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=stock-validation-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=stock-camp-1" />
   </head>
   <body>
     <header class="site-header">
@@ -14,6 +14,7 @@
         <a href="#map">产业链图谱</a>
         <a href="#updates">逻辑监控</a>
         <a href="#activity">研究动态</a>
+        <a href="#stocks">个股集中营</a>
         <a href="#logic">核心逻辑</a>
         <a href="#verification">观察验证</a>
         <a href="#article">原文阅读</a>
@@ -88,6 +89,17 @@
         </div>
       </section>
 
+      <section id="stocks" class="section">
+        <div class="section-head">
+          <p class="eyebrow">Stock Camp</p>
+          <h2>个股集中营</h2>
+          <p>把产业链里的上市公司、关联环节、核心逻辑和行情入口集中到一处，先看市场是否在交易这条产业链。</p>
+        </div>
+        <div class="stock-camp-summary" id="stockCampSummary"></div>
+        <div class="stock-camp-filters" id="stockCampFilters" aria-label="个股筛选"></div>
+        <div class="stock-camp-grid" id="stockCampGrid"></div>
+      </section>
+
       <section id="logic" class="section">
         <div class="section-head">
           <p class="eyebrow">Logic</p>
@@ -128,6 +140,6 @@
     <div id="companyPanel" hidden></div>
 
     <script src="./assets/data.js"></script>
-    <script type="module" src="./assets/bootstrap.js?v=stock-validation-1"></script>
+    <script type="module" src="./assets/bootstrap.js?v=stock-camp-1"></script>
   </body>
 </html>
