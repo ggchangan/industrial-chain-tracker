@@ -132,6 +132,7 @@ curl https://industry.ygys30ds.cloud/api/v1/health
 curl https://api.industry.ygys30ds.cloud/api/v1/health
 curl -I https://static.industry.ygys30ds.cloud/assets/styles.css
 curl -I https://admin.industry.ygys30ds.cloud/admin-login.html
+npm run verify:user-features -- https://api.industry.ygys30ds.cloud
 ```
 
 对应职责：
