@@ -430,7 +430,7 @@ async function importSelectedPackage(event) {
     await refreshLibrary(chainId);
     archiveSelect.value = chainId;
     packageFolder.value = "";
-    resetPackageInspection();
+    renderPackageImportSummary(result.researchPackage, chainId);
     document.querySelector("#archive").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
     setNotice(error.message, "error");
@@ -438,6 +438,63 @@ async function importSelectedPackage(event) {
     setBusy(importPackageButton, false, "确认入库");
     importPackageButton.disabled = !state.packageInspection?.valid;
   }
+}
+
+function renderPackageImportSummary(researchPackage, chainId) {
+  state.packagePayload = null;
+  state.packageInspection = null;
+  importPackageButton.disabled = true;
+  const publicUrl = `./index.html?chain=${encodeURIComponent(chainId)}#activity`;
+  const logicUrl = `./index.html?chain=${encodeURIComponent(chainId)}#logic`;
+  const trackingUrl = `./index.html?chain=${encodeURIComponent(chainId)}#updates`;
+  const marketUrl = `./index.html?chain=${encodeURIComponent(chainId)}#stocks`;
+  const readerUrl = sourceReaderUrl(chainId, researchPackage.sourceUrl);
+  const companies = [...new Set((researchPackage.logic?.logics || [])
+    .flatMap((item) => item.companies || [])
+    .map((company) => company.name)
+    .filter(Boolean))];
+  const monitors = (researchPackage.logic?.logics || [])
+    .flatMap((item) => item.monitors || [])
+    .map((monitor) => monitor.name)
+    .filter(Boolean);
+
+  packageInspection.innerHTML = `
+    <section class="package-result-card">
+      <div class="package-result-head">
+        <span>已入库</span>
+        <h3>${escapeHtml(researchPackage.topicTitle)}</h3>
+        <p>${escapeHtml(researchPackage.title)}</p>
+      </div>
+      <dl class="package-result-metrics">
+        <div><dt>逻辑</dt><dd>${researchPackage.logicCount || 0}</dd></div>
+        <div><dt>监控</dt><dd>${researchPackage.monitorCount || 0}</dd></div>
+        <div><dt>公司</dt><dd>${researchPackage.companyCount || companies.length}</dd></div>
+        <div><dt>资源</dt><dd>${researchPackage.assetCount || 0}</dd></div>
+      </dl>
+      <div class="package-result-summary">
+        <article>
+          <strong>核心摘要</strong>
+          <p>${escapeHtml(researchPackage.logic?.summary || "已保存研究原文，并生成逻辑卡、资料归档和跟踪验证入口。")}</p>
+        </article>
+        <article>
+          <strong>关联公司</strong>
+          <p>${companies.length ? companies.slice(0, 12).map(escapeHtml).join("、") : "暂无公司映射"}</p>
+        </article>
+        <article>
+          <strong>监控项</strong>
+          <p>${monitors.length ? monitors.slice(0, 8).map(escapeHtml).join("、") : "暂无监控项"}</p>
+        </article>
+      </div>
+      <div class="package-result-actions">
+        <a href="${escapeHtml(publicUrl)}" target="_blank">查看最新研究</a>
+        <a href="${escapeHtml(logicUrl)}" target="_blank">查看逻辑卡</a>
+        <a href="${escapeHtml(trackingUrl)}" target="_blank">查看跟踪验证</a>
+        <a href="${escapeHtml(marketUrl)}" target="_blank">查看市场验证</a>
+        <a href="${escapeHtml(readerUrl)}" target="_blank">阅读 Markdown</a>
+        <a href="${escapeHtml(researchPackage.articleUrl)}" target="_blank">打开 HTML</a>
+      </div>
+    </section>
+  `;
 }
 
 function renderPackageInspection() {

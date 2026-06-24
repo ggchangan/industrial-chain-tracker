@@ -206,6 +206,11 @@ test("maintainer can inspect and import a standard research package", async () =
   assert.equal(importResponse.status, 201);
   const imported = (await importResponse.json()).researchPackage;
   assert.match(imported.articleUrl, /^\/managed\/research-packages\/optical-module\/mpo\//);
+  assert.equal(imported.logicCount, 1);
+  assert.equal(imported.monitorCount, 1);
+  assert.equal(imported.companyCount, 1);
+  assert.equal(imported.logic.logics[0].companies[0].name, "太辰光");
+  assert.equal(imported.logic.logics[0].monitors[0].name, "订单增长");
 
   const library = await fetch(`${baseUrl}/api/v1/library`).then((response) => response.json());
   const chain = library.chains.find((item) => item.id === "optical-module");
