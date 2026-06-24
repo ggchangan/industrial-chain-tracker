@@ -11,7 +11,8 @@ Git 内容仓库
   ├─ 网页版
   ├─ 微信小程序
   ├─ iOS App
-  └─ Android App
+  ├─ Android App
+  └─ HarmonyOS NEXT 原生版（第二阶段评估）
 ```
 
 维护者登录和未来的写入 API 与公开阅读 API 分离。真实密码、会话密钥和发布凭证只保存在服务器环境变量或密钥服务中。
@@ -64,16 +65,17 @@ Git 内容仓库
 
 收藏、订阅和跨设备同步需要微信登录和用户数据库；未登录时可以先允许只读浏览，避免阻塞首次阅读。
 
-## 第四阶段：iOS 与 Android
+## 第四阶段：iOS 与 Android 阅读版
 
-已开始使用 `apps/mobile` 业务代码支持 iOS App：
+已开始使用 `apps/mobile` 业务代码支持 iOS 与 Android App：
 
-- App 平台构建脚本和 iOS manifest 基础配置
+- App 平台构建脚本和 iOS / Android manifest 基础配置
 - 生产 HTTPS API / 静态资源配置
-- iOS readiness 检查脚本
+- iOS / Android readiness 检查脚本
 - App 端登录保护：Apple 登录接入前不误调用微信小程序登录
 
 首版 iOS 阅读版上线资料见 `docs/ios-app-launch-checklist.md`。
+首版 Android 阅读版上线资料见 `docs/android-app-launch-checklist.md`。
 
 后续按平台补充：
 
@@ -81,6 +83,10 @@ Git 内容仓库
 - 深色模式和系统字体适配
 - 离线缓存与后台更新
 - App Store、各安卓市场的隐私和审核材料
+
+HarmonyOS NEXT 原生版不和 Android 首版混在一起推进。第二阶段 TODO 见
+`docs/mobile-next-todo.md`：先确认是否需要原生鸿蒙上架，再评估 uni-app x / Harmony
+NEXT 构建链路、证书、包名、隐私材料和兼容性。
 
 ## 第五阶段：在线内容管理
 

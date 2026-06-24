@@ -1,6 +1,6 @@
 # 产业链研究库移动端
 
-基于 uni-app Vue 3/Vite，同一份源码编译微信小程序和 App 平台。当前优先支持微信小程序与 iOS App 阅读版，后续可继续扩展 Android 和 H5。
+基于 uni-app Vue 3/Vite，同一份源码编译微信小程序和 App 平台。当前优先支持微信小程序、iOS App 阅读版和 Android App 阅读版，后续可继续扩展 HarmonyOS NEXT 原生版和 H5。
 
 ## 本地准备
 
@@ -64,6 +64,38 @@ npm run build:app-ios
 docs/ios-app-launch-checklist.md
 ```
 
+## Android App
+
+Android App 复用 App 平台同一套页面和 API。首版同样定位为阅读版；Android 登录、推送和离线缓存后续再接。
+
+构建前检查：
+
+```bash
+cd ../..
+npm run verify:android-app
+```
+
+构建 App 平台资源：
+
+```bash
+cd apps/mobile
+npm run build:app-android
+```
+
+产物位于 `dist/build/app`。最终 APK/AAB 需要用 HBuilderX 或 DCloud 云打包生成。
+
+详细上线材料见仓库根目录：
+
+```text
+docs/android-app-launch-checklist.md
+```
+
+HarmonyOS NEXT 原生版暂不和 Android 首版同时展开，后续任务见：
+
+```text
+docs/mobile-next-todo.md
+```
+
 ## 当前功能
 
 - 产业链列表
@@ -75,3 +107,4 @@ docs/ios-app-launch-checklist.md
 - 服务端 Markdown 正文渲染
 - 微信小程序登录、退出登录、收藏、订阅和阅读历史
 - iOS App 平台构建与只读阅读版上线准备
+- Android App 平台构建与只读阅读版上线准备
