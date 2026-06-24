@@ -73,6 +73,7 @@ export function readMobileProject() {
   return {
     authSource,
     manifest,
+    mobileRoot,
     mobilePackage,
     pagePaths: new Set((pages.pages || []).map((item) => item.path)),
     platformSource,
@@ -81,7 +82,7 @@ export function readMobileProject() {
 }
 
 export function assertSharedAppChecks(checker, project) {
-  const { authSource, pagePaths, platformSource, productionEnv } = project;
+  const { authSource, mobileRoot, pagePaths, platformSource, productionEnv } = project;
   checker.assert("Production API uses HTTPS", /^https:\/\//.test(productionEnv.VITE_API_BASE_URL || ""), productionEnv.VITE_API_BASE_URL || "");
   checker.assert("Production static assets use HTTPS", /^https:\/\//.test(productionEnv.VITE_STATIC_BASE_URL || ""), productionEnv.VITE_STATIC_BASE_URL || "");
   checker.assert("Index page is registered", pagePaths.has("pages/index/index"));
@@ -89,6 +90,8 @@ export function assertSharedAppChecks(checker, project) {
   checker.assert("Legal page is registered", pagePaths.has("pages/legal/legal"));
   checker.assert("Privacy policy URL setting exists", Object.hasOwn(productionEnv, "VITE_PRIVACY_POLICY_URL"));
   checker.assert("Terms URL setting exists", Object.hasOwn(productionEnv, "VITE_TERMS_OF_SERVICE_URL"));
+  checker.assert("1024 App icon exists", fs.existsSync(path.join(mobileRoot, "src", "static", "brand", "app-icon-1024.png")));
+  checker.assert("Mobile launch image exists", fs.existsSync(path.join(mobileRoot, "src", "static", "brand", "launch-1170x2532.png")));
   checker.assert("Platform helper detects App runtime", platformSource.includes("APP-PLUS") && platformSource.includes('return "app"'));
   checker.assert("Non-WeChat clients do not call WeChat login", authSource.includes("isWechatMiniProgram()") && authSource.includes("登录待接入"));
 }
