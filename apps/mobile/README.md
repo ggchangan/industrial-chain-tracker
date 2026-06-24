@@ -1,6 +1,6 @@
 # 产业链研究库移动端
 
-基于 uni-app Vue 3/Vite，同一份源码优先编译微信小程序，后续可继续编译 iOS、Android 和 H5。
+基于 uni-app Vue 3/Vite，同一份源码编译微信小程序和 App 平台。当前优先支持微信小程序与 iOS App 阅读版，后续可继续扩展 Android 和 H5。
 
 ## 本地准备
 
@@ -38,6 +38,32 @@ npm run build:mp-weixin
 小程序头像使用仓库根目录的
 `assets/brand/mini-program-avatar-v2-512.png`，在微信公众平台后台单独上传。
 
+## iOS App
+
+iOS App 复用同一套页面、API 和阅读结构。首版 App 先开放未登录浏览、搜索、详情页、图谱、原文阅读和个股 K 线入口；Apple 登录接入前，收藏、订阅和跨端阅读历史暂不作为上线阻塞项。
+
+构建前检查：
+
+```bash
+cd ../..
+npm run verify:ios-app
+```
+
+构建 App 平台资源：
+
+```bash
+cd apps/mobile
+npm run build:app-ios
+```
+
+产物位于 `dist/build/app`。这不是最终 `.ipa`，需要用 HBuilderX 或 DCloud 云打包继续完成 iOS 证书签名、真机安装和 App Store 上传。
+
+详细上线材料见仓库根目录：
+
+```text
+docs/ios-app-launch-checklist.md
+```
+
 ## 当前功能
 
 - 产业链列表
@@ -47,3 +73,5 @@ npm run build:mp-weixin
 - 核心逻辑和专属追踪指标
 - 最新动态
 - 服务端 Markdown 正文渲染
+- 微信小程序登录、退出登录、收藏、订阅和阅读历史
+- iOS App 平台构建与只读阅读版上线准备

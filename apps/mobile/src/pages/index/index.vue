@@ -6,11 +6,11 @@
       <text class="subtitle">用图谱理解行业结构，用动态追踪关键变化。</text>
       <view class="user-bar">
         <view>
-          <text class="user-title">{{ user ? "已登录微信用户" : "未登录也可浏览" }}</text>
-          <text class="user-subtitle">{{ user ? "后续可同步收藏、订阅和阅读历史。" : "登录后可使用收藏、订阅和跨设备同步。" }}</text>
+          <text class="user-title">{{ user ? `已登录${clientPlatformLabel}用户` : "未登录也可浏览" }}</text>
+          <text class="user-subtitle">{{ user ? "收藏、订阅和阅读历史会跨端同步。" : loginHint }}</text>
         </view>
-        <button class="login-button" :disabled="authLoading" @click="toggleLogin">
-          {{ authLoading ? "处理中…" : user ? "退出登录" : "微信登录" }}
+        <button class="login-button" :disabled="authLoading || loginUnavailable" @click="toggleLogin">
+          {{ authLoading ? "处理中…" : user ? "退出登录" : loginButtonLabel }}
         </button>
       </view>
       <view class="search">
@@ -106,6 +106,7 @@
 <script>
 import { getChains, searchChains } from "../../utils/api";
 import { fetchUserSession, getStoredProfile, getStoredUser, loginWithWechat, logoutUser } from "../../utils/auth";
+import { getClientPlatformLabel, getLoginProviderLabel, isWechatMiniProgram } from "../../utils/platform";
 
 export default {
   data() {
@@ -209,9 +210,23 @@ export default {
     }
   },
   computed: {
+    clientPlatformLabel() {
+      return getClientPlatformLabel();
+    },
     favoriteChains() {
       const ids = new Set(this.profile?.favorites?.chains || []);
       return this.chains.filter((chain) => ids.has(chain.id)).slice(0, 4);
+    },
+    loginButtonLabel() {
+      return this.loginUnavailable ? "登录待接入" : getLoginProviderLabel();
+    },
+    loginHint() {
+      return isWechatMiniProgram()
+        ? "登录后可使用收藏、订阅和跨设备同步。"
+        : "当前版本先开放浏览、搜索和阅读；账号登录将在 Apple 登录接入后开放。";
+    },
+    loginUnavailable() {
+      return !this.user && !isWechatMiniProgram();
     }
   }
 };
