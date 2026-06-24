@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAuth } from "./auth.mjs";
 import { createContentStore } from "./content-store.mjs";
-import { loadArticle, loadLibrary, searchLibrary } from "./library.mjs";
+import { buildMobileChainSummary, loadArticle, loadLibrary, searchLibrary } from "./library.mjs";
 import { renderMarkdown } from "./markdown.mjs";
 import { createStateStore } from "./state-store.mjs";
 import { createObjectStorage } from "./object-storage.mjs";
@@ -108,6 +108,7 @@ async function handleApi(context) {
         meta: library.meta,
         chains: library.chains.map(({ article, cover, diagram, diagramSvg, updateFile, ...chain }) => ({
           ...chain,
+          mobileSummary: buildMobileChainSummary({ article, cover, diagram, diagramSvg, updateFile, ...chain }, library),
           resources: { article, cover, diagram, diagramSvg, updateFile }
         }))
       },
@@ -126,7 +127,18 @@ async function handleApi(context) {
     const articleMode = url.searchParams.get("article");
     const markdown = articleMode ? await loadArticle(rootDir, chain, contentStore.dataDir) : undefined;
     const article = articleMode === "html" ? renderMarkdown(markdown) : markdown;
-    sendJson(response, 200, { chain, ...(article === undefined ? {} : { article }) }, { cache: "public, max-age=60" });
+    sendJson(
+      response,
+      200,
+      {
+        chain: {
+          ...chain,
+          mobileSummary: buildMobileChainSummary(chain, library)
+        },
+        ...(article === undefined ? {} : { article })
+      },
+      { cache: "public, max-age=60" }
+    );
     return;
   }
 
