@@ -8,6 +8,7 @@
 - 小程序头像：`assets/brand/mini-program-avatar-v2-512.png`
 - 内容 API、服务端搜索和 HTML 正文
 - 维护者密码登录与服务端访问控制
+- 微信小程序登录 API、退出登录、收藏、订阅和阅读历史 API
 - 四个生产域名均已解析至 `43.136.177.133`
 - 证书包含 `*.industry.ygys30ds.cloud`
 
@@ -24,6 +25,7 @@ curl https://industry.ygys30ds.cloud/api/v1/health
 curl https://api.industry.ygys30ds.cloud/api/v1/health
 curl -I https://static.industry.ygys30ds.cloud/assets/styles.css
 curl -I https://admin.industry.ygys30ds.cloud/admin-login.html
+npm run verify:user-features -- https://api.industry.ygys30ds.cloud
 ```
 
 6. 在微信公众平台配置服务器域名：
@@ -31,14 +33,24 @@ curl -I https://admin.industry.ygys30ds.cloud/admin-login.html
    - downloadFile 合法域名：`https://static.industry.ygys30ds.cloud`
 7. 执行 `npm run mobile:build:weixin`。
 8. 微信开发者工具导入 `apps/mobile/dist/build/mp-weixin`。
-9. 完成真机预览、体验版、审核和发布。
+9. 完成真机预览：
+   - 未登录状态可以浏览产业链列表、搜索、详情页和原文。
+   - 点击“微信登录”可以成功登录；服务端未配置微信变量时应提示配置缺失。
+   - 登录后收藏产业链，返回首页能看到“我的关注”。
+   - 登录后订阅产业链动态，刷新详情页仍保持订阅状态。
+   - 打开原文阅读一段后返回首页，能看到阅读历史。
+   - 点击“退出登录”后，本地个人资料清空，收藏/订阅按钮提示先登录。
+10. 完成体验版、审核和发布。
 
 生产 `.env` 必须包含独立维护密码和随机 Session 密钥：
 
 ```dotenv
 ADMIN_PASSWORD=使用密码管理器生成的长密码
 ADMIN_SESSION_SECRET=使用openssl生成的至少32位随机字符串
+USER_SESSION_SECRET=使用openssl生成的至少32位随机字符串
 CORS_ORIGIN=https://industry.ygys30ds.cloud
+WECHAT_MINIAPP_APPID=wxc099f3e25b3ee919
+WECHAT_MINIAPP_SECRET=微信公众平台生成的小程序密钥
 ```
 
 `.env` 不得提交到 Git，也不要通过聊天传递其中的秘密。
