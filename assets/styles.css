@@ -2678,6 +2678,97 @@ button.propagation-signal:hover {
   font-weight: 800;
 }
 
+.package-result-card {
+  background: linear-gradient(180deg, rgba(53, 211, 154, 0.08), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(53, 211, 154, 0.42);
+  padding: 18px;
+}
+
+.package-result-head span {
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.package-result-head h3 {
+  font-size: 22px;
+  margin: 6px 0 4px;
+}
+
+.package-result-head p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.package-result-metrics {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(70px, 1fr));
+  margin: 18px 0;
+}
+
+.package-result-metrics div {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.package-result-metrics dt {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.package-result-metrics dd {
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 4px 0 0;
+}
+
+.package-result-summary {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.package-result-summary article {
+  background: rgba(8, 18, 32, 0.45);
+  border: 1px solid var(--line);
+  padding: 12px;
+}
+
+.package-result-summary strong {
+  display: block;
+  font-size: 0.84rem;
+  margin-bottom: 6px;
+}
+
+.package-result-summary p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.package-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.package-result-actions a {
+  border: 1px solid rgba(39, 217, 232, 0.35);
+  color: #c8f7ff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 8px 10px;
+}
+
+.package-result-actions a:hover {
+  border-color: var(--cyan);
+}
+
 .inspection-issues {
   margin-top: 12px;
   padding: 14px 16px;
@@ -3381,6 +3472,11 @@ footer a {
 
   .package-preview dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .package-result-metrics,
+  .package-result-summary {
+    grid-template-columns: 1fr;
   }
 
   .source-illustration-item {
