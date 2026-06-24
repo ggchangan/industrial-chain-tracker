@@ -14,6 +14,15 @@ npm install
 `https://static.industry.ygys30ds.cloud`。本地调试时可在 `.env` 中覆盖
 `VITE_API_BASE_URL` 和 `VITE_STATIC_BASE_URL`。
 
+隐私政策和用户协议正式 URL 可通过环境变量配置：
+
+```dotenv
+VITE_PRIVACY_POLICY_URL=https://...
+VITE_TERMS_OF_SERVICE_URL=https://...
+```
+
+未配置正式 URL 时，App 内会展示首版占位说明，方便开发测试和审核材料准备。
+
 ## 微信小程序
 
 当前 AppID：`wxc099f3e25b3ee919`。
@@ -108,3 +117,4 @@ docs/mobile-next-todo.md
 - 微信小程序登录、退出登录、收藏、订阅和阅读历史
 - iOS App 平台构建与只读阅读版上线准备
 - Android App 平台构建与只读阅读版上线准备
+- 关于、隐私政策和用户协议入口
