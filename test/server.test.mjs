@@ -37,6 +37,67 @@ test.after(async () => {
   await rm(dataDir, { recursive: true, force: true });
 });
 
+test("mini program auth reports configuration and supports login/logout", async () => {
+  const anonymous = await fetch(`${baseUrl}/api/v1/auth/session`).then((response) => response.json());
+  assert.equal(anonymous.authenticated, false);
+  assert.equal(anonymous.configured, false);
+
+  const missingConfig = await fetch(`${baseUrl}/api/v1/auth/wechat-login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code: "test-code" })
+  });
+  assert.equal(missingConfig.status, 503);
+  assert.equal((await missingConfig.json()).error, "wechat_login_not_configured");
+
+  const authServer = await createAppServer({
+    rootDir,
+    dataDir,
+    adminPassword: "correct-horse-battery",
+    sessionSecret: "test-session-secret-that-is-long-enough-123456",
+    userSessionSecret: "test-user-session-secret-that-is-long-enough-123456",
+    wechatAppId: "wx-test-appid",
+    wechatAppSecret: "wx-test-secret",
+    wechatExchangeCode: async ({ code }) => ({
+      openid: `openid-${code}`,
+      unionid: "union-test"
+    })
+  });
+  authServer.listen(0, "127.0.0.1");
+  await once(authServer, "listening");
+  const authBaseUrl = `http://127.0.0.1:${authServer.address().port}`;
+  try {
+    const login = await fetch(`${authBaseUrl}/api/v1/auth/wechat-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "abc123" })
+    });
+    assert.equal(login.status, 200);
+    const loggedIn = await login.json();
+    assert.equal(loggedIn.authenticated, true);
+    assert.equal(loggedIn.user.openid, "openid-abc123");
+    assert.ok(loggedIn.token);
+
+    const session = await fetch(`${authBaseUrl}/api/v1/auth/session`, {
+      headers: { Authorization: `Bearer ${loggedIn.token}` }
+    }).then((response) => response.json());
+    assert.equal(session.authenticated, true);
+    assert.equal(session.user.id, "wx:openid-abc123");
+
+    const logout = await fetch(`${authBaseUrl}/api/v1/auth/logout`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${loggedIn.token}` }
+    });
+    assert.equal(logout.status, 200);
+    const afterLogout = await fetch(`${authBaseUrl}/api/v1/auth/session`, {
+      headers: { Authorization: `Bearer ${loggedIn.token}` }
+    }).then((response) => response.json());
+    assert.equal(afterLogout.authenticated, false);
+  } finally {
+    authServer.close();
+  }
+});
+
 test("health and library APIs expose synchronized content", async () => {
   const health = await fetch(`${baseUrl}/api/v1/health`).then((response) => response.json());
   assert.equal(health.status, "ok");

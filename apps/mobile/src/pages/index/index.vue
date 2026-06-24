@@ -4,6 +4,15 @@
       <text class="eyebrow">INDUSTRY CHAIN WATCH</text>
       <text class="title">产业链研究库</text>
       <text class="subtitle">用图谱理解行业结构，用动态追踪关键变化。</text>
+      <view class="user-bar">
+        <view>
+          <text class="user-title">{{ user ? "已登录微信用户" : "未登录也可浏览" }}</text>
+          <text class="user-subtitle">{{ user ? "后续可同步收藏、订阅和阅读历史。" : "登录后可使用收藏、订阅和跨设备同步。" }}</text>
+        </view>
+        <button class="login-button" :disabled="authLoading" @click="toggleLogin">
+          {{ authLoading ? "处理中…" : user ? "退出登录" : "微信登录" }}
+        </button>
+      </view>
       <view class="search">
         <input
           v-model="query"
@@ -65,6 +74,7 @@
 
 <script>
 import { getChains, searchChains } from "../../utils/api";
+import { fetchUserSession, getStoredUser, loginWithWechat, logoutUser } from "../../utils/auth";
 
 export default {
   data() {
@@ -75,7 +85,9 @@ export default {
       query: "",
       results: [],
       searchTimer: null,
-      searching: false
+      searching: false,
+      authLoading: false,
+      user: null
     };
   },
   watch: {
@@ -90,7 +102,9 @@ export default {
     }
   },
   onLoad() {
+    this.user = getStoredUser();
     this.loadChains();
+    this.refreshSession();
   },
   methods: {
     async loadChains() {
@@ -129,6 +143,32 @@ export default {
       const suffix = query ? `&q=${encodeURIComponent(query)}` : "";
       const target = targetTitle ? `&target=${encodeURIComponent(targetTitle)}` : "";
       uni.navigateTo({ url: `/pages/detail/detail?id=${id}${suffix}${target}` });
+    },
+    async refreshSession() {
+      try {
+        const session = await fetchUserSession();
+        this.user = session.user;
+      } catch {
+        this.user = getStoredUser();
+      }
+    },
+    async toggleLogin() {
+      this.authLoading = true;
+      try {
+        if (this.user) {
+          await logoutUser();
+          this.user = null;
+          uni.showToast({ title: "已退出登录", icon: "none" });
+          return;
+        }
+        const session = await loginWithWechat();
+        this.user = session.user;
+        uni.showToast({ title: "登录成功", icon: "success" });
+      } catch (error) {
+        uni.showToast({ title: error.message || "登录失败", icon: "none" });
+      } finally {
+        this.authLoading = false;
+      }
     }
   }
 };
@@ -165,6 +205,50 @@ export default {
   font-size: 27rpx;
   line-height: 1.7;
   margin-top: 12rpx;
+}
+
+.user-bar {
+  align-items: center;
+  border: 1rpx solid #263244;
+  display: flex;
+  gap: 20rpx;
+  justify-content: space-between;
+  margin-top: 28rpx;
+  padding: 22rpx;
+}
+
+.user-title {
+  color: #f8fafc;
+  display: block;
+  font-size: 27rpx;
+  font-weight: 750;
+}
+
+.user-subtitle {
+  color: #94a3b8;
+  display: block;
+  font-size: 22rpx;
+  line-height: 1.55;
+  margin-top: 6rpx;
+}
+
+.login-button {
+  background: #0e7490;
+  color: #ecfeff;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 750;
+  line-height: 1;
+  margin: 0;
+  padding: 20rpx 24rpx;
+}
+
+.login-button::after {
+  border: 0;
+}
+
+.login-button[disabled] {
+  opacity: 0.72;
 }
 
 .search {

@@ -60,12 +60,23 @@ chmod 600 .env
 ```dotenv
 ADMIN_PASSWORD=使用至少10位的独立维护密码
 ADMIN_SESSION_SECRET=使用openssl生成的至少32位随机字符串
+USER_SESSION_SECRET=使用openssl生成的至少32位随机字符串
 CORS_ORIGIN=https://industry.ygys30ds.cloud
 IMAGE_TAG=latest
 ```
 
 不要提交 `.env`，也不要通过聊天或工单传递其中的秘密。
 Compose 使用 raw env-file 模式注入这些值，因此密码中的 `$`、`#` 等字符不会被变量替换。
+
+如果启用微信小程序登录，还需要在微信公众平台取得小程序 AppID 和 AppSecret，并配置：
+
+```dotenv
+WECHAT_MINIAPP_APPID=小程序AppID
+WECHAT_MINIAPP_SECRET=小程序AppSecret
+```
+
+`USER_SESSION_SECRET` 用于签发小程序用户登录态，和维护后台 Cookie 密钥分离。未配置微信
+登录变量时，小程序仍可只读浏览，但点击微信登录会返回“服务器尚未配置微信小程序登录”。
 
 登录 CCR：
 

@@ -23,12 +23,17 @@ export function assetUrl(relativePath) {
   return `${STATIC_BASE}/${path}`;
 }
 
-function request(path) {
+export function request(path, options = {}) {
   return new Promise((resolve, reject) => {
     uni.request({
       url: `${API_BASE}${path}`,
-      method: "GET",
-      header: { Accept: "application/json" },
+      method: options.method || "GET",
+      data: options.data,
+      header: {
+        Accept: "application/json",
+        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+        ...(options.data ? { "Content-Type": "application/json" } : {})
+      },
       success(response) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
           resolve(response.data);

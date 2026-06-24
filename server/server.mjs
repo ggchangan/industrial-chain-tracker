@@ -8,6 +8,7 @@ import { buildMobileChainSummary, loadArticle, loadLibrary, searchLibrary } from
 import { renderMarkdown } from "./markdown.mjs";
 import { createStateStore } from "./state-store.mjs";
 import { createObjectStorage } from "./object-storage.mjs";
+import { createUserAuth } from "./user-auth.mjs";
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
 const defaultRoot = path.resolve(serverDir, "..");
@@ -37,6 +38,12 @@ export async function createAppServer(options = {}) {
     secret: options.sessionSecret ?? process.env.ADMIN_SESSION_SECRET,
     secureCookie: options.secureCookie ?? process.env.NODE_ENV === "production"
   });
+  const userAuth = createUserAuth({
+    wechatAppId: options.wechatAppId,
+    wechatAppSecret: options.wechatAppSecret,
+    sessionSecret: options.userSessionSecret,
+    exchangeCode: options.wechatExchangeCode
+  });
   const corsOrigin = options.corsOrigin ?? process.env.CORS_ORIGIN ?? "";
 
   const server = createHttpServer(async (request, response) => {
@@ -51,7 +58,7 @@ export async function createAppServer(options = {}) {
       }
 
       if (url.pathname.startsWith("/api/v1/")) {
-        await handleApi({ request, response, url, contentStore, rootDir, auth });
+        await handleApi({ request, response, url, contentStore, rootDir, auth, userAuth });
         return;
       }
 
@@ -79,7 +86,7 @@ export async function createAppServer(options = {}) {
 }
 
 async function handleApi(context) {
-  const { request, response, url, contentStore, rootDir, auth } = context;
+  const { request, response, url, contentStore, rootDir, auth, userAuth } = context;
   const pathname = url.pathname;
   const library = contentStore.getLibrary();
 
@@ -92,6 +99,29 @@ async function handleApi(context) {
       stateStore: contentStore.stateStoreDriver,
       objectStorage: contentStore.objectStorageDriver
     });
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/v1/auth/session") {
+    const session = userAuth.authenticate(request);
+    sendJson(response, 200, {
+      authenticated: Boolean(session),
+      configured: userAuth.isConfigured(),
+      user: session?.user || null
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/v1/auth/wechat-login") {
+    const body = await readJsonBody(request, 16 * 1024);
+    const session = await userAuth.loginWithWechat(body.code);
+    sendJson(response, 200, { authenticated: true, ...session });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/v1/auth/logout") {
+    userAuth.logout(request);
+    sendJson(response, 200, { authenticated: false });
     return;
   }
 
@@ -431,7 +461,7 @@ function setCorsHeaders(request, response, corsOrigin) {
   const origin = request.headers.origin;
   if (corsOrigin === "*" || origin === corsOrigin) {
     response.setHeader("Access-Control-Allow-Origin", corsOrigin === "*" ? "*" : origin);
-    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     response.setHeader("Vary", "Origin");
   }
