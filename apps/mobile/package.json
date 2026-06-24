@@ -10,15 +10,26 @@
     "@dcloudio/uni-app": "3.0.0-5000720260410001",
     "@dcloudio/uni-components": "3.0.0-5000720260410001",
     "@dcloudio/uni-mp-weixin": "3.0.0-5000720260410001",
-    "vue": "^3.4.21",
+    "vue": "3.5.35",
     "vue-i18n": "^9.1.9"
   },
   "devDependencies": {
-    "@dcloudio/types": "^3.4.8",
+    "@dcloudio/types": "3.4.28",
     "@dcloudio/uni-cli-shared": "3.0.0-5000720260410001",
     "@dcloudio/uni-stacktracey": "3.0.0-5000720260410001",
     "@dcloudio/vite-plugin-uni": "3.0.0-5000720260410001",
-    "@vue/runtime-core": "^3.4.21",
+    "@vue/runtime-core": "3.5.35",
     "vite": "5.2.8"
+  },
+  "overrides": {
+    "@vue/compiler-core": "3.5.35",
+    "@vue/compiler-dom": "3.5.35",
+    "@vue/compiler-sfc": "3.5.35",
+    "@vue/compiler-ssr": "3.5.35",
+    "@vue/reactivity": "3.5.35",
+    "@vue/runtime-core": "3.5.35",
+    "@vue/runtime-dom": "3.5.35",
+    "@vue/server-renderer": "3.5.35",
+    "@vue/shared": "3.5.35"
   }
 }
