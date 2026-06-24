@@ -89,6 +89,8 @@ export function assertSharedAppChecks(checker, project) {
   checker.assert("Detail page is registered", pagePaths.has("pages/detail/detail"));
   checker.assert("Legal page is registered", pagePaths.has("pages/legal/legal"));
   checker.assert("Privacy policy URL setting exists", Object.hasOwn(productionEnv, "VITE_PRIVACY_POLICY_URL"));
+  checker.assert("Support email setting exists", Object.hasOwn(productionEnv, "VITE_SUPPORT_EMAIL"));
+  checker.assert("Support URL setting exists", Object.hasOwn(productionEnv, "VITE_SUPPORT_URL"));
   checker.assert("Terms URL setting exists", Object.hasOwn(productionEnv, "VITE_TERMS_OF_SERVICE_URL"));
   checker.assert("1024 App icon exists", fs.existsSync(path.join(mobileRoot, "src", "static", "brand", "app-icon-1024.png")));
   checker.assert("Mobile launch image exists", fs.existsSync(path.join(mobileRoot, "src", "static", "brand", "launch-1170x2532.png")));

@@ -18,10 +18,12 @@ npm install
 
 ```dotenv
 VITE_PRIVACY_POLICY_URL=https://...
+VITE_SUPPORT_EMAIL=support@example.com
+VITE_SUPPORT_URL=https://...
 VITE_TERMS_OF_SERVICE_URL=https://...
 ```
 
-未配置正式 URL 时，App 内会展示首版占位说明，方便开发测试和审核材料准备。
+未配置正式 URL 或邮箱时，App 内会展示首版占位说明，方便开发测试和审核材料准备。
 
 ## 微信小程序
 
@@ -117,4 +119,4 @@ docs/mobile-next-todo.md
 - 微信小程序登录、退出登录、收藏、订阅和阅读历史
 - iOS App 平台构建与只读阅读版上线准备
 - Android App 平台构建与只读阅读版上线准备
-- 关于、隐私政策和用户协议入口
+- 关于、帮助反馈、隐私政策和用户协议入口
