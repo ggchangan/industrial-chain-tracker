@@ -99,6 +99,12 @@
           <text class="arrow">›</text>
         </view>
       </view>
+
+      <view class="legal-links">
+        <button @click="openLegal('about')">关于</button>
+        <button @click="openLegal('privacy')">隐私政策</button>
+        <button @click="openLegal('terms')">用户协议</button>
+      </view>
     </view>
   </view>
 </template>
@@ -177,6 +183,9 @@ export default {
       const suffix = query ? `&q=${encodeURIComponent(query)}` : "";
       const target = targetTitle ? `&target=${encodeURIComponent(targetTitle)}` : "";
       uni.navigateTo({ url: `/pages/detail/detail?id=${id}${suffix}${target}` });
+    },
+    openLegal(type) {
+      uni.navigateTo({ url: `/pages/legal/legal?type=${encodeURIComponent(type)}` });
     },
     async refreshSession() {
       try {
@@ -441,5 +450,27 @@ export default {
   font-size: 25rpx;
   margin-top: 26rpx;
   width: 220rpx;
+}
+
+.legal-links {
+  border-top: 1rpx solid #263244;
+  display: flex;
+  gap: 10rpx;
+  justify-content: center;
+  margin-top: 46rpx;
+  padding-top: 26rpx;
+}
+
+.legal-links button {
+  background: transparent;
+  color: #94a3b8;
+  font-size: 23rpx;
+  line-height: 1;
+  margin: 0;
+  padding: 16rpx 12rpx;
+}
+
+.legal-links button::after {
+  border: 0;
 }
 </style>

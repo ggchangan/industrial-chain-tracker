@@ -13,6 +13,14 @@
 				"navigationBarBackgroundColor": "#0b1120",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/legal/legal",
+			"style": {
+				"navigationBarTitleText": "关于",
+				"navigationBarBackgroundColor": "#0b1120",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
 	"globalStyle": {
