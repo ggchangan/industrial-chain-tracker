@@ -40,6 +40,9 @@ npm start
 | `GET /api/v1/chains/{id}?article=1` | 单条产业链及 Markdown 正文 |
 | `GET /api/v1/chains/{id}?article=html` | 单条产业链及已渲染正文 |
 | `GET /api/v1/search?q=关键词` | 跨产业链搜索 |
+| `GET /api/v1/auth/session` | 小程序/App 用户登录态 |
+| `POST /api/v1/auth/wechat-login` | 微信小程序 code 登录 |
+| `POST /api/v1/auth/logout` | 小程序/App 退出登录 |
 | `POST /api/v1/admin/login` | 维护者登录 |
 | `POST /api/v1/admin/logout` | 退出登录 |
 | `GET /api/v1/admin/chains` | 获取维护台产业链列表 |
