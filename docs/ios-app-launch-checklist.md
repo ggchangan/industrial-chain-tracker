@@ -117,3 +117,6 @@ GET  /api/v1/me
 ```
 
 这样个人数据模型可以继续复用当前 MySQL 结构，不需要为 iOS 单独建一套用户系统。
+
+Android 阅读版上线资料见 `docs/android-app-launch-checklist.md`。HarmonyOS NEXT 原生版暂不和
+Android 首版同时展开，后续 TODO 见 `docs/mobile-next-todo.md`。

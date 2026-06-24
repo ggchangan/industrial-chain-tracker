@@ -7,7 +7,8 @@
     "build:mp-weixin": "uni build -p mp-weixin",
     "dev:app": "uni -p app",
     "build:app": "uni build -p app",
-    "build:app-ios": "uni build -p app --mode production"
+    "build:app-ios": "uni build -p app --mode production",
+    "build:app-android": "uni build -p app --mode production"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-5000720260410001",
