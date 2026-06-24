@@ -5,8 +5,13 @@ export function getChains() {
   return request("/api/v1/chains");
 }
 
-export function getChain(id) {
-  return request(`/api/v1/chains/${encodeURIComponent(id)}?article=html`);
+export function getChain(id, options = {}) {
+  const article = options.article ? "?article=html" : "";
+  return request(`/api/v1/chains/${encodeURIComponent(id)}${article}`);
+}
+
+export function getChainArticle(id) {
+  return getChain(id, { article: true });
 }
 
 export function searchChains(query) {
