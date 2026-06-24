@@ -1266,16 +1266,22 @@ function renderCurrent(chain) {
 
   const quick = document.querySelector("#quickLinks");
   quick.innerHTML = "";
-  [
-    ["最新研究", "#activity"],
-    ["核心逻辑", "#logic"],
-    ["产业链结构", "#chain"],
-    ["跟踪验证", "#updates"],
-    ["市场验证", "#stocks"],
-    ["原文阅读", "#article"],
-  ].forEach(([label, href]) => {
+  const quickLinks = chain.mobileSummary?.sections?.length
+    ? chain.mobileSummary.sections
+        .filter((section) => section.id !== "focus")
+        .map((section) => [section.title, summarySectionHref(section.id), section.count])
+    : [
+        ["最新研究", "#activity"],
+        ["核心逻辑", "#logic"],
+        ["产业链结构", "#chain"],
+        ["跟踪验证", "#updates"],
+        ["市场验证", "#stocks"],
+        ["原文阅读", "#article"],
+      ];
+  quickLinks.forEach(([label, href, count]) => {
     const link = el("a", "button", label);
     link.href = href;
+    if (count !== undefined) link.dataset.count = count;
     quick.append(link);
   });
 
@@ -1284,6 +1290,21 @@ function renderCurrent(chain) {
 
 function renderCurrentHighlights(chain) {
   const root = document.querySelector("#currentHighlights");
+  if (chain.mobileSummary?.highlights?.length) {
+    const sectionMeta = new Map((chain.mobileSummary.sections || []).map((section) => [section.id, section]));
+    root.innerHTML = chain.mobileSummary.highlights.slice(0, 3).map((item) => {
+      const section = sectionMeta.get(item.target);
+      return `
+        <a class="current-highlight" href="${escapeHtml(summaryHighlightHref(item))}">
+          <span>${escapeHtml(item.label || section?.title || "当前重点")}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(item.body || section?.summary || "")}</p>
+          ${item.date ? `<small>${escapeHtml(item.date)}</small>` : ""}
+        </a>
+      `;
+    }).join("");
+    return;
+  }
   const latestUpdate = [...(chain.updates || [])].sort((left, right) =>
     String(right.date || "").localeCompare(String(left.date || ""))
   )[0];
@@ -1340,6 +1361,25 @@ function renderCurrentHighlights(chain) {
       <p>${escapeHtml(chain.theme)}</p>
     </article>
   `;
+}
+
+function summarySectionHref(id) {
+  return {
+    focus: "#overview",
+    research: "#activity",
+    logic: "#logic",
+    structure: "#chain",
+    tracking: "#updates",
+    stocks: "#stocks",
+    article: "#article"
+  }[id] || "#overview";
+}
+
+function summaryHighlightHref(item) {
+  if (item?.type === "research") return "#research";
+  if (item?.type === "logic") return "#logic";
+  if (item?.type === "update") return "#changes";
+  return summarySectionHref(item?.target);
 }
 
 function renderChain(chain) {

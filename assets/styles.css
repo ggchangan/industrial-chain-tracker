@@ -419,6 +419,15 @@ main {
   max-width: 560px;
 }
 
+.quick-links a[data-count]::after {
+  color: var(--cyan);
+  content: attr(data-count);
+  font-size: 0.72em;
+  font-weight: 900;
+  margin-left: 7px;
+  opacity: 0.92;
+}
+
 .current-highlights {
   display: grid;
   gap: 14px;
@@ -460,6 +469,14 @@ main {
   font-size: 12px;
   line-height: 1.65;
   margin: 0;
+}
+
+.current-highlight small {
+  color: var(--green);
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: 12px;
 }
 
 .chain-card {
