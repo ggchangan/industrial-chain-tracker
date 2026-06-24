@@ -8,6 +8,14 @@
         <text class="title">{{ chain.title }}</text>
         <text class="theme">{{ chain.theme }}</text>
         <text v-if="query" class="query">当前搜索：{{ query }}</text>
+        <view class="detail-actions">
+          <button :disabled="personalLoading" @click="toggleFavorite">
+            {{ isFavorite ? "取消收藏" : "收藏产业链" }}
+          </button>
+          <button :disabled="personalLoading" @click="toggleSubscription">
+            {{ isSubscribed ? "取消订阅" : "订阅动态" }}
+          </button>
+        </view>
       </view>
 
       <view id="focus" class="section focus-section">
@@ -209,6 +217,13 @@
 
 <script>
 import { assetUrl, getChain, getChainArticle } from "../../utils/api";
+import {
+  fetchUserProfile,
+  getStoredProfile,
+  saveReadingProgress,
+  setFavoriteChain,
+  setSubscribedChain
+} from "../../utils/auth";
 import { buildArticleBlocks, buildReaderToc, findArticleTarget } from "../../utils/article.mjs";
 
 export default {
@@ -225,6 +240,8 @@ export default {
       lastScrollTop: 0,
       loading: true,
       query: "",
+      personalLoading: false,
+      profile: null,
       readerEnd: 0,
       readingProgress: 0,
       restoreTimer: null,
@@ -239,7 +256,9 @@ export default {
     this.query = decodeURIComponent(options.q || "");
     this.targetTitle = decodeURIComponent(options.target || "");
     this.viewportHeight = uni.getSystemInfoSync().windowHeight || 0;
+    this.profile = getStoredProfile();
     this.loadChain(options.id);
+    this.refreshProfile();
   },
   onPageScroll(event) {
     if (!this.articleBlocks.length) return;
@@ -266,6 +285,7 @@ export default {
         const payload = await getChain(id);
         this.chain = payload.chain;
         uni.setNavigationBarTitle({ title: this.chain.shortTitle || this.chain.title });
+        this.restoreRemoteReadingHint();
         if (this.query || this.targetTitle) await this.loadArticle(false);
       } catch (error) {
         this.error = error.message || "内容加载失败";
@@ -322,6 +342,38 @@ export default {
     },
     closeToc() {
       this.tocVisible = false;
+    },
+    async refreshProfile() {
+      try {
+        this.profile = await fetchUserProfile();
+      } catch {
+        this.profile = getStoredProfile();
+      }
+    },
+    async toggleFavorite() {
+      await this.updatePersonalFlag("favorite");
+    },
+    async toggleSubscription() {
+      await this.updatePersonalFlag("subscription");
+    },
+    async updatePersonalFlag(kind) {
+      if (!this.chain?.id) return;
+      this.personalLoading = true;
+      try {
+        this.profile = kind === "favorite"
+          ? await setFavoriteChain(this.chain.id, !this.isFavorite)
+          : await setSubscribedChain(this.chain.id, !this.isSubscribed);
+        uni.showToast({
+          title: kind === "favorite"
+            ? (this.isFavorite ? "已收藏" : "已取消收藏")
+            : (this.isSubscribed ? "已订阅" : "已取消订阅"),
+          icon: "none"
+        });
+      } catch (error) {
+        uni.showToast({ title: error.message || "请先登录", icon: "none" });
+      } finally {
+        this.personalLoading = false;
+      }
     },
     async scrollToSection(id) {
       if (id === "article" && !this.articleLoaded) {
@@ -397,15 +449,37 @@ export default {
     },
     saveReadingPosition(scrollTop = this.lastScrollTop || 0) {
       if (!this.chain?.id || !this.articleLoaded || scrollTop <= 0) return;
-      uni.setStorageSync(this.storageKey, {
+      const record = {
         blockIndex: this.activeBlockIndex,
         headingId: this.articleBlocks[this.activeBlockIndex]?.headingId || "",
+        headingTitle: this.articleBlocks[this.activeBlockIndex]?.title || "",
         scrollTop,
+        progress: this.readingProgress,
         updatedAt: Date.now()
-      });
+      };
+      uni.setStorageSync(this.storageKey, record);
+      saveReadingProgress(this.chain.id, record)
+        .then((profile) => {
+          if (profile) this.profile = profile;
+        })
+        .catch(() => {});
+    },
+    restoreRemoteReadingHint() {
+      const remote = (this.profile?.readingHistory || []).find((item) => item.chainId === this.chain?.id);
+      if (!remote) return;
+      const local = uni.getStorageSync(this.storageKey);
+      if (!local?.updatedAt || new Date(remote.updatedAt).getTime() > Number(local.updatedAt || 0)) {
+        uni.setStorageSync(this.storageKey, remote);
+      }
     }
   },
   computed: {
+    isFavorite() {
+      return Boolean(this.profile?.favorites?.chains?.includes(this.chain?.id));
+    },
+    isSubscribed() {
+      return Boolean(this.profile?.subscriptions?.chains?.includes(this.chain?.id));
+    },
     activeTocAnchor() {
       const active = this.readerToc.find((item) => item.blockIndex === this.activeBlockIndex);
       return active ? `toc-${active.anchorId}` : "";
@@ -517,6 +591,31 @@ function decorateArticleHtml(html) {
   font-size: 24rpx;
   margin-top: 24rpx;
   padding-left: 16rpx;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 26rpx;
+}
+
+.detail-actions button {
+  background: transparent;
+  border: 1rpx solid #334155;
+  color: #67e8f9;
+  font-size: 24rpx;
+  line-height: 1;
+  margin: 0;
+  padding: 18rpx 22rpx;
+}
+
+.detail-actions button::after {
+  border: 0;
+}
+
+.detail-actions button[disabled] {
+  opacity: 0.65;
 }
 
 .diagram {

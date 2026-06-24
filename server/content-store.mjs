@@ -70,6 +70,73 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     return structuredClone(update);
   }
 
+  function getUserProfile(user) {
+    const profile = ensureUserProfile(user);
+    return publicUserProfile(profile);
+  }
+
+  async function setFavoriteChain(user, chainId, active) {
+    assertKnownChain(chainId);
+    const profile = ensureUserProfile(user);
+    toggleListItem(profile.favorites.chains, chainId, active);
+    profile.updatedAt = new Date().toISOString();
+    await stateStore.save(state);
+    return publicUserProfile(profile);
+  }
+
+  async function setSubscribedChain(user, chainId, active) {
+    assertKnownChain(chainId);
+    const profile = ensureUserProfile(user);
+    toggleListItem(profile.subscriptions.chains, chainId, active);
+    profile.updatedAt = new Date().toISOString();
+    await stateStore.save(state);
+    return publicUserProfile(profile);
+  }
+
+  async function saveReadingProgress(user, chainId, input) {
+    const chain = assertKnownChain(chainId);
+    const profile = ensureUserProfile(user);
+    const record = {
+      chainId,
+      chainTitle: chain.title,
+      headingId: String(input.headingId || "").trim(),
+      headingTitle: String(input.headingTitle || "").trim(),
+      blockIndex: Math.max(0, Number.parseInt(input.blockIndex || 0, 10) || 0),
+      scrollTop: Math.max(0, Number.parseInt(input.scrollTop || 0, 10) || 0),
+      progress: Math.max(0, Math.min(100, Number.parseInt(input.progress || 0, 10) || 0)),
+      updatedAt: new Date().toISOString()
+    };
+    profile.readingHistory = [
+      record,
+      ...profile.readingHistory.filter((item) => item.chainId !== chainId)
+    ].slice(0, 50);
+    profile.updatedAt = record.updatedAt;
+    await stateStore.save(state);
+    return publicUserProfile(profile);
+  }
+
+  function assertKnownChain(chainId) {
+    const chain = library.chains.find((item) => item.id === chainId);
+    if (!chain) throw notFoundError("产业链不存在");
+    return chain;
+  }
+
+  function ensureUserProfile(user) {
+    const userId = String(user?.id || "").trim();
+    if (!userId) throw validationError("用户登录态无效");
+    state.usersById ||= {};
+    state.usersById[userId] = normalizeUserProfile({
+      ...state.usersById[userId],
+      id: userId,
+      provider: user.provider || state.usersById[userId]?.provider || "wechat-miniapp",
+      openid: user.openid || state.usersById[userId]?.openid || "",
+      unionid: user.unionid || state.usersById[userId]?.unionid || "",
+      createdAt: state.usersById[userId]?.createdAt || new Date().toISOString(),
+      lastSeenAt: new Date().toISOString()
+    });
+    return state.usersById[userId];
+  }
+
   async function updateUpdate(chainId, updateId, input) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -337,6 +404,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     addUpdate,
     createChain,
     deleteManagedChain,
+    getUserProfile,
     previewChain: (input) => buildChainDraft({
       ...input,
       id: normalizeId(input.id || "new-chain"),
@@ -354,7 +422,10 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     updateSource,
     updateUpdate,
     saveLogicCard,
+    saveReadingProgress,
     deleteLogicCard,
+    setFavoriteChain,
+    setSubscribedChain,
     dataDir: resolvedDataDir,
     stateStoreDriver: stateStore.driver,
     objectStorageDriver: objectStorage.driver,
@@ -371,6 +442,66 @@ function storageErrorMessage(error) {
   if (error?.code === "NoSuchBucket") return "COS Bucket 不存在或地域配置不正确。";
   if (error?.code === "InvalidAccessKeyId") return "COS 密钥无效，请检查服务器环境变量。";
   return `对象存储写入失败：${error?.message || "未知错误"}`;
+}
+
+function normalizeUserProfile(profile = {}) {
+  return {
+    id: String(profile.id || "").trim(),
+    provider: String(profile.provider || "wechat-miniapp").trim(),
+    openid: String(profile.openid || "").trim(),
+    unionid: String(profile.unionid || "").trim(),
+    favorites: {
+      chains: uniqueStrings(profile.favorites?.chains)
+    },
+    subscriptions: {
+      chains: uniqueStrings(profile.subscriptions?.chains)
+    },
+    readingHistory: Array.isArray(profile.readingHistory)
+      ? profile.readingHistory.map(normalizeReadingRecord).filter((item) => item.chainId).slice(0, 50)
+      : [],
+    createdAt: profile.createdAt || new Date().toISOString(),
+    lastSeenAt: profile.lastSeenAt || "",
+    updatedAt: profile.updatedAt || ""
+  };
+}
+
+function normalizeReadingRecord(record = {}) {
+  return {
+    chainId: String(record.chainId || "").trim(),
+    chainTitle: String(record.chainTitle || "").trim(),
+    headingId: String(record.headingId || "").trim(),
+    headingTitle: String(record.headingTitle || "").trim(),
+    blockIndex: Math.max(0, Number.parseInt(record.blockIndex || 0, 10) || 0),
+    scrollTop: Math.max(0, Number.parseInt(record.scrollTop || 0, 10) || 0),
+    progress: Math.max(0, Math.min(100, Number.parseInt(record.progress || 0, 10) || 0)),
+    updatedAt: record.updatedAt || ""
+  };
+}
+
+function publicUserProfile(profile) {
+  const normalized = normalizeUserProfile(profile);
+  return {
+    id: normalized.id,
+    provider: normalized.provider,
+    favorites: normalized.favorites,
+    subscriptions: normalized.subscriptions,
+    readingHistory: normalized.readingHistory,
+    updatedAt: normalized.updatedAt
+  };
+}
+
+function toggleListItem(list, value, active) {
+  const item = String(value || "").trim();
+  if (!item) return;
+  const index = list.indexOf(item);
+  if (active && index < 0) list.push(item);
+  if (!active && index >= 0) list.splice(index, 1);
+}
+
+function uniqueStrings(value) {
+  return [...new Set((Array.isArray(value) ? value : [])
+    .map((item) => String(item || "").trim())
+    .filter(Boolean))];
 }
 
 async function readChainArticle(rootDir, objectStorage, articleUrl) {

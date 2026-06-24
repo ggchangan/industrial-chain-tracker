@@ -43,6 +43,10 @@ npm start
 | `GET /api/v1/auth/session` | 小程序/App 用户登录态 |
 | `POST /api/v1/auth/wechat-login` | 微信小程序 code 登录 |
 | `POST /api/v1/auth/logout` | 小程序/App 退出登录 |
+| `GET /api/v1/me` | 当前用户收藏、订阅和阅读历史 |
+| `PUT/DELETE /api/v1/me/favorites/chains/{id}` | 收藏或取消收藏产业链 |
+| `PUT/DELETE /api/v1/me/subscriptions/chains/{id}` | 订阅或取消订阅产业链动态 |
+| `PUT /api/v1/me/reading-history/chains/{id}` | 保存产业链原文阅读进度 |
 | `POST /api/v1/admin/login` | 维护者登录 |
 | `POST /api/v1/admin/logout` | 退出登录 |
 | `GET /api/v1/admin/chains` | 获取维护台产业链列表 |
