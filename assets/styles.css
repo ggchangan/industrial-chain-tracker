@@ -110,6 +110,100 @@ h1 {
   max-width: 920px;
 }
 
+.web-user-panel {
+  align-items: center;
+  border: 1px solid var(--line);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-top: 24px;
+  max-width: 920px;
+  padding: 16px 18px;
+}
+
+.web-user-panel strong {
+  display: block;
+}
+
+.web-user-panel p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.web-user-panel button,
+.personal-actions button {
+  background: transparent;
+  border: 1px solid rgba(39, 217, 232, 0.35);
+  color: #c8f7ff;
+  cursor: pointer;
+  font-weight: 900;
+  padding: 8px 11px;
+}
+
+.web-user-panel button:hover,
+.personal-actions button:hover,
+.personal-actions button.active {
+  border-color: var(--cyan);
+}
+
+.web-personal-panel {
+  margin-top: 20px;
+}
+
+.web-personal-head {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.web-personal-head span {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.web-personal-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.web-personal-grid button {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--line);
+  color: var(--text);
+  cursor: pointer;
+  padding: 14px;
+  text-align: left;
+}
+
+.web-personal-grid button:hover {
+  border-color: var(--cyan);
+}
+
+.web-personal-grid span {
+  color: var(--green);
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.web-personal-grid strong {
+  display: block;
+  line-height: 1.4;
+}
+
+.web-personal-grid p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 8px 0 0;
+}
+
 .search-panel label {
   color: var(--muted);
   display: block;
@@ -419,6 +513,10 @@ main {
   max-width: 560px;
 }
 
+.personal-actions {
+  display: contents;
+}
+
 .quick-links a[data-count]::after {
   color: var(--cyan);
   content: attr(data-count);
@@ -477,6 +575,25 @@ main {
   font-size: 11px;
   font-weight: 800;
   margin-top: 12px;
+}
+
+.web-toast {
+  background: rgba(2, 6, 23, 0.95);
+  border: 1px solid var(--line);
+  bottom: 28px;
+  color: var(--text);
+  opacity: 0;
+  padding: 12px 16px;
+  position: fixed;
+  right: 28px;
+  transform: translateY(8px);
+  transition: 180ms ease;
+  z-index: 100;
+}
+
+.web-toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .chain-card {
@@ -3370,7 +3487,8 @@ footer a {
 
   .research-feed,
   .stock-camp-grid,
-  .verification-grid {
+  .verification-grid,
+  .web-personal-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3453,8 +3571,14 @@ footer a {
 @media (max-width: 640px) {
   .research-feed,
   .stock-camp-grid,
-  .verification-grid {
+  .verification-grid,
+  .web-personal-grid {
     grid-template-columns: 1fr;
+  }
+
+  .web-user-panel {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .stock-camp-summary {
