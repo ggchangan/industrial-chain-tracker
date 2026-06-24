@@ -12,6 +12,12 @@
       <button class="external-button" @click="openExternal">打开正式页面</button>
     </view>
 
+    <view v-if="document.contactEmail" class="external-card">
+      <text class="external-title">反馈邮箱</text>
+      <text class="external-url">{{ document.contactEmail }}</text>
+      <button class="external-button" @click="copyEmail">复制邮箱</button>
+    </view>
+
     <view class="content">
       <view
         v-for="section in document.sections"
@@ -53,6 +59,14 @@ export default {
         success: () => uni.showToast({ title: "链接已复制", icon: "none" })
       });
       // #endif
+    },
+    copyEmail() {
+      const email = this.document.contactEmail;
+      if (!email) return;
+      uni.setClipboardData({
+        data: email,
+        success: () => uni.showToast({ title: "邮箱已复制", icon: "none" })
+      });
     }
   },
   computed: {

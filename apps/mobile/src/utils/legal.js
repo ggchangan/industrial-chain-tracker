@@ -1,7 +1,10 @@
 export const LEGAL_LINKS = {
   privacy: String(import.meta.env.VITE_PRIVACY_POLICY_URL || "").trim(),
+  support: String(import.meta.env.VITE_SUPPORT_URL || "").trim(),
   terms: String(import.meta.env.VITE_TERMS_OF_SERVICE_URL || "").trim()
 };
+
+export const SUPPORT_EMAIL = String(import.meta.env.VITE_SUPPORT_EMAIL || "").trim();
 
 const documents = {
   about: {
@@ -68,6 +71,31 @@ const documents = {
       {
         title: "正式协议",
         body: "上线前需要替换为正式用户协议 URL，并根据 App Store、安卓应用市场和小程序审核要求完善。"
+      }
+    ]
+  },
+  support: {
+    title: "帮助与反馈",
+    eyebrow: "SUPPORT",
+    summary: "如果你在使用产业链研究库时遇到问题，可以通过这里查看常见说明，或复制联系方式反馈。",
+    externalUrl: LEGAL_LINKS.support,
+    contactEmail: SUPPORT_EMAIL,
+    sections: [
+      {
+        title: "内容没有加载出来",
+        body: "请先确认网络连接是否正常。应用通过 HTTPS 访问内容 API 和静态资源；弱网或服务器维护时，首页、图谱和原文可能需要稍后重试。"
+      },
+      {
+        title: "搜索不到想看的产业链",
+        body: "首版搜索覆盖已建档产业链、公司、环节、核心逻辑和部分原文内容。如果没有结果，说明该产业链可能还没有入库。"
+      },
+      {
+        title: "K 线入口的作用",
+        body: "个股 K 线入口用于观察市场是否交易相关产业逻辑，不代表产业逻辑已经得到验证，也不构成投资建议。"
+      },
+      {
+        title: "反馈时建议提供",
+        body: "请尽量提供手机型号、系统版本、问题页面、操作步骤和截图。这样更容易复现和修复问题。"
       }
     ]
   }

@@ -102,6 +102,7 @@
 
       <view class="legal-links">
         <button @click="openLegal('about')">关于</button>
+        <button @click="openLegal('support')">帮助反馈</button>
         <button @click="openLegal('privacy')">隐私政策</button>
         <button @click="openLegal('terms')">用户协议</button>
       </view>
