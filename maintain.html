@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=monitor-verification-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=ia-review-1" />
   </head>
   <body class="maintainer-page">
     <header class="site-header compact-header">
@@ -12,11 +12,8 @@
         <a href="./index.html">公开阅读页</a>
         <a href="#package-inbox">研究收件箱</a>
         <a href="#archive">资料档案</a>
-        <a href="#monitor-verifications">监控核验</a>
-        <a href="#add-source">新增资料</a>
-        <a href="#logic-cards">逻辑卡</a>
-        <a href="#edit-article">更新原文</a>
-        <a href="#add-update">添加动态</a>
+        <a href="#monitor-verifications">待办核验</a>
+        <a href="#advanced-maintenance">高级维护</a>
         <button id="adminLogout" class="nav-button" type="button">退出登录</button>
       </nav>
       <section class="hero">
@@ -75,8 +72,8 @@
         <section id="monitor-verifications" class="monitor-verification-console">
           <div class="section-head compact">
             <p class="eyebrow">Monitor Verification</p>
-            <h2>人工核验监控项</h2>
-            <p>选择研究监控项，记录新证据和判断。保存后会更新公开页状态、核验历史，并生成一条逻辑变化记录。</p>
+            <h2>待办核验</h2>
+            <p>集中处理需要人工判断的监控项。选择监控项后记录新证据和判断，保存后会更新公开页状态、核验历史，并生成一条逻辑变化记录。</p>
           </div>
           <div class="admin-field-row monitor-picker-row">
             <label>
@@ -135,10 +132,17 @@
           </div>
         </section>
 
-        <section id="logic-cards" class="logic-card-console">
+        <section id="advanced-maintenance" class="advanced-maintenance-console">
+          <div class="section-head compact">
+            <p class="eyebrow">Advanced</p>
+            <h2>高级维护</h2>
+            <p>低频或复杂操作集中放在这里：手工逻辑卡、单篇资料归档、基准原文更新和动态补录。日常主流程优先使用研究收件箱。</p>
+          </div>
+
+        <section id="logic-cards" class="logic-card-console advanced-subsection">
           <div class="section-head compact">
             <p class="eyebrow">Logic Cards</p>
-            <h2 id="logicCardFormTitle">新增逻辑卡</h2>
+            <h2 id="logicCardFormTitle">手工逻辑卡</h2>
             <p>从一份资料中提炼可复用结论，关联产业链、公司与原文；草稿不会出现在公开页。</p>
           </div>
           <form id="logicCardForm" class="admin-form logic-card-form">
@@ -241,7 +245,7 @@
           </form>
         </section>
 
-        <div class="admin-form-grid">
+        <div class="admin-form-grid advanced-subsection-grid">
           <article id="add-source" class="admin-form-panel">
             <div class="section-head compact">
               <p class="eyebrow">New Source</p>
@@ -468,6 +472,7 @@
             </form>
           </article>
         </div>
+        </section>
       </section>
 
       <section id="resources" class="section">
@@ -489,6 +494,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js?v=monitor-verification-1"></script>
+    <script src="./assets/maintain.js?v=ia-review-1"></script>
   </body>
 </html>
