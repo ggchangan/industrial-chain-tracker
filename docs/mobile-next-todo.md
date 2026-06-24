@@ -2,6 +2,8 @@
 
 本文记录第一阶段之后的移动端任务。当前优先级是先把 iOS 与 Android 阅读版跑通，再决定是否展开鸿蒙原生版。
 
+首版商店提交资料模板见 `docs/app-store-submission-kit.md`。
+
 ## 第一阶段：iOS + Android 阅读版
 
 状态：进行中。
