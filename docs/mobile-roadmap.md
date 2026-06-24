@@ -66,7 +66,16 @@ Git 内容仓库
 
 ## 第四阶段：iOS 与 Android
 
-继续使用 `apps/mobile` 业务代码，按平台补充：
+已开始使用 `apps/mobile` 业务代码支持 iOS App：
+
+- App 平台构建脚本和 iOS manifest 基础配置
+- 生产 HTTPS API / 静态资源配置
+- iOS readiness 检查脚本
+- App 端登录保护：Apple 登录接入前不误调用微信小程序登录
+
+首版 iOS 阅读版上线资料见 `docs/ios-app-launch-checklist.md`。
+
+后续按平台补充：
 
 - Apple/Android 登录与推送
 - 深色模式和系统字体适配

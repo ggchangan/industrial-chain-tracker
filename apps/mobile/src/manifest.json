@@ -20,6 +20,9 @@
         "modules" : {},
         /* 应用发布信息 */
         "distribute" : {
+            "apple" : {
+                "bundleId" : "cloud.ygys30ds.industrychain"
+            },
             /* android打包配置 */
             "android" : {
                 "permissions" : [
@@ -41,7 +44,15 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "id" : "cloud.ygys30ds.industrychain",
+                "devices" : "universal",
+                "deploymentTarget" : "13.0",
+                "privacyDescription" : {
+                    "NSAppTransportSecurity" : "应用通过 HTTPS 访问产业链研究库内容服务。",
+                    "NSUserTrackingUsageDescription" : "本应用不进行跨 App 跟踪。"
+                }
+            },
             /* SDK配置 */
             "sdkConfigs" : {}
         }

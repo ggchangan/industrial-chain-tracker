@@ -1,4 +1,5 @@
 import { request } from "./api";
+import { getClientPlatformLabel, isWechatMiniProgram } from "./platform";
 
 const TOKEN_KEY = "industry-chain:user-token";
 const USER_KEY = "industry-chain:user";
@@ -29,6 +30,9 @@ export async function fetchUserSession() {
 }
 
 export async function loginWithWechat() {
+  if (!isWechatMiniProgram()) {
+    throw new Error(`${getClientPlatformLabel()}登录待接入；当前版本可先浏览、搜索和阅读产业链。`);
+  }
   const loginResult = await uniLogin();
   const payload = await request("/api/v1/auth/wechat-login", {
     method: "POST",
@@ -90,6 +94,9 @@ function clearStoredSession() {
 
 function requireToken() {
   const token = getStoredToken();
+  if (!token && !isWechatMiniProgram()) {
+    throw new Error(`${getClientPlatformLabel()}登录待接入；当前版本可先浏览、搜索和阅读产业链。`);
+  }
   if (!token) throw new Error("请先登录");
   return token;
 }
