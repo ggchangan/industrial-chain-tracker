@@ -904,7 +904,7 @@ function scrollToArticleHash() {
 
 function scrollToRenderedSectionHash() {
   const id = decodeURIComponent(window.location.hash.slice(1));
-  if (!["chain", "updates", "activity", "changes", "research", "stocks", "logic", "verification", "article"].includes(id)) return;
+  if (!["overview", "chain", "updates", "activity", "changes", "research", "stocks", "logic", "article"].includes(id)) return;
   if (id === "research") setActivityTab("research");
   if (id === "changes") setActivityTab("changes");
   const target = document.getElementById(id);
@@ -1267,18 +1267,79 @@ function renderCurrent(chain) {
   const quick = document.querySelector("#quickLinks");
   quick.innerHTML = "";
   [
-    ["产业链骨架", "#chain"],
-    ["逻辑监控", "#updates"],
-    ["研究动态", "#activity"],
-    ["个股集中营", "#stocks"],
+    ["最新研究", "#activity"],
     ["核心逻辑", "#logic"],
-    ["观察与验证", "#verification"],
+    ["产业链结构", "#chain"],
+    ["跟踪验证", "#updates"],
+    ["市场验证", "#stocks"],
     ["原文阅读", "#article"],
   ].forEach(([label, href]) => {
     const link = el("a", "button", label);
     link.href = href;
     quick.append(link);
   });
+
+  renderCurrentHighlights(chain);
+}
+
+function renderCurrentHighlights(chain) {
+  const root = document.querySelector("#currentHighlights");
+  const latestUpdate = [...(chain.updates || [])].sort((left, right) =>
+    String(right.date || "").localeCompare(String(left.date || ""))
+  )[0];
+  const latestSource = [...(chain.sources || [])].sort((left, right) =>
+    String(right.date || "").localeCompare(String(left.date || "")) ||
+    String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
+  )[0];
+  const latestVerification = (chain.trackingProfile?.metrics || [])
+    .map((item) => item.latestVerification ? ({ metric: item, verification: item.latestVerification }) : null)
+    .filter(Boolean)
+    .sort((left, right) =>
+      String(right.verification.date || "").localeCompare(String(left.verification.date || ""))
+    )[0];
+  const firstLogic = (chain.logicTracks || [])
+    .flatMap((track) => (track.coreInsights || []).map((insight) => ({ track, insight })))
+    .find(({ insight }) => insight.status !== "draft");
+
+  const highlights = [
+    latestUpdate ? {
+      label: "最新变化",
+      title: latestUpdate.signal,
+      body: latestUpdate.impact,
+      href: "#activity"
+    } : null,
+    latestSource ? {
+      label: "最新资料",
+      title: latestSource.title,
+      body: latestSource.summary || `${latestSource.platform || "资料"} · ${latestSource.date || ""}`,
+      href: "#activity"
+    } : null,
+    latestVerification ? {
+      label: "最近核验",
+      title: `${latestVerification.metric.name}：${verificationResultLabel(latestVerification.verification.result)}`,
+      body: latestVerification.verification.summary,
+      href: "#updates"
+    } : firstLogic ? {
+      label: "重点逻辑",
+      title: firstLogic.insight.title,
+      body: firstLogic.insight.summary,
+      href: "#logic"
+    } : null
+  ].filter(Boolean).slice(0, 3);
+
+  root.innerHTML = highlights.length ? highlights.map((item) => `
+    <a class="current-highlight" href="${escapeHtml(item.href)}">
+      <span>${escapeHtml(item.label)}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <p>${escapeHtml(item.body || "")}</p>
+    </a>
+  `).join("") : `
+    <article class="current-highlight">
+      <span>当前重点</span>
+      <strong>${escapeHtml(chain.title)}</strong>
+      <p>${escapeHtml(chain.theme)}</p>
+    </article>
+  `;
 }
 
 function renderChain(chain) {
@@ -1368,6 +1429,9 @@ function renderLogic(chain) {
   root.innerHTML = "";
   tracksRoot.innerHTML = "";
 
+  if (chain.logic.length) {
+    root.append(el("div", "logic-section-label", "基准逻辑"));
+  }
   chain.logic.forEach((item, index) => {
     const card = el("article", "logic-card");
     card.dataset.searchTarget = searchTargetKey(chain.id, "logic", index);
@@ -1378,6 +1442,9 @@ function renderLogic(chain) {
     root.append(card);
   });
 
+  if ((chain.logicTracks || []).length) {
+    tracksRoot.append(el("div", "logic-section-label recent", "近期研究逻辑"));
+  }
   (chain.logicTracks || []).forEach((track) => {
     const logicTrack = el("section", "logic-track");
     logicTrack.id = `logic-track-${track.id}`;

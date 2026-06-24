@@ -4,19 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链研究库</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=stock-camp-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=ia-review-1" />
   </head>
   <body>
     <header class="site-header">
       <nav class="nav">
         <a href="#chains">产业链库</a>
-        <a href="#chain">产业链骨架</a>
-        <a href="#map">产业链图谱</a>
-        <a href="#updates">逻辑监控</a>
-        <a href="#activity">研究动态</a>
-        <a href="#stocks">个股集中营</a>
+        <a href="#overview">当前重点</a>
+        <a href="#activity">最新研究</a>
         <a href="#logic">核心逻辑</a>
-        <a href="#verification">观察验证</a>
+        <a href="#chain">产业链结构</a>
+        <a href="#updates">跟踪验证</a>
+        <a href="#stocks">市场验证</a>
         <a href="#article">原文阅读</a>
       </nav>
       <section id="chains" class="hero">
@@ -36,7 +35,7 @@
     </header>
 
     <main>
-      <section class="section current-chain">
+      <section id="overview" class="section current-chain">
         <div class="current-chain-head">
           <div>
             <p class="eyebrow">Current</p>
@@ -45,6 +44,7 @@
           </div>
           <div class="quick-links" id="quickLinks"></div>
         </div>
+        <div class="current-highlights" id="currentHighlights"></div>
         <div id="map" class="chain-map-panel">
           <a class="diagram-link" id="diagramLink">
             <img id="diagramImage" alt="产业链全景与价值传导图" />
@@ -54,28 +54,33 @@
 
       <section id="chain" class="section">
         <div class="section-head">
-          <p class="eyebrow">Chain Map</p>
-          <h2>产业链骨架</h2>
-          <p>先看清上游、中游、下游和关键公司，再顺着材料、工艺、需求和主题交叉探索。</p>
+          <p class="eyebrow">Structure</p>
+          <h2>产业链结构</h2>
+          <p>把图谱和上中下游骨架放在一起看，先理解价值链位置，再顺着材料、工艺、需求和公司继续探索。</p>
         </div>
         <div class="chain-grid" id="chainGrid"></div>
       </section>
 
       <section id="updates" class="section">
         <div class="section-head">
-          <p class="eyebrow">Tracking</p>
-          <h2 id="trackingTitle">逻辑监控</h2>
+          <p class="eyebrow">Tracking & Verification</p>
+          <h2 id="trackingTitle">跟踪验证</h2>
           <p id="trackingSummary"></p>
         </div>
         <div class="tracking-filters" id="trackingFilters" aria-label="监控主题"></div>
         <div class="tracking-grid" id="trackingGrid"></div>
+        <details class="watchlist-collapse">
+          <summary>观察清单</summary>
+          <p>这些指标暂不一定都有稳定自动数据源，但可以作为后续人工核验或自动监控的候选项。</p>
+          <div class="verification-grid" id="watchlist"></div>
+        </details>
       </section>
 
       <section id="activity" class="section">
         <div class="section-head">
           <p class="eyebrow">Research Activity</p>
-          <h2>研究动态</h2>
-          <p>一边看逻辑发生了什么变化，一边回到对应的文章、视频、公告和研究原文核验证据。</p>
+          <h2>最新研究</h2>
+          <p>默认先看逻辑发生了什么变化；需要追溯时，再回到对应的文章、视频、公告和研究原文核验证据。</p>
         </div>
         <div class="activity-tabs" role="tablist" aria-label="研究动态">
           <button class="active" type="button" role="tab" aria-selected="true" data-activity-tab="changes">逻辑变化</button>
@@ -91,9 +96,9 @@
 
       <section id="stocks" class="section">
         <div class="section-head">
-          <p class="eyebrow">Stock Camp</p>
-          <h2>个股集中营</h2>
-          <p>把产业链里的上市公司、关联环节、核心逻辑和行情入口集中到一处，先看市场是否在交易这条产业链。</p>
+          <p class="eyebrow">Market Validation</p>
+          <h2>市场验证</h2>
+          <p>把产业链里的上市公司、关联环节、核心逻辑和行情入口集中到一处，辅助观察市场是否在交易这条产业链。</p>
         </div>
         <div class="stock-camp-summary" id="stockCampSummary"></div>
         <div class="stock-camp-filters" id="stockCampFilters" aria-label="个股筛选"></div>
@@ -104,19 +109,10 @@
         <div class="section-head">
           <p class="eyebrow">Logic</p>
           <h2>核心逻辑</h2>
-          <p>先掌握产业链长期有效的基准逻辑，再查看近期资料提炼出的价格传导、价值量和公司弹性判断。</p>
+          <p>先掌握产业链长期有效的基准逻辑，再查看近期研究提炼出的价格传导、价值量和公司弹性判断。</p>
         </div>
         <div class="logic-grid" id="logicGrid"></div>
         <div id="logicTracks"></div>
-      </section>
-
-      <section id="verification" class="section">
-        <div class="section-head">
-          <p class="eyebrow">Verification</p>
-          <h2>观察与验证</h2>
-          <p>这些指标用于验证当前逻辑是否继续成立、正在强化，还是已经出现反转迹象。</p>
-        </div>
-        <div class="verification-grid" id="watchlist"></div>
       </section>
 
       <section id="article" class="section article-section">
@@ -140,6 +136,6 @@
     <div id="companyPanel" hidden></div>
 
     <script src="./assets/data.js"></script>
-    <script type="module" src="./assets/bootstrap.js?v=stock-camp-1"></script>
+    <script type="module" src="./assets/bootstrap.js?v=ia-review-1"></script>
   </body>
 </html>

@@ -419,6 +419,49 @@ main {
   max-width: 560px;
 }
 
+.current-highlights {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 24px;
+}
+
+.current-highlight {
+  background: linear-gradient(180deg, rgba(39, 217, 232, 0.08), rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  display: block;
+  min-height: 148px;
+  padding: 17px;
+}
+
+.current-highlight:hover {
+  border-color: var(--cyan);
+}
+
+.current-highlight span {
+  color: var(--cyan);
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.current-highlight strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.current-highlight p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  margin: 0;
+}
+
 .chain-card {
   min-height: 420px;
   padding: 22px;
@@ -545,6 +588,18 @@ main {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.logic-section-label {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 900;
+  grid-column: 1 / -1;
+  letter-spacing: 0.02em;
+}
+
+.logic-section-label.recent {
+  margin-top: 8px;
 }
 
 .tracking-grid {
@@ -733,6 +788,24 @@ main {
   color: #cbd5e1;
   font-size: 11px;
   padding: 4px 7px;
+}
+
+.watchlist-collapse {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.watchlist-collapse summary {
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.watchlist-collapse > p {
+  color: var(--muted);
+  margin: 8px 0 16px;
 }
 
 .stock-camp-summary {
@@ -2864,6 +2937,23 @@ button.propagation-signal:hover {
   padding: 24px;
 }
 
+.advanced-maintenance-console {
+  background: rgba(10, 18, 28, 0.52);
+  border: 1px solid var(--line);
+  margin-top: 32px;
+  padding: 24px;
+}
+
+.advanced-subsection {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.advanced-subsection-grid {
+  margin-top: 20px;
+}
+
 .monitor-picker-row {
   margin-bottom: 18px;
 }
@@ -3180,6 +3270,7 @@ footer a {
   .logic-grid,
   .tracking-grid,
   .stock-camp-summary,
+  .current-highlights,
   .article-layout,
   .split,
   .current-chain-head,
@@ -3260,6 +3351,10 @@ footer a {
 
   .stock-camp-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .current-highlights {
+    grid-template-columns: 1fr;
   }
 
   .stock-card-head {
