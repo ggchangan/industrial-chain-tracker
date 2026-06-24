@@ -98,6 +98,72 @@ test("mini program auth reports configuration and supports login/logout", async 
   }
 });
 
+test("authenticated user can manage favorites subscriptions and reading history", async () => {
+  const authServer = await createAppServer({
+    rootDir,
+    dataDir,
+    adminPassword: "correct-horse-battery",
+    sessionSecret: "test-session-secret-that-is-long-enough-123456",
+    userSessionSecret: "test-user-session-secret-that-is-long-enough-123456",
+    wechatAppId: "wx-test-appid",
+    wechatAppSecret: "wx-test-secret",
+    wechatExchangeCode: async ({ code }) => ({ openid: `openid-${code}` })
+  });
+  authServer.listen(0, "127.0.0.1");
+  await once(authServer, "listening");
+  const authBaseUrl = `http://127.0.0.1:${authServer.address().port}`;
+  try {
+    const denied = await fetch(`${authBaseUrl}/api/v1/me`);
+    assert.equal(denied.status, 401);
+
+    const login = await fetch(`${authBaseUrl}/api/v1/auth/wechat-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "profile" })
+    }).then((response) => response.json());
+    const headers = { Authorization: `Bearer ${login.token}`, "Content-Type": "application/json" };
+
+    const favorite = await fetch(`${authBaseUrl}/api/v1/me/favorites/chains/optical-module`, {
+      method: "PUT",
+      headers
+    }).then((response) => response.json());
+    assert.deepEqual(favorite.profile.favorites.chains, ["optical-module"]);
+
+    const subscription = await fetch(`${authBaseUrl}/api/v1/me/subscriptions/chains/optical-module`, {
+      method: "PUT",
+      headers
+    }).then((response) => response.json());
+    assert.deepEqual(subscription.profile.subscriptions.chains, ["optical-module"]);
+
+    const history = await fetch(`${authBaseUrl}/api/v1/me/reading-history/chains/optical-module`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({
+        headingId: "mpo",
+        headingTitle: "MPO产业链",
+        blockIndex: 3,
+        scrollTop: 1200,
+        progress: 42
+      })
+    }).then((response) => response.json());
+    assert.equal(history.profile.readingHistory[0].chainId, "optical-module");
+    assert.equal(history.profile.readingHistory[0].progress, 42);
+
+    const profile = await fetch(`${authBaseUrl}/api/v1/me`, { headers }).then((response) => response.json());
+    assert.deepEqual(profile.profile.favorites.chains, ["optical-module"]);
+    assert.deepEqual(profile.profile.subscriptions.chains, ["optical-module"]);
+    assert.equal(profile.profile.readingHistory[0].headingTitle, "MPO产业链");
+
+    const removed = await fetch(`${authBaseUrl}/api/v1/me/favorites/chains/optical-module`, {
+      method: "DELETE",
+      headers
+    }).then((response) => response.json());
+    assert.deepEqual(removed.profile.favorites.chains, []);
+  } finally {
+    authServer.close();
+  }
+});
+
 test("health and library APIs expose synchronized content", async () => {
   const health = await fetch(`${baseUrl}/api/v1/health`).then((response) => response.json());
   assert.equal(health.status, "ok");

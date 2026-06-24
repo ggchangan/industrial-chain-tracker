@@ -10,6 +10,7 @@ const EMPTY_STATE = {
   logicCardsByChain: {},
   researchPackagesByChain: {},
   monitorVerificationsByChain: {},
+  usersById: {},
   updatedAt: ""
 };
 
@@ -123,6 +124,7 @@ function normalizeState(state = {}) {
     logicCardsByChain: objectValue(state.logicCardsByChain),
     researchPackagesByChain: objectValue(state.researchPackagesByChain),
     monitorVerificationsByChain: objectValue(state.monitorVerificationsByChain),
+    usersById: objectValue(state.usersById),
     updatedAt: state.updatedAt || ""
   };
 }

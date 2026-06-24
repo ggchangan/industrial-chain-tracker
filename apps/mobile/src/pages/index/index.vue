@@ -31,6 +31,37 @@
     </view>
 
     <view v-else class="content">
+      <view v-if="profile && (profile.favorites.chains.length || profile.readingHistory.length)" class="section">
+        <view class="section-head">
+          <text class="section-title">我的关注</text>
+          <text class="count">{{ profile.favorites.chains.length }} 个收藏</text>
+        </view>
+        <view v-if="favoriteChains.length" class="personal-grid">
+          <view
+            v-for="chain in favoriteChains"
+            :key="chain.id"
+            class="personal-card"
+            @click="openChain(chain.id)"
+          >
+            <text class="result-meta">收藏产业链</text>
+            <text class="result-title">{{ chain.title }}</text>
+            <text class="result-excerpt">{{ chain.theme }}</text>
+          </view>
+        </view>
+        <view v-if="profile.readingHistory.length" class="personal-grid">
+          <view
+            v-for="item in profile.readingHistory.slice(0, 3)"
+            :key="item.chainId"
+            class="personal-card"
+            @click="openChain(item.chainId)"
+          >
+            <text class="result-meta">阅读历史 · {{ item.progress }}%</text>
+            <text class="result-title">{{ item.chainTitle }}</text>
+            <text class="result-excerpt">{{ item.headingTitle || '继续阅读原文' }}</text>
+          </view>
+        </view>
+      </view>
+
       <view v-if="searching || results.length" class="section">
         <view class="section-head">
           <text class="section-title">搜索结果</text>
@@ -74,7 +105,7 @@
 
 <script>
 import { getChains, searchChains } from "../../utils/api";
-import { fetchUserSession, getStoredUser, loginWithWechat, logoutUser } from "../../utils/auth";
+import { fetchUserSession, getStoredProfile, getStoredUser, loginWithWechat, logoutUser } from "../../utils/auth";
 
 export default {
   data() {
@@ -87,7 +118,8 @@ export default {
       searchTimer: null,
       searching: false,
       authLoading: false,
-      user: null
+      user: null,
+      profile: null
     };
   },
   watch: {
@@ -103,6 +135,7 @@ export default {
   },
   onLoad() {
     this.user = getStoredUser();
+    this.profile = getStoredProfile();
     this.loadChains();
     this.refreshSession();
   },
@@ -148,8 +181,10 @@ export default {
       try {
         const session = await fetchUserSession();
         this.user = session.user;
+        this.profile = getStoredProfile();
       } catch {
         this.user = getStoredUser();
+        this.profile = getStoredProfile();
       }
     },
     async toggleLogin() {
@@ -158,17 +193,25 @@ export default {
         if (this.user) {
           await logoutUser();
           this.user = null;
+          this.profile = null;
           uni.showToast({ title: "已退出登录", icon: "none" });
           return;
         }
         const session = await loginWithWechat();
         this.user = session.user;
+        this.profile = getStoredProfile();
         uni.showToast({ title: "登录成功", icon: "success" });
       } catch (error) {
         uni.showToast({ title: error.message || "登录失败", icon: "none" });
       } finally {
         this.authLoading = false;
       }
+    }
+  },
+  computed: {
+    favoriteChains() {
+      const ids = new Set(this.profile?.favorites?.chains || []);
+      return this.chains.filter((chain) => ids.has(chain.id)).slice(0, 4);
     }
   }
 };
@@ -312,6 +355,17 @@ export default {
 .result {
   border-top: 1rpx solid #263244;
   padding: 26rpx 0;
+}
+
+.personal-grid {
+  display: grid;
+  gap: 16rpx;
+  margin-bottom: 18rpx;
+}
+
+.personal-card {
+  border: 1rpx solid #263244;
+  padding: 22rpx;
 }
 
 .chain-row {

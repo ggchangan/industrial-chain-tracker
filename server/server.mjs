@@ -125,6 +125,45 @@ async function handleApi(context) {
     return;
   }
 
+  if (pathname === "/api/v1/me") {
+    const session = requireUserSession(userAuth, request);
+    sendJson(response, 200, { profile: contentStore.getUserProfile(session.user) });
+    return;
+  }
+
+  const favoriteChainMatch = pathname.match(/^\/api\/v1\/me\/favorites\/chains\/([a-z0-9-]+)$/);
+  if ((request.method === "PUT" || request.method === "DELETE") && favoriteChainMatch) {
+    const session = requireUserSession(userAuth, request);
+    const profile = await contentStore.setFavoriteChain(
+      session.user,
+      favoriteChainMatch[1],
+      request.method === "PUT"
+    );
+    sendJson(response, 200, { profile });
+    return;
+  }
+
+  const subscriptionChainMatch = pathname.match(/^\/api\/v1\/me\/subscriptions\/chains\/([a-z0-9-]+)$/);
+  if ((request.method === "PUT" || request.method === "DELETE") && subscriptionChainMatch) {
+    const session = requireUserSession(userAuth, request);
+    const profile = await contentStore.setSubscribedChain(
+      session.user,
+      subscriptionChainMatch[1],
+      request.method === "PUT"
+    );
+    sendJson(response, 200, { profile });
+    return;
+  }
+
+  const readingHistoryMatch = pathname.match(/^\/api\/v1\/me\/reading-history\/chains\/([a-z0-9-]+)$/);
+  if (request.method === "PUT" && readingHistoryMatch) {
+    const session = requireUserSession(userAuth, request);
+    const body = await readJsonBody(request, 32 * 1024);
+    const profile = await contentStore.saveReadingProgress(session.user, readingHistoryMatch[1], body);
+    sendJson(response, 200, { profile });
+    return;
+  }
+
   if (request.method === "GET" && pathname === "/api/v1/library") {
     sendJson(response, 200, library, { cache: "public, max-age=60" });
     return;
@@ -456,13 +495,22 @@ function setSecurityHeaders(response) {
   response.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 }
 
+function requireUserSession(userAuth, request) {
+  const session = userAuth.authenticate(request);
+  if (session) return session;
+  const error = new Error("请先登录");
+  error.statusCode = 401;
+  error.code = "authentication_required";
+  throw error;
+}
+
 function setCorsHeaders(request, response, corsOrigin) {
   if (!corsOrigin) return;
   const origin = request.headers.origin;
   if (corsOrigin === "*" || origin === corsOrigin) {
     response.setHeader("Access-Control-Allow-Origin", corsOrigin === "*" ? "*" : origin);
     response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     response.setHeader("Vary", "Origin");
   }
 }
