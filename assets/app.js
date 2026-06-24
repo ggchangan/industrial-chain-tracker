@@ -30,8 +30,12 @@ let articleScrollCleanup;
 let pendingArticleTarget = null;
 let companyIndex = new Map();
 let topicIndex = new Map();
+let userProfile = null;
+let readingSaveTimer = null;
 const activeTrackingGroupByChain = new Map();
 const activeStockCampFilterByChain = new Map();
+const USER_TOKEN_KEY = "industry-chain:user-token";
+const USER_PROFILE_KEY = "industry-chain:user-profile";
 
 const trackedTopics = [
   "AI服务器",
@@ -97,6 +101,63 @@ function buildReadingUrl(sourceUrl, anchor = "") {
   if (anchor) url.searchParams.set("readingAnchor", anchor);
   url.hash = "article";
   return url.toString();
+}
+
+function userToken() {
+  return window.localStorage.getItem(USER_TOKEN_KEY) || "";
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(path, {
+    method: options.method || "GET",
+    headers: {
+      Accept: "application/json",
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {})
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.message || `请求失败（${response.status}）`);
+  return payload;
+}
+
+async function fetchUserProfile() {
+  const token = userToken();
+  if (!token) {
+    userProfile = null;
+    return null;
+  }
+  try {
+    const payload = await apiRequest("/api/v1/me", { token });
+    userProfile = payload.profile;
+    window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(userProfile));
+    return userProfile;
+  } catch {
+    userProfile = null;
+    window.localStorage.removeItem(USER_PROFILE_KEY);
+    return null;
+  } finally {
+  }
+}
+
+function loadCachedUserProfile() {
+  try {
+    userProfile = JSON.parse(window.localStorage.getItem(USER_PROFILE_KEY) || "null");
+  } catch {
+    userProfile = null;
+  }
+}
+
+async function updateUserProfile(path, method) {
+  const token = userToken();
+  if (!token) throw new Error("请先在小程序登录后同步账号");
+  const payload = await apiRequest(path, { method, token });
+  userProfile = payload.profile;
+  window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(userProfile));
+  renderWebUserPanels(activeChain());
+  renderCurrent(activeChain());
+  return userProfile;
 }
 
 function searchTargetKey(chainId, type, index) {
@@ -788,6 +849,7 @@ function watchArticleHeadings() {
         .sort((a, b) => Math.abs(a.top - offset) - Math.abs(b.top - offset))[0]?.heading || headings[0];
 
     links.forEach((link) => link.classList.toggle("active", link.dataset.heading === current.id));
+    scheduleReadingHistorySave(current, headings);
   };
 
   const schedule = () => {
@@ -802,6 +864,35 @@ function watchArticleHeadings() {
     if (frame) window.cancelAnimationFrame(frame);
   };
   setActiveHeading();
+}
+
+function scheduleReadingHistorySave(currentHeading, headings) {
+  if (!userToken() || !currentHeading || requestedReading) return;
+  window.clearTimeout(readingSaveTimer);
+  readingSaveTimer = window.setTimeout(() => {
+    const chain = activeChain();
+    const article = document.querySelector("#articleView");
+    const rect = article?.getBoundingClientRect();
+    const total = Math.max((article?.scrollHeight || 0) - window.innerHeight, 1);
+    const read = Math.max(0, -Number(rect?.top || 0));
+    const payload = {
+      headingId: currentHeading.id,
+      headingTitle: currentHeading.textContent.trim(),
+      blockIndex: Math.max(0, headings.findIndex((item) => item.id === currentHeading.id)),
+      scrollTop: Math.max(0, Math.round(window.scrollY)),
+      progress: Math.max(0, Math.min(100, Math.round((read / total) * 100)))
+    };
+    apiRequest(`/api/v1/me/reading-history/chains/${encodeURIComponent(chain.id)}`, {
+      method: "PUT",
+      token: userToken(),
+      body: payload
+    })
+      .then((result) => {
+        userProfile = result.profile;
+        window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(userProfile));
+      })
+      .catch(() => {});
+  }, 800);
 }
 
 function loadTextResource(url) {
@@ -1260,6 +1351,58 @@ function renderIndustryGrid(chain) {
   });
 }
 
+function renderWebUserPanels(chain) {
+  const userPanel = document.querySelector("#webUserPanel");
+  const personalPanel = document.querySelector("#webPersonalPanel");
+  if (!userPanel || !personalPanel) return;
+
+  const hasToken = Boolean(userToken());
+  userPanel.innerHTML = `
+    <div>
+      <strong>${userProfile ? "已同步个人资料" : hasToken ? "正在同步个人资料" : "未登录也可浏览"}</strong>
+      <p>${userProfile
+        ? "收藏、订阅和阅读历史会在网页、小程序和未来 App 之间复用。"
+        : "登录能力优先在小程序启用；网页识别同一用户 token 后可展示个人收藏与阅读历史。"}</p>
+    </div>
+    <button type="button" id="refreshUserProfile">${userProfile ? "刷新" : "同步账号"}</button>
+  `;
+  userPanel.querySelector("#refreshUserProfile").addEventListener("click", () => {
+    fetchUserProfile().then(() => {
+      renderWebUserPanels(activeChain());
+      renderCurrent(activeChain());
+    });
+  });
+
+  const favoriteIds = new Set(userProfile?.favorites?.chains || []);
+  const favorites = library.chains.filter((item) => favoriteIds.has(item.id)).slice(0, 4);
+  const history = (userProfile?.readingHistory || []).slice(0, 4);
+  personalPanel.innerHTML = userProfile && (favorites.length || history.length) ? `
+    <div class="web-personal-head">
+      <span>我的关注</span>
+      <strong>${favorites.length} 个收藏 · ${history.length} 条阅读历史</strong>
+    </div>
+    <div class="web-personal-grid">
+      ${favorites.map((item) => `
+        <button type="button" data-chain="${escapeHtml(item.id)}">
+          <span>收藏产业链</span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(item.theme)}</p>
+        </button>
+      `).join("")}
+      ${history.map((item) => `
+        <button type="button" data-chain="${escapeHtml(item.chainId)}">
+          <span>阅读历史 · ${escapeHtml(item.progress)}%</span>
+          <strong>${escapeHtml(item.chainTitle)}</strong>
+          <p>${escapeHtml(item.headingTitle || "继续阅读原文")}</p>
+        </button>
+      `).join("")}
+    </div>
+  ` : "";
+  personalPanel.querySelectorAll("[data-chain]").forEach((button) => {
+    button.addEventListener("click", () => setChain(button.dataset.chain));
+  });
+}
+
 function renderCurrent(chain) {
   document.querySelector("#currentTitle").textContent = chain.title;
   document.querySelector("#currentTheme").textContent = chain.theme;
@@ -1284,6 +1427,20 @@ function renderCurrent(chain) {
     if (count !== undefined) link.dataset.count = count;
     quick.append(link);
   });
+
+  const personalActions = el("div", "personal-actions");
+  const isFavorite = Boolean(userProfile?.favorites?.chains?.includes(chain.id));
+  const isSubscribed = Boolean(userProfile?.subscriptions?.chains?.includes(chain.id));
+  [
+    ["favorite", isFavorite ? "取消收藏" : "收藏产业链", isFavorite],
+    ["subscription", isSubscribed ? "取消订阅" : "订阅动态", isSubscribed]
+  ].forEach(([kind, label, active]) => {
+    const button = el("button", active ? "active" : "", label);
+    button.type = "button";
+    button.addEventListener("click", () => toggleWebPersonalFlag(kind));
+    personalActions.append(button);
+  });
+  quick.append(personalActions);
 
   renderCurrentHighlights(chain);
 }
@@ -1380,6 +1537,31 @@ function summaryHighlightHref(item) {
   if (item?.type === "logic") return "#logic";
   if (item?.type === "update") return "#changes";
   return summarySectionHref(item?.target);
+}
+
+async function toggleWebPersonalFlag(kind) {
+  try {
+    const chain = activeChain();
+    const active = kind === "favorite"
+      ? Boolean(userProfile?.favorites?.chains?.includes(chain.id))
+      : Boolean(userProfile?.subscriptions?.chains?.includes(chain.id));
+    const path = kind === "favorite"
+      ? `/api/v1/me/favorites/chains/${encodeURIComponent(chain.id)}`
+      : `/api/v1/me/subscriptions/chains/${encodeURIComponent(chain.id)}`;
+    await updateUserProfile(path, active ? "DELETE" : "PUT");
+  } catch (error) {
+    showToast(error.message || "个人资料同步失败");
+  }
+}
+
+function showToast(message) {
+  const toast = el("div", "web-toast", escapeHtml(message));
+  document.body.append(toast);
+  window.setTimeout(() => toast.classList.add("show"), 20);
+  window.setTimeout(() => {
+    toast.classList.remove("show");
+    window.setTimeout(() => toast.remove(), 220);
+  }, 2600);
 }
 
 function renderChain(chain) {
@@ -2271,6 +2453,7 @@ function renderWatchlist(chain) {
 function render() {
   const chain = activeChain();
   document.querySelector("#updatedAt").textContent = `更新：${library.meta.updated}`;
+  renderWebUserPanels(chain);
   renderIndustryGrid(chain);
   renderCurrent(chain);
   renderChain(chain);
@@ -2306,6 +2489,8 @@ function initSearch() {
   if (initialQuery) renderSearchResults(initialQuery);
 }
 
+loadCachedUserProfile();
+fetchUserProfile().then(() => render());
 initSearch();
 initActivityTabs();
 render();
