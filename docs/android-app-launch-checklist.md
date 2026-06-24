@@ -2,6 +2,8 @@
 
 Android App 与 iOS App 一样复用 `apps/mobile` 这套 uni-app 代码。首版定位为产业链研究阅读版：先完成浏览、搜索、详情页、图谱、原文阅读和个股 K 线入口；登录、推送和离线能力后续逐步补。
 
+商店文案、截图说明、审核备注、权限说明和隐私问卷口径见 `docs/app-store-submission-kit.md`。
+
 ## 当前已具备
 
 - App 平台构建脚本：`npm --prefix apps/mobile run build:app-android`。
