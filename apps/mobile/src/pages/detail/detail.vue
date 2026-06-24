@@ -10,7 +10,35 @@
         <text v-if="query" class="query">当前搜索：{{ query }}</text>
       </view>
 
-      <view class="diagram-section">
+      <view id="focus" class="section focus-section">
+        <text class="section-label">当前重点</text>
+        <view class="mobile-nav">
+          <button
+            v-for="section in mobileSummary.sections"
+            :key="section.id"
+            class="mobile-nav-item"
+            @click="scrollToSection(section.id)"
+          >
+            <text>{{ section.title }}</text>
+            <text>{{ section.count }}</text>
+          </button>
+        </view>
+        <view v-if="mobileSummary.highlights.length" class="focus-grid">
+          <view
+            v-for="item in mobileSummary.highlights"
+            :key="`${item.type}-${item.title}`"
+            class="focus-card"
+            @click="scrollToSection(item.target)"
+          >
+            <text class="focus-label">{{ item.label }}</text>
+            <text class="focus-title">{{ item.title }}</text>
+            <text class="focus-body">{{ item.body }}</text>
+            <text v-if="item.date" class="focus-date">{{ item.date }}</text>
+          </view>
+        </view>
+      </view>
+
+      <view id="structure" class="diagram-section">
         <text class="section-label">产业链图谱</text>
         <image
           class="diagram"
@@ -37,7 +65,7 @@
         </view>
       </view>
 
-      <view class="section">
+      <view id="logic" class="section">
         <text class="section-label">核心逻辑</text>
         <view v-for="(item, index) in chain.logic" :key="item.title" class="logic">
           <text class="logic-index">{{ index + 1 }}</text>
@@ -48,7 +76,7 @@
         </view>
       </view>
 
-      <view class="section">
+      <view id="tracking" class="section">
         <text class="section-label">{{ chain.trackingProfile.title }}</text>
         <text class="tracking-summary">{{ chain.trackingProfile.summary }}</text>
         <view
@@ -61,6 +89,28 @@
           <view class="signals">
             <text v-for="signal in metric.signals" :key="signal" class="signal">{{ signal }}</text>
           </view>
+        </view>
+      </view>
+
+      <view id="research" class="section">
+        <text class="section-label">最新研究</text>
+        <view
+          v-for="source in mobileSummary.latestResearch"
+          :key="source.id || source.title"
+          class="research"
+        >
+          <view class="update-meta-row">
+            <text class="update-date">{{ source.date || "日期待补" }}</text>
+            <text class="update-type">{{ source.platform || source.type || "资料" }}</text>
+          </view>
+          <text class="item-name">{{ source.title }}</text>
+          <text class="item-detail">{{ source.summary || "已归档，等待进一步整理。" }}</text>
+          <view v-if="source.companies && source.companies.length" class="signals">
+            <text v-for="company in source.companies" :key="company" class="signal">{{ company }}</text>
+          </view>
+        </view>
+        <view v-if="!mobileSummary.latestResearch.length" class="empty-card">
+          <text>暂无独立研究资料，先阅读核心逻辑和原文。</text>
         </view>
       </view>
 
@@ -77,7 +127,30 @@
         </view>
       </view>
 
-      <view class="section article-section">
+      <view id="stocks" class="section">
+        <text class="section-label">个股集中营</text>
+        <view class="stock-summary">
+          <view>
+            <text class="stock-number">{{ mobileSummary.stocks.total }}</text>
+            <text class="stock-label">相关公司</text>
+          </view>
+          <view>
+            <text class="stock-number">{{ mobileSummary.stocks.mapped }}</text>
+            <text class="stock-label">已有行情入口</text>
+          </view>
+        </view>
+        <view class="signals">
+          <text
+            v-for="company in mobileSummary.stocks.examples"
+            :key="company.name"
+            class="signal"
+          >
+            {{ company.name }}{{ company.mapped ? " · 已补代码" : "" }}
+          </text>
+        </view>
+      </view>
+
+      <view id="article" class="section article-section">
         <view id="article-reader" class="reader-head">
           <view>
             <text class="section-label">原文阅读</text>
@@ -212,6 +285,10 @@ export default {
     closeToc() {
       this.tocVisible = false;
     },
+    scrollToSection(id) {
+      const selector = id === "article" ? "#article-reader" : `#${id}`;
+      uni.pageScrollTo({ selector, duration: 260 });
+    },
     jumpToBlock(index, highlight = false) {
       const block = this.articleBlocks[index];
       if (!block) return;
@@ -296,6 +373,24 @@ export default {
     },
     readerToc() {
       return buildReaderToc(this.articleBlocks);
+    },
+    mobileSummary() {
+      const fallbackSections = [
+        { id: "focus", title: "当前重点", count: 0 },
+        { id: "research", title: "最新研究", count: this.chain?.sources?.length || 0 },
+        { id: "logic", title: "核心逻辑", count: this.chain?.logic?.length || 0 },
+        { id: "structure", title: "产业结构", count: this.chain?.chain?.length || 0 },
+        { id: "tracking", title: "跟踪验证", count: this.chain?.trackingProfile?.metrics?.length || 0 },
+        { id: "stocks", title: "个股集中营", count: 0 },
+        { id: "article", title: "原文阅读", count: 1 }
+      ];
+      return {
+        sections: fallbackSections,
+        highlights: [],
+        latestResearch: [],
+        stocks: { total: 0, mapped: 0, examples: [] },
+        ...(this.chain?.mobileSummary || {})
+      };
     },
     storageKey() {
       return `reader-progress:${this.chain?.id || "unknown"}`;
@@ -388,6 +483,85 @@ function decorateArticleHtml(html) {
   width: 100%;
 }
 
+.focus-section {
+  border-bottom: 1rpx solid #263244;
+  padding-bottom: 10rpx;
+}
+
+.mobile-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.mobile-nav-item {
+  align-items: center;
+  background: #101827;
+  border: 1rpx solid #263244;
+  color: #cbd5e1;
+  display: flex;
+  font-size: 23rpx;
+  gap: 10rpx;
+  line-height: 1;
+  margin: 0;
+  padding: 16rpx 18rpx;
+}
+
+.mobile-nav-item::after {
+  border: 0;
+}
+
+.mobile-nav-item text:last-child {
+  color: #67e8f9;
+  font-weight: 800;
+}
+
+.focus-grid {
+  display: grid;
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+
+.focus-card,
+.research,
+.empty-card {
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.08), rgba(15, 23, 42, 0.2));
+  border: 1rpx solid #263244;
+  padding: 22rpx;
+}
+
+.focus-label {
+  color: #34d399;
+  display: block;
+  font-size: 21rpx;
+  font-weight: 800;
+}
+
+.focus-title {
+  color: #f8fafc;
+  display: block;
+  font-size: 30rpx;
+  font-weight: 750;
+  line-height: 1.45;
+  margin-top: 10rpx;
+}
+
+.focus-body {
+  color: #94a3b8;
+  display: block;
+  font-size: 25rpx;
+  line-height: 1.7;
+  margin-top: 8rpx;
+}
+
+.focus-date {
+  color: #67e8f9;
+  display: block;
+  font-size: 22rpx;
+  margin-top: 12rpx;
+}
+
 .chain-section,
 .metric {
   border-top: 1rpx solid #263244;
@@ -469,6 +643,43 @@ function decorateArticleHtml(html) {
   border-top: 1rpx solid #263244;
   margin-top: 20rpx;
   padding-top: 24rpx;
+}
+
+.research {
+  margin-top: 18rpx;
+}
+
+.empty-card {
+  color: #94a3b8;
+  font-size: 25rpx;
+  line-height: 1.7;
+  margin-top: 18rpx;
+}
+
+.stock-summary {
+  display: grid;
+  gap: 14rpx;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18rpx;
+}
+
+.stock-summary > view {
+  border: 1rpx solid #263244;
+  padding: 22rpx;
+}
+
+.stock-number {
+  color: #f8fafc;
+  display: block;
+  font-size: 42rpx;
+  font-weight: 850;
+}
+
+.stock-label {
+  color: #94a3b8;
+  display: block;
+  font-size: 23rpx;
+  margin-top: 6rpx;
 }
 
 .update-meta {

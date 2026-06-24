@@ -71,6 +71,22 @@ test("chain API can render article HTML for mobile clients", async () => {
   assert.equal(response.status, 200);
   assert.match(payload.article.html, /<table>/);
   assert.ok(payload.article.toc.length > 10);
+  assert.equal(payload.chain.mobileSummary.version, "0.1");
+  assert.ok(payload.chain.mobileSummary.sections.some((section) => section.id === "focus"));
+  assert.ok(payload.chain.mobileSummary.sections.some((section) => section.id === "stocks"));
+  assert.ok(payload.chain.mobileSummary.coreLogic.length > 0);
+  assert.ok(payload.chain.mobileSummary.tracking.metrics.length > 0);
+  assert.ok(payload.chain.mobileSummary.stocks.total > 0);
+});
+
+test("chain list API includes mobile-friendly summary cards", async () => {
+  const payload = await fetch(`${baseUrl}/api/v1/chains`).then((response) => response.json());
+  const optical = payload.chains.find((chain) => chain.id === "optical-module");
+  assert.ok(optical.mobileSummary);
+  assert.equal(optical.mobileSummary.sections.at(-1).id, "article");
+  assert.ok(optical.mobileSummary.highlights.length > 0);
+  assert.ok(optical.mobileSummary.stocks.mapped > 0);
+  assert.ok(optical.mobileSummary.stocks.examples.some((company) => company.mapped));
 });
 
 test("search API finds content across chain structures", async () => {
