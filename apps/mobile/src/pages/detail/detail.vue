@@ -155,8 +155,17 @@
           <view>
             <text class="section-label">原文阅读</text>
             <text v-if="currentHeading" class="current-heading">{{ currentHeading }}</text>
+            <text v-else class="current-heading">完整原文按需加载，适合深度阅读和搜索定位。</text>
           </view>
-          <button class="toc-open" @click="openToc">目录</button>
+          <button class="toc-open" @click="openToc">{{ articleLoaded ? "目录" : "加载原文" }}</button>
+        </view>
+        <view v-if="!articleLoaded" class="article-load-card">
+          <text class="item-name">先看摘要，深读时再打开全文</text>
+          <text class="item-detail">这样小程序和 App 首屏更快；需要查原文、目录或搜索定位时再加载完整 HTML。</text>
+          <button class="article-load-button" :disabled="articleLoading" @click="loadArticle(true)">
+            {{ articleLoading ? "正在加载…" : "加载完整原文" }}
+          </button>
+          <text v-if="articleError" class="article-load-error">{{ articleError }}</text>
         </view>
         <view
           v-for="(block, index) in articleBlocks"
@@ -169,7 +178,7 @@
         </view>
       </view>
 
-      <button v-if="readerToc.length" class="reader-fab" @click="openToc">目录</button>
+      <button v-if="articleLoaded" class="reader-fab" @click="openToc">目录</button>
 
       <view v-if="tocVisible" class="toc-layer" @click="closeToc">
         <view class="toc-sheet" @click.stop>
@@ -199,7 +208,7 @@
 </template>
 
 <script>
-import { assetUrl, getChain } from "../../utils/api";
+import { assetUrl, getChain, getChainArticle } from "../../utils/api";
 import { buildArticleBlocks, buildReaderToc, findArticleTarget } from "../../utils/article.mjs";
 
 export default {
@@ -207,6 +216,9 @@ export default {
     return {
       activeBlockIndex: 0,
       articleBlocks: [],
+      articleError: "",
+      articleLoaded: false,
+      articleLoading: false,
       blockOffsets: [],
       chain: null,
       error: "",
@@ -253,22 +265,8 @@ export default {
       try {
         const payload = await getChain(id);
         this.chain = payload.chain;
-        this.articleBlocks = buildArticleBlocks(payload.article.html, payload.article.toc).map((block) => ({
-          ...block,
-          html: decorateArticleHtml(block.html)
-        }));
-        this.searchTargetIndex = findArticleTarget(
-          this.articleBlocks,
-          this.query,
-          this.targetTitle
-        );
         uni.setNavigationBarTitle({ title: this.chain.shortTitle || this.chain.title });
-        this.$nextTick(() => {
-          this.restoreTimer = setTimeout(
-            () => this.measureBlocks(() => this.restoreReadingPosition()),
-            160
-          );
-        });
+        if (this.query || this.targetTitle) await this.loadArticle(false);
       } catch (error) {
         this.error = error.message || "内容加载失败";
       } finally {
@@ -279,13 +277,57 @@ export default {
       const url = assetUrl(this.chain.diagram);
       uni.previewImage({ current: url, urls: [url] });
     },
-    openToc() {
+    async loadArticle(scrollAfterLoad = false) {
+      if (this.articleLoaded || this.articleLoading || !this.chain?.id) {
+        if (scrollAfterLoad && this.articleLoaded) this.scrollToSection("article");
+        return;
+      }
+      this.articleLoading = true;
+      this.articleError = "";
+      try {
+        const payload = await getChainArticle(this.chain.id);
+        this.chain = payload.chain;
+        this.articleBlocks = buildArticleBlocks(payload.article.html, payload.article.toc).map((block) => ({
+          ...block,
+          html: decorateArticleHtml(block.html)
+        }));
+        this.searchTargetIndex = findArticleTarget(
+          this.articleBlocks,
+          this.query,
+          this.targetTitle
+        );
+        this.articleLoaded = true;
+        this.$nextTick(() => {
+          this.restoreTimer = setTimeout(
+            () => this.measureBlocks(() => {
+              if (this.query || this.targetTitle) this.restoreReadingPosition();
+              else if (scrollAfterLoad) this.scrollToSection("article");
+            }),
+            160
+          );
+        });
+      } catch (error) {
+        this.articleError = error.message || "原文加载失败";
+        if (!scrollAfterLoad) throw error;
+      } finally {
+        this.articleLoading = false;
+      }
+    },
+    async openToc() {
+      if (!this.articleLoaded) {
+        await this.loadArticle(true);
+        if (!this.articleLoaded) return;
+      }
       this.tocVisible = true;
     },
     closeToc() {
       this.tocVisible = false;
     },
-    scrollToSection(id) {
+    async scrollToSection(id) {
+      if (id === "article" && !this.articleLoaded) {
+        await this.loadArticle(true);
+        return;
+      }
       const selector = id === "article" ? "#article-reader" : `#${id}`;
       uni.pageScrollTo({ selector, duration: 260 });
     },
@@ -354,7 +396,7 @@ export default {
       this.saveTimer = setTimeout(() => this.saveReadingPosition(scrollTop), 350);
     },
     saveReadingPosition(scrollTop = this.lastScrollTop || 0) {
-      if (!this.chain?.id || scrollTop <= 0) return;
+      if (!this.chain?.id || !this.articleLoaded || scrollTop <= 0) return;
       uni.setStorageSync(this.storageKey, {
         blockIndex: this.activeBlockIndex,
         headingId: this.articleBlocks[this.activeBlockIndex]?.headingId || "",
@@ -711,6 +753,39 @@ function decorateArticleHtml(html) {
 
 .article-section {
   overflow: hidden;
+}
+
+.article-load-card {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), rgba(15, 23, 42, 0.18));
+  border: 1rpx solid #334155;
+  margin-top: 22rpx;
+  padding: 24rpx;
+}
+
+.article-load-button {
+  background: #0e7490;
+  color: #ecfeff;
+  font-size: 25rpx;
+  font-weight: 750;
+  line-height: 1;
+  margin: 22rpx 0 0;
+  padding: 22rpx 26rpx;
+}
+
+.article-load-button::after {
+  border: 0;
+}
+
+.article-load-button[disabled] {
+  opacity: 0.72;
+}
+
+.article-load-error {
+  color: #fda4af;
+  display: block;
+  font-size: 23rpx;
+  line-height: 1.5;
+  margin-top: 14rpx;
 }
 
 .reader-head,
