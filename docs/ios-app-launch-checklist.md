@@ -19,6 +19,7 @@
 
 ```bash
 cd /Users/renzhang/Documents/industrial-chain-tracker
+npm run verify:mobile-release
 npm run verify:ios-app
 npm --prefix apps/mobile run build:app-ios
 ```

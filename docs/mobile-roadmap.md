@@ -77,6 +77,15 @@ Git 内容仓库
 首版 iOS 阅读版上线资料见 `docs/ios-app-launch-checklist.md`。
 首版 Android 阅读版上线资料见 `docs/android-app-launch-checklist.md`。
 
+上线前可运行聚合检查：
+
+```bash
+npm run verify:mobile-release
+npm run verify:mobile-release -- --api https://api.industry.ygys30ds.cloud --build-app
+```
+
+第一条用于本地 readiness 与测试；第二条额外检查生产 API 并构建 App 平台产物。
+
 后续按平台补充：
 
 - Apple/Android 登录与推送
