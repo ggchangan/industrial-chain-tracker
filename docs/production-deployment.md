@@ -63,10 +63,15 @@ ADMIN_SESSION_SECRET=使用openssl生成的至少32位随机字符串
 USER_SESSION_SECRET=使用openssl生成的至少32位随机字符串
 CORS_ORIGIN=https://industry.ygys30ds.cloud
 IMAGE_TAG=latest
+STATE_STORE_DRIVER=mysql
+OBJECT_STORAGE_DRIVER=cos
 ```
 
 不要提交 `.env`，也不要通过聊天或工单传递其中的秘密。
 Compose 使用 raw env-file 模式注入这些值，因此密码中的 `$`、`#` 等字符不会被变量替换。
+`STATE_STORE_DRIVER` 和 `OBJECT_STORAGE_DRIVER` 必须只从 `.env` 注入，不要在
+`docker-compose.yml` 的 `environment` 区域用 `${VAR:-default}` 覆盖；Compose 插值读取的是
+宿主机环境变量，不会从 `env_file` 中读取这些值，容易把生产环境误启动成 `file/local`。
 
 如果启用微信小程序登录，还需要在微信公众平台取得小程序 AppID 和 AppSecret，并配置：
 
@@ -132,8 +137,21 @@ curl https://industry.ygys30ds.cloud/api/v1/health
 curl https://api.industry.ygys30ds.cloud/api/v1/health
 curl -I https://static.industry.ygys30ds.cloud/assets/styles.css
 curl -I https://admin.industry.ygys30ds.cloud/admin-login.html
+npm run verify:deploy-config
 npm run verify:user-features -- https://api.industry.ygys30ds.cloud
 ```
+
+`/api/v1/health` 应返回：
+
+```json
+{
+  "stateStore": "mysql",
+  "objectStorage": "cos"
+}
+```
+
+如果看到 `stateStore=file` 或 `objectStorage=local`，说明容器没有读取到生产 `.env` 中的驱动配置，
+或者 Compose 配置又覆盖了 `.env`。
 
 对应职责：
 
