@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export const root = path.resolve(new URL("..", import.meta.url).pathname);
+export const root = fileURLToPath(new URL("..", import.meta.url));
 export const mobileRoot = path.join(root, "apps", "mobile");
 
 export function createChecker(label) {

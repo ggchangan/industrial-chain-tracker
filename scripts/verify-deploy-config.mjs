@@ -2,8 +2,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = fileURLToPath(new URL("..", import.meta.url));
 const composePath = path.join(root, "deploy", "docker-compose.yml");
 const compose = fs.readFileSync(composePath, "utf8");
 
