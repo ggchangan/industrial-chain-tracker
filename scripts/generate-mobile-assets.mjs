@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = fileURLToPath(new URL("..", import.meta.url));
 const sourceIcon = path.join(root, "assets", "brand", "mini-program-avatar-v2-512.png");
 const outDir = path.join(root, "apps", "mobile", "src", "static", "brand");
 const docsDir = path.join(root, "docs", "app-assets");

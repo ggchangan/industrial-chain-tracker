@@ -2,8 +2,10 @@
 
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = fileURLToPath(new URL("..", import.meta.url));
+const node = process.execPath;
 const args = new Set(process.argv.slice(2));
 const apiArg = process.argv.slice(2).find((item) => /^https?:\/\//.test(item));
 const shouldBuildApp = args.has("--build-app");
@@ -13,17 +15,17 @@ const apiBaseUrl = apiArg || process.env.API_BASE_URL || "https://api.industry.y
 const steps = [
   {
     name: "iOS App readiness",
-    command: ["node", "scripts/verify-ios-app-readiness.mjs"],
+    command: [node, "scripts/verify-ios-app-readiness.mjs"],
     cwd: root
   },
   {
     name: "Android App readiness",
-    command: ["node", "scripts/verify-android-app-readiness.mjs"],
+    command: [node, "scripts/verify-android-app-readiness.mjs"],
     cwd: root
   },
   {
     name: "Project tests",
-    command: ["node", "--test"],
+    command: [node, "--test"],
     cwd: root
   }
 ];
@@ -31,7 +33,7 @@ const steps = [
 if (shouldCheckApi) {
   steps.push({
     name: `Production user feature API checks (${apiBaseUrl})`,
-    command: ["node", "scripts/verify-user-features.mjs", apiBaseUrl],
+    command: [node, "scripts/verify-user-features.mjs", apiBaseUrl],
     cwd: root
   });
 }
@@ -39,7 +41,7 @@ if (shouldCheckApi) {
 if (shouldBuildApp) {
   steps.push({
     name: "uni-app App platform build",
-    command: ["node", "./node_modules/@dcloudio/vite-plugin-uni/bin/uni.js", "build", "-p", "app", "--mode", "production"],
+    command: [node, "./node_modules/@dcloudio/vite-plugin-uni/bin/uni.js", "build", "-p", "app", "--mode", "production"],
     cwd: path.join(root, "apps", "mobile")
   });
 }

@@ -4,9 +4,10 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { createAppServer } from "../server/server.mjs";
 
-const rootDir = new URL("..", import.meta.url).pathname;
+const rootDir = fileURLToPath(new URL("..", import.meta.url));
 let server;
 let baseUrl;
 let dataDir;
