@@ -2975,6 +2975,59 @@ button.propagation-signal:hover {
   gap: 12px;
 }
 
+.update-preprocess-panel {
+  background: rgba(8, 18, 32, 0.52);
+  border: 1px dashed rgba(39, 217, 232, 0.34);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.update-preprocess-panel span {
+  color: var(--cyan);
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.update-preprocess-panel p,
+.update-preprocess-actions small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.update-preprocess-panel textarea {
+  min-height: 96px;
+}
+
+.update-preprocess-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.update-preprocess-actions button {
+  background: rgba(39, 217, 232, 0.08);
+  border: 1px solid rgba(39, 217, 232, 0.34);
+  border-radius: 999px;
+  color: #c8f7ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  min-height: 36px;
+  padding: 0 13px;
+}
+
+.update-preprocess-actions button:hover {
+  border-color: var(--cyan);
+}
+
 .admin-submit {
   justify-self: start;
   border: 0;

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=ia-review-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=share-preprocess-1" />
   </head>
   <body class="maintainer-page">
     <header class="site-header compact-header">
@@ -406,6 +406,18 @@
                 <select id="updateChainId" name="chainId" required></select>
               </label>
 
+              <section class="update-preprocess-panel">
+                <div>
+                  <span>信息预处理</span>
+                  <p>粘贴抖音、公众号或网页分享文本，先自动提取标题、链接、平台和待核验备注，再人工补充影响判断。</p>
+                </div>
+                <textarea id="updateShareText" name="sourceRawText" rows="3" placeholder="例如：复制打开抖音，看看【机构调研日记的作品】康宁扔出王炸！... https://v.douyin.com/..."></textarea>
+                <div class="update-preprocess-actions">
+                  <button id="parseUpdateShare" type="button">解析并预填</button>
+                  <small id="updatePreprocessHint">不会直接发布，保存前仍可逐项修改。</small>
+                </div>
+              </section>
+
               <div class="admin-field-row">
                 <label>
                   <span>日期</span>
@@ -510,6 +522,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js?v=ia-review-1"></script>
+    <script src="./assets/maintain.js?v=share-preprocess-1"></script>
   </body>
 </html>
