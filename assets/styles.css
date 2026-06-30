@@ -702,6 +702,215 @@ main {
   color: var(--text);
 }
 
+.workbench-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(320px, 1.2fr) minmax(300px, 1fr);
+}
+
+.workbench-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  min-width: 0;
+  padding: 18px;
+}
+
+.workbench-panel-head {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+}
+
+.workbench-panel-head span {
+  color: var(--cyan);
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.workbench-panel-head h3 {
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.learning-path,
+.source-timeline,
+.logic-map {
+  display: grid;
+  gap: 12px;
+}
+
+.learning-step {
+  background: rgba(8, 18, 32, 0.58);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  min-height: 116px;
+  padding: 13px;
+  text-align: left;
+}
+
+.learning-step:hover {
+  border-color: rgba(39, 217, 232, 0.48);
+  transform: translateY(-1px);
+}
+
+.learning-step:disabled {
+  cursor: default;
+  opacity: 0.62;
+  transform: none;
+}
+
+.learning-step span,
+.logic-map-node-head span {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.learning-step strong {
+  font-size: 15px;
+  line-height: 1.38;
+}
+
+.learning-step small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.source-timeline-item,
+.logic-map-node {
+  background: rgba(8, 18, 32, 0.48);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.source-timeline-item.short-video {
+  border-color: rgba(242, 168, 59, 0.34);
+}
+
+.source-timeline-meta,
+.source-timeline-relation,
+.source-timeline-actions,
+.logic-map-node-head,
+.logic-map-links,
+.logic-map-evidence {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.source-timeline-meta {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.source-timeline-meta span,
+.source-timeline-meta em {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #c9d8dd;
+  font-style: normal;
+  padding: 3px 7px;
+}
+
+.source-timeline-item h4,
+.logic-map-node h4 {
+  font-size: 16px;
+  line-height: 1.42;
+  margin: 0 0 8px;
+}
+
+.source-timeline-item p,
+.logic-map-node p {
+  font-size: 12px;
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.source-timeline-relation {
+  background: rgba(39, 217, 232, 0.055);
+  border-left: 3px solid rgba(39, 217, 232, 0.64);
+  color: #bfeaf0;
+  font-size: 12px;
+  margin-top: 10px;
+  padding: 9px 10px;
+}
+
+.source-timeline-actions {
+  margin-top: 12px;
+}
+
+.source-timeline-actions a,
+.source-timeline-actions button,
+.logic-map-links button {
+  background: rgba(20, 33, 48, 0.74);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #c8f7ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+.source-timeline-actions a:hover,
+.source-timeline-actions button:hover,
+.logic-map-links button:hover {
+  border-color: var(--cyan);
+}
+
+.logic-map-node.research {
+  border-color: rgba(53, 211, 154, 0.28);
+}
+
+.logic-map-node-head {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.logic-map-node-head em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.logic-map-links {
+  margin-top: 12px;
+}
+
+.logic-map-evidence {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.workbench-empty {
+  background: rgba(8, 18, 32, 0.42);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  margin: 0;
+  padding: 14px;
+}
+
 .chain-map-panel {
   margin-top: 0;
 }
@@ -3495,6 +3704,7 @@ footer a {
   .chain-grid,
   .logic-grid,
   .tracking-grid,
+  .workbench-grid,
   .stock-camp-summary,
   .current-highlights,
   .article-layout,
@@ -3572,7 +3782,8 @@ footer a {
   .research-feed,
   .stock-camp-grid,
   .verification-grid,
-  .web-personal-grid {
+  .web-personal-grid,
+  .workbench-grid {
     grid-template-columns: 1fr;
   }
 

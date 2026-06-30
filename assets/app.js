@@ -1421,6 +1421,9 @@ function renderCurrent(chain) {
         ["市场验证", "#stocks"],
         ["原文阅读", "#article"],
       ];
+  if (!quickLinks.some(([, href]) => href === "#workbench")) {
+    quickLinks.splice(2, 0, ["工作台", "#workbench", buildWorkbenchSummary(chain).logicNodes.length]);
+  }
   quickLinks.forEach(([label, href, count]) => {
     const link = el("a", "button", label);
     link.href = href;
@@ -1526,6 +1529,7 @@ function summarySectionHref(id) {
     research: "#activity",
     logic: "#logic",
     structure: "#chain",
+    workbench: "#workbench",
     tracking: "#updates",
     stocks: "#stocks",
     article: "#article"
@@ -1622,6 +1626,349 @@ function renderChain(chain) {
 
     root.append(card);
   });
+}
+
+function renderWorkbench(chain) {
+  const learningRoot = document.querySelector("#learningPath");
+  const timelineRoot = document.querySelector("#sourceTimeline");
+  const logicRoot = document.querySelector("#logicMap");
+  if (!learningRoot || !timelineRoot || !logicRoot) return;
+
+  const summary = buildWorkbenchSummary(chain);
+
+  learningRoot.innerHTML = "";
+  summary.learningSteps.forEach((step, index) => {
+    const card = el("button", "learning-step");
+    card.type = "button";
+    card.disabled = !step.target;
+    card.innerHTML = `
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <strong>${escapeHtml(step.title)}</strong>
+      <small>${escapeHtml(step.body)}</small>
+    `;
+    if (step.target) {
+      card.addEventListener("click", () => scrollToWorkbenchTarget(step.target));
+    }
+    learningRoot.append(card);
+  });
+
+  timelineRoot.innerHTML = "";
+  if (!summary.timeline.length) {
+    timelineRoot.append(el("p", "workbench-empty", "暂时没有独立资料或动态。后续 PDF、公众号、短视频和公告都会沉淀到这里。"));
+  }
+  summary.timeline.forEach((item) => {
+    const card = el("article", `source-timeline-item ${item.kind}`);
+    card.innerHTML = `
+      <div class="source-timeline-meta">
+        <time>${escapeHtml(item.date || "待定日期")}</time>
+        <span>${escapeHtml(item.type)}</span>
+        <em>${escapeHtml(item.segment || "全产业链")}</em>
+      </div>
+      <h4>${escapeHtml(item.title)}</h4>
+      <p>${escapeHtml(item.summary || "已归档，等待进一步提炼。")}</p>
+      <div class="source-timeline-relation">
+        <span>影响逻辑：${escapeHtml(item.logicTitle || "待判断")}</span>
+        <span>状态：${escapeHtml(item.status || "待核验")}</span>
+      </div>
+    `;
+    const actions = el("div", "source-timeline-actions");
+    if (item.href) {
+      const link = el("a", "", item.kind === "short-video" ? "打开视频" : "查看来源");
+      link.href = item.href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      actions.append(link);
+    }
+    if (item.logicTarget) {
+      const logicButton = el("button", "", "查看逻辑");
+      logicButton.type = "button";
+      logicButton.addEventListener("click", () => scrollToWorkbenchTarget(item.logicTarget));
+      actions.append(logicButton);
+    }
+    card.append(actions);
+    timelineRoot.append(card);
+  });
+
+  logicRoot.innerHTML = "";
+  summary.logicNodes.forEach((node, index) => {
+    const card = el("article", `logic-map-node ${node.kind}`);
+    card.dataset.searchTarget = node.target;
+    card.innerHTML = `
+      <div class="logic-map-node-head">
+        <span>${escapeHtml(node.kindLabel)}</span>
+        <em>${String(index + 1).padStart(2, "0")}</em>
+      </div>
+      <h4>${escapeHtml(node.title)}</h4>
+      <p>${escapeHtml(node.body)}</p>
+      <div class="logic-map-links">
+        ${node.segments.slice(0, 3).map((segment) => `<button type="button" data-target="${escapeHtml(segment.target)}">${escapeHtml(segment.label)}</button>`).join("")}
+      </div>
+      <div class="logic-map-evidence">
+        <span>${node.evidenceCount} 条资料/动态</span>
+        <span>${node.metricCount} 个跟踪项</span>
+      </div>
+    `;
+    card.querySelectorAll("[data-target]").forEach((button) => {
+      button.addEventListener("click", () => scrollToWorkbenchTarget(button.dataset.target));
+    });
+    logicRoot.append(card);
+  });
+}
+
+function scrollToWorkbenchTarget(target) {
+  if (!target) return;
+  if (target.startsWith("#")) {
+    flashAndScroll(document.querySelector(target));
+    return;
+  }
+  const byId = document.getElementById(target);
+  if (byId) {
+    flashAndScroll(byId);
+    return;
+  }
+  scrollToSearchTarget(target);
+}
+
+function buildWorkbenchSummary(chain) {
+  return {
+    learningSteps: buildLearningSteps(chain),
+    timeline: buildSourceTimeline(chain).slice(0, 8),
+    logicNodes: buildLogicMapNodes(chain)
+  };
+}
+
+function buildLearningSteps(chain) {
+  if (chain.id === "optical-module") {
+    return [
+      {
+        title: "先理解 AI 算力为什么需要高速互联",
+        body: "从 GPU 集群通信、带宽、功耗和延迟约束看光进铜退。",
+        target: findChainItemTarget(chain, ["交换机与云厂", "高速光模块"])
+      },
+      {
+        title: "再看 800G / 1.6T 光模块如何承接需求",
+        body: "高速模块是业绩兑现最直接环节，订单、产能和毛利率是关键。",
+        target: findChainItemTarget(chain, ["高速光模块"])
+      },
+      {
+        title: "拆开上游瓶颈",
+        body: "光芯片、InP、陶瓷封装、TFLN 和光器件决定供给弹性。",
+        target: findChainItemTarget(chain, ["光芯片", "衬底", "薄膜铌酸锂"])
+      },
+      {
+        title: "理解 CPO / 硅光的价值重构",
+        body: "CPO 把价值链推向光引擎、硅光、调制器和高精密器件。",
+        target: findChainItemTarget(chain, ["CPO硅光交换机", "光器件与光引擎"])
+      },
+      {
+        title: "看底层网络升级",
+        body: "多芯光缆、光纤涨价和交换机订单验证智算网络落地。",
+        target: findChainItemTarget(chain, ["光纤光缆网络", "光纤预制棒"])
+      },
+      {
+        title: "最后回到公司与 K 线验证",
+        body: "把逻辑映射到公司，观察市场是否已经开始交易。",
+        target: "#stocks"
+      }
+    ];
+  }
+
+  return (chain.chain || []).flatMap((section, sectionIndex) =>
+    (section.items || section.segments || []).slice(0, 2).map((item, itemIndex) => ({
+      title: item.name,
+      body: item.detail || item.logic || section.role || chain.theme,
+      target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`)
+    }))
+  ).slice(0, 6);
+}
+
+function findChainItemTarget(chain, terms) {
+  const normalizedTerms = terms.map(normalize);
+  for (let sectionIndex = 0; sectionIndex < (chain.chain || []).length; sectionIndex += 1) {
+    const section = chain.chain[sectionIndex];
+    const items = section.items || section.segments || [];
+    for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
+      const item = items[itemIndex];
+      const text = normalize(compactText([section.title, section.name, item.name, item.detail, item.logic, item.companies]));
+      if (normalizedTerms.some((term) => text.includes(term))) {
+        return searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`);
+      }
+    }
+  }
+  return "";
+}
+
+function buildSourceTimeline(chain) {
+  const updates = (chain.updates || []).map((item, index) => {
+    const logic = inferSourceLogic(chain, compactText([item.segment, item.signal, item.impact, item.notes]));
+    return {
+      kind: item.sourceKind === "短视频" ? "short-video" : "update",
+      date: item.date,
+      type: item.sourceKind || item.type || "动态",
+      segment: item.segment,
+      title: item.signal,
+      summary: item.impact,
+      status: item.confidence,
+      href: item.sourceKind === "文章" ? buildReadingUrl(item.sourceUrl) : item.sourceUrl,
+      logicTitle: logic?.title || item.logicTrack?.role || "",
+      logicTarget: logic?.target || (item.logicTrack?.id ? `logic-track-${item.logicTrack.id}` : ""),
+      sortKey: `${item.date || ""}-update-${index}`
+    };
+  });
+
+  const sources = (chain.sources || []).map((item, index) => {
+    const logic = inferSourceLogic(chain, compactText([
+      item.segment,
+      item.title,
+      item.summary,
+      item.tags,
+      item.companies
+    ]));
+    return {
+      kind: item.type === "short-video" ? "short-video" : "source",
+      date: item.date || item.createdAt?.slice(0, 10) || "",
+      type: researchTypeLabel(item.type),
+      segment: item.segment,
+      title: item.title,
+      summary: item.summary,
+      status: item.status === "published" ? "已归档" : "待整理",
+      href: item.markdownUrl ? buildReadingUrl(item.markdownUrl) : item.originalUrl,
+      logicTitle: logic?.title || "",
+      logicTarget: logic?.target || "",
+      sortKey: `${item.date || item.createdAt || ""}-source-${index}`
+    };
+  });
+
+  const packages = (chain.researchPackages || []).map((item, index) => {
+    const logic = inferSourceLogic(chain, compactText([item.topicTitle, item.summary, item.logic?.summary]));
+    return {
+      kind: "package",
+      date: item.researchDate || item.importedAt?.slice(0, 10) || "",
+      type: "研究包",
+      segment: item.topicTitle || "研究主题",
+      title: item.title || item.topicTitle || item.packageId,
+      summary: item.summary || `提炼 ${item.logicCount || 0} 条逻辑，关联 ${item.companyCount || 0} 家公司。`,
+      status: item.status === "imported" ? "已入库" : "待入库",
+      href: item.sourceUrl ? buildReadingUrl(item.sourceUrl) : item.articleUrl,
+      logicTitle: logic?.title || item.topicTitle || "",
+      logicTarget: logic?.target || (item.topicId ? `logic-track-research-${item.topicId}` : ""),
+      sortKey: `${item.researchDate || item.importedAt || ""}-package-${index}`
+    };
+  });
+
+  const seen = new Set();
+  return [...updates, ...sources, ...packages]
+    .filter((item) => {
+      const key = `${item.date}:${item.title}:${item.href}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return item.title;
+    })
+    .sort((left, right) => String(right.sortKey).localeCompare(String(left.sortKey)));
+}
+
+function inferSourceLogic(chain, value) {
+  const text = normalize(value);
+  const baseLogic = (chain.logic || []).map((item, index) => ({
+    title: item.title,
+    target: searchTargetKey(chain.id, "logic", index),
+    haystack: normalize(compactText([item.title, item.body]))
+  }));
+  const researchLogic = (chain.logicTracks || []).flatMap((track) =>
+    (track.coreInsights || []).map((item, index) => ({
+      title: item.title,
+      target: searchTargetKey(chain.id, "logic-card", `${track.id}-${item.id || index}`),
+      haystack: normalize(compactText([track.title, item.title, item.summary, item.conclusion]))
+    }))
+  );
+  const metrics = (chain.trackingProfile?.metrics || []).map((item, index) => ({
+    title: item.topicTitle || item.logicTitle || item.name,
+    target: searchTargetKey(chain.id, "tracking", index),
+    haystack: normalize(compactText([item.name, item.why, item.signals, item.topicTitle, item.logicTitle]))
+  }));
+
+  return [...baseLogic, ...researchLogic, ...metrics]
+    .map((item) => ({
+      ...item,
+      score: searchTokensForWorkbench(item.haystack).filter((term) => text.includes(term)).length +
+        searchTokensForWorkbench(text).filter((term) => item.haystack.includes(term)).length
+    }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score)[0] || null;
+}
+
+function buildLogicMapNodes(chain) {
+  const baseNodes = (chain.logic || []).map((item, index) => logicMapNodeFromBase(chain, item, index));
+  const researchNodes = (chain.logicTracks || []).flatMap((track) =>
+    (track.coreInsights || []).map((item, index) => logicMapNodeFromInsight(chain, track, item, index))
+  );
+  return [...baseNodes, ...researchNodes];
+}
+
+function logicMapNodeFromBase(chain, item, index) {
+  const target = searchTargetKey(chain.id, "logic", index);
+  const text = compactText([item.title, item.body]);
+  return {
+    kind: "base",
+    kindLabel: "基准逻辑",
+    target,
+    title: item.title,
+    body: item.body,
+    segments: relatedSegmentsForText(chain, text),
+    evidenceCount: buildSourceTimeline(chain).filter((source) => source.logicTarget === target || source.logicTitle === item.title).length,
+    metricCount: relatedMetricsForText(chain, text).length
+  };
+}
+
+function logicMapNodeFromInsight(chain, track, item, index) {
+  const target = searchTargetKey(chain.id, "logic-card", `${track.id}-${item.id || index}`);
+  const text = compactText([track.title, track.summary, item.title, item.summary, item.conclusion, item.points, item.metrics]);
+  return {
+    kind: "research",
+    kindLabel: "近期研究",
+    target,
+    title: item.title,
+    body: item.summary || item.conclusion || track.summary,
+    segments: relatedSegmentsForText(chain, text),
+    evidenceCount: (item.sources || []).length,
+    metricCount: relatedMetricsForText(chain, text).length
+  };
+}
+
+function relatedSegmentsForText(chain, value) {
+  const text = normalize(value);
+  const segments = [];
+  (chain.chain || []).forEach((section, sectionIndex) => {
+    (section.items || section.segments || []).forEach((item, itemIndex) => {
+      const segmentText = normalize(compactText([item.name, item.detail, item.logic, item.companies]));
+      const score = searchTokensForWorkbench(segmentText).filter((term) => text.includes(term)).length;
+      if (score > 0) {
+        segments.push({
+          label: item.name,
+          score,
+          target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`)
+        });
+      }
+    });
+  });
+  return segments.sort((left, right) => right.score - left.score).slice(0, 5);
+}
+
+function relatedMetricsForText(chain, value) {
+  const text = normalize(value);
+  return (chain.trackingProfile?.metrics || []).filter((metric) => {
+    const metricText = normalize(compactText([metric.name, metric.why, metric.signals, metric.topicTitle, metric.logicTitle]));
+    return searchTokensForWorkbench(metricText).some((term) => text.includes(term));
+  });
+}
+
+function searchTokensForWorkbench(value) {
+  return [...new Set(String(value || "")
+    .toLowerCase()
+    .split(/[、，,;/；\s+：:()（）-]+/)
+    .map((item) => item.trim())
+    .filter((item) => item.length >= 2)
+    .filter((item) => !/^(产业链|逻辑|公司|环节|上游|中游|下游|当前|订单|客户)$/.test(item)))];
 }
 
 function renderDiagram(chain) {
@@ -2457,6 +2804,7 @@ function render() {
   renderIndustryGrid(chain);
   renderCurrent(chain);
   renderChain(chain);
+  renderWorkbench(chain);
   renderDiagram(chain);
   renderTrackingProfile(chain);
   renderTimeline(chain);
