@@ -705,7 +705,11 @@ main {
 .workbench-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(220px, 0.85fr) minmax(320px, 1.2fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(220px, 0.8fr) minmax(320px, 1.15fr) minmax(280px, 0.95fr);
+}
+
+.radar-panel {
+  grid-column: 1 / -1;
 }
 
 .workbench-panel {
@@ -740,7 +744,8 @@ main {
 
 .learning-path,
 .source-timeline,
-.logic-map {
+.logic-map,
+.logic-radar {
   display: grid;
   gap: 12px;
 }
@@ -788,7 +793,8 @@ main {
 }
 
 .source-timeline-item,
-.logic-map-node {
+.logic-map-node,
+.logic-radar-item {
   background: rgba(8, 18, 32, 0.48);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -804,7 +810,10 @@ main {
 .source-timeline-actions,
 .logic-map-node-head,
 .logic-map-links,
-.logic-map-evidence {
+.logic-map-evidence,
+.logic-radar-state,
+.logic-radar-metrics,
+.logic-radar-actions {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -828,14 +837,16 @@ main {
 }
 
 .source-timeline-item h4,
-.logic-map-node h4 {
+.logic-map-node h4,
+.logic-radar-item h4 {
   font-size: 16px;
   line-height: 1.42;
   margin: 0 0 8px;
 }
 
 .source-timeline-item p,
-.logic-map-node p {
+.logic-map-node p,
+.logic-radar-item p {
   font-size: 12px;
   line-height: 1.65;
   margin-bottom: 10px;
@@ -856,7 +867,10 @@ main {
 
 .source-timeline-actions a,
 .source-timeline-actions button,
-.logic-map-links button {
+.logic-map-links button,
+.logic-radar-actions a,
+.logic-radar-actions button,
+.logic-radar-metrics button {
   background: rgba(20, 33, 48, 0.74);
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -870,8 +884,91 @@ main {
 
 .source-timeline-actions a:hover,
 .source-timeline-actions button:hover,
-.logic-map-links button:hover {
+.logic-map-links button:hover,
+.logic-radar-actions a:hover,
+.logic-radar-actions button:hover,
+.logic-radar-metrics button:hover {
   border-color: var(--cyan);
+}
+
+.logic-radar {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.logic-radar-item {
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+}
+
+.logic-radar-item.pending {
+  border-color: rgba(242, 168, 59, 0.42);
+}
+
+.logic-radar-item.strengthening {
+  border-color: rgba(53, 211, 154, 0.36);
+}
+
+.logic-radar-item.challenged {
+  border-color: rgba(243, 111, 145, 0.42);
+}
+
+.logic-radar-state {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.logic-radar-state span {
+  color: var(--amber);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.logic-radar-state time {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.logic-radar-link {
+  background: rgba(39, 217, 232, 0.055);
+  border-left: 3px solid rgba(39, 217, 232, 0.64);
+  margin: 10px 0;
+  padding: 9px 10px;
+}
+
+.logic-radar-link span,
+.logic-radar-link strong {
+  display: block;
+}
+
+.logic-radar-link span {
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.logic-radar-link strong {
+  font-size: 14px;
+  line-height: 1.42;
+}
+
+.logic-radar-next {
+  color: #dbeafe;
+  font-size: 12px;
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.logic-radar-metrics {
+  margin-top: auto;
+}
+
+.logic-radar-actions {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 12px;
 }
 
 .logic-map-node.research {
@@ -3718,6 +3815,10 @@ footer a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .logic-radar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .package-preview {
     grid-template-columns: 1fr;
   }
@@ -3784,6 +3885,10 @@ footer a {
   .verification-grid,
   .web-personal-grid,
   .workbench-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logic-radar {
     grid-template-columns: 1fr;
   }
 

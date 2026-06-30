@@ -1632,7 +1632,8 @@ function renderWorkbench(chain) {
   const learningRoot = document.querySelector("#learningPath");
   const timelineRoot = document.querySelector("#sourceTimeline");
   const logicRoot = document.querySelector("#logicMap");
-  if (!learningRoot || !timelineRoot || !logicRoot) return;
+  const radarRoot = document.querySelector("#logicRadar");
+  if (!learningRoot || !timelineRoot || !logicRoot || !radarRoot) return;
 
   const summary = buildWorkbenchSummary(chain);
 
@@ -1713,6 +1714,49 @@ function renderWorkbench(chain) {
     });
     logicRoot.append(card);
   });
+
+  radarRoot.innerHTML = "";
+  if (!summary.radarItems.length) {
+    radarRoot.append(el("p", "workbench-empty", "暂无需要立即处理的逻辑变化。新增资料归档后会自动进入这里。"));
+  }
+  summary.radarItems.forEach((item) => {
+    const card = el("article", `logic-radar-item ${item.status}`);
+    card.innerHTML = `
+      <div class="logic-radar-state">
+        <span>${escapeHtml(radarStatusLabel(item.status))}</span>
+        <time>${escapeHtml(item.date || "待定日期")}</time>
+      </div>
+      <h4>${escapeHtml(item.title)}</h4>
+      <p>${escapeHtml(item.summary)}</p>
+      <div class="logic-radar-link">
+        <span>影响逻辑</span>
+        <strong>${escapeHtml(item.logicTitle || "待判断")}</strong>
+      </div>
+      <div class="logic-radar-next">${escapeHtml(item.nextAction)}</div>
+      <div class="logic-radar-metrics">
+        ${item.metrics.slice(0, 3).map((metric) => `<button type="button" data-target="${escapeHtml(metric.target)}">${escapeHtml(metric.label)}</button>`).join("")}
+      </div>
+    `;
+    const actions = el("div", "logic-radar-actions");
+    if (item.href) {
+      const link = el("a", "", item.kind === "short-video" ? "打开视频" : "查看来源");
+      link.href = item.href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      actions.append(link);
+    }
+    if (item.logicTarget) {
+      const logicButton = el("button", "", "查看逻辑");
+      logicButton.type = "button";
+      logicButton.addEventListener("click", () => scrollToWorkbenchTarget(item.logicTarget));
+      actions.append(logicButton);
+    }
+    card.querySelectorAll("[data-target]").forEach((button) => {
+      button.addEventListener("click", () => scrollToWorkbenchTarget(button.dataset.target));
+    });
+    card.append(actions);
+    radarRoot.append(card);
+  });
 }
 
 function scrollToWorkbenchTarget(target) {
@@ -1733,7 +1777,8 @@ function buildWorkbenchSummary(chain) {
   return {
     learningSteps: buildLearningSteps(chain),
     timeline: buildSourceTimeline(chain).slice(0, 8),
-    logicNodes: buildLogicMapNodes(chain)
+    logicNodes: buildLogicMapNodes(chain),
+    radarItems: buildLogicRadarItems(chain).slice(0, 6)
   };
 }
 
@@ -1903,6 +1948,66 @@ function buildLogicMapNodes(chain) {
     (track.coreInsights || []).map((item, index) => logicMapNodeFromInsight(chain, track, item, index))
   );
   return [...baseNodes, ...researchNodes];
+}
+
+function buildLogicRadarItems(chain) {
+  return buildSourceTimeline(chain)
+    .filter((source) => source.logicTitle || source.logicTarget || source.status)
+    .map((source) => {
+      const status = radarStatusFromSource(source);
+      const metrics = relatedMetricsForText(chain, compactText([
+        source.title,
+        source.summary,
+        source.segment,
+        source.logicTitle
+      ])).map((metric, index) => {
+        const metricIndex = (chain.trackingProfile?.metrics || []).indexOf(metric);
+        return {
+          label: metric.name,
+          target: metricIndex >= 0 ? searchTargetKey(chain.id, "tracking", metricIndex) : "",
+          index
+        };
+      }).filter((metric) => metric.target);
+      return {
+        ...source,
+        status,
+        nextAction: radarActionLabel(status, source),
+        metrics
+      };
+    })
+    .sort((left, right) => {
+      const rank = { pending: 0, challenged: 1, strengthening: 2, archived: 3 };
+      return (rank[left.status] ?? 9) - (rank[right.status] ?? 9) ||
+        String(right.sortKey).localeCompare(String(left.sortKey));
+    });
+}
+
+function radarStatusFromSource(source) {
+  const value = compactText([source.status, source.title, source.summary]);
+  if (/反证|削弱|失效|挑战|不及预期|证伪/.test(value)) return "challenged";
+  if (/待核验|待验证|待判断|待整理|待入库/.test(value)) return "pending";
+  if (/高置信|已核验|强化|已入库|已归档|基准框架/.test(value)) return "strengthening";
+  return "archived";
+}
+
+function radarStatusLabel(status) {
+  return {
+    pending: "待核验",
+    strengthening: "逻辑强化",
+    challenged: "出现反证",
+    archived: "已归档"
+  }[status] || "待判断";
+}
+
+function radarActionLabel(status, source) {
+  if (status === "pending") {
+    return source.kind === "short-video"
+      ? "下一步：补完整字幕或原始纪要，再找公告、研报或产业链访谈交叉验证。"
+      : "下一步：核验来源口径，判断是否需要更新产业链骨架或逻辑卡。";
+  }
+  if (status === "challenged") return "下一步：检查反证是否足以削弱原逻辑，并回看相关公司走势。";
+  if (status === "strengthening") return "下一步：补充更多证据，观察是否传导到订单、价格、产能或公司业绩。";
+  return "下一步：等待新的证据或跟踪项变化。";
 }
 
 function logicMapNodeFromBase(chain, item, index) {
