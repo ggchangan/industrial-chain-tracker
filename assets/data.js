@@ -1,7 +1,7 @@
 window.INDUSTRY_CHAIN_LIBRARY = {
   "meta": {
     "title": "产业链研究库",
-    "updated": "2026-06-13",
+    "updated": "2026-07-01",
     "description": "统一沉淀产业链骨架、公众号配图、动态追踪和资料文件。"
   },
   "chains": [
@@ -2871,6 +2871,25 @@ window.INDUSTRY_CHAIN_LIBRARY = {
           "sourcePlatform": "用户原稿",
           "sourceIllustrations": [],
           "notes": "建议后续用英伟达、云厂CAPEX、LightCounting、公司公告和调研纪要持续核验。"
+        },
+        {
+          "date": "2026-07-01",
+          "type": "机构逻辑",
+          "segment": "CPO与硅光交换机",
+          "signal": "待核验：短视频观点称康宁玻璃桥可能改写光通信与CPO量产路径",
+          "impact": "若玻璃桥相关封装或互连方案被主流CPO/光通信系统采用，CPO价值链需要在光引擎、硅光之外继续跟踪玻璃基材料、精密加工、封装互连和设备验证进展；当前仅依据短视频标题入库，尚不能视为已验证产业事实。",
+          "confidence": "待核验",
+          "sourceTitle": "机构调研日记：康宁扔出王炸！玻璃桥改写光通信格局，CPO量产彻...",
+          "sourceUrl": "https://v.douyin.com/R6F6fJk2-SE/",
+          "sourceKind": "短视频",
+          "sourcePlatform": "Douyin",
+          "sourceIllustrations": [],
+          "logicTrack": {
+            "id": "cpo-value-reconstruction",
+            "role": "CPO价值重构观察",
+            "contribution": "把玻璃桥作为CPO量产路径中的新增待验证变量，后续需要用公司公告、券商研报、产业会议或供应链调研确认其技术位置、量产节奏和受益环节。"
+          },
+          "notes": "用户于2026-07-01提供抖音分享文本，当前只保存视频标题、账号和链接；未取得完整字幕、原始调研纪要或康宁官方资料。分享文本中含“12/01”，但年份与含义待确认，暂不作为事件发生日期。"
         }
       ],
       "logicTracks": []

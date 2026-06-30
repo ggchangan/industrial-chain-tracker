@@ -1139,6 +1139,10 @@ function normalizeUpdate(input) {
   if (!["产业事件", "机构逻辑", "公司公告", "数据变化"].includes(type)) {
     throw validationError("动态类型无效");
   }
+  const sourceKind = String(input.sourceKind || "文章").trim();
+  if (!["文章", "短视频", "公告", "资料"].includes(sourceKind)) {
+    throw validationError("来源类型无效");
+  }
 
   const update = {
     id: String(input.id || createStableId("update", [
@@ -1155,6 +1159,8 @@ function normalizeUpdate(input) {
     confidence: String(input.confidence || "待核验").trim(),
     sourceTitle: required(input.sourceTitle, "请输入来源标题"),
     sourceUrl,
+    sourceKind,
+    sourcePlatform: String(input.sourcePlatform || "").trim(),
     notes: String(input.notes || "通过维护台添加，后续持续跟踪。").trim()
   };
 

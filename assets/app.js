@@ -1859,7 +1859,7 @@ function buildSourceTimeline(chain) {
   const seen = new Set();
   return [...updates, ...sources, ...packages]
     .filter((item) => {
-      const key = `${item.date}:${item.title}:${item.href}`;
+      const key = item.href ? `${item.date}:${item.href}` : `${item.date}:${item.title}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return item.title;

@@ -1141,9 +1141,9 @@ function editUpdate(chainId, updateId) {
   updateForm.elements.updateId.value = update.id;
   [
     "date", "type", "segment", "signal", "impact", "confidence",
-    "sourceTitle", "sourceUrl", "notes"
+    "sourceTitle", "sourceKind", "sourcePlatform", "sourceUrl", "notes"
   ].forEach((name) => {
-    updateForm.elements[name].value = update[name] || "";
+    updateForm.elements[name].value = update[name] || (name === "sourceKind" ? "文章" : "");
   });
   updateForm.querySelector("button[type='submit']").textContent = "保存动态修改";
   cancelUpdateEdit.hidden = false;
@@ -1154,6 +1154,7 @@ function resetUpdateForm(chainId = updateSelect.value) {
   updateForm.reset();
   renderChainOptions(updateSelect, chainId);
   updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  updateForm.elements.sourceKind.value = "文章";
   updateForm.querySelector("button[type='submit']").textContent = "保存动态追踪";
   cancelUpdateEdit.hidden = true;
 }

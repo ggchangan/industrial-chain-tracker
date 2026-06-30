@@ -11,7 +11,7 @@ async function startApplication() {
     console.info("Using static library fallback:", error.message);
   }
 
-  await import("./app.js?v=ia-review-1");
+  await import("./app.js?v=workbench-source-1");
 }
 
 startApplication();
