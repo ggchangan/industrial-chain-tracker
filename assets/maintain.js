@@ -12,6 +12,8 @@ const state = {
 const notice = document.querySelector("#adminNotice");
 const articleForm = document.querySelector("#editArticleForm");
 const updateForm = document.querySelector("#addUpdateForm");
+const updateShareText = document.querySelector("#updateShareText");
+const parseUpdateShare = document.querySelector("#parseUpdateShare");
 const sourceForm = document.querySelector("#addSourceForm");
 const grid = document.querySelector("#maintenanceGrid");
 const search = document.querySelector("#maintainSearch");
@@ -71,6 +73,7 @@ async function initialize() {
   articleForm.addEventListener("submit", saveArticle);
   sourceForm.addEventListener("submit", addSource);
   updateForm.addEventListener("submit", addUpdate);
+  parseUpdateShare.addEventListener("click", preprocessUpdateShareText);
   cancelSourceEdit.addEventListener("click", resetSourceForm);
   cancelUpdateEdit.addEventListener("click", resetUpdateForm);
   logicCardForm.addEventListener("submit", saveLogicCard);
@@ -1111,6 +1114,7 @@ async function addUpdate(event) {
     const updateId = payload.updateId;
     delete payload.chainId;
     delete payload.updateId;
+    delete payload.sourceRawText;
     await apiRequest(
       updateId
         ? `./api/v1/admin/chains/${encodeURIComponent(chainId)}/updates/${encodeURIComponent(updateId)}`
@@ -1157,6 +1161,92 @@ function resetUpdateForm(chainId = updateSelect.value) {
   updateForm.elements.sourceKind.value = "文章";
   updateForm.querySelector("button[type='submit']").textContent = "保存动态追踪";
   cancelUpdateEdit.hidden = true;
+}
+
+function preprocessUpdateShareText() {
+  const rawText = updateShareText.value.trim();
+  if (!rawText) {
+    setNotice("请先粘贴一段分享文本。", "error");
+    updateShareText.focus();
+    return;
+  }
+
+  const parsed = parseUpdateShareText(rawText);
+  if (!parsed.url && !parsed.title) {
+    setNotice("暂时没有识别到标题或链接，请检查分享文本。", "error");
+    return;
+  }
+
+  const form = updateForm.elements;
+  if (parsed.url) form.sourceUrl.value = parsed.url;
+  if (parsed.platform) form.sourcePlatform.value = parsed.platform;
+  if (parsed.sourceKind) form.sourceKind.value = parsed.sourceKind;
+  if (parsed.sourceTitle) form.sourceTitle.value = parsed.sourceTitle;
+  form.confidence.value = "待核验";
+  form.type.value = parsed.updateType;
+  if (parsed.segment && !form.segment.value.trim()) form.segment.value = parsed.segment;
+  if (parsed.signal && !form.signal.value.trim()) form.signal.value = parsed.signal;
+  if (parsed.impact && !form.impact.value.trim()) form.impact.value = parsed.impact;
+  form.notes.value = compactUpdateNotes(form.notes.value, parsed.notes);
+  setNotice("已根据分享文本预填动态草稿，请继续检查影响判断和所属环节。", "success");
+}
+
+function parseUpdateShareText(rawText) {
+  const text = rawText.replace(/\s+/g, " ").trim();
+  const url = text.match(/https?:\/\/[^\s]+/i)?.[0]?.replace(/[，。；;、]+$/, "") || "";
+  const author = text.match(/【([^】]+?)的作品】/)?.[1]?.trim() || "";
+  const afterAuthor = text.match(/】(.+?)(?:https?:\/\/|$)/i)?.[1]?.trim() || "";
+  const beforeUrl = url ? text.slice(0, text.indexOf(url)).trim() : text;
+  const title = cleanSharedTitle(afterAuthor || beforeUrl.replace(/.*看看【[^】]+】/, ""));
+  const platform = inferSharePlatform(url, text);
+  const sourceKind = platform === "Douyin" || /短视频|视频|抖音/.test(text) ? "短视频" : "文章";
+  const sourceTitle = author && title ? `${author}：${title}` : title || author;
+  const segment = inferUpdateSegment(text);
+  const updateType = /机构|调研|研报|观点|解读|券商/.test(text) ? "机构逻辑" : "产业事件";
+
+  return {
+    url,
+    platform,
+    sourceKind,
+    sourceTitle,
+    updateType,
+    segment,
+    signal: title ? `待核验：${sourceKind === "短视频" ? "短视频观点称" : "资料称"}${title}` : "",
+    impact: title
+      ? `该资料已作为待核验线索入库；若后续被公告、研报或产业链访谈验证，需要判断它是否改变相关环节的供需、技术路线、订单节奏或公司受益逻辑。`
+      : "",
+    notes: `原始分享文本：${rawText}\n当前仅完成信息预处理，尚未取得完整原文、字幕或交叉验证资料。`
+  };
+}
+
+function cleanSharedTitle(value) {
+  return String(value || "")
+    .replace(/^复制打开\S*，?看看/, "")
+    .replace(/^\s*[：:，,。]+/, "")
+    .replace(/\s*\d{1,2}\/\d{1,2}\s+.*$/, "")
+    .replace(/\s+[A-Za-z0-9]{2,}:\/\s*.*$/, "")
+    .trim();
+}
+
+function inferSharePlatform(url, text) {
+  if (/douyin\.com/i.test(url) || /抖音/.test(text)) return "Douyin";
+  if (/weixin\.qq\.com|mp\.weixin\.qq\.com/i.test(url) || /公众号|微信/.test(text)) return "微信公众号";
+  if (/xueqiu\.com/i.test(url)) return "雪球";
+  return "";
+}
+
+function inferUpdateSegment(value) {
+  const text = String(value || "");
+  if (/CPO|硅光|光通信|玻璃桥|光模块/.test(text)) return "CPO与硅光交换机";
+  if (/PCB|覆铜板|CCL|电子布/.test(text)) return "覆铜板/CCL";
+  if (/光刻胶/.test(text)) return "光刻胶";
+  return "";
+}
+
+function compactUpdateNotes(current, addition) {
+  const existing = String(current || "").trim();
+  if (existing.includes(addition)) return existing;
+  return existing ? `${existing}\n\n${addition}` : addition;
 }
 
 function renderCards(query = "") {
