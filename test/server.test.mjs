@@ -20,6 +20,7 @@ test.before(async () => {
     updatesByChain: {},
     sourcesByChain: {},
     logicCardsByChain: {},
+    feedbackItems: [],
     updatedAt: ""
   }));
   server = await createAppServer({
@@ -249,6 +250,50 @@ test("maintenance page requires a valid signed session", async () => {
   });
   assert.equal(protectedPage.status, 200);
   assert.match(await protectedPage.text(), /产业链维护台/);
+});
+
+test("public feedback is collected and manageable from admin APIs", async () => {
+  const submitted = await fetch(`${baseUrl}/api/v1/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chainId: "optical-module",
+      type: "content",
+      message: "希望优先补充 CPO 抖音短视频线索。",
+      contact: "tester@example.com",
+      pageUrl: `${baseUrl}/?chain=optical-module#feedback`
+    })
+  });
+  assert.equal(submitted.status, 201);
+  const submittedPayload = await submitted.json();
+  assert.equal(submittedPayload.feedback.chainId, "optical-module");
+  assert.equal(submittedPayload.feedback.status, "open");
+
+  const denied = await fetch(`${baseUrl}/api/v1/admin/feedback`);
+  assert.equal(denied.status, 401);
+
+  const login = await fetch(`${baseUrl}/api/v1/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: "correct-horse-battery" })
+  });
+  const cookie = login.headers.get("set-cookie").split(";")[0];
+
+  const inbox = await fetch(`${baseUrl}/api/v1/admin/feedback`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.equal(inbox.feedback[0].id, submittedPayload.feedback.id);
+  assert.equal(inbox.feedback[0].type, "content");
+
+  const updated = await fetch(`${baseUrl}/api/v1/admin/feedback/${submittedPayload.feedback.id}`, {
+    method: "PUT",
+    headers: { Cookie: cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "planned", adminNotes: "排入光模块更新列表。" })
+  });
+  assert.equal(updated.status, 200);
+  const updatedPayload = await updated.json();
+  assert.equal(updatedPayload.feedback.status, "planned");
+  assert.equal(updatedPayload.feedback.adminNotes, "排入光模块更新列表。");
 });
 
 test("runtime secrets and server source are never served as static files", async () => {

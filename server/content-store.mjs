@@ -297,6 +297,29 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     return structuredClone(verification);
   }
 
+  async function addFeedback(input) {
+    const feedback = normalizeFeedback(input, library);
+    state.feedbackItems ||= [];
+    state.feedbackItems.unshift(feedback);
+    await stateStore.save(state);
+    return structuredClone(feedback);
+  }
+
+  function listFeedback() {
+    return structuredClone([...(state.feedbackItems || [])].sort((left, right) =>
+      String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
+    ));
+  }
+
+  async function updateFeedback(feedbackId, input) {
+    state.feedbackItems ||= [];
+    const index = state.feedbackItems.findIndex((item) => item.id === feedbackId);
+    if (index < 0) throw notFoundError("反馈不存在");
+    state.feedbackItems[index] = normalizeFeedbackUpdate(state.feedbackItems[index], input);
+    await stateStore.save(state);
+    return structuredClone(state.feedbackItems[index]);
+  }
+
   async function listLogicCards(chainId) {
     const chain = library.chains.find((item) => item.id === chainId);
     if (!chain) throw notFoundError("产业链不存在");
@@ -416,6 +439,8 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     importPackage,
     inspectPackage,
     addMonitorVerification,
+    addFeedback,
+    listFeedback,
     listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
@@ -423,6 +448,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     updateUpdate,
     saveLogicCard,
     saveReadingProgress,
+    updateFeedback,
     deleteLogicCard,
     setFavoriteChain,
     setSubscribedChain,
@@ -442,6 +468,53 @@ function storageErrorMessage(error) {
   if (error?.code === "NoSuchBucket") return "COS Bucket 不存在或地域配置不正确。";
   if (error?.code === "InvalidAccessKeyId") return "COS 密钥无效，请检查服务器环境变量。";
   return `对象存储写入失败：${error?.message || "未知错误"}`;
+}
+
+function normalizeFeedback(input = {}, library) {
+  const chainId = String(input.chainId || "").trim();
+  const chain = chainId ? library.chains.find((item) => item.id === chainId) : null;
+  if (chainId && !chain) throw validationError("产业链不存在");
+
+  const type = String(input.type || "suggestion").trim();
+  if (!feedbackTypes().has(type)) throw validationError("反馈类型无效");
+
+  const message = required(input.message, "请输入反馈内容");
+  if (message.length > 2000) throw validationError("反馈内容不能超过 2000 字");
+
+  return {
+    id: `feedback-${crypto.randomUUID().slice(0, 12)}`,
+    chainId,
+    chainTitle: chain?.title || "",
+    type,
+    message,
+    contact: String(input.contact || "").trim().slice(0, 120),
+    pageUrl: String(input.pageUrl || "").trim().slice(0, 500),
+    status: "open",
+    adminNotes: "",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function normalizeFeedbackUpdate(current, input = {}) {
+  const status = String(input.status || current.status || "open").trim();
+  if (!feedbackStatuses().has(status)) throw validationError("反馈状态无效");
+  const adminNotes = String(input.adminNotes ?? current.adminNotes ?? "").trim();
+  if (adminNotes.length > 2000) throw validationError("处理备注不能超过 2000 字");
+  return {
+    ...current,
+    status,
+    adminNotes,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function feedbackTypes() {
+  return new Set(["suggestion", "bug", "content", "cooperation", "other"]);
+}
+
+function feedbackStatuses() {
+  return new Set(["open", "reviewing", "planned", "resolved", "closed"]);
 }
 
 function normalizeUserProfile(profile = {}) {

@@ -2921,6 +2921,38 @@ function render() {
   scrollToRenderedSectionHash();
 }
 
+function initFeedbackForm() {
+  const form = document.querySelector("#feedbackForm");
+  if (!form) return;
+  form.addEventListener("submit", submitFeedback);
+}
+
+async function submitFeedback(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector("button[type='submit']");
+  const message = document.querySelector("#feedbackMessage");
+  const payload = Object.fromEntries(new FormData(form).entries());
+  payload.chainId = activeChain().id;
+  payload.pageUrl = window.location.href;
+
+  message.textContent = "";
+  button.disabled = true;
+  button.textContent = "提交中...";
+  try {
+    await apiRequest("./api/v1/feedback", { method: "POST", body: payload });
+    form.reset();
+    message.textContent = "已收到，谢谢。我们会把它放进维护台继续处理。";
+    message.className = "feedback-message success";
+  } catch (error) {
+    message.textContent = error.message;
+    message.className = "feedback-message error";
+  } finally {
+    button.disabled = false;
+    button.textContent = "提交反馈";
+  }
+}
+
 function initSearch() {
   createSearchIndex();
   createCompanyIndex();
@@ -2945,5 +2977,6 @@ function initSearch() {
 loadCachedUserProfile();
 fetchUserProfile().then(() => render());
 initSearch();
+initFeedbackForm();
 initActivityTabs();
 render();

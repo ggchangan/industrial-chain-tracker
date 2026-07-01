@@ -218,6 +218,13 @@ async function handleApi(context) {
     return;
   }
 
+  if (request.method === "POST" && pathname === "/api/v1/feedback") {
+    const body = await readJsonBody(request, 64 * 1024);
+    const feedback = await contentStore.addFeedback(body);
+    sendJson(response, 201, { feedback });
+    return;
+  }
+
   if (request.method === "GET" && pathname === "/api/v1/admin/session") {
     sendJson(response, 200, {
       authenticated: auth.isAuthenticated(request),
@@ -272,6 +279,19 @@ async function handleApi(context) {
         managed: contentStore.isManagedChain(chain.id)
       }))
     });
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/v1/admin/feedback") {
+    sendJson(response, 200, { feedback: contentStore.listFeedback() });
+    return;
+  }
+
+  const editableFeedbackMatch = pathname.match(/^\/api\/v1\/admin\/feedback\/([a-z0-9-]+)$/);
+  if (request.method === "PUT" && editableFeedbackMatch) {
+    const body = await readJsonBody(request, 64 * 1024);
+    const feedback = await contentStore.updateFeedback(editableFeedbackMatch[1], body);
+    sendJson(response, 200, { feedback });
     return;
   }
 

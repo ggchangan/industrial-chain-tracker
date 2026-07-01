@@ -5,6 +5,7 @@ const state = {
   sourceAssets: [],
   logicCards: [],
   logicTracks: [],
+  feedbackItems: [],
   packagePayload: null,
   packageInspection: null,
   verificationChainId: ""
@@ -23,6 +24,7 @@ const sourceSelect = document.querySelector("#sourceChainId");
 const archiveSelect = document.querySelector("#archiveChainId");
 const archiveSummary = document.querySelector("#archiveSummary");
 const archiveList = document.querySelector("#archiveList");
+const feedbackInbox = document.querySelector("#feedbackInbox");
 const fileInput = document.querySelector("#chainMarkdownFile");
 const markdownInput = document.querySelector("#articleMarkdown");
 const sourceFileInput = document.querySelector("#sourceMarkdownFile");
@@ -99,6 +101,7 @@ async function initialize() {
   document.querySelector("#adminLogout").addEventListener("click", logout);
   renderSourceIllustrations();
   await refreshLibrary();
+  await loadFeedback();
   resetLogicCardForm(state.archiveChainId);
   if (articleSelect.value) await loadArticle(articleSelect.value);
 }
@@ -127,6 +130,104 @@ async function refreshLibrary(preferredChainId = "") {
   } catch (error) {
     setNotice(error.message, "error");
   }
+}
+
+async function loadFeedback() {
+  try {
+    const payload = await apiRequest("./api/v1/admin/feedback");
+    state.feedbackItems = payload.feedback || [];
+    renderFeedbackInbox();
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+function renderFeedbackInbox() {
+  if (!feedbackInbox) return;
+  const items = state.feedbackItems || [];
+  if (!items.length) {
+    feedbackInbox.innerHTML = `<p class="archive-empty">暂无公开页反馈。</p>`;
+    return;
+  }
+  feedbackInbox.innerHTML = items.map((item) => `
+    <article class="archive-item feedback-item status-${escapeHtml(item.status)}">
+      <div class="archive-item-head">
+        <span>${escapeHtml(feedbackTypeLabel(item.type))}</span>
+        <small>${escapeHtml(formatDateTime(item.createdAt))}</small>
+      </div>
+      <h3>${escapeHtml(item.chainTitle || "未指定产业链")}</h3>
+      <p>${escapeHtml(item.message)}</p>
+      <div class="archive-item-meta">
+        <span>${escapeHtml(feedbackStatusLabel(item.status))}</span>
+        ${item.contact ? `<span>联系：${escapeHtml(item.contact)}</span>` : ""}
+        ${item.pageUrl ? `<span>页面：${escapeHtml(item.pageUrl)}</span>` : ""}
+      </div>
+      <div class="archive-item-actions feedback-actions">
+        <label>
+          <span>处理状态</span>
+          <select data-feedback-status="${escapeHtml(item.id)}">
+            ${feedbackStatusOptions(item.status)}
+          </select>
+        </label>
+        <label>
+          <span>处理备注</span>
+          <textarea data-feedback-notes="${escapeHtml(item.id)}" rows="2">${escapeHtml(item.adminNotes || "")}</textarea>
+        </label>
+        <button type="button" data-feedback-save="${escapeHtml(item.id)}">保存处理</button>
+      </div>
+    </article>
+  `).join("");
+  feedbackInbox.querySelectorAll("[data-feedback-save]").forEach((button) => {
+    button.addEventListener("click", () => saveFeedbackUpdate(button.dataset.feedbackSave));
+  });
+}
+
+async function saveFeedbackUpdate(feedbackId) {
+  const status = feedbackInbox.querySelector(`[data-feedback-status="${CSS.escape(feedbackId)}"]`)?.value || "open";
+  const adminNotes = feedbackInbox.querySelector(`[data-feedback-notes="${CSS.escape(feedbackId)}"]`)?.value || "";
+  try {
+    await apiRequest(`./api/v1/admin/feedback/${encodeURIComponent(feedbackId)}`, {
+      method: "PUT",
+      body: JSON.stringify({ status, adminNotes })
+    });
+    await loadFeedback();
+    setNotice("反馈处理状态已更新。", "success");
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+function feedbackTypeLabel(type) {
+  return {
+    suggestion: "产品建议",
+    bug: "问题反馈",
+    content: "内容补充",
+    cooperation: "合作线索",
+    other: "其他"
+  }[type] || "反馈";
+}
+
+function feedbackStatusLabel(status) {
+  return {
+    open: "待处理",
+    reviewing: "处理中",
+    planned: "已规划",
+    resolved: "已解决",
+    closed: "已关闭"
+  }[status] || "待处理";
+}
+
+function feedbackStatusOptions(current) {
+  return ["open", "reviewing", "planned", "resolved", "closed"].map((status) =>
+    `<option value="${status}" ${status === current ? "selected" : ""}>${escapeHtml(feedbackStatusLabel(status))}</option>`
+  ).join("");
+}
+
+function formatDateTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString("zh-CN", { hour12: false });
 }
 
 function researchMonitors(chain) {
