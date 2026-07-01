@@ -152,6 +152,8 @@ test("authenticated user can manage favorites subscriptions and reading history"
     assert.equal(history.profile.readingHistory[0].progress, 42);
 
     const profile = await fetch(`${authBaseUrl}/api/v1/me`, { headers }).then((response) => response.json());
+    assert.equal(profile.profile.membership.tier, "free");
+    assert.equal(profile.profile.membership.status, "inactive");
     assert.deepEqual(profile.profile.favorites.chains, ["optical-module"]);
     assert.deepEqual(profile.profile.subscriptions.chains, ["optical-module"]);
     assert.equal(profile.profile.readingHistory[0].headingTitle, "MPO产业链");
