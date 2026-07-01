@@ -158,6 +158,33 @@ test("authenticated user can manage favorites subscriptions and reading history"
     assert.deepEqual(profile.profile.subscriptions.chains, ["optical-module"]);
     assert.equal(profile.profile.readingHistory[0].headingTitle, "MPO产业链");
 
+    const adminLogin = await fetch(`${authBaseUrl}/api/v1/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: "correct-horse-battery" })
+    });
+    const adminCookie = adminLogin.headers.get("set-cookie").split(";")[0];
+    const users = await fetch(`${authBaseUrl}/api/v1/admin/users`, {
+      headers: { Cookie: adminCookie }
+    }).then((response) => response.json());
+    assert.equal(users.users[0].id, "wx:openid-profile");
+    assert.equal(users.users[0].counts.readingHistory, 1);
+
+    const membership = await fetch(
+      `${authBaseUrl}/api/v1/admin/users/${encodeURIComponent("wx:openid-profile")}/membership`,
+      {
+        method: "PUT",
+        headers: { Cookie: adminCookie, "Content-Type": "application/json" },
+        body: JSON.stringify({ tier: "pro", status: "active", expiresAt: "2026-12-31" })
+      }
+    ).then((response) => response.json());
+    assert.equal(membership.user.membership.tier, "pro");
+    assert.equal(membership.user.membership.status, "active");
+
+    const proProfile = await fetch(`${authBaseUrl}/api/v1/me`, { headers }).then((response) => response.json());
+    assert.equal(proProfile.profile.membership.tier, "pro");
+    assert.equal(proProfile.profile.membership.status, "active");
+
     const removed = await fetch(`${authBaseUrl}/api/v1/me/favorites/chains/optical-module`, {
       method: "DELETE",
       headers

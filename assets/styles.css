@@ -3222,7 +3222,18 @@ button.propagation-signal:hover {
   padding-bottom: 32px;
 }
 
+.user-membership-console {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+}
+
 .feedback-inbox-list {
+  display: grid;
+  gap: 14px;
+}
+
+.user-membership-list {
   display: grid;
   gap: 14px;
 }
@@ -3256,6 +3267,35 @@ button.propagation-signal:hover {
 
 .feedback-actions select,
 .feedback-actions textarea {
+  background: #0d151e;
+  border: 1px solid #2b4052;
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  padding: 9px 10px;
+}
+
+.membership-actions {
+  align-items: end;
+  display: grid;
+  grid-template-columns: minmax(120px, 160px) minmax(120px, 160px) minmax(160px, 1fr) auto;
+}
+
+.membership-actions label {
+  color: var(--muted);
+  display: grid;
+  font-size: 11px;
+  gap: 7px;
+}
+
+.membership-actions label > span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.membership-actions input,
+.membership-actions select {
   background: #0d151e;
   border: 1px solid #2b4052;
   border-radius: 6px;
@@ -4123,6 +4163,10 @@ footer a {
   }
 
   .feedback-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-actions {
     grid-template-columns: 1fr;
   }
 }

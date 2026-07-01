@@ -6,6 +6,7 @@ const state = {
   logicCards: [],
   logicTracks: [],
   feedbackItems: [],
+  users: [],
   packagePayload: null,
   packageInspection: null,
   verificationChainId: ""
@@ -25,6 +26,7 @@ const archiveSelect = document.querySelector("#archiveChainId");
 const archiveSummary = document.querySelector("#archiveSummary");
 const archiveList = document.querySelector("#archiveList");
 const feedbackInbox = document.querySelector("#feedbackInbox");
+const userMembershipList = document.querySelector("#userMembershipList");
 const fileInput = document.querySelector("#chainMarkdownFile");
 const markdownInput = document.querySelector("#articleMarkdown");
 const sourceFileInput = document.querySelector("#sourceMarkdownFile");
@@ -102,6 +104,7 @@ async function initialize() {
   renderSourceIllustrations();
   await refreshLibrary();
   await loadFeedback();
+  await loadUsers();
   resetLogicCardForm(state.archiveChainId);
   if (articleSelect.value) await loadArticle(articleSelect.value);
 }
@@ -140,6 +143,122 @@ async function loadFeedback() {
   } catch (error) {
     setNotice(error.message, "error");
   }
+}
+
+async function loadUsers() {
+  try {
+    const payload = await apiRequest("./api/v1/admin/users");
+    state.users = payload.users || [];
+    renderUserMemberships();
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+function renderUserMemberships() {
+  if (!userMembershipList) return;
+  const users = state.users || [];
+  if (!users.length) {
+    userMembershipList.innerHTML = `<p class="archive-empty">暂无登录用户。用户从小程序或网页同步账号后会出现在这里。</p>`;
+    return;
+  }
+  userMembershipList.innerHTML = users.map((user) => {
+    const membership = user.membership || { tier: "free", status: "inactive", expiresAt: "" };
+    return `
+      <article class="archive-item user-membership-item">
+        <div class="archive-item-head">
+          <span>${escapeHtml(membershipLabel(membership))}</span>
+          <small>${escapeHtml(formatDateTime(user.lastSeenAt || user.createdAt))}</small>
+        </div>
+        <h3>${escapeHtml(user.id)}</h3>
+        <p>${escapeHtml(user.openid || user.unionid || "无公开身份标识")}</p>
+        <div class="archive-item-meta">
+          <span>收藏 ${escapeHtml(user.counts?.favorites || 0)}</span>
+          <span>订阅 ${escapeHtml(user.counts?.subscriptions || 0)}</span>
+          <span>阅读 ${escapeHtml(user.counts?.readingHistory || 0)}</span>
+        </div>
+        <div class="archive-item-actions membership-actions">
+          <label>
+            <span>档位</span>
+            <select data-membership-tier="${escapeHtml(user.id)}">
+              ${membershipTierOptions(membership.tier)}
+            </select>
+          </label>
+          <label>
+            <span>状态</span>
+            <select data-membership-status="${escapeHtml(user.id)}">
+              ${membershipStatusOptions(membership.status)}
+            </select>
+          </label>
+          <label>
+            <span>到期时间</span>
+            <input data-membership-expires="${escapeHtml(user.id)}" type="date" value="${escapeHtml((membership.expiresAt || "").slice(0, 10))}" />
+          </label>
+          <button type="button" data-membership-save="${escapeHtml(user.id)}">保存会员</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+  userMembershipList.querySelectorAll("[data-membership-save]").forEach((button) => {
+    button.addEventListener("click", () => saveUserMembership(button.dataset.membershipSave));
+  });
+}
+
+async function saveUserMembership(userId) {
+  const escaped = CSS.escape(userId);
+  const tier = userMembershipList.querySelector(`[data-membership-tier="${escaped}"]`)?.value || "free";
+  const status = userMembershipList.querySelector(`[data-membership-status="${escaped}"]`)?.value || "inactive";
+  const expiresAt = userMembershipList.querySelector(`[data-membership-expires="${escaped}"]`)?.value || "";
+  try {
+    await apiRequest(`./api/v1/admin/users/${encodeURIComponent(userId)}/membership`, {
+      method: "PUT",
+      body: JSON.stringify({ tier, status, expiresAt })
+    });
+    await loadUsers();
+    setNotice("用户会员状态已更新。", "success");
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+function membershipLabel(membership = {}) {
+  const tier = {
+    free: "免费",
+    pro: "Pro",
+    team: "Team",
+    admin: "Admin"
+  }[membership.tier] || "免费";
+  const status = {
+    active: "有效",
+    inactive: "未开通",
+    trialing: "试用",
+    expired: "已过期",
+    canceled: "已取消"
+  }[membership.status] || membership.status || "未开通";
+  return `${tier} · ${status}`;
+}
+
+function membershipTierOptions(current) {
+  return ["free", "pro", "team", "admin"].map((tier) =>
+    `<option value="${tier}" ${tier === current ? "selected" : ""}>${escapeHtml({
+      free: "免费",
+      pro: "Pro",
+      team: "Team",
+      admin: "Admin"
+    }[tier])}</option>`
+  ).join("");
+}
+
+function membershipStatusOptions(current) {
+  return ["inactive", "active", "trialing", "expired", "canceled"].map((status) =>
+    `<option value="${status}" ${status === current ? "selected" : ""}>${escapeHtml({
+      inactive: "未开通",
+      active: "有效",
+      trialing: "试用",
+      expired: "已过期",
+      canceled: "已取消"
+    }[status])}</option>`
+  ).join("");
 }
 
 function renderFeedbackInbox() {
