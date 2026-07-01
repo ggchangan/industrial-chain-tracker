@@ -476,6 +476,29 @@ main {
   border-color: var(--cyan);
 }
 
+.industry-card.locked {
+  opacity: 0.74;
+}
+
+.industry-card.locked:hover {
+  border-color: rgba(245, 158, 11, 0.7);
+}
+
+.access-badge {
+  border: 1px solid rgba(39, 217, 232, 0.28);
+  color: var(--cyan);
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  padding: 4px 7px;
+}
+
+.industry-card.locked .access-badge {
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #f8c36a;
+}
+
 .industry-card strong {
   display: block;
   font-size: 18px;
@@ -545,6 +568,50 @@ main {
 
 .current-highlight:hover {
   border-color: var(--cyan);
+}
+
+.locked-chain-panel {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.09), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 12px;
+  grid-column: 1 / -1;
+  padding: 22px;
+}
+
+.locked-chain-panel span {
+  color: #f8c36a;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.locked-chain-panel strong {
+  font-size: clamp(24px, 4vw, 36px);
+}
+
+.locked-chain-panel p,
+.locked-placeholder {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.locked-chain-panel button {
+  background: transparent;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #ffe1a3;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  justify-self: start;
+  padding: 9px 12px;
+}
+
+.locked-placeholder {
+  border: 1px dashed var(--line);
+  padding: 16px;
 }
 
 .current-highlight span {

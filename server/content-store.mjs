@@ -529,12 +529,24 @@ function normalizeUserProfile(profile = {}) {
     subscriptions: {
       chains: uniqueStrings(profile.subscriptions?.chains)
     },
+    membership: normalizeMembership(profile.membership),
     readingHistory: Array.isArray(profile.readingHistory)
       ? profile.readingHistory.map(normalizeReadingRecord).filter((item) => item.chainId).slice(0, 50)
       : [],
     createdAt: profile.createdAt || new Date().toISOString(),
     lastSeenAt: profile.lastSeenAt || "",
     updatedAt: profile.updatedAt || ""
+  };
+}
+
+function normalizeMembership(membership = {}) {
+  const tier = String(membership.tier || "free").trim().toLowerCase();
+  const allowedTiers = new Set(["free", "pro", "team", "admin"]);
+  const normalizedTier = allowedTiers.has(tier) ? tier : "free";
+  return {
+    tier: normalizedTier,
+    status: String(membership.status || (normalizedTier === "free" ? "inactive" : "active")).trim(),
+    expiresAt: String(membership.expiresAt || "").trim()
   };
 }
 
@@ -558,6 +570,7 @@ function publicUserProfile(profile) {
     provider: normalized.provider,
     favorites: normalized.favorites,
     subscriptions: normalized.subscriptions,
+    membership: normalized.membership,
     readingHistory: normalized.readingHistory,
     updatedAt: normalized.updatedAt
   };

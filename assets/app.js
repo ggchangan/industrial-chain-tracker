@@ -36,6 +36,7 @@ const activeTrackingGroupByChain = new Map();
 const activeStockCampFilterByChain = new Map();
 const USER_TOKEN_KEY = "industry-chain:user-token";
 const USER_PROFILE_KEY = "industry-chain:user-profile";
+const FREE_CHAIN_LIMIT = 1;
 
 const trackedTopics = [
   "AI服务器",
@@ -403,7 +404,31 @@ function activeChain() {
   return library.chains.find((chain) => chain.id === currentId) || library.chains[0];
 }
 
+function chainAccessRank(chainId) {
+  return library.chains.findIndex((chain) => chain.id === chainId);
+}
+
+function hasMembershipAccess() {
+  const membership = userProfile?.membership;
+  if (!membership || membership.status !== "active") return false;
+  return ["pro", "team", "admin"].includes(membership.tier);
+}
+
+function isChainUnlocked(chainId) {
+  const rank = chainAccessRank(chainId);
+  return rank >= 0 && (rank < FREE_CHAIN_LIMIT || hasMembershipAccess());
+}
+
+function membershipLabel() {
+  if (hasMembershipAccess()) return "会员已解锁";
+  return "免费体验";
+}
+
 function setChain(id) {
+  const locked = !isChainUnlocked(id);
+  if (!isChainUnlocked(id)) {
+    showLockedChainNotice(library.chains.find((chain) => chain.id === id));
+  }
   currentId = id;
   requestedReading = "";
   requestedReadingAnchor = "";
@@ -414,6 +439,11 @@ function setChain(id) {
   url.hash = "";
   window.history.replaceState({}, "", url);
   render();
+  if (locked) document.querySelector("#overview")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function showLockedChainNotice(chain) {
+  showToast(`${chain?.title || "该产业链"}为会员产业链，当前先开放第一个产业链试读。`);
 }
 
 function scrollToSearchTarget(targetKey) {
@@ -1339,10 +1369,12 @@ function renderIndustryGrid(chain) {
   root.innerHTML = "";
 
   library.chains.forEach((item) => {
-    const card = el("button", "industry-card");
+    const locked = !isChainUnlocked(item.id);
+    const card = el("button", locked ? "industry-card locked" : "industry-card");
     if (item.id === chain.id) card.classList.add("active");
     card.type = "button";
     card.innerHTML = `
+      <span class="access-badge">${locked ? "会员" : chainAccessRank(item.id) < FREE_CHAIN_LIMIT ? "免费" : membershipLabel()}</span>
       <strong>${item.title}</strong>
       <p>${item.theme}</p>
     `;
@@ -1357,12 +1389,13 @@ function renderWebUserPanels(chain) {
   if (!userPanel || !personalPanel) return;
 
   const hasToken = Boolean(userToken());
+  const unlockedCount = hasMembershipAccess() ? library.chains.length : FREE_CHAIN_LIMIT;
   userPanel.innerHTML = `
     <div>
-      <strong>${userProfile ? "已同步个人资料" : hasToken ? "正在同步个人资料" : "未登录也可浏览"}</strong>
+      <strong>${userProfile ? `${membershipLabel()} · 已同步个人资料` : hasToken ? "正在同步个人资料" : "未登录也可浏览"}</strong>
       <p>${userProfile
-        ? "收藏、订阅和阅读历史会在网页、小程序和未来 App 之间复用。"
-        : "登录能力优先在小程序启用；网页识别同一用户 token 后可展示个人收藏与阅读历史。"}</p>
+        ? `当前可阅读 ${unlockedCount} 条产业链；收藏、订阅和阅读历史会在网页、小程序和未来 App 之间复用。`
+        : `免费开放第一个产业链；会员产业链会先锁定，后续接入订阅后自动解锁。`}</p>
     </div>
     <button type="button" id="refreshUserProfile">${userProfile ? "刷新" : "同步账号"}</button>
   `;
@@ -1541,6 +1574,51 @@ function summaryHighlightHref(item) {
   if (item?.type === "logic") return "#logic";
   if (item?.type === "update") return "#changes";
   return summarySectionHref(item?.target);
+}
+
+function renderLockedChain(chain) {
+  articleRequestId += 1;
+  document.querySelector("#currentTitle").textContent = chain.title;
+  document.querySelector("#currentTheme").textContent = chain.theme;
+  document.querySelector("#quickLinks").innerHTML = `
+    <a href="#chains">返回产业链库</a>
+    <a href="#feedback">申请优先开放</a>
+  `;
+  document.querySelector("#currentHighlights").innerHTML = `
+    <article class="locked-chain-panel">
+      <span>Member Chain</span>
+      <strong>${escapeHtml(chain.title)}当前为会员产业链</strong>
+      <p>免费用户先开放第一个产业链用于体验完整学习路线、逻辑地图、资料时间线和市场验证。会员解锁后，这条产业链会自动展示完整内容。</p>
+      <button type="button" data-feedback-focus>告诉我们你想优先看这条产业链</button>
+    </article>
+  `;
+  document.querySelector("[data-feedback-focus]")?.addEventListener("click", () => {
+    document.querySelector("#feedback")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  [
+    "#chainGrid",
+    "#learningPath",
+    "#sourceTimeline",
+    "#logicMap",
+    "#logicRadar",
+    "#trackingFilters",
+    "#trackingGrid",
+    "#timeline",
+    "#researchFeed",
+    "#stockCampSummary",
+    "#stockCampFilters",
+    "#stockCampGrid",
+    "#logicGrid",
+    "#logicTracks",
+    "#watchlist",
+    "#articleView",
+    "#articleToc"
+  ].forEach((selector) => {
+    const node = document.querySelector(selector);
+    if (node) node.innerHTML = `<p class="locked-placeholder">会员解锁后展示完整内容。</p>`;
+  });
+  const diagram = document.querySelector("#diagramImage");
+  if (diagram) diagram.removeAttribute("src");
 }
 
 async function toggleWebPersonalFlag(kind) {
@@ -2907,6 +2985,11 @@ function render() {
   document.querySelector("#updatedAt").textContent = `更新：${library.meta.updated}`;
   renderWebUserPanels(chain);
   renderIndustryGrid(chain);
+  if (!isChainUnlocked(chain.id)) {
+    renderLockedChain(chain);
+    scrollToRenderedSectionHash();
+    return;
+  }
   renderCurrent(chain);
   renderChain(chain);
   renderWorkbench(chain);
