@@ -17,6 +17,7 @@
         <a href="#updates">跟踪验证</a>
         <a href="#stocks">市场验证</a>
         <a href="#article">原文阅读</a>
+        <a href="#feedback">意见反馈</a>
       </nav>
       <section id="chains" class="hero">
         <p class="eyebrow">Industry Chain Watch</p>
@@ -165,6 +166,37 @@
           <article class="article-view" id="articleView"></article>
           <aside class="article-toc" id="articleToc" aria-label="原文目录"></aside>
         </div>
+      </section>
+      <section id="feedback" class="section feedback-section">
+        <div class="section-head compact">
+          <p class="eyebrow">Feedback</p>
+          <h2>意见反馈</h2>
+          <p>如果某条逻辑需要补证据、某个产业链想优先更新，或者页面体验不顺，可以直接留下建议。</p>
+        </div>
+        <form id="feedbackForm" class="feedback-form">
+          <div class="feedback-grid">
+            <label>
+              <span>反馈类型</span>
+              <select name="type">
+                <option value="suggestion">产品建议</option>
+                <option value="content">内容补充</option>
+                <option value="bug">问题反馈</option>
+                <option value="cooperation">合作线索</option>
+                <option value="other">其他</option>
+              </select>
+            </label>
+            <label>
+              <span>联系方式（可选）</span>
+              <input name="contact" type="text" maxlength="120" placeholder="微信、邮箱或其他联系方式" />
+            </label>
+          </div>
+          <label>
+            <span>反馈内容</span>
+            <textarea name="message" rows="4" maxlength="2000" required placeholder="可以写你想看的产业链、某个逻辑的疑问，或者你觉得难用的地方。"></textarea>
+          </label>
+          <button class="button primary" type="submit">提交反馈</button>
+          <p id="feedbackMessage" class="feedback-message" role="status" aria-live="polite"></p>
+        </form>
       </section>
     </main>
 

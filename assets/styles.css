@@ -2894,6 +2894,81 @@ button.propagation-signal:hover {
   padding-bottom: 20px;
 }
 
+.feedback-section {
+  border-top: 1px solid var(--line);
+}
+
+.feedback-form {
+  background: rgba(8, 18, 32, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 16px;
+  max-width: 860px;
+  padding: 22px;
+}
+
+.feedback-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.feedback-form label {
+  color: var(--muted);
+  display: grid;
+  font-size: 13px;
+  gap: 8px;
+}
+
+.feedback-form label > span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
+  background: #0d151e;
+  border: 1px solid #2b4052;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--text);
+  font: inherit;
+  padding: 11px 12px;
+  width: 100%;
+}
+
+.feedback-form textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.feedback-form input:focus,
+.feedback-form select:focus,
+.feedback-form textarea:focus {
+  border-color: var(--cyan);
+  outline: 2px solid rgba(39, 217, 232, 0.25);
+}
+
+.feedback-form button {
+  justify-self: start;
+}
+
+.feedback-message {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.feedback-message.success {
+  color: #83edc1;
+}
+
+.feedback-message.error {
+  color: #ff9fa1;
+}
+
 .admin-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3072,6 +3147,55 @@ button.propagation-signal:hover {
   border-bottom: 1px solid var(--line);
   margin-bottom: 32px;
   padding-bottom: 32px;
+}
+
+.feedback-inbox-console {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+}
+
+.feedback-inbox-list {
+  display: grid;
+  gap: 14px;
+}
+
+.feedback-item > p {
+  min-height: auto;
+  white-space: pre-wrap;
+}
+
+.feedback-item.status-open {
+  border-color: rgba(39, 217, 232, 0.36);
+}
+
+.feedback-actions {
+  align-items: end;
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr) auto;
+}
+
+.feedback-actions label {
+  color: var(--muted);
+  display: grid;
+  font-size: 11px;
+  gap: 7px;
+}
+
+.feedback-actions label > span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.feedback-actions select,
+.feedback-actions textarea {
+  background: #0d151e;
+  border: 1px solid #2b4052;
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  padding: 9px 10px;
 }
 
 .package-inbox {
@@ -3930,6 +4054,10 @@ footer a {
   .chain-card {
     min-height: auto;
   }
+
+  .feedback-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -3967,6 +4095,10 @@ footer a {
   }
 
   .admin-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .feedback-grid {
     grid-template-columns: 1fr;
   }
 
