@@ -3216,6 +3216,66 @@ button.propagation-signal:hover {
   padding-bottom: 32px;
 }
 
+.logic-radar-inbox-console {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+}
+
+.logic-radar-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.logic-radar-summary article {
+  background: rgba(8, 18, 32, 0.7);
+  border: 1px solid var(--line);
+  padding: 16px;
+}
+
+.logic-radar-summary span {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.logic-radar-summary strong {
+  color: var(--text);
+  display: block;
+  font-size: 28px;
+  margin: 5px 0;
+}
+
+.logic-radar-summary small {
+  color: var(--cyan);
+  font-size: 11px;
+}
+
+.logic-radar-inbox-list {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.logic-radar-inbox-item.radar-high {
+  border-color: rgba(245, 109, 112, 0.55);
+}
+
+.logic-radar-inbox-item.radar-high .archive-item-head span {
+  color: #ff9fa1;
+}
+
+.logic-radar-inbox-item.radar-medium {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.logic-radar-inbox-item.radar-medium .archive-item-head span {
+  color: #f8c36a;
+}
+
 .feedback-inbox-console {
   border-bottom: 1px solid var(--line);
   margin-bottom: 32px;
@@ -4099,6 +4159,11 @@ footer a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .logic-radar-summary,
+  .logic-radar-inbox-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .logic-radar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -4219,7 +4284,9 @@ footer a {
   }
 
   .archive-summary,
-  .archive-list {
+  .archive-list,
+  .logic-radar-summary,
+  .logic-radar-inbox-list {
     grid-template-columns: 1fr;
   }
 

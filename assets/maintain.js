@@ -25,6 +25,8 @@ const sourceSelect = document.querySelector("#sourceChainId");
 const archiveSelect = document.querySelector("#archiveChainId");
 const archiveSummary = document.querySelector("#archiveSummary");
 const archiveList = document.querySelector("#archiveList");
+const logicRadarSummary = document.querySelector("#logicRadarSummary");
+const logicRadarInbox = document.querySelector("#logicRadarInbox");
 const feedbackInbox = document.querySelector("#feedbackInbox");
 const userMembershipList = document.querySelector("#userMembershipList");
 const fileInput = document.querySelector("#chainMarkdownFile");
@@ -126,6 +128,7 @@ async function refreshLibrary(preferredChainId = "") {
     state.archiveChainId = archiveSelect.value;
     await loadLogicCards();
     renderLogicSourceOptions();
+    renderLogicRadarInbox();
     renderArchive();
     renderVerificationMonitors();
     renderCards(search.value);
@@ -347,6 +350,169 @@ function formatDateTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString("zh-CN", { hour12: false });
+}
+
+function renderLogicRadarInbox() {
+  if (!logicRadarSummary || !logicRadarInbox) return;
+  const items = buildLogicRadarInboxItems();
+  const pending = items.filter((item) => item.kind === "pending-verification").length;
+  const changed = items.filter((item) => item.kind === "logic-change").length;
+  const sources = items.filter((item) => item.kind === "new-source").length;
+  logicRadarSummary.innerHTML = `
+    <article><span>待核验</span><strong>${pending}</strong><small>需要人工判断</small></article>
+    <article><span>逻辑变化</span><strong>${changed}</strong><small>研究包/核验触发</small></article>
+    <article><span>最新资料</span><strong>${sources}</strong><small>可继续提炼</small></article>
+    <article><span>覆盖产业链</span><strong>${new Set(items.map((item) => item.chainId)).size}</strong><small>当前雷达范围</small></article>
+  `;
+  if (!items.length) {
+    logicRadarInbox.innerHTML = `<p class="archive-empty">暂无雷达信号。导入研究包、补充资料或完成监控核验后会自动出现在这里。</p>`;
+    return;
+  }
+  logicRadarInbox.innerHTML = items.slice(0, 18).map((item) => `
+    <article class="archive-item logic-radar-inbox-item radar-${escapeHtml(item.priority)}">
+      <div class="archive-item-head">
+        <span>${escapeHtml(item.kindLabel)}</span>
+        <small>${escapeHtml(item.date || "无日期")}</small>
+      </div>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.summary)}</p>
+      <div class="archive-item-meta">
+        <span>${escapeHtml(item.chainTitle)}</span>
+        <span>${escapeHtml(item.priorityLabel)}</span>
+        ${item.source ? `<span>${escapeHtml(item.source)}</span>` : ""}
+      </div>
+      <div class="archive-item-actions">
+        <button type="button" data-radar-chain="${escapeHtml(item.chainId)}" data-radar-target="${escapeHtml(item.target)}">${escapeHtml(item.action)}</button>
+        <a href="./index.html?chain=${encodeURIComponent(item.chainId)}#${escapeHtml(item.publicHash)}" target="_blank" rel="noopener noreferrer">查看公开页</a>
+      </div>
+    </article>
+  `).join("");
+  logicRadarInbox.querySelectorAll("[data-radar-chain]").forEach((button) => {
+    button.addEventListener("click", () =>
+      openRadarTarget(button.dataset.radarChain, button.dataset.radarTarget)
+        .catch((error) => setNotice(error.message, "error"))
+    );
+  });
+}
+
+function buildLogicRadarInboxItems() {
+  return (state.library?.chains || []).flatMap((chain) => [
+    ...pendingVerificationItems(chain),
+    ...logicChangeItems(chain),
+    ...newSourceItems(chain),
+    ...latestVerificationItems(chain)
+  ]).sort((left, right) =>
+    priorityScore(right.priority) - priorityScore(left.priority) ||
+    String(right.date || "").localeCompare(String(left.date || ""))
+  );
+}
+
+function pendingVerificationItems(chain) {
+  return (chain.trackingProfile?.metrics || [])
+    .filter((item) => item.topicTitle && item.id && !item.latestVerification)
+    .map((item) => ({
+      kind: "pending-verification",
+      kindLabel: "待核验",
+      priority: item.executionStatus === "planned" ? "high" : "medium",
+      priorityLabel: item.executionStatus === "planned" ? "新监控项" : trackingStatusLabel(item.executionStatus),
+      chainId: chain.id,
+      chainTitle: chain.title,
+      date: item.updatedAt?.slice(0, 10) || "",
+      title: `${item.topicTitle} · ${item.name}`,
+      summary: item.why || item.logicTitle || "需要补充最新证据并判断逻辑是否强化、减弱或失效。",
+      source: item.logicTitle || "",
+      target: `verification:${item.id}`,
+      publicHash: "updates",
+      action: "去核验"
+    }));
+}
+
+function logicChangeItems(chain) {
+  return (chain.updates || [])
+    .filter((item) => item.logicTrack || item.verificationId || /逻辑|研究|核验|反证|强化|减弱|失效/.test(`${item.signal} ${item.impact}`))
+    .slice(0, 5)
+    .map((item) => ({
+      kind: "logic-change",
+      kindLabel: item.verificationId ? "核验变化" : "逻辑变化",
+      priority: item.verificationId || /失效|反证|减弱/.test(`${item.signal} ${item.impact}`) ? "high" : "medium",
+      priorityLabel: item.confidence || "待判断",
+      chainId: chain.id,
+      chainTitle: chain.title,
+      date: item.date || "",
+      title: item.signal || item.segment || "逻辑变化",
+      summary: item.impact || item.notes || "新的资料或核验改变了产业链判断。",
+      source: item.sourceTitle || "",
+      target: "archive",
+      publicHash: "activity",
+      action: "看档案"
+    }));
+}
+
+function newSourceItems(chain) {
+  return (chain.sources || [])
+    .filter((item) => item.status !== "archived")
+    .sort((left, right) =>
+      String(right.date || right.createdAt || "").localeCompare(String(left.date || left.createdAt || ""))
+    )
+    .slice(0, 3)
+    .map((item) => ({
+      kind: "new-source",
+      kindLabel: "最新资料",
+      priority: item.status === "draft" ? "medium" : "low",
+      priorityLabel: sourceStatusLabel(item.status),
+      chainId: chain.id,
+      chainTitle: chain.title,
+      date: item.date || item.createdAt?.slice(0, 10) || "",
+      title: item.title,
+      summary: item.summary || `${sourceTypeLabel(item.type)} · ${item.platform || "未标平台"}`,
+      source: item.platform || sourceTypeLabel(item.type),
+      target: "archive",
+      publicHash: "activity",
+      action: "看资料"
+    }));
+}
+
+function latestVerificationItems(chain) {
+  return (chain.trackingProfile?.metrics || [])
+    .filter((item) => item.latestVerification)
+    .slice(0, 3)
+    .map((item) => ({
+      kind: "latest-verification",
+      kindLabel: "最近核验",
+      priority: ["challenge", "invalidate", "weaken"].includes(item.latestVerification.result) ? "high" : "low",
+      priorityLabel: verificationResultLabel(item.latestVerification.result),
+      chainId: chain.id,
+      chainTitle: chain.title,
+      date: item.latestVerification.date || "",
+      title: `${item.topicTitle || item.name} · ${item.name}`,
+      summary: item.latestVerification.summary,
+      source: item.latestVerification.sourceTitle || "",
+      target: `verification:${item.id}`,
+      publicHash: "updates",
+      action: "复核"
+    }));
+}
+
+async function openRadarTarget(chainId, target) {
+  state.archiveChainId = chainId;
+  archiveSelect.value = chainId;
+  sourceSelect.value = chainId;
+  logicCardChainSelect.value = chainId;
+  await loadLogicCards();
+  renderLogicSourceOptions();
+  if (target?.startsWith("verification:")) {
+    verificationChainSelect.value = chainId;
+    state.verificationChainId = chainId;
+    renderVerificationMonitors(target.replace(/^verification:/, ""));
+    document.querySelector("#monitor-verifications").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  renderArchive();
+  document.querySelector("#archive").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function priorityScore(priority) {
+  return { high: 3, medium: 2, low: 1 }[priority] || 0;
 }
 
 function researchMonitors(chain) {
