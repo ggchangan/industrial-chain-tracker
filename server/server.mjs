@@ -287,6 +287,19 @@ async function handleApi(context) {
     return;
   }
 
+  if (request.method === "GET" && pathname === "/api/v1/admin/users") {
+    sendJson(response, 200, { users: contentStore.listUsers() });
+    return;
+  }
+
+  const userMembershipMatch = pathname.match(/^\/api\/v1\/admin\/users\/([^/]+)\/membership$/);
+  if (request.method === "PUT" && userMembershipMatch) {
+    const body = await readJsonBody(request, 64 * 1024);
+    const user = await contentStore.updateUserMembership(decodeURIComponent(userMembershipMatch[1]), body);
+    sendJson(response, 200, { user });
+    return;
+  }
+
   const editableFeedbackMatch = pathname.match(/^\/api\/v1\/admin\/feedback\/([a-z0-9-]+)$/);
   if (request.method === "PUT" && editableFeedbackMatch) {
     const body = await readJsonBody(request, 64 * 1024);

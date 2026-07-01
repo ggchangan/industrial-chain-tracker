@@ -75,6 +75,28 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     return publicUserProfile(profile);
   }
 
+  function listUsers() {
+    state.usersById ||= {};
+    return Object.values(state.usersById)
+      .map(publicAdminUserProfile)
+      .sort((left, right) =>
+        String(right.lastSeenAt || right.createdAt || "").localeCompare(String(left.lastSeenAt || left.createdAt || ""))
+      );
+  }
+
+  async function updateUserMembership(userId, input) {
+    state.usersById ||= {};
+    const current = state.usersById[userId];
+    if (!current) throw notFoundError("用户不存在");
+    state.usersById[userId] = normalizeUserProfile({
+      ...current,
+      membership: normalizeMembership(input),
+      updatedAt: new Date().toISOString()
+    });
+    await stateStore.save(state);
+    return publicAdminUserProfile(state.usersById[userId]);
+  }
+
   async function setFavoriteChain(user, chainId, active) {
     assertKnownChain(chainId);
     const profile = ensureUserProfile(user);
@@ -428,6 +450,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     createChain,
     deleteManagedChain,
     getUserProfile,
+    listUsers,
     previewChain: (input) => buildChainDraft({
       ...input,
       id: normalizeId(input.id || "new-chain"),
@@ -449,6 +472,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     saveLogicCard,
     saveReadingProgress,
     updateFeedback,
+    updateUserMembership,
     deleteLogicCard,
     setFavoriteChain,
     setSubscribedChain,
@@ -573,6 +597,22 @@ function publicUserProfile(profile) {
     membership: normalized.membership,
     readingHistory: normalized.readingHistory,
     updatedAt: normalized.updatedAt
+  };
+}
+
+function publicAdminUserProfile(profile) {
+  const normalized = normalizeUserProfile(profile);
+  return {
+    ...publicUserProfile(normalized),
+    openid: normalized.openid,
+    unionid: normalized.unionid,
+    createdAt: normalized.createdAt,
+    lastSeenAt: normalized.lastSeenAt,
+    counts: {
+      favorites: normalized.favorites.chains.length,
+      subscriptions: normalized.subscriptions.chains.length,
+      readingHistory: normalized.readingHistory.length
+    }
   };
 }
 
