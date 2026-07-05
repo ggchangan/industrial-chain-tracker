@@ -5,6 +5,11 @@ const state = {
   sourceAssets: [],
   logicCards: [],
   logicTracks: [],
+  logicRadarFilters: {
+    chainId: "all",
+    priority: "all",
+    kind: "all"
+  },
   feedbackItems: [],
   users: [],
   packagePayload: null,
@@ -27,6 +32,9 @@ const archiveSummary = document.querySelector("#archiveSummary");
 const archiveList = document.querySelector("#archiveList");
 const logicRadarSummary = document.querySelector("#logicRadarSummary");
 const logicRadarInbox = document.querySelector("#logicRadarInbox");
+const logicRadarChainFilter = document.querySelector("#logicRadarChainFilter");
+const logicRadarPriorityFilter = document.querySelector("#logicRadarPriorityFilter");
+const logicRadarKindFilter = document.querySelector("#logicRadarKindFilter");
 const feedbackInbox = document.querySelector("#feedbackInbox");
 const userMembershipList = document.querySelector("#userMembershipList");
 const fileInput = document.querySelector("#chainMarkdownFile");
@@ -80,6 +88,9 @@ async function initialize() {
   sourceForm.addEventListener("submit", addSource);
   updateForm.addEventListener("submit", addUpdate);
   parseUpdateShare.addEventListener("click", preprocessUpdateShareText);
+  logicRadarChainFilter.addEventListener("change", updateLogicRadarFilters);
+  logicRadarPriorityFilter.addEventListener("change", updateLogicRadarFilters);
+  logicRadarKindFilter.addEventListener("change", updateLogicRadarFilters);
   cancelSourceEdit.addEventListener("click", resetSourceForm);
   cancelUpdateEdit.addEventListener("click", resetUpdateForm);
   logicCardForm.addEventListener("submit", saveLogicCard);
@@ -120,6 +131,7 @@ async function refreshLibrary(preferredChainId = "") {
     renderChainOptions(archiveSelect, state.archiveChainId || preferredChainId || archiveSelect.value);
     renderChainOptions(logicCardChainSelect, state.archiveChainId || preferredChainId || logicCardChainSelect.value);
     renderChainOptions(packageChainSelect, preferredChainId || packageChainSelect.value);
+    renderLogicRadarFilterOptions();
     renderChainOptions(
       verificationChainSelect,
       state.verificationChainId || preferredChainId || verificationChainSelect.value
@@ -354,7 +366,8 @@ function formatDateTime(value) {
 
 function renderLogicRadarInbox() {
   if (!logicRadarSummary || !logicRadarInbox) return;
-  const items = buildLogicRadarInboxItems();
+  const allItems = buildLogicRadarInboxItems();
+  const items = filterLogicRadarItems(allItems);
   const pending = items.filter((item) => item.kind === "pending-verification").length;
   const changed = items.filter((item) => item.kind === "logic-change").length;
   const sources = items.filter((item) => item.kind === "new-source").length;
@@ -362,10 +375,10 @@ function renderLogicRadarInbox() {
     <article><span>待核验</span><strong>${pending}</strong><small>需要人工判断</small></article>
     <article><span>逻辑变化</span><strong>${changed}</strong><small>研究包/核验触发</small></article>
     <article><span>最新资料</span><strong>${sources}</strong><small>可继续提炼</small></article>
-    <article><span>覆盖产业链</span><strong>${new Set(items.map((item) => item.chainId)).size}</strong><small>当前雷达范围</small></article>
+    <article><span>筛选结果</span><strong>${items.length}</strong><small>共 ${allItems.length} 条信号</small></article>
   `;
   if (!items.length) {
-    logicRadarInbox.innerHTML = `<p class="archive-empty">暂无雷达信号。导入研究包、补充资料或完成监控核验后会自动出现在这里。</p>`;
+    logicRadarInbox.innerHTML = `<p class="archive-empty">当前筛选条件下暂无雷达信号。可以切回全部产业链、全部优先级或全部信号查看。</p>`;
     return;
   }
   logicRadarInbox.innerHTML = items.slice(0, 18).map((item) => `
@@ -395,6 +408,40 @@ function renderLogicRadarInbox() {
   });
 }
 
+function updateLogicRadarFilters() {
+  state.logicRadarFilters = {
+    chainId: logicRadarChainFilter.value || "all",
+    priority: logicRadarPriorityFilter.value || "all",
+    kind: logicRadarKindFilter.value || "all"
+  };
+  renderLogicRadarInbox();
+}
+
+function renderLogicRadarFilterOptions() {
+  const current = state.logicRadarFilters.chainId || "all";
+  logicRadarChainFilter.innerHTML = [
+    `<option value="all">全部产业链</option>`,
+    ...state.library.chains.map((chain) =>
+      `<option value="${escapeHtml(chain.id)}">${escapeHtml(chain.title)}</option>`
+    )
+  ].join("");
+  logicRadarChainFilter.value = [...logicRadarChainFilter.options].some((option) => option.value === current)
+    ? current
+    : "all";
+  state.logicRadarFilters.chainId = logicRadarChainFilter.value;
+  logicRadarPriorityFilter.value = state.logicRadarFilters.priority || "all";
+  logicRadarKindFilter.value = state.logicRadarFilters.kind || "all";
+}
+
+function filterLogicRadarItems(items) {
+  const { chainId, priority, kind } = state.logicRadarFilters;
+  return items.filter((item) =>
+    (chainId === "all" || item.chainId === chainId) &&
+    (priority === "all" || item.priority === priority) &&
+    (kind === "all" || item.kind === kind)
+  );
+}
+
 function buildLogicRadarInboxItems() {
   return (state.library?.chains || []).flatMap((chain) => [
     ...pendingVerificationItems(chain),
@@ -413,7 +460,7 @@ function pendingVerificationItems(chain) {
     .map((item) => ({
       kind: "pending-verification",
       kindLabel: "待核验",
-      priority: item.executionStatus === "planned" ? "high" : "medium",
+      priority: radarPriorityForMonitor(item),
       priorityLabel: item.executionStatus === "planned" ? "新监控项" : trackingStatusLabel(item.executionStatus),
       chainId: chain.id,
       chainTitle: chain.title,
@@ -458,7 +505,7 @@ function newSourceItems(chain) {
     .map((item) => ({
       kind: "new-source",
       kindLabel: "最新资料",
-      priority: item.status === "draft" ? "medium" : "low",
+      priority: radarPriorityForSource(item),
       priorityLabel: sourceStatusLabel(item.status),
       chainId: chain.id,
       chainTitle: chain.title,
@@ -513,6 +560,21 @@ async function openRadarTarget(chainId, target) {
 
 function priorityScore(priority) {
   return { high: 3, medium: 2, low: 1 }[priority] || 0;
+}
+
+function radarPriorityForMonitor(item) {
+  const text = `${item.name} ${item.why} ${item.topicTitle} ${item.logicTitle} ${(item.signals || []).join(" ")}`;
+  if (item.executionStatus === "planned") return "high";
+  if (/失效|反证|减弱|订单|量产|价格|招标|客户|产能|良率/.test(text)) return "high";
+  if (item.executionStatus === "active") return "medium";
+  return "low";
+}
+
+function radarPriorityForSource(item) {
+  const text = `${item.title} ${item.summary} ${item.segment} ${(item.tags || []).join(" ")}`;
+  if (/订单|量产|涨价|降价|招标|中标|业绩|产能|良率|客户|英伟达|华为|CPO|AI/.test(text)) return "high";
+  if (item.status === "draft") return "medium";
+  return "low";
 }
 
 function researchMonitors(chain) {
