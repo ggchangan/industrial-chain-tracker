@@ -1097,6 +1097,143 @@ main {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.logic-overview {
+  margin-bottom: 24px;
+}
+
+.logic-overview-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.logic-overview-summary article {
+  background: rgba(8, 18, 32, 0.62);
+  border: 1px solid var(--line);
+  padding: 15px;
+}
+
+.logic-overview-summary span {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.logic-overview-summary strong {
+  color: var(--text);
+  display: block;
+  font-size: 28px;
+  margin: 4px 0;
+}
+
+.logic-overview-summary small {
+  color: var(--cyan);
+  font-size: 11px;
+}
+
+.logic-overview-map {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.logic-overview-node {
+  background: rgba(8, 18, 32, 0.58);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cyan);
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  padding: 16px;
+}
+
+.logic-overview-node.status-base {
+  border-left-color: var(--cyan);
+}
+
+.logic-overview-node.status-strengthen,
+.logic-overview-node.status-stable {
+  border-left-color: var(--green);
+}
+
+.logic-overview-node.status-weaken,
+.logic-overview-node.status-challenge {
+  border-left-color: var(--amber);
+}
+
+.logic-overview-node.status-invalidate {
+  border-left-color: #fb7185;
+}
+
+.logic-overview-node-head,
+.logic-overview-meta,
+.logic-overview-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.logic-overview-node-head {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.logic-overview-node-head span {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.logic-overview-node-head em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.logic-overview-node h3 {
+  font-size: 17px;
+  line-height: 1.42;
+  margin: 0 0 8px;
+}
+
+.logic-overview-node p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.logic-overview-meta {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.logic-overview-actions {
+  margin-top: 12px;
+}
+
+.logic-overview-actions button {
+  background: rgba(20, 33, 48, 0.74);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #cbd5e1;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+.logic-overview-actions button:hover {
+  border-color: var(--cyan);
+}
+
 .logic-section-label {
   color: var(--cyan);
   font-size: 12px;
@@ -4344,6 +4481,7 @@ footer a {
 
   .chain-grid,
   .logic-grid,
+  .logic-overview-map,
   .tracking-grid,
   .workbench-grid,
   .stock-camp-summary,
@@ -4360,6 +4498,7 @@ footer a {
   }
 
   .logic-radar-summary,
+  .logic-overview-summary,
   .logic-radar-inbox-list,
   .logic-radar-filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4503,6 +4642,8 @@ footer a {
 
   .archive-summary,
   .archive-list,
+  .logic-overview-map,
+  .logic-overview-summary,
   .logic-radar-summary,
   .logic-radar-inbox-list,
   .logic-radar-filters {

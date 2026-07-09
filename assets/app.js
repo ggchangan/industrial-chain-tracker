@@ -1608,6 +1608,7 @@ function renderLockedChain(chain) {
     "#stockCampSummary",
     "#stockCampFilters",
     "#stockCampGrid",
+    "#logicOverview",
     "#logicGrid",
     "#logicTracks",
     "#watchlist",
@@ -2176,10 +2177,14 @@ function renderDiagram(chain) {
 }
 
 function renderLogic(chain) {
+  const overviewRoot = document.querySelector("#logicOverview");
   const root = document.querySelector("#logicGrid");
   const tracksRoot = document.querySelector("#logicTracks");
+  overviewRoot.innerHTML = "";
   root.innerHTML = "";
   tracksRoot.innerHTML = "";
+
+  renderLogicOverview(chain, overviewRoot);
 
   if (chain.logic.length) {
     root.append(el("div", "logic-section-label", "基准逻辑"));
@@ -2211,6 +2216,114 @@ function renderLogic(chain) {
     }
     tracksRoot.append(logicTrack);
   });
+}
+
+function renderLogicOverview(chain, root) {
+  const groups = buildLogicOverviewGroups(chain);
+  if (!groups.length) {
+    root.innerHTML = `<p class="archive-empty">暂无结构化逻辑地图。</p>`;
+    return;
+  }
+
+  const totalInsights = groups.reduce((sum, group) => sum + group.insightCount, 0);
+  const trackedGroups = groups.filter((group) => group.metricCount > 0).length;
+  const alertGroups = groups.filter((group) => ["challenge", "invalidate", "weaken"].includes(group.status)).length;
+  root.innerHTML = `
+    <div class="logic-overview-summary">
+      <article><span>逻辑主题</span><strong>${groups.length}</strong><small>基准 + 研究分组</small></article>
+      <article><span>研究卡片</span><strong>${totalInsights}</strong><small>已沉淀结论</small></article>
+      <article><span>跟踪覆盖</span><strong>${trackedGroups}</strong><small>关联监控项</small></article>
+      <article><span>需要复核</span><strong>${alertGroups}</strong><small>反证/减弱/失效</small></article>
+    </div>
+    <div class="logic-overview-map">
+      ${groups.map((group, index) => `
+        <article class="logic-overview-node status-${escapeHtml(group.status || "base")}">
+          <div class="logic-overview-node-head">
+            <span>${escapeHtml(logicOverviewStatusLabel(group.status))}</span>
+            <em>${String(index + 1).padStart(2, "0")}</em>
+          </div>
+          <h3>${escapeHtml(group.title)}</h3>
+          <p>${escapeHtml(group.summary)}</p>
+          <div class="logic-overview-meta">
+            <span>${group.insightCount} 条逻辑卡</span>
+            <span>${group.evidenceCount} 条证据</span>
+            <span>${group.metricCount} 个监控项</span>
+          </div>
+          <div class="logic-overview-actions">
+            <button type="button" data-logic-overview-target="${escapeHtml(group.target)}">查看逻辑</button>
+            ${group.evidenceTarget ? `<button type="button" data-logic-overview-target="${escapeHtml(group.evidenceTarget)}">证据链</button>` : ""}
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+
+  root.querySelectorAll("[data-logic-overview-target]").forEach((button) => {
+    button.addEventListener("click", () => scrollToWorkbenchTarget(button.dataset.logicOverviewTarget));
+  });
+}
+
+function buildLogicOverviewGroups(chain) {
+  const timeline = buildSourceTimeline(chain);
+  const baseGroups = (chain.logic || []).map((item, index) => {
+    const node = logicMapNodeFromBase(chain, item, index);
+    return {
+      title: item.title,
+      summary: item.body,
+      status: "base",
+      target: node.target,
+      evidenceTarget: timeline.some((source) => source.logicTarget === node.target || source.logicTitle === item.title)
+        ? "#activity"
+        : "",
+      evidenceCount: node.evidenceCount,
+      metricCount: node.metricCount,
+      insightCount: 0
+    };
+  });
+  const researchGroups = (chain.logicTracks || []).map((track) => {
+    const insights = (track.coreInsights || []).filter((item) => item.status !== "draft");
+    const text = compactText([
+      track.title,
+      track.summary,
+      insights.map((item) => [item.title, item.summary, item.conclusion])
+    ]);
+    const status = aggregateLogicOverviewStatus(insights.map((item) => item.verificationStatus || item.status));
+    const evidence = timeline.filter((source) =>
+      source.logicTarget === `logic-track-${track.id}` ||
+      normalize(compactText([source.title, source.summary, source.logicTitle])).includes(normalize(track.title))
+    );
+    return {
+      title: track.title,
+      summary: track.summary || insights[0]?.summary || "该主题已经沉淀为近期研究逻辑。",
+      status,
+      target: `logic-track-${track.id}`,
+      evidenceTarget: evidence[0]?.href ? "#activity" : "",
+      evidenceCount: evidence.length + insights.reduce((sum, item) => sum + (item.sources?.length || 0), 0),
+      metricCount: relatedMetricsForText(chain, text).length,
+      insightCount: insights.length
+    };
+  }).filter((group) => group.insightCount || group.summary);
+  return [...researchGroups, ...baseGroups].slice(0, 10);
+}
+
+function aggregateLogicOverviewStatus(statuses) {
+  for (const status of ["invalidate", "challenge", "weaken", "strengthen", "stable"]) {
+    if (statuses.includes(status)) return status;
+  }
+  return statuses.some(Boolean) ? statuses.find(Boolean) : "research";
+}
+
+function logicOverviewStatusLabel(status) {
+  return {
+    base: "基准骨架",
+    research: "近期研究",
+    strengthen: "核验强化",
+    stable: "核验稳定",
+    weaken: "核验减弱",
+    challenge: "出现反证",
+    invalidate: "逻辑失效",
+    draft: "草稿"
+  }[status] || "近期研究";
 }
 
 function renderStockCamp(chain) {
