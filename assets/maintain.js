@@ -1104,6 +1104,7 @@ function renderArchive() {
         </div>
         <div class="archive-item-actions">
           <button type="button" data-edit-update="${escapeHtml(update.id)}">编辑动态</button>
+          <button type="button" data-create-logic-from-update="${escapeHtml(update.id)}">沉淀逻辑卡</button>
         </div>
       </article>
     `).join("")}
@@ -1132,6 +1133,9 @@ function renderArchive() {
   });
   archiveList.querySelectorAll("[data-edit-update]").forEach((button) => {
     button.addEventListener("click", () => editUpdate(chain.id, button.dataset.editUpdate));
+  });
+  archiveList.querySelectorAll("[data-create-logic-from-update]").forEach((button) => {
+    button.addEventListener("click", () => startLogicCardFromUpdate(chain.id, button.dataset.createLogicFromUpdate));
   });
 }
 
@@ -1614,6 +1618,48 @@ function startLogicCardFromSource(chainId, sourceId) {
   logicCardForm.elements.title.focus();
 }
 
+function startLogicCardFromUpdate(chainId, updateId) {
+  const chain = state.library.chains.find((item) => item.id === chainId);
+  const update = chain?.updates?.find((item) => item.id === updateId);
+  if (!update) {
+    setNotice("未找到这条动态。", "error");
+    return;
+  }
+  resetLogicCardForm(chainId);
+  const sourceId = findSourceIdForUpdate(chain, update);
+  renderLogicSourceOptions(sourceId);
+  logicCardForm.elements.sourceId.value = sourceId;
+  logicCardForm.elements.trackId.value = update.logicTrack?.id || logicTrackIdFromUpdate(chainId, update);
+  logicCardForm.elements.trackTitle.value = update.logicTrack?.role
+    ? `${update.segment || chain.shortTitle || chain.title} · ${update.logicTrack.role}`
+    : `${update.segment || chain.shortTitle || chain.title}逻辑变化`;
+  logicCardForm.elements.trackSummary.value = update.logicTrack?.contribution || update.impact || update.signal;
+  logicCardForm.elements.kicker.value = update.type || "动态沉淀";
+  logicCardForm.elements.display.value = "points";
+  logicCardForm.elements.title.value = update.signal;
+  logicCardForm.elements.summary.value = update.impact;
+  logicCardForm.elements.conclusion.value = [
+    update.confidence ? `置信度：${update.confidence}` : "",
+    update.notes || ""
+  ].filter(Boolean).join("\n");
+  logicCardForm.elements.segments.value = update.segment || "";
+  logicCardForm.elements.articleAnchor.value = "";
+  logicCardContent.value = JSON.stringify({
+    points: [
+      { label: "核心变化", description: update.signal },
+      { label: "产业链影响", description: update.impact },
+      { label: "后续观察", description: update.notes || "继续跟踪证据变化和市场验证。" }
+    ]
+  }, null, 2);
+  updateLogicContentHint();
+  document.querySelector("#logicCardFormTitle").textContent = "从动态沉淀逻辑卡";
+  logicCardForm.querySelector("button[type='submit']").textContent = "保存逻辑卡草稿";
+  cancelLogicCardEdit.hidden = false;
+  document.querySelector("#logic-cards").scrollIntoView({ behavior: "smooth", block: "start" });
+  logicCardForm.elements.summary.focus();
+  setNotice("已根据动态追踪预填逻辑卡草稿，请检查结构化内容后保存。", "success");
+}
+
 function editLogicCard(cardId) {
   const card = state.logicCards.find((item) => item.id === cardId);
   if (!card) return;
@@ -1796,6 +1842,34 @@ function findLogicCardSourceId(chain, card) {
     sourceUrls.has(normalizeAdminUrl(source.markdownUrl)) ||
     sourceUrls.has(normalizeAdminUrl(source.originalUrl))
   )?.id || "";
+}
+
+function findSourceIdForUpdate(chain, update) {
+  const updateUrl = normalizeAdminUrl(update.sourceUrl);
+  const updateTitle = String(update.sourceTitle || "").trim();
+  return (chain?.sources || []).find((source) =>
+    updateUrl && (
+      normalizeAdminUrl(source.markdownUrl) === updateUrl ||
+      normalizeAdminUrl(source.originalUrl) === updateUrl ||
+      normalizeAdminUrl(source.articleUrl) === updateUrl
+    )
+  )?.id || (chain?.sources || []).find((source) =>
+    updateTitle && String(source.title || "").trim() === updateTitle
+  )?.id || "";
+}
+
+function logicTrackIdFromUpdate(chainId, update) {
+  return `${chainId}-${normalizeLogicIdPart(update.segment || update.type || "logic")}-track`;
+}
+
+function normalizeLogicIdPart(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fa5-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 48) || "logic";
 }
 
 function normalizeAdminUrl(value) {
