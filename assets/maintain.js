@@ -12,6 +12,7 @@ const state = {
     decision: "all"
   },
   radarDecisions: {},
+  radarVerificationTasks: [],
   feedbackItems: [],
   users: [],
   packagePayload: null,
@@ -66,6 +67,7 @@ const verificationForm = document.querySelector("#monitorVerificationForm");
 const verificationChainSelect = document.querySelector("#verificationChainId");
 const verificationMonitorSelect = document.querySelector("#verificationMonitorId");
 const verificationMonitorPreview = document.querySelector("#verificationMonitorPreview");
+const radarVerificationTasks = document.querySelector("#radarVerificationTasks");
 const verificationHistoryList = document.querySelector("#verificationHistoryList");
 
 initialize();
@@ -121,6 +123,7 @@ async function initialize() {
   renderSourceIllustrations();
   await refreshLibrary();
   await loadRadarDecisions();
+  await loadRadarVerificationTasks();
   await loadFeedback();
   await loadUsers();
   resetLogicCardForm(state.archiveChainId);
@@ -148,6 +151,7 @@ async function refreshLibrary(preferredChainId = "") {
     renderLogicRadarInbox();
     renderArchive();
     renderVerificationMonitors();
+    renderRadarVerificationTasks();
     renderCards(search.value);
     document.querySelector("#maintainUpdatedAt").textContent = `更新：${state.library.meta.updated}`;
   } catch (error) {
@@ -180,6 +184,16 @@ async function loadRadarDecisions() {
     const payload = await apiRequest("./api/v1/admin/radar-decisions");
     state.radarDecisions = Object.fromEntries((payload.decisions || []).map((item) => [item.id, item]));
     renderLogicRadarInbox();
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+async function loadRadarVerificationTasks() {
+  try {
+    const payload = await apiRequest("./api/v1/admin/radar-verification-tasks");
+    state.radarVerificationTasks = payload.tasks || [];
+    renderRadarVerificationTasks();
   } catch (error) {
     setNotice(error.message, "error");
   }
@@ -411,6 +425,7 @@ function renderLogicRadarInbox() {
       </div>
       <div class="archive-item-actions">
         <button type="button" data-radar-chain="${escapeHtml(item.chainId)}" data-radar-target="${escapeHtml(item.target)}">${escapeHtml(item.action)}</button>
+        <button type="button" data-radar-task="${escapeHtml(item.id)}">转入核验任务</button>
         <a href="./index.html?chain=${encodeURIComponent(item.chainId)}#${escapeHtml(item.publicHash)}" target="_blank" rel="noopener noreferrer">查看公开页</a>
       </div>
       <div class="radar-decision-actions">
@@ -437,6 +452,12 @@ function renderLogicRadarInbox() {
   logicRadarInbox.querySelectorAll("[data-radar-decision-save]").forEach((button) => {
     button.addEventListener("click", () =>
       saveRadarDecision(button.dataset.radarDecisionSave)
+        .catch((error) => setNotice(error.message, "error"))
+    );
+  });
+  logicRadarInbox.querySelectorAll("[data-radar-task]").forEach((button) => {
+    button.addEventListener("click", () =>
+      createRadarVerificationTask(button.dataset.radarTask)
         .catch((error) => setNotice(error.message, "error"))
     );
   });
@@ -636,6 +657,108 @@ async function saveRadarDecision(decisionId) {
   setNotice("雷达项处理状态已保存。", "success");
 }
 
+async function createRadarVerificationTask(radarId) {
+  const item = buildLogicRadarInboxItems().find((entry) => entry.id === radarId);
+  if (!item) throw new Error("雷达项不存在，请刷新后重试。");
+  const payload = await apiRequest("./api/v1/admin/radar-verification-tasks", {
+    method: "POST",
+    body: JSON.stringify({
+      radarId: item.id,
+      chainId: item.chainId,
+      kind: item.kind,
+      priority: item.priority,
+      title: item.title,
+      summary: item.summary,
+      source: item.source,
+      target: item.target,
+      notes: item.decision.notes || ""
+    })
+  });
+  const index = state.radarVerificationTasks.findIndex((task) => task.id === payload.task.id);
+  if (index >= 0) {
+    state.radarVerificationTasks[index] = payload.task;
+  } else {
+    state.radarVerificationTasks.unshift(payload.task);
+  }
+  state.radarDecisions[item.id] = {
+    ...(state.radarDecisions[item.id] || {}),
+    id: item.id,
+    status: "verification",
+    notes: payload.task.notes || `已转入核验任务：${payload.task.title}`
+  };
+  renderLogicRadarInbox();
+  renderRadarVerificationTasks();
+  setNotice("已转入核验任务。", "success");
+}
+
+function renderRadarVerificationTasks() {
+  if (!radarVerificationTasks) return;
+  const tasks = state.radarVerificationTasks || [];
+  if (!tasks.length) {
+    radarVerificationTasks.innerHTML = `<p class="archive-empty">暂无从雷达转入的核验任务。</p>`;
+    return;
+  }
+  radarVerificationTasks.innerHTML = tasks.slice(0, 12).map((task) => `
+    <article class="archive-item radar-verification-task status-${escapeHtml(task.status)} priority-${escapeHtml(task.priority)}">
+      <div class="archive-item-head">
+        <span>${escapeHtml(radarTaskStatusLabel(task.status))} · ${escapeHtml(radarKindLabel(task.kind))}</span>
+        <small>${escapeHtml(formatDateTime(task.createdAt))}</small>
+      </div>
+      <h3>${escapeHtml(task.title)}</h3>
+      <p>${escapeHtml(task.summary)}</p>
+      <div class="archive-item-meta">
+        <span>${escapeHtml(task.chainTitle)}</span>
+        <span>${escapeHtml(radarPriorityLabel(task.priority))}</span>
+        ${task.source ? `<span>${escapeHtml(task.source)}</span>` : ""}
+      </div>
+      <div class="radar-decision-actions radar-task-actions">
+        <label>
+          <span>任务状态</span>
+          <select data-radar-task-status="${escapeHtml(task.id)}">
+            ${radarTaskStatusOptions(task.status)}
+          </select>
+        </label>
+        <label>
+          <span>任务备注</span>
+          <input data-radar-task-notes="${escapeHtml(task.id)}" type="text" value="${escapeHtml(task.notes || "")}" placeholder="记录核验计划、证据来源或处理结论" />
+        </label>
+        <button type="button" data-radar-task-save="${escapeHtml(task.id)}">保存任务</button>
+      </div>
+      <div class="archive-item-actions">
+        <button type="button" data-radar-task-open="${escapeHtml(task.id)}">处理任务</button>
+      </div>
+    </article>
+  `).join("");
+  radarVerificationTasks.querySelectorAll("[data-radar-task-save]").forEach((button) => {
+    button.addEventListener("click", () =>
+      saveRadarVerificationTask(button.dataset.radarTaskSave)
+        .catch((error) => setNotice(error.message, "error"))
+    );
+  });
+  radarVerificationTasks.querySelectorAll("[data-radar-task-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const task = state.radarVerificationTasks.find((item) => item.id === button.dataset.radarTaskOpen);
+      if (!task) return;
+      openRadarTarget(task.chainId, task.target)
+        .catch((error) => setNotice(error.message, "error"));
+    });
+  });
+}
+
+async function saveRadarVerificationTask(taskId) {
+  const escaped = CSS.escape(taskId);
+  const status = radarVerificationTasks.querySelector(`[data-radar-task-status="${escaped}"]`)?.value || "open";
+  const notes = radarVerificationTasks.querySelector(`[data-radar-task-notes="${escaped}"]`)?.value || "";
+  const payload = await apiRequest(`./api/v1/admin/radar-verification-tasks/${encodeURIComponent(taskId)}`, {
+    method: "PUT",
+    body: JSON.stringify({ status, notes })
+  });
+  const index = state.radarVerificationTasks.findIndex((task) => task.id === taskId);
+  if (index >= 0) state.radarVerificationTasks[index] = payload.task;
+  renderRadarVerificationTasks();
+  setNotice("核验任务已更新。", "success");
+}
+
 function radarDecisionLabel(status) {
   return {
     open: "待处理",
@@ -649,6 +772,38 @@ function radarDecisionOptions(current) {
   return ["open", "reviewed", "verification", "ignored"].map((status) =>
     `<option value="${status}" ${status === current ? "selected" : ""}>${escapeHtml(radarDecisionLabel(status))}</option>`
   ).join("");
+}
+
+function radarTaskStatusLabel(status) {
+  return {
+    open: "待处理",
+    doing: "核验中",
+    done: "已完成",
+    ignored: "已忽略"
+  }[status] || "待处理";
+}
+
+function radarTaskStatusOptions(current) {
+  return ["open", "doing", "done", "ignored"].map((status) =>
+    `<option value="${status}" ${status === current ? "selected" : ""}>${escapeHtml(radarTaskStatusLabel(status))}</option>`
+  ).join("");
+}
+
+function radarKindLabel(kind) {
+  return {
+    "pending-verification": "待核验",
+    "logic-change": "逻辑变化",
+    "new-source": "最新资料",
+    "latest-verification": "最近核验"
+  }[kind] || "雷达信号";
+}
+
+function radarPriorityLabel(priority) {
+  return {
+    high: "高优先级",
+    medium: "中优先级",
+    low: "低优先级"
+  }[priority] || "中优先级";
 }
 
 function priorityScore(priority) {

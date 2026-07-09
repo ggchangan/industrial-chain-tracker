@@ -338,6 +338,44 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     return structuredClone(Object.values(state.radarDecisionsById));
   }
 
+  function listRadarVerificationTasks() {
+    state.radarVerificationTasksById ||= {};
+    return structuredClone(Object.values(state.radarVerificationTasksById).sort((left, right) =>
+      String(right.createdAt || "").localeCompare(String(left.createdAt || ""))
+    ));
+  }
+
+  async function createRadarVerificationTask(input) {
+    const task = normalizeRadarVerificationTask(input, library);
+    state.radarVerificationTasksById ||= {};
+    const existing = Object.values(state.radarVerificationTasksById)
+      .find((item) => item.radarId === task.radarId);
+    const savedTask = existing
+      ? normalizeRadarVerificationTaskUpdate(existing, { ...task, status: existing.status })
+      : task;
+    state.radarVerificationTasksById[savedTask.id] = savedTask;
+    if (task.radarId) {
+      state.radarDecisionsById ||= {};
+      state.radarDecisionsById[task.radarId] = normalizeRadarDecision(task.radarId, {
+        ...state.radarDecisionsById[task.radarId],
+        status: "verification",
+        notes: savedTask.notes || `已转入核验任务：${savedTask.title}`
+      });
+    }
+    await stateStore.save(state);
+    return structuredClone(savedTask);
+  }
+
+  async function updateRadarVerificationTask(taskId, input) {
+    state.radarVerificationTasksById ||= {};
+    const current = state.radarVerificationTasksById[taskId];
+    if (!current) throw notFoundError("核验任务不存在");
+    const task = normalizeRadarVerificationTaskUpdate(current, input);
+    state.radarVerificationTasksById[task.id] = task;
+    await stateStore.save(state);
+    return structuredClone(task);
+  }
+
   async function updateRadarDecision(decisionId, input) {
     state.radarDecisionsById ||= {};
     const decision = normalizeRadarDecision(decisionId, {
@@ -481,6 +519,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     addFeedback,
     listFeedback,
     listRadarDecisions,
+    listRadarVerificationTasks,
     listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
@@ -490,6 +529,8 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     saveReadingProgress,
     updateFeedback,
     updateRadarDecision,
+    createRadarVerificationTask,
+    updateRadarVerificationTask,
     updateUserMembership,
     deleteLogicCard,
     setFavoriteChain,
@@ -568,6 +609,60 @@ function normalizeRadarDecision(decisionId, input = {}) {
   };
 }
 
+function normalizeRadarVerificationTask(input = {}, library) {
+  const chainId = required(input.chainId, "请选择产业链");
+  const chain = library.chains.find((item) => item.id === chainId);
+  if (!chain) throw validationError("产业链不存在");
+  const radarId = required(input.radarId, "雷达项 ID 无效");
+  if (radarId.length > 240) throw validationError("雷达项 ID 无效");
+  const title = required(input.title, "请输入任务标题");
+  if (title.length > 200) throw validationError("任务标题不能超过 200 字");
+  const summary = required(input.summary, "请输入任务摘要");
+  if (summary.length > 2000) throw validationError("任务摘要不能超过 2000 字");
+  const now = new Date().toISOString();
+  return {
+    id: `radar-task-${crypto.randomUUID().slice(0, 12)}`,
+    radarId,
+    chainId,
+    chainTitle: chain.title,
+    kind: normalizeRadarTaskKind(input.kind),
+    priority: normalizeRadarTaskPriority(input.priority),
+    status: "open",
+    title,
+    summary,
+    source: String(input.source || "").trim().slice(0, 240),
+    target: String(input.target || "").trim().slice(0, 240),
+    notes: String(input.notes || "").trim().slice(0, 2000),
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+function normalizeRadarVerificationTaskUpdate(current, input = {}) {
+  const status = String(input.status || current.status || "open").trim();
+  if (!radarVerificationTaskStatuses().has(status)) throw validationError("核验任务状态无效");
+  const notes = String(input.notes ?? current.notes ?? "").trim();
+  if (notes.length > 2000) throw validationError("任务备注不能超过 2000 字");
+  return {
+    ...current,
+    status,
+    notes,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function normalizeRadarTaskKind(value) {
+  const kind = String(value || "logic-change").trim();
+  return ["pending-verification", "logic-change", "new-source", "latest-verification"].includes(kind)
+    ? kind
+    : "logic-change";
+}
+
+function normalizeRadarTaskPriority(value) {
+  const priority = String(value || "medium").trim();
+  return ["high", "medium", "low"].includes(priority) ? priority : "medium";
+}
+
 function feedbackTypes() {
   return new Set(["suggestion", "bug", "content", "cooperation", "other"]);
 }
@@ -578,6 +673,10 @@ function feedbackStatuses() {
 
 function radarDecisionStatuses() {
   return new Set(["open", "reviewed", "verification", "ignored"]);
+}
+
+function radarVerificationTaskStatuses() {
+  return new Set(["open", "doing", "done", "ignored"]);
 }
 
 function normalizeUserProfile(profile = {}) {
