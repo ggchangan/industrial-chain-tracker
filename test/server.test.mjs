@@ -354,6 +354,61 @@ test("admin can persist logic radar decisions", async () => {
   assert.equal(decisions.decisions[0].notes, "转入待办核验。");
 });
 
+test("admin can turn radar signals into verification tasks", async () => {
+  const denied = await fetch(`${baseUrl}/api/v1/admin/radar-verification-tasks`);
+  assert.equal(denied.status, 401);
+
+  const login = await fetch(`${baseUrl}/api/v1/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: "correct-horse-battery" })
+  });
+  const cookie = login.headers.get("set-cookie").split(";")[0];
+  const radarId = "logic-change:optical-module:archive:2026-07-02:cpo-glass-bridge";
+
+  const created = await fetch(`${baseUrl}/api/v1/admin/radar-verification-tasks`, {
+    method: "POST",
+    headers: { Cookie: cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      radarId,
+      chainId: "optical-module",
+      kind: "logic-change",
+      priority: "high",
+      title: "CPO玻璃桥量产线索",
+      summary: "康宁玻璃桥可能改变光通信封装路径，需要核验量产节奏和受益环节。",
+      source: "机构调研日记",
+      target: "archive",
+      notes: "先找券商研报交叉验证。"
+    })
+  });
+  assert.equal(created.status, 201);
+  const createdPayload = await created.json();
+  assert.equal(createdPayload.task.radarId, radarId);
+  assert.equal(createdPayload.task.status, "open");
+  assert.equal(createdPayload.task.chainTitle, "光模块产业链");
+
+  const decisions = await fetch(`${baseUrl}/api/v1/admin/radar-decisions`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  const decision = decisions.decisions.find((item) => item.id === radarId);
+  assert.equal(decision.status, "verification");
+
+  const updated = await fetch(`${baseUrl}/api/v1/admin/radar-verification-tasks/${createdPayload.task.id}`, {
+    method: "PUT",
+    headers: { Cookie: cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "doing", notes: "已找到两篇研报，等待整理结论。" })
+  });
+  assert.equal(updated.status, 200);
+  const updatedPayload = await updated.json();
+  assert.equal(updatedPayload.task.status, "doing");
+  assert.equal(updatedPayload.task.notes, "已找到两篇研报，等待整理结论。");
+
+  const tasks = await fetch(`${baseUrl}/api/v1/admin/radar-verification-tasks`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.equal(tasks.tasks[0].id, createdPayload.task.id);
+});
+
 test("runtime secrets and server source are never served as static files", async () => {
   const envResponse = await fetch(`${baseUrl}/.env`);
   const sourceResponse = await fetch(`${baseUrl}/server/server.mjs`);

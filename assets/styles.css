@@ -3955,6 +3955,34 @@ button.propagation-signal:hover {
   color: var(--muted);
 }
 
+.radar-verification-tasks {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+}
+
+.radar-verification-task-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.radar-verification-task {
+  border-color: rgba(148, 163, 184, 0.24);
+}
+
+.radar-verification-task.priority-high {
+  border-color: rgba(245, 109, 112, 0.5);
+}
+
+.radar-verification-task.status-done {
+  opacity: 0.74;
+}
+
+.radar-task-actions {
+  grid-template-columns: minmax(120px, 160px) minmax(0, 1fr) auto;
+}
+
 .verification-signals {
   display: grid;
   gap: 10px;
@@ -4312,6 +4340,10 @@ footer a {
   }
 
   .radar-decision-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .radar-verification-task-list {
     grid-template-columns: 1fr;
   }
 }
