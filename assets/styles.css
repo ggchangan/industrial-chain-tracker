@@ -3210,6 +3210,103 @@ button.propagation-signal:hover {
   color: #ff9fa1;
 }
 
+.insight-brief-console {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+}
+
+.insight-brief-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.insight-brief-summary button {
+  background: rgba(8, 18, 32, 0.72);
+  border: 1px solid var(--line);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 16px;
+  text-align: left;
+}
+
+.insight-brief-summary button:hover {
+  border-color: rgba(39, 217, 232, 0.45);
+}
+
+.insight-brief-summary span {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.insight-brief-summary strong {
+  color: var(--text);
+  display: block;
+  font-size: 28px;
+  margin: 5px 0;
+}
+
+.insight-brief-summary small {
+  color: var(--cyan);
+  font-size: 11px;
+}
+
+.insight-brief-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.insight-brief-item {
+  align-items: start;
+  background: rgba(8, 18, 32, 0.58);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 16px;
+}
+
+.insight-brief-item.priority-chain,
+.insight-brief-item.task {
+  border-color: rgba(245, 158, 11, 0.38);
+}
+
+.insight-brief-item span {
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.insight-brief-item h3 {
+  font-size: 16px;
+  margin: 7px 0;
+}
+
+.insight-brief-item p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.insight-brief-item button {
+  background: transparent;
+  border: 0;
+  color: var(--cyan);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 0;
+  white-space: nowrap;
+}
+
 .archive-workspace {
   border-bottom: 1px solid var(--line);
   margin-bottom: 32px;
@@ -4336,6 +4433,15 @@ footer a {
   }
 
   .membership-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-brief-list,
+  .insight-brief-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-brief-item {
     grid-template-columns: 1fr;
   }
 

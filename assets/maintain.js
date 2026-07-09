@@ -34,6 +34,8 @@ const sourceSelect = document.querySelector("#sourceChainId");
 const archiveSelect = document.querySelector("#archiveChainId");
 const archiveSummary = document.querySelector("#archiveSummary");
 const archiveList = document.querySelector("#archiveList");
+const insightBriefSummary = document.querySelector("#insightBriefSummary");
+const insightBriefList = document.querySelector("#insightBriefList");
 const logicRadarSummary = document.querySelector("#logicRadarSummary");
 const logicRadarInbox = document.querySelector("#logicRadarInbox");
 const logicRadarChainFilter = document.querySelector("#logicRadarChainFilter");
@@ -150,9 +152,11 @@ async function refreshLibrary(preferredChainId = "") {
     await loadLogicCards();
     renderLogicSourceOptions();
     renderLogicRadarInbox();
+    renderInsightBrief();
     renderArchive();
     renderVerificationMonitors();
     renderRadarVerificationTasks();
+    renderInsightBrief();
     renderCards(search.value);
     document.querySelector("#maintainUpdatedAt").textContent = `更新：${state.library.meta.updated}`;
   } catch (error) {
@@ -195,9 +199,177 @@ async function loadRadarVerificationTasks() {
     const payload = await apiRequest("./api/v1/admin/radar-verification-tasks");
     state.radarVerificationTasks = payload.tasks || [];
     renderRadarVerificationTasks();
+    renderInsightBrief();
   } catch (error) {
     setNotice(error.message, "error");
   }
+}
+
+function renderInsightBrief() {
+  if (!insightBriefSummary || !insightBriefList || !state.library) return;
+  const radarItems = buildLogicRadarInboxItems();
+  const openRadar = radarItems.filter((item) => item.decision.status === "open");
+  const activeTasks = (state.radarVerificationTasks || []).filter((task) =>
+    ["open", "doing"].includes(task.status)
+  );
+  const recentUpdates = recentLibraryUpdates(14);
+  const draftCards = currentDraftLogicCards();
+  const priorityChains = buildPriorityChainInsights(radarItems, activeTasks, recentUpdates);
+
+  insightBriefSummary.innerHTML = [
+    insightMetric("待处理雷达", openRadar.length, "未查看/未转核验", "radar-open"),
+    insightMetric("核验任务", activeTasks.length, "待处理或核验中", "tasks"),
+    insightMetric("近14日动态", recentUpdates.length, "已进入时间线", "recent-updates"),
+    insightMetric("逻辑卡草稿", draftCards.length, "当前产业链待发布", "draft-cards")
+  ].join("");
+
+  const cards = [
+    ...priorityChains.slice(0, 3).map((item) => ({
+      type: "priority-chain",
+      title: item.chain.title,
+      meta: `${item.score} 分 · ${item.reasons.join(" / ")}`,
+      body: item.nextAction,
+      action: "查看产业链",
+      chainId: item.chain.id,
+      target: "archive"
+    })),
+    ...activeTasks.slice(0, 2).map((task) => ({
+      type: "task",
+      title: task.title,
+      meta: `${task.chainTitle} · ${radarTaskStatusLabel(task.status)}`,
+      body: task.summary,
+      action: "处理任务",
+      chainId: task.chainId,
+      target: task.target || "archive"
+    })),
+    ...openRadar.slice(0, 2).map((item) => ({
+      type: "radar",
+      title: item.title,
+      meta: `${item.chainTitle} · ${item.kindLabel}`,
+      body: item.summary,
+      action: "查看雷达",
+      chainId: item.chainId,
+      target: "radar"
+    })),
+    ...draftCards.slice(0, 2).map((card) => ({
+      type: "draft",
+      title: card.title,
+      meta: `${card.trackTitle || "逻辑卡"} · 草稿`,
+      body: card.summary,
+      action: "编辑草稿",
+      chainId: state.archiveChainId,
+      target: `logic-card:${card.id}`
+    }))
+  ].slice(0, 8);
+
+  insightBriefList.innerHTML = cards.length
+    ? cards.map((item) => `
+      <article class="insight-brief-item ${escapeHtml(item.type)}">
+        <div>
+          <span>${escapeHtml(item.meta)}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.body || "等待进一步处理。")}</p>
+        </div>
+        <button type="button" data-insight-chain="${escapeHtml(item.chainId || "")}" data-insight-target="${escapeHtml(item.target)}">${escapeHtml(item.action)}</button>
+      </article>
+    `).join("")
+    : `<p class="archive-empty">当前没有紧急事项。可以从研究包、资料归档或动态追踪继续补充产业链证据。</p>`;
+
+  insightBriefSummary.querySelectorAll("[data-insight-metric]").forEach((button) => {
+    button.addEventListener("click", () => openInsightMetric(button.dataset.insightMetric));
+  });
+  insightBriefList.querySelectorAll("[data-insight-target]").forEach((button) => {
+    button.addEventListener("click", () =>
+      openInsightTarget(button.dataset.insightChain, button.dataset.insightTarget)
+        .catch((error) => setNotice(error.message, "error"))
+    );
+  });
+}
+
+function insightMetric(label, value, caption, target) {
+  return `
+    <button type="button" data-insight-metric="${escapeHtml(target)}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <small>${escapeHtml(caption)}</small>
+    </button>
+  `;
+}
+
+function recentLibraryUpdates(days) {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return (state.library?.chains || []).flatMap((chain) =>
+    (chain.updates || []).map((update) => ({ ...update, chainId: chain.id, chainTitle: chain.title }))
+  ).filter((update) => {
+    const time = Date.parse(update.date || "");
+    return Number.isFinite(time) && time >= cutoff;
+  }).sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")));
+}
+
+function currentDraftLogicCards() {
+  return (state.logicCards || []).filter((card) => card.status === "draft");
+}
+
+function buildPriorityChainInsights(radarItems, tasks, updates) {
+  return (state.library?.chains || []).map((chain) => {
+    const chainRadar = radarItems.filter((item) => item.chainId === chain.id && item.decision.status !== "ignored");
+    const chainTasks = tasks.filter((task) => task.chainId === chain.id);
+    const chainUpdates = updates.filter((update) => update.chainId === chain.id);
+    const highRadar = chainRadar.filter((item) => item.priority === "high");
+    const openRadar = chainRadar.filter((item) => item.decision.status === "open");
+    const score = highRadar.length * 4 + openRadar.length * 2 + chainTasks.length * 3 + chainUpdates.length;
+    const reasons = [
+      highRadar.length ? `${highRadar.length} 个高优先级雷达` : "",
+      chainTasks.length ? `${chainTasks.length} 个核验任务` : "",
+      chainUpdates.length ? `${chainUpdates.length} 条近期动态` : ""
+    ].filter(Boolean);
+    return {
+      chain,
+      score,
+      reasons,
+      nextAction: reasons.length ? "建议先处理雷达和核验任务，再把结论沉淀为动态或逻辑卡。" : "暂无明显紧急信号。"
+    };
+  }).filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score || left.chain.title.localeCompare(right.chain.title, "zh-CN"));
+}
+
+function openInsightMetric(target) {
+  if (target === "radar-open") {
+    logicRadarDecisionFilter.value = "open";
+    updateLogicRadarFilters();
+    document.querySelector("#logic-radar-inbox").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  if (target === "tasks") {
+    document.querySelector("#monitor-verifications").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  if (target === "draft-cards") {
+    document.querySelector("#logic-cards").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  document.querySelector("#archive").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function openInsightTarget(chainId, target) {
+  if (target === "radar") {
+    logicRadarChainFilter.value = chainId || "all";
+    logicRadarDecisionFilter.value = "open";
+    updateLogicRadarFilters();
+    document.querySelector("#logic-radar-inbox").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  if (target?.startsWith("logic-card:")) {
+    if (chainId && chainId !== state.archiveChainId) {
+      state.archiveChainId = chainId;
+      archiveSelect.value = chainId;
+      await loadLogicCards();
+      renderArchive();
+    }
+    editLogicCard(target.replace(/^logic-card:/, ""));
+    return;
+  }
+  if (chainId) await openRadarTarget(chainId, target);
 }
 
 function renderUserMemberships() {
