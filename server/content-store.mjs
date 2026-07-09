@@ -333,6 +333,22 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     ));
   }
 
+  function listRadarDecisions() {
+    state.radarDecisionsById ||= {};
+    return structuredClone(Object.values(state.radarDecisionsById));
+  }
+
+  async function updateRadarDecision(decisionId, input) {
+    state.radarDecisionsById ||= {};
+    const decision = normalizeRadarDecision(decisionId, {
+      ...state.radarDecisionsById[decisionId],
+      ...input
+    });
+    state.radarDecisionsById[decisionId] = decision;
+    await stateStore.save(state);
+    return structuredClone(decision);
+  }
+
   async function updateFeedback(feedbackId, input) {
     state.feedbackItems ||= [];
     const index = state.feedbackItems.findIndex((item) => item.id === feedbackId);
@@ -464,6 +480,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     addMonitorVerification,
     addFeedback,
     listFeedback,
+    listRadarDecisions,
     listLogicCards,
     isManagedChain: (chainId) => state.managedChains.some((chain) => chain.id === chainId),
     updateArticle,
@@ -472,6 +489,7 @@ export async function createContentStore({ baseLibrary, dataDir, rootDir, stateS
     saveLogicCard,
     saveReadingProgress,
     updateFeedback,
+    updateRadarDecision,
     updateUserMembership,
     deleteLogicCard,
     setFavoriteChain,
@@ -533,12 +551,33 @@ function normalizeFeedbackUpdate(current, input = {}) {
   };
 }
 
+function normalizeRadarDecision(decisionId, input = {}) {
+  const id = String(decisionId || "").trim();
+  if (!id || id.length > 240) throw validationError("雷达项 ID 无效");
+  const status = String(input.status || "open").trim();
+  if (!radarDecisionStatuses().has(status)) throw validationError("雷达项状态无效");
+  const notes = String(input.notes || "").trim();
+  if (notes.length > 1000) throw validationError("雷达项备注不能超过 1000 字");
+  const now = new Date().toISOString();
+  return {
+    id,
+    status,
+    notes,
+    createdAt: input.createdAt || now,
+    updatedAt: now
+  };
+}
+
 function feedbackTypes() {
   return new Set(["suggestion", "bug", "content", "cooperation", "other"]);
 }
 
 function feedbackStatuses() {
   return new Set(["open", "reviewing", "planned", "resolved", "closed"]);
+}
+
+function radarDecisionStatuses() {
+  return new Set(["open", "reviewed", "verification", "ignored"]);
 }
 
 function normalizeUserProfile(profile = {}) {

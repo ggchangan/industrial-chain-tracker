@@ -287,6 +287,19 @@ async function handleApi(context) {
     return;
   }
 
+  if (request.method === "GET" && pathname === "/api/v1/admin/radar-decisions") {
+    sendJson(response, 200, { decisions: contentStore.listRadarDecisions() });
+    return;
+  }
+
+  const radarDecisionMatch = pathname.match(/^\/api\/v1\/admin\/radar-decisions\/([^/]+)$/);
+  if (request.method === "PUT" && radarDecisionMatch) {
+    const body = await readJsonBody(request, 64 * 1024);
+    const decision = await contentStore.updateRadarDecision(decodeURIComponent(radarDecisionMatch[1]), body);
+    sendJson(response, 200, { decision });
+    return;
+  }
+
   if (request.method === "GET" && pathname === "/api/v1/admin/users") {
     sendJson(response, 200, { users: contentStore.listUsers() });
     return;

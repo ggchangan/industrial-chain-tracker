@@ -3226,7 +3226,7 @@ button.propagation-signal:hover {
   align-items: end;
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-bottom: 16px;
 }
 
@@ -3304,6 +3304,51 @@ button.propagation-signal:hover {
 
 .logic-radar-inbox-item.radar-medium .archive-item-head span {
   color: #f8c36a;
+}
+
+.radar-decision-actions {
+  align-items: end;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(130px, 170px) minmax(0, 1fr) auto;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.radar-decision-actions label {
+  color: var(--muted);
+  display: grid;
+  font-size: 11px;
+  gap: 7px;
+}
+
+.radar-decision-actions label > span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.radar-decision-actions input,
+.radar-decision-actions select {
+  background: #0d151e;
+  border: 1px solid #2b4052;
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  padding: 9px 10px;
+}
+
+.radar-decision-actions button {
+  background: transparent;
+  border: 0;
+  color: var(--cyan);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 0 0 9px;
+  text-decoration: none;
 }
 
 .feedback-inbox-console {
@@ -4263,6 +4308,10 @@ footer a {
   }
 
   .membership-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .radar-decision-actions {
     grid-template-columns: 1fr;
   }
 }

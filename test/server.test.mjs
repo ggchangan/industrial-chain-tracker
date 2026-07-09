@@ -325,6 +325,35 @@ test("public feedback is collected and manageable from admin APIs", async () => 
   assert.equal(updatedPayload.feedback.adminNotes, "排入光模块更新列表。");
 });
 
+test("admin can persist logic radar decisions", async () => {
+  const denied = await fetch(`${baseUrl}/api/v1/admin/radar-decisions`);
+  assert.equal(denied.status, 401);
+
+  const login = await fetch(`${baseUrl}/api/v1/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: "correct-horse-battery" })
+  });
+  const cookie = login.headers.get("set-cookie").split(";")[0];
+  const decisionId = "pending-verification:optical-module:verification:research-mpo-order-growth:2026-07-01:mpo";
+
+  const saved = await fetch(`${baseUrl}/api/v1/admin/radar-decisions/${encodeURIComponent(decisionId)}`, {
+    method: "PUT",
+    headers: { Cookie: cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "verification", notes: "转入待办核验。" })
+  });
+  assert.equal(saved.status, 200);
+  const savedPayload = await saved.json();
+  assert.equal(savedPayload.decision.id, decisionId);
+  assert.equal(savedPayload.decision.status, "verification");
+
+  const decisions = await fetch(`${baseUrl}/api/v1/admin/radar-decisions`, {
+    headers: { Cookie: cookie }
+  }).then((response) => response.json());
+  assert.equal(decisions.decisions[0].id, decisionId);
+  assert.equal(decisions.decisions[0].notes, "转入待办核验。");
+});
+
 test("runtime secrets and server source are never served as static files", async () => {
   const envResponse = await fetch(`${baseUrl}/.env`);
   const sourceResponse = await fetch(`${baseUrl}/server/server.mjs`);
