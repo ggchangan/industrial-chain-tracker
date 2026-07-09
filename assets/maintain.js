@@ -13,6 +13,7 @@ const state = {
   },
   radarDecisions: {},
   radarVerificationTasks: [],
+  settlingRadarTaskId: "",
   feedbackItems: [],
   users: [],
   packagePayload: null,
@@ -726,6 +727,7 @@ function renderRadarVerificationTasks() {
       </div>
       <div class="archive-item-actions">
         <button type="button" data-radar-task-open="${escapeHtml(task.id)}">处理任务</button>
+        <button type="button" data-radar-task-update="${escapeHtml(task.id)}">沉淀为动态</button>
       </div>
     </article>
   `).join("");
@@ -743,6 +745,11 @@ function renderRadarVerificationTasks() {
         .catch((error) => setNotice(error.message, "error"));
     });
   });
+  radarVerificationTasks.querySelectorAll("[data-radar-task-update]").forEach((button) => {
+    button.addEventListener("click", () =>
+      startUpdateFromRadarTask(button.dataset.radarTaskUpdate)
+    );
+  });
 }
 
 async function saveRadarVerificationTask(taskId) {
@@ -757,6 +764,59 @@ async function saveRadarVerificationTask(taskId) {
   if (index >= 0) state.radarVerificationTasks[index] = payload.task;
   renderRadarVerificationTasks();
   setNotice("核验任务已更新。", "success");
+}
+
+function startUpdateFromRadarTask(taskId) {
+  const task = state.radarVerificationTasks.find((item) => item.id === taskId);
+  if (!task) {
+    setNotice("未找到这条核验任务。", "error");
+    return;
+  }
+  const chain = state.library.chains.find((item) => item.id === task.chainId);
+  resetUpdateForm(task.chainId);
+  state.settlingRadarTaskId = task.id;
+  updateSelect.value = task.chainId;
+  updateForm.elements.type.value = radarTaskUpdateType(task.kind);
+  updateForm.elements.segment.value = radarTaskSegment(task, chain);
+  updateForm.elements.signal.value = task.title;
+  updateForm.elements.impact.value = task.summary;
+  updateForm.elements.confidence.value = task.status === "done" ? "已核验" : "待核验";
+  updateForm.elements.sourceTitle.value = task.source || task.title;
+  updateForm.elements.sourceKind.value = task.kind === "new-source" ? "资料" : "文章";
+  updateForm.elements.sourcePlatform.value = task.source || "人工核验";
+  updateForm.elements.sourceUrl.value = radarTaskSourceUrl(task, chain);
+  updateForm.elements.notes.value = [
+    task.notes,
+    `来自逻辑雷达任务：${task.title}`,
+    task.radarId ? `雷达ID：${task.radarId}` : ""
+  ].filter(Boolean).join("\n");
+  updateForm.querySelector("button[type='submit']").textContent = "保存动态并完成任务";
+  cancelUpdateEdit.hidden = false;
+  document.querySelector("#add-update").scrollIntoView({ behavior: "smooth", block: "start" });
+  updateForm.elements.impact.focus();
+  setNotice("已根据核验任务预填动态草稿，请补充来源链接和影响判断后保存。", "success");
+}
+
+function radarTaskUpdateType(kind) {
+  if (kind === "pending-verification" || kind === "latest-verification") return "数据变化";
+  if (kind === "new-source") return "机构逻辑";
+  return "产业事件";
+}
+
+function radarTaskSegment(task, chain) {
+  const fromTitle = String(task.title || "").split(/[·:：]/, 1)[0].trim();
+  if (fromTitle && fromTitle.length <= 30) return fromTitle;
+  return chain?.shortTitle || chain?.title || "全产业链";
+}
+
+function radarTaskSourceUrl(task, chain) {
+  const source = String(task.source || "").trim();
+  if (/^https?:\/\//i.test(source)) return source;
+  const article = String(chain?.article || "").trim();
+  if (/^\.\/content\/[A-Za-z0-9_./-]+$/i.test(article) || /^\/managed\/[A-Za-z0-9_./-]+$/i.test(article)) {
+    return article;
+  }
+  return "";
 }
 
 function radarDecisionLabel(status) {
@@ -1819,6 +1879,9 @@ async function addUpdate(event) {
       method: updateId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
+    if (!updateId && state.settlingRadarTaskId) {
+      await completeRadarTaskAfterUpdate(state.settlingRadarTaskId, payload);
+    }
     const chainTitle = state.library.chains.find((chain) => chain.id === chainId)?.title || chainId;
     setNotice(`${chainTitle}的动态已${updateId ? "更新" : "保存并发布"}。`, "success");
     resetUpdateForm(chainId);
@@ -1828,6 +1891,21 @@ async function addUpdate(event) {
   } finally {
     setBusy(button, false, "保存动态追踪");
   }
+}
+
+async function completeRadarTaskAfterUpdate(taskId, updatePayload) {
+  const currentTask = state.radarVerificationTasks.find((task) => task.id === taskId);
+  const notes = [
+    currentTask?.notes,
+    `已沉淀为动态追踪：${updatePayload.signal}`
+  ].filter(Boolean).join("\n");
+  const payload = await apiRequest(`./api/v1/admin/radar-verification-tasks/${encodeURIComponent(taskId)}`, {
+    method: "PUT",
+    body: JSON.stringify({ status: "done", notes })
+  });
+  const index = state.radarVerificationTasks.findIndex((task) => task.id === taskId);
+  if (index >= 0) state.radarVerificationTasks[index] = payload.task;
+  renderRadarVerificationTasks();
 }
 
 function editUpdate(chainId, updateId) {
@@ -1852,6 +1930,7 @@ function editUpdate(chainId, updateId) {
 
 function resetUpdateForm(chainId = updateSelect.value) {
   updateForm.reset();
+  state.settlingRadarTaskId = "";
   renderChainOptions(updateSelect, chainId);
   updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
   updateForm.elements.sourceKind.value = "文章";
