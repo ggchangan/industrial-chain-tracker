@@ -8,8 +8,10 @@ const state = {
   logicRadarFilters: {
     chainId: "all",
     priority: "all",
-    kind: "all"
+    kind: "all",
+    decision: "all"
   },
+  radarDecisions: {},
   feedbackItems: [],
   users: [],
   packagePayload: null,
@@ -35,6 +37,7 @@ const logicRadarInbox = document.querySelector("#logicRadarInbox");
 const logicRadarChainFilter = document.querySelector("#logicRadarChainFilter");
 const logicRadarPriorityFilter = document.querySelector("#logicRadarPriorityFilter");
 const logicRadarKindFilter = document.querySelector("#logicRadarKindFilter");
+const logicRadarDecisionFilter = document.querySelector("#logicRadarDecisionFilter");
 const feedbackInbox = document.querySelector("#feedbackInbox");
 const userMembershipList = document.querySelector("#userMembershipList");
 const fileInput = document.querySelector("#chainMarkdownFile");
@@ -91,6 +94,7 @@ async function initialize() {
   logicRadarChainFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarPriorityFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarKindFilter.addEventListener("change", updateLogicRadarFilters);
+  logicRadarDecisionFilter.addEventListener("change", updateLogicRadarFilters);
   cancelSourceEdit.addEventListener("click", resetSourceForm);
   cancelUpdateEdit.addEventListener("click", resetUpdateForm);
   logicCardForm.addEventListener("submit", saveLogicCard);
@@ -116,6 +120,7 @@ async function initialize() {
   document.querySelector("#adminLogout").addEventListener("click", logout);
   renderSourceIllustrations();
   await refreshLibrary();
+  await loadRadarDecisions();
   await loadFeedback();
   await loadUsers();
   resetLogicCardForm(state.archiveChainId);
@@ -165,6 +170,16 @@ async function loadUsers() {
     const payload = await apiRequest("./api/v1/admin/users");
     state.users = payload.users || [];
     renderUserMemberships();
+  } catch (error) {
+    setNotice(error.message, "error");
+  }
+}
+
+async function loadRadarDecisions() {
+  try {
+    const payload = await apiRequest("./api/v1/admin/radar-decisions");
+    state.radarDecisions = Object.fromEntries((payload.decisions || []).map((item) => [item.id, item]));
+    renderLogicRadarInbox();
   } catch (error) {
     setNotice(error.message, "error");
   }
@@ -384,7 +399,7 @@ function renderLogicRadarInbox() {
   logicRadarInbox.innerHTML = items.slice(0, 18).map((item) => `
     <article class="archive-item logic-radar-inbox-item radar-${escapeHtml(item.priority)}">
       <div class="archive-item-head">
-        <span>${escapeHtml(item.kindLabel)}</span>
+        <span>${escapeHtml(item.kindLabel)} · ${escapeHtml(radarDecisionLabel(item.decision.status))}</span>
         <small>${escapeHtml(item.date || "无日期")}</small>
       </div>
       <h3>${escapeHtml(item.title)}</h3>
@@ -398,11 +413,30 @@ function renderLogicRadarInbox() {
         <button type="button" data-radar-chain="${escapeHtml(item.chainId)}" data-radar-target="${escapeHtml(item.target)}">${escapeHtml(item.action)}</button>
         <a href="./index.html?chain=${encodeURIComponent(item.chainId)}#${escapeHtml(item.publicHash)}" target="_blank" rel="noopener noreferrer">查看公开页</a>
       </div>
+      <div class="radar-decision-actions">
+        <label>
+          <span>处理状态</span>
+          <select data-radar-decision-status="${escapeHtml(item.id)}">
+            ${radarDecisionOptions(item.decision.status)}
+          </select>
+        </label>
+        <label>
+          <span>处理备注</span>
+          <input data-radar-decision-notes="${escapeHtml(item.id)}" type="text" value="${escapeHtml(item.decision.notes || "")}" placeholder="记录判断、后续动作或忽略原因" />
+        </label>
+        <button type="button" data-radar-decision-save="${escapeHtml(item.id)}">保存状态</button>
+      </div>
     </article>
   `).join("");
   logicRadarInbox.querySelectorAll("[data-radar-chain]").forEach((button) => {
     button.addEventListener("click", () =>
       openRadarTarget(button.dataset.radarChain, button.dataset.radarTarget)
+        .catch((error) => setNotice(error.message, "error"))
+    );
+  });
+  logicRadarInbox.querySelectorAll("[data-radar-decision-save]").forEach((button) => {
+    button.addEventListener("click", () =>
+      saveRadarDecision(button.dataset.radarDecisionSave)
         .catch((error) => setNotice(error.message, "error"))
     );
   });
@@ -412,7 +446,8 @@ function updateLogicRadarFilters() {
   state.logicRadarFilters = {
     chainId: logicRadarChainFilter.value || "all",
     priority: logicRadarPriorityFilter.value || "all",
-    kind: logicRadarKindFilter.value || "all"
+    kind: logicRadarKindFilter.value || "all",
+    decision: logicRadarDecisionFilter.value || "all"
   };
   renderLogicRadarInbox();
 }
@@ -431,14 +466,16 @@ function renderLogicRadarFilterOptions() {
   state.logicRadarFilters.chainId = logicRadarChainFilter.value;
   logicRadarPriorityFilter.value = state.logicRadarFilters.priority || "all";
   logicRadarKindFilter.value = state.logicRadarFilters.kind || "all";
+  logicRadarDecisionFilter.value = state.logicRadarFilters.decision || "all";
 }
 
 function filterLogicRadarItems(items) {
-  const { chainId, priority, kind } = state.logicRadarFilters;
+  const { chainId, priority, kind, decision } = state.logicRadarFilters;
   return items.filter((item) =>
     (chainId === "all" || item.chainId === chainId) &&
     (priority === "all" || item.priority === priority) &&
-    (kind === "all" || item.kind === kind)
+    (kind === "all" || item.kind === kind) &&
+    (decision === "all" || item.decision.status === decision)
   );
 }
 
@@ -448,10 +485,38 @@ function buildLogicRadarInboxItems() {
     ...logicChangeItems(chain),
     ...newSourceItems(chain),
     ...latestVerificationItems(chain)
-  ]).sort((left, right) =>
+  ]).map(withRadarDecision).sort((left, right) =>
     priorityScore(right.priority) - priorityScore(left.priority) ||
     String(right.date || "").localeCompare(String(left.date || ""))
   );
+}
+
+function withRadarDecision(item) {
+  const id = radarItemId(item);
+  return {
+    ...item,
+    id,
+    decision: state.radarDecisions[id] || { status: "open", notes: "" }
+  };
+}
+
+function radarItemId(item) {
+  return [
+    item.kind,
+    item.chainId,
+    item.target,
+    item.date || "nodate",
+    normalizeRadarIdPart(item.title)
+  ].join(":");
+}
+
+function normalizeRadarIdPart(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fa5-]+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 80) || "untitled";
 }
 
 function pendingVerificationItems(chain) {
@@ -556,6 +621,34 @@ async function openRadarTarget(chainId, target) {
   }
   renderArchive();
   document.querySelector("#archive").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function saveRadarDecision(decisionId) {
+  const escaped = CSS.escape(decisionId);
+  const status = logicRadarInbox.querySelector(`[data-radar-decision-status="${escaped}"]`)?.value || "open";
+  const notes = logicRadarInbox.querySelector(`[data-radar-decision-notes="${escaped}"]`)?.value || "";
+  const payload = await apiRequest(`./api/v1/admin/radar-decisions/${encodeURIComponent(decisionId)}`, {
+    method: "PUT",
+    body: JSON.stringify({ status, notes })
+  });
+  state.radarDecisions[payload.decision.id] = payload.decision;
+  renderLogicRadarInbox();
+  setNotice("雷达项处理状态已保存。", "success");
+}
+
+function radarDecisionLabel(status) {
+  return {
+    open: "待处理",
+    reviewed: "已查看",
+    verification: "已转核验",
+    ignored: "已忽略"
+  }[status] || "待处理";
+}
+
+function radarDecisionOptions(current) {
+  return ["open", "reviewed", "verification", "ignored"].map((status) =>
+    `<option value="${status}" ${status === current ? "selected" : ""}>${escapeHtml(radarDecisionLabel(status))}</option>`
+  ).join("");
 }
 
 function priorityScore(priority) {

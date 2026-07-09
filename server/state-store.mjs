@@ -11,6 +11,7 @@ const EMPTY_STATE = {
   researchPackagesByChain: {},
   monitorVerificationsByChain: {},
   feedbackItems: [],
+  radarDecisionsById: {},
   usersById: {},
   updatedAt: ""
 };
@@ -126,6 +127,7 @@ function normalizeState(state = {}) {
     researchPackagesByChain: objectValue(state.researchPackagesByChain),
     monitorVerificationsByChain: objectValue(state.monitorVerificationsByChain),
     feedbackItems: Array.isArray(state.feedbackItems) ? state.feedbackItems : [],
+    radarDecisionsById: objectValue(state.radarDecisionsById),
     usersById: objectValue(state.usersById),
     updatedAt: state.updatedAt || ""
   };
