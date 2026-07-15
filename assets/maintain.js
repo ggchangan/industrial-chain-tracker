@@ -1302,7 +1302,15 @@ function renderArchive() {
     });
   });
   archiveList.querySelectorAll("[data-edit-source]").forEach((button) => {
+    const updateDraftButton = document.createElement("button");
+    updateDraftButton.type = "button";
+    updateDraftButton.dataset.createUpdateFromSource = button.dataset.editSource;
+    updateDraftButton.textContent = "生成动态草稿";
+    button.insertAdjacentElement("afterend", updateDraftButton);
     button.addEventListener("click", () => editSource(chain.id, button.dataset.editSource));
+  });
+  archiveList.querySelectorAll("[data-create-update-from-source]").forEach((button) => {
+    button.addEventListener("click", () => startUpdateDraftFromSource(chain.id, button.dataset.createUpdateFromSource));
   });
   archiveList.querySelectorAll("[data-create-logic]").forEach((button) => {
     button.addEventListener("click", () => startLogicCardFromSource(chain.id, button.dataset.createLogic));
@@ -2382,6 +2390,38 @@ function sourceTypeFromParsedShare(parsed, rawText) {
   if (/公告|财报|年报|季报|业绩说明会/.test(text)) return "announcement";
   if (/新闻|快讯|媒体/.test(text)) return "news";
   return "research-article";
+}
+
+function startUpdateDraftFromSource(chainId, sourceId) {
+  const chain = state.library?.chains?.find((item) => item.id === chainId);
+  const source = chain?.sources?.find((item) => item.id === sourceId);
+  if (!source) {
+    setNotice("未找到这份资料。", "error");
+    return;
+  }
+
+  const update = updateForm.elements;
+  update.chainId.value = chainId;
+  update.date.value = source.date || new Date().toISOString().slice(0, 10);
+  update.type.value = updateTypeFromSourceType(source.type, source.title, source.summary);
+  update.segment.value = source.segment || "全产业链";
+  update.signal.value = source.title ? `待核验：${source.title}` : "待核验：新增资料线索";
+  update.impact.value = source.summary ||
+    "该资料已归档为线索，需要判断是否改变相关环节的供需、技术路线、订单节奏或公司受益逻辑。";
+  update.confidence.value = "待核验";
+  update.sourceTitle.value = source.title || "未命名资料";
+  update.sourceKind.value = updateSourceKindFromSourceType(source.type);
+  update.sourcePlatform.value = source.platform || "";
+  update.sourceUrl.value = source.markdownUrl || source.originalUrl || "";
+  update.notes.value = compactUpdateNotes(update.notes.value, [
+    source.author ? `作者/机构：${source.author}` : "",
+    source.companies?.length ? `关联公司：${source.companies.join("、")}` : "",
+    source.tags?.length ? `标签：${source.tags.join("、")}` : "",
+    "由资料档案生成动态草稿。"
+  ].filter(Boolean).join("\n"));
+  document.querySelector("#add-update").scrollIntoView({ behavior: "smooth", block: "start" });
+  update.segment.focus();
+  setNotice("已从资料档案生成动态追踪草稿，请检查影响判断后保存。", "success");
 }
 
 function updateTypeFromSourceType(type, title = "", summary = "") {
