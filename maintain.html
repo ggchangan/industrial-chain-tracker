@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>产业链维护台</title>
-    <link rel="stylesheet" href="./assets/styles.css?v=share-preprocess-1" />
+    <link rel="stylesheet" href="./assets/styles.css?v=source-preprocess-1" />
   </head>
   <body class="maintainer-page">
     <header class="site-header compact-header">
@@ -344,6 +344,18 @@
                 <select id="sourceChainId" name="chainId" required></select>
               </label>
 
+              <section class="update-preprocess-panel source-preprocess-panel">
+                <div>
+                  <span>信息预处理</span>
+                  <p>粘贴抖音、公众号、研报或公告分享文本，先生成资料归档草稿。</p>
+                </div>
+                <textarea id="sourceShareText" rows="3" placeholder="例如：复制打开抖音，看看【机构调研日记的作品】康宁扔出王炸！... https://v.douyin.com/..."></textarea>
+                <div class="update-preprocess-actions">
+                  <button id="parseSourceShare" class="button secondary" type="button">预填资料草稿</button>
+                  <small id="sourcePreprocessHint">不会直接保存，预填后仍可逐项修改。</small>
+                </div>
+              </section>
+
               <div class="admin-field-row">
                 <label>
                   <span>资料类型</span>
@@ -606,6 +618,6 @@
       <span id="maintainUpdatedAt"></span>
     </footer>
 
-    <script src="./assets/maintain.js?v=share-preprocess-1"></script>
+    <script src="./assets/maintain.js?v=source-preprocess-1"></script>
   </body>
 </html>
