@@ -2884,11 +2884,15 @@ function renderCoreInsights(trackId, insights) {
 
   const grid = el("div", "logic-insights-grid");
   insights.forEach((insight, index) => {
-    const card = el("article", `logic-insight display-${insight.display || "text"}`);
+    const status = insight.verificationStatus || insight.status || "research";
+    const card = el("article", `logic-insight display-${insight.display || "text"} status-${status}`);
     card.id = `logic-card-${trackId}-${insight.id || index}`;
     card.dataset.searchTarget = searchTargetKey(currentId, "logic-card", `${trackId}-${insight.id || index}`);
     card.append(el("span", "logic-insight-index", String(index + 1).padStart(2, "0")));
-    card.append(el("div", "logic-insight-kicker", insight.kicker));
+    const meta = el("div", "logic-insight-meta");
+    meta.append(el("span", "logic-insight-kicker", insight.kicker));
+    meta.append(el("span", `logic-status-badge status-${status}`, logicOverviewStatusLabel(status)));
+    card.append(meta);
     card.append(el("h4", "", insight.title));
     card.append(el("p", "logic-insight-summary", insight.summary));
 
