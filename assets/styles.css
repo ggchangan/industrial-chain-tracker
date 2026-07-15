@@ -1133,6 +1133,90 @@ main {
   font-size: 11px;
 }
 
+.logic-recent-changes {
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+}
+
+.logic-recent-changes-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.logic-recent-changes-head span {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.logic-recent-changes-head strong {
+  color: #dbeafe;
+  font-size: 12px;
+}
+
+.logic-recent-changes-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.logic-recent-change {
+  border-left: 3px solid rgba(34, 211, 238, 0.55);
+  background: rgba(8, 18, 32, 0.58);
+  color: inherit;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px 12px;
+  text-decoration: none;
+}
+
+.logic-recent-change.kind-weaken,
+.logic-recent-change.kind-challenge,
+.logic-recent-change.kind-logic-change {
+  border-left-color: var(--amber);
+}
+
+.logic-recent-change.kind-invalidate {
+  border-left-color: #fb7185;
+}
+
+.logic-recent-change.kind-strengthen,
+.logic-recent-change.kind-stable {
+  border-left-color: var(--green);
+}
+
+.logic-recent-change span,
+.logic-recent-change small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.logic-recent-change strong {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.logic-recent-change p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.logic-recent-change:hover {
+  border-color: var(--cyan);
+}
+
 .logic-overview-map {
   display: grid;
   gap: 12px;
@@ -4594,6 +4678,7 @@ footer a {
   }
 
   .logic-radar-summary,
+  .logic-recent-changes-list,
   .logic-overview-summary,
   .logic-radar-inbox-list,
   .logic-radar-filters {
@@ -4740,6 +4825,7 @@ footer a {
   .archive-list,
   .logic-overview-map,
   .logic-overview-summary,
+  .logic-recent-changes-list,
   .logic-radar-summary,
   .logic-radar-inbox-list,
   .logic-radar-filters {
