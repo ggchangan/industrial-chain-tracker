@@ -2383,16 +2383,62 @@ button.propagation-signal:hover {
 .logic-source {
   border-color: rgba(251, 191, 36, 0.38);
   color: #fde68a;
-  margin-left: auto;
-}
-
-.logic-source + .logic-source {
-  margin-left: 0;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
 }
 
 .logic-source:hover {
   border-color: var(--amber);
   color: #fff7cc;
+}
+
+.logic-source span,
+.logic-source small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logic-source small {
+  color: rgba(253, 230, 138, 0.68);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.logic-evidence-chain {
+  background: rgba(251, 191, 36, 0.06);
+  border-left: 3px solid rgba(251, 191, 36, 0.55);
+  display: grid;
+  gap: 9px;
+  margin-top: 5px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.logic-evidence-head {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.logic-evidence-head span {
+  color: #fde68a;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.logic-evidence-head strong {
+  color: #cbd5e1;
+  font-size: 10px;
+}
+
+.logic-evidence-list {
+  display: grid;
+  gap: 7px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  min-width: 0;
 }
 
 .update-source-kind {
