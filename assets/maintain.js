@@ -28,6 +28,7 @@ const parseUpdateShare = document.querySelector("#parseUpdateShare");
 const sourceForm = document.querySelector("#addSourceForm");
 const sourceShareText = document.querySelector("#sourceShareText");
 const parseSourceShare = document.querySelector("#parseSourceShare");
+const sourceToUpdateDraft = document.querySelector("#sourceToUpdateDraft");
 const grid = document.querySelector("#maintenanceGrid");
 const search = document.querySelector("#maintainSearch");
 const articleSelect = document.querySelector("#articleChainId");
@@ -99,6 +100,7 @@ async function initialize() {
   updateForm.addEventListener("submit", addUpdate);
   parseUpdateShare.addEventListener("click", preprocessUpdateShareText);
   parseSourceShare.addEventListener("click", preprocessSourceShareText);
+  sourceToUpdateDraft.addEventListener("click", createUpdateDraftFromSourceForm);
   logicRadarChainFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarPriorityFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarKindFilter.addEventListener("change", updateLogicRadarFilters);
@@ -2251,6 +2253,39 @@ function preprocessSourceShareText() {
   setNotice("已根据分享文本预填资料草稿，请继续补充摘要、原文和关联公司。", "success");
 }
 
+function createUpdateDraftFromSourceForm() {
+  const source = Object.fromEntries(new FormData(sourceForm).entries());
+  if (!source.title && !source.originalUrl && !source.summary) {
+    setNotice("请先填写或预处理一份资料，再转为动态草稿。", "error");
+    sourceShareText.focus();
+    return;
+  }
+
+  const update = updateForm.elements;
+  update.chainId.value = source.chainId || sourceSelect.value;
+  update.date.value = source.date || new Date().toISOString().slice(0, 10);
+  update.type.value = updateTypeFromSourceType(source.type, source.title, source.summary);
+  update.segment.value = source.segment || "全产业链";
+  update.signal.value = source.title ? `待核验：${source.title}` : "待核验：新增资料线索";
+  update.impact.value = source.summary ||
+    "该资料已归档为线索，需要判断是否改变相关环节的供需、技术路线、订单节奏或公司受益逻辑。";
+  update.confidence.value = "待核验";
+  update.sourceTitle.value = source.title || "未命名资料";
+  update.sourceKind.value = updateSourceKindFromSourceType(source.type);
+  update.sourcePlatform.value = source.platform || "";
+  update.sourceUrl.value = source.originalUrl || "";
+  update.notes.value = compactUpdateNotes(update.notes.value, [
+    source.author ? `作者/机构：${source.author}` : "",
+    source.companies ? `关联公司：${source.companies}` : "",
+    source.tags ? `标签：${source.tags}` : "",
+    source.markdown ? "已在资料归档表单中生成/填写 Markdown 草稿。" : "",
+    sourceShareText.value.trim() ? `原始分享文本：${sourceShareText.value.trim()}` : ""
+  ].filter(Boolean).join("\n"));
+  document.querySelector("#add-update").scrollIntoView({ behavior: "smooth", block: "start" });
+  update.segment.focus();
+  setNotice("已同步为动态追踪草稿，请继续检查影响判断后保存。", "success");
+}
+
 function parseUpdateShareText(rawText) {
   const text = rawText.replace(/\s+/g, " ").trim();
   const url = text.match(/https?:\/\/[^\s]+/i)?.[0]?.replace(/[，。；;、]+$/, "") || "";
@@ -2296,6 +2331,21 @@ function sourceTypeFromParsedShare(parsed, rawText) {
   if (/公告|财报|年报|季报|业绩说明会/.test(text)) return "announcement";
   if (/新闻|快讯|媒体/.test(text)) return "news";
   return "research-article";
+}
+
+function updateTypeFromSourceType(type, title = "", summary = "") {
+  const text = `${type} ${title} ${summary}`;
+  if (/announcement|公告|财报|年报|季报/.test(text)) return "公司公告";
+  if (/report|research|研报|机构|券商|调研/.test(text)) return "机构逻辑";
+  if (/数据|价格|涨价|产能|订单/.test(text)) return "数据变化";
+  return "产业事件";
+}
+
+function updateSourceKindFromSourceType(type) {
+  if (type === "short-video") return "短视频";
+  if (type === "announcement") return "公告";
+  if (type === "other") return "资料";
+  return "文章";
 }
 
 function sourceTagsFromParsedShare(parsed, rawText) {
