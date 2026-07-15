@@ -2973,16 +2973,31 @@ function renderCoreInsights(trackId, insights) {
         }
         footer.append(chip);
       });
-      insight.sources?.forEach((source) => {
-        const link = el("a", "logic-source", source.label);
-        link.href = source.type === "article"
-          ? buildReadingUrl(source.url, source.anchor)
-          : source.url;
-        link.title = source.title || source.label;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        footer.append(link);
-      });
+      if (insight.sources?.length) {
+        const evidence = el("div", "logic-evidence-chain");
+        const evidenceHead = el("div", "logic-evidence-head");
+        evidenceHead.append(el("span", "", "证据链"));
+        evidenceHead.append(el("strong", "", `${insight.sources.length} 条资料`));
+        evidence.append(evidenceHead);
+        const evidenceList = el("div", "logic-evidence-list");
+        insight.sources.forEach((source, sourceIndex) => {
+          const sourceType = source.type || "reference";
+          const sourceLabel = source.label || source.title || `证据 ${sourceIndex + 1}`;
+          const sourceTitle = source.title || sourceLabel;
+          const link = el("a", `logic-source source-${sourceType}`);
+          link.href = source.type === "article"
+            ? buildReadingUrl(source.url, source.anchor)
+            : source.url;
+          link.title = sourceTitle;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.append(el("span", "", sourceLabel));
+          if (sourceTitle !== sourceLabel) link.append(el("small", "", sourceTitle));
+          evidenceList.append(link);
+        });
+        evidence.append(evidenceList);
+        footer.append(evidence);
+      }
       card.append(footer);
     }
     grid.append(card);
