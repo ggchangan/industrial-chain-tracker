@@ -26,6 +26,8 @@ const updateForm = document.querySelector("#addUpdateForm");
 const updateShareText = document.querySelector("#updateShareText");
 const parseUpdateShare = document.querySelector("#parseUpdateShare");
 const sourceForm = document.querySelector("#addSourceForm");
+const sourceShareText = document.querySelector("#sourceShareText");
+const parseSourceShare = document.querySelector("#parseSourceShare");
 const grid = document.querySelector("#maintenanceGrid");
 const search = document.querySelector("#maintainSearch");
 const articleSelect = document.querySelector("#articleChainId");
@@ -96,6 +98,7 @@ async function initialize() {
   sourceForm.addEventListener("submit", addSource);
   updateForm.addEventListener("submit", addUpdate);
   parseUpdateShare.addEventListener("click", preprocessUpdateShareText);
+  parseSourceShare.addEventListener("click", preprocessSourceShareText);
   logicRadarChainFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarPriorityFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarKindFilter.addEventListener("change", updateLogicRadarFilters);
@@ -1757,6 +1760,7 @@ async function editSource(chainId, sourceId) {
 
 function resetSourceForm(chainId = sourceSelect.value) {
   sourceForm.reset();
+  sourceShareText.value = "";
   renderChainOptions(sourceSelect, chainId);
   sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
   sourceFileInput.value = "";
@@ -2212,6 +2216,41 @@ function preprocessUpdateShareText() {
   setNotice("已根据分享文本预填动态草稿，请继续检查影响判断和所属环节。", "success");
 }
 
+function preprocessSourceShareText() {
+  const rawText = sourceShareText.value.trim();
+  if (!rawText) {
+    setNotice("请先粘贴一段资料分享文本。", "error");
+    sourceShareText.focus();
+    return;
+  }
+
+  const parsed = parseUpdateShareText(rawText);
+  if (!parsed.url && !parsed.sourceTitle) {
+    setNotice("暂时没有识别到标题或链接，请检查分享文本。", "error");
+    return;
+  }
+
+  const form = sourceForm.elements;
+  const sourceType = sourceTypeFromParsedShare(parsed, rawText);
+  if (sourceType) form.type.value = sourceType;
+  if (parsed.sourceTitle && !form.title.value.trim()) form.title.value = parsed.sourceTitle;
+  if (parsed.platform && !form.platform.value.trim()) form.platform.value = parsed.platform;
+  if (parsed.url && !form.originalUrl.value.trim()) form.originalUrl.value = parsed.url;
+  if (parsed.segment && !form.segment.value.trim()) form.segment.value = parsed.segment;
+  if (!form.summary.value.trim()) {
+    form.summary.value = parsed.impact || "该资料已作为产业链线索归档，后续需要补充原文、字幕或交叉验证。";
+  }
+  if (!form.tags.value.trim()) {
+    form.tags.value = sourceTagsFromParsedShare(parsed, rawText).join("、");
+  }
+  if (!sourceMarkdownInput.value.trim()) {
+    sourceMarkdownInput.value = buildSourceMarkdownDraft(parsed, rawText);
+  }
+  form.status.value = "draft";
+  renderSourceMarkdownAnalysis();
+  setNotice("已根据分享文本预填资料草稿，请继续补充摘要、原文和关联公司。", "success");
+}
+
 function parseUpdateShareText(rawText) {
   const text = rawText.replace(/\s+/g, " ").trim();
   const url = text.match(/https?:\/\/[^\s]+/i)?.[0]?.replace(/[，。；;、]+$/, "") || "";
@@ -2247,6 +2286,47 @@ function cleanSharedTitle(value) {
     .replace(/\s*\d{1,2}\/\d{1,2}\s+.*$/, "")
     .replace(/\s+[A-Za-z0-9]{2,}:\/\s*.*$/, "")
     .trim();
+}
+
+function sourceTypeFromParsedShare(parsed, rawText) {
+  const text = `${rawText} ${parsed.platform || ""} ${parsed.sourceKind || ""}`;
+  if (/Douyin|抖音|短视频|视频/.test(text)) return "short-video";
+  if (/微信公众号|微信|mp\.weixin|weixin\.qq/.test(text)) return "wechat";
+  if (/研报|券商|证券|PDF|报告/.test(text)) return "report";
+  if (/公告|财报|年报|季报|业绩说明会/.test(text)) return "announcement";
+  if (/新闻|快讯|媒体/.test(text)) return "news";
+  return "research-article";
+}
+
+function sourceTagsFromParsedShare(parsed, rawText) {
+  const tags = [];
+  if (parsed.platform) tags.push(parsed.platform);
+  if (parsed.segment) tags.push(parsed.segment);
+  if (/CPO|硅光|MPO|光通信|光模块/i.test(rawText)) tags.push("光通信");
+  if (/机构|调研|研报|券商/.test(rawText)) tags.push("机构观点");
+  if (/待核验|验证|订单|量产|产能|价格|涨价/.test(rawText)) tags.push("待核验");
+  return [...new Set(tags)].slice(0, 5);
+}
+
+function buildSourceMarkdownDraft(parsed, rawText) {
+  const title = parsed.sourceTitle || "待整理资料";
+  return [
+    `# ${title}`,
+    "",
+    "## 来源信息",
+    "",
+    `- 平台：${parsed.platform || "待补充"}`,
+    `- 链接：${parsed.url || "待补充"}`,
+    `- 类型：${parsed.sourceKind || "资料"}`,
+    "",
+    "## 初步摘要",
+    "",
+    parsed.impact || "这是一条由分享文本预处理生成的资料草稿，需要继续补充完整原文、字幕、截图或交叉验证依据。",
+    "",
+    "## 原始分享文本",
+    "",
+    rawText
+  ].join("\n");
 }
 
 function inferSharePlatform(url, text) {
