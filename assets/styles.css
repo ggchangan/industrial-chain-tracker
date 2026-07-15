@@ -859,6 +859,28 @@ main {
   line-height: 1.55;
 }
 
+.learning-step-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.learning-step-links em {
+  border: 1px solid rgba(34, 211, 238, 0.26);
+  color: #a5f3fc;
+  cursor: pointer;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+  padding: 4px 7px;
+}
+
+.learning-step-links em:hover {
+  background: rgba(34, 211, 238, 0.08);
+  border-color: var(--cyan);
+}
+
 .source-timeline-item,
 .logic-map-node,
 .logic-radar-item {

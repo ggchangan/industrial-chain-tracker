@@ -1720,15 +1720,26 @@ function renderWorkbench(chain) {
   summary.learningSteps.forEach((step, index) => {
     const card = el("button", "learning-step");
     card.type = "button";
-    card.disabled = !step.target;
+    card.disabled = !step.target && !step.relatedLinks?.length;
     card.innerHTML = `
       <span>${String(index + 1).padStart(2, "0")}</span>
       <strong>${escapeHtml(step.title)}</strong>
       <small>${escapeHtml(step.body)}</small>
+      ${step.relatedLinks?.length ? `
+        <div class="learning-step-links">
+          ${step.relatedLinks.map((link) => `<em data-target="${escapeHtml(link.target)}">${escapeHtml(link.label)}</em>`).join("")}
+        </div>
+      ` : ""}
     `;
     if (step.target) {
       card.addEventListener("click", () => scrollToWorkbenchTarget(step.target));
     }
+    card.querySelectorAll("[data-target]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.stopPropagation();
+        scrollToWorkbenchTarget(link.dataset.target);
+      });
+    });
     learningRoot.append(card);
   });
 
@@ -1863,7 +1874,7 @@ function buildWorkbenchSummary(chain) {
 
 function buildLearningSteps(chain) {
   if (chain.id === "optical-module") {
-    return [
+    const steps = [
       {
         title: "先理解 AI 算力为什么需要高速互联",
         body: "从 GPU 集群通信、带宽、功耗和延迟约束看光进铜退。",
@@ -1895,15 +1906,42 @@ function buildLearningSteps(chain) {
         target: "#stocks"
       }
     ];
+    return attachLearningStepLinks(chain, steps);
   }
 
-  return (chain.chain || []).flatMap((section, sectionIndex) =>
+  const steps = (chain.chain || []).flatMap((section, sectionIndex) =>
     (section.items || section.segments || []).slice(0, 2).map((item, itemIndex) => ({
       title: item.name,
       body: item.detail || item.logic || section.role || chain.theme,
       target: searchTargetKey(chain.id, "chain-item", `${sectionIndex}-${itemIndex}`)
     }))
   ).slice(0, 6);
+  return attachLearningStepLinks(chain, steps);
+}
+
+function attachLearningStepLinks(chain, steps) {
+  return steps.map((step) => ({
+    ...step,
+    relatedLinks: buildLearningStepLinks(chain, step)
+  }));
+}
+
+function buildLearningStepLinks(chain, step) {
+  const links = [];
+  if (step.target) links.push({ label: "产业链位置", target: step.target });
+  const nodes = buildLogicMapNodes(chain);
+  const directLogic = nodes.find((node) => (node.segments || []).some((segment) => segment.target === step.target));
+  const inferredLogic = directLogic || inferSourceLogic(chain, compactText([step.title, step.body]));
+  if (inferredLogic?.target && inferredLogic.target !== step.target) {
+    links.push({ label: "对应逻辑", target: inferredLogic.target });
+  }
+  const metric = relatedMetricsForText(chain, compactText([step.title, step.body]))[0];
+  const metricIndex = metric ? (chain.trackingProfile?.metrics || []).indexOf(metric) : -1;
+  if (metricIndex >= 0) links.push({ label: "跟踪验证", target: searchTargetKey(chain.id, "tracking", metricIndex) });
+  if ((chain.updates?.length || chain.sources?.length) && !links.some((link) => link.target === "#activity")) {
+    links.push({ label: "资料时间线", target: "#activity" });
+  }
+  return links.slice(0, 3);
 }
 
 function findChainItemTarget(chain, terms) {
