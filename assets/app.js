@@ -2228,6 +2228,7 @@ function renderLogicOverview(chain, root) {
   const totalInsights = groups.reduce((sum, group) => sum + group.insightCount, 0);
   const trackedGroups = groups.filter((group) => group.metricCount > 0).length;
   const alertGroups = groups.filter((group) => ["challenge", "invalidate", "weaken"].includes(group.status)).length;
+  const recentChanges = buildRecentLogicChanges(chain);
   root.innerHTML = `
     <div class="logic-overview-summary">
       <article><span>逻辑主题</span><strong>${groups.length}</strong><small>基准 + 研究分组</small></article>
@@ -2235,6 +2236,24 @@ function renderLogicOverview(chain, root) {
       <article><span>跟踪覆盖</span><strong>${trackedGroups}</strong><small>关联监控项</small></article>
       <article><span>需要复核</span><strong>${alertGroups}</strong><small>反证/减弱/失效</small></article>
     </div>
+    ${recentChanges.length ? `
+      <div class="logic-recent-changes">
+        <div class="logic-recent-changes-head">
+          <span>最近变化</span>
+          <strong>优先看这些信号如何改变产业链逻辑</strong>
+        </div>
+        <div class="logic-recent-changes-list">
+          ${recentChanges.map((item) => `
+            <a class="logic-recent-change kind-${escapeHtml(item.kind)}" href="${escapeHtml(item.href)}">
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.title)}</strong>
+              <p>${escapeHtml(item.summary)}</p>
+              <small>${escapeHtml(item.date || "待更新")}</small>
+            </a>
+          `).join("")}
+        </div>
+      </div>
+    ` : ""}
     <div class="logic-overview-map">
       ${groups.map((group, index) => `
         <article class="logic-overview-node status-${escapeHtml(group.status || "base")}">
@@ -2261,6 +2280,49 @@ function renderLogicOverview(chain, root) {
   root.querySelectorAll("[data-logic-overview-target]").forEach((button) => {
     button.addEventListener("click", () => scrollToWorkbenchTarget(button.dataset.logicOverviewTarget));
   });
+}
+
+function buildRecentLogicChanges(chain) {
+  const updates = (chain.updates || []).map((item, index) => ({
+    kind: item.type === "latest-verification" ? "verification" : item.type || "update",
+    label: item.type === "logic-change" ? "逻辑变化" : item.sourceKind || item.type || "产业信号",
+    title: item.signal || item.sourceTitle || item.segment || "新的产业链信号",
+    summary: item.impact || item.notes || item.sourceTitle || "",
+    date: item.date || "",
+    href: "#activity",
+    sortKey: `${item.date || ""}-update-${index}`
+  }));
+  const verifications = (chain.trackingProfile?.metrics || [])
+    .map((metric, index) => metric.latestVerification ? ({
+      kind: metric.latestVerification.result || "verification",
+      label: "逻辑核验",
+      title: `${metric.name}：${verificationResultLabel(metric.latestVerification.result)}`,
+      summary: metric.latestVerification.summary || metric.latestVerification.notes || "",
+      date: metric.latestVerification.date || "",
+      href: "#updates",
+      sortKey: `${metric.latestVerification.date || ""}-verification-${index}`
+    }) : null)
+    .filter(Boolean);
+  const sources = (chain.sources || []).map((source, index) => ({
+    kind: source.type || "source",
+    label: source.type === "short-video" ? "短视频资料" : "新增资料",
+    title: source.title,
+    summary: source.summary || `${source.platform || "资料"} · ${source.date || source.createdAt?.slice(0, 10) || ""}`,
+    date: source.date || source.createdAt?.slice(0, 10) || "",
+    href: "#activity",
+    sortKey: `${source.date || source.createdAt || ""}-source-${index}`
+  }));
+  const seen = new Set();
+  return [...updates, ...verifications, ...sources]
+    .filter((item) => item.title && item.summary)
+    .sort((left, right) => String(right.sortKey).localeCompare(String(left.sortKey)))
+    .filter((item) => {
+      const key = `${item.date}:${item.title}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
 }
 
 function buildLogicOverviewGroups(chain) {
