@@ -29,6 +29,7 @@ const sourceForm = document.querySelector("#addSourceForm");
 const sourceShareText = document.querySelector("#sourceShareText");
 const parseSourceShare = document.querySelector("#parseSourceShare");
 const sourceToUpdateDraft = document.querySelector("#sourceToUpdateDraft");
+const updateToLogicDraft = document.createElement("button");
 const grid = document.querySelector("#maintenanceGrid");
 const search = document.querySelector("#maintainSearch");
 const articleSelect = document.querySelector("#articleChainId");
@@ -82,6 +83,11 @@ async function initialize() {
   updateForm.elements.date.value = new Date().toISOString().slice(0, 10);
   sourceForm.elements.date.value = new Date().toISOString().slice(0, 10);
   verificationForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  updateToLogicDraft.id = "updateToLogicDraft";
+  updateToLogicDraft.className = "button secondary";
+  updateToLogicDraft.type = "button";
+  updateToLogicDraft.textContent = "转为逻辑卡草稿";
+  updateForm.querySelector(".admin-form-actions")?.prepend(updateToLogicDraft);
   fileInput.addEventListener("change", readMarkdownFile);
   sourceFileInput.addEventListener("change", readSourceMarkdownFile);
   sourceIllustrationFiles.addEventListener("change", readSourceIllustrations);
@@ -101,6 +107,7 @@ async function initialize() {
   parseUpdateShare.addEventListener("click", preprocessUpdateShareText);
   parseSourceShare.addEventListener("click", preprocessSourceShareText);
   sourceToUpdateDraft.addEventListener("click", createUpdateDraftFromSourceForm);
+  updateToLogicDraft.addEventListener("click", createLogicDraftFromUpdateForm);
   logicRadarChainFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarPriorityFilter.addEventListener("change", updateLogicRadarFilters);
   logicRadarKindFilter.addEventListener("change", updateLogicRadarFilters);
@@ -1836,6 +1843,50 @@ function startLogicCardFromUpdate(chainId, updateId) {
   document.querySelector("#logic-cards").scrollIntoView({ behavior: "smooth", block: "start" });
   logicCardForm.elements.summary.focus();
   setNotice("已根据动态追踪预填逻辑卡草稿，请检查结构化内容后保存。", "success");
+}
+
+function createLogicDraftFromUpdateForm() {
+  const update = Object.fromEntries(new FormData(updateForm).entries());
+  if (!update.signal && !update.impact) {
+    setNotice("请先填写或预处理一条动态，再转为逻辑卡草稿。", "error");
+    updateForm.elements.signal.focus();
+    return;
+  }
+
+  const chainId = update.chainId || updateSelect.value;
+  const chain = state.library?.chains?.find((item) => item.id === chainId);
+  resetLogicCardForm(chainId);
+  const sourceId = findSourceIdForUpdate(chain, update);
+  renderLogicSourceOptions(sourceId);
+  logicCardForm.elements.sourceId.value = sourceId;
+  logicCardForm.elements.trackId.value = logicTrackIdFromUpdate(chainId, update);
+  logicCardForm.elements.trackTitle.value = `${update.segment || chain?.shortTitle || chain?.title || "产业链"}逻辑变化`;
+  logicCardForm.elements.trackSummary.value = update.impact || update.signal;
+  logicCardForm.elements.kicker.value = update.type || "动态沉淀";
+  logicCardForm.elements.display.value = "points";
+  logicCardForm.elements.title.value = update.signal || update.sourceTitle || "待沉淀逻辑";
+  logicCardForm.elements.summary.value = update.impact || "这条动态需要继续判断它改变了哪条产业链逻辑。";
+  logicCardForm.elements.conclusion.value = [
+    update.confidence ? `置信度：${update.confidence}` : "",
+    update.notes || "",
+    update.sourceTitle ? `来源：${update.sourceTitle}` : ""
+  ].filter(Boolean).join("\n");
+  logicCardForm.elements.segments.value = update.segment || "";
+  logicCardForm.elements.articleAnchor.value = "";
+  logicCardContent.value = JSON.stringify({
+    points: [
+      { label: "核心变化", description: update.signal || update.sourceTitle || "新增动态线索" },
+      { label: "产业链影响", description: update.impact || "等待补充影响判断。" },
+      { label: "后续观察", description: update.notes || "继续跟踪证据变化和市场验证。" }
+    ]
+  }, null, 2);
+  updateLogicContentHint();
+  document.querySelector("#logicCardFormTitle").textContent = "从动态草稿沉淀逻辑卡";
+  logicCardForm.querySelector("button[type='submit']").textContent = "保存逻辑卡草稿";
+  cancelLogicCardEdit.hidden = false;
+  document.querySelector("#logic-cards").scrollIntoView({ behavior: "smooth", block: "start" });
+  logicCardForm.elements.summary.focus();
+  setNotice("已生成逻辑卡草稿，请继续补充结构化内容后保存。", "success");
 }
 
 function editLogicCard(cardId) {
