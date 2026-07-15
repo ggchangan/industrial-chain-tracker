@@ -2151,11 +2151,61 @@ button.propagation-signal:hover {
   top: 10px;
 }
 
+.logic-insight.status-strengthen,
+.logic-insight.status-stable {
+  border-color: rgba(53, 211, 154, 0.36);
+}
+
+.logic-insight.status-weaken,
+.logic-insight.status-challenge {
+  border-color: rgba(242, 168, 59, 0.42);
+}
+
+.logic-insight.status-invalidate {
+  border-color: rgba(251, 113, 133, 0.48);
+}
+
+.logic-insight.status-draft {
+  opacity: 0.78;
+}
+
+.logic-insight-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 40px 8px 0;
+}
+
 .logic-insight-kicker {
   color: var(--cyan);
   font-size: 10px;
   font-weight: 800;
-  margin-bottom: 7px;
+}
+
+.logic-status-badge {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 3px 7px;
+}
+
+.logic-status-badge.status-strengthen,
+.logic-status-badge.status-stable {
+  border-color: rgba(53, 211, 154, 0.45);
+  color: #86efac;
+}
+
+.logic-status-badge.status-weaken,
+.logic-status-badge.status-challenge {
+  border-color: rgba(242, 168, 59, 0.52);
+  color: #fde68a;
+}
+
+.logic-status-badge.status-invalidate {
+  border-color: rgba(251, 113, 133, 0.56);
+  color: #fda4af;
 }
 
 .logic-insight h4 {
